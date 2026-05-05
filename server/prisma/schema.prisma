@@ -1,0 +1,91 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  manuscripts  Manuscript[]
+  subscribers  Subscriber[]
+  orders       Order[]
+}
+
+model Manuscript {
+  id        String   @id @default(cuid())
+  title     String
+  subtitle  String?
+  status    String   @default("draft")
+  wordCount Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  authorId  String
+  author    User     @relation(fields: [authorId], references: [id])
+
+  betaReaders BetaReader[]
+  chapters    Chapter[]
+}
+
+model Chapter {
+  id           String     @id @default(cuid())
+  number       Int
+  title        String
+  wordCount    Int        @default(0)
+  manuscriptId String
+  manuscript   Manuscript @relation(fields: [manuscriptId], references: [id])
+}
+
+model BetaReader {
+  id           String     @id @default(cuid())
+  name         String
+  email        String
+  progress     Float      @default(0)
+  verdict      String?
+  notesCount   Int        @default(0)
+  joinedAt     DateTime   @default(now())
+  lastSeenAt   DateTime?
+  manuscriptId String
+  manuscript   Manuscript @relation(fields: [manuscriptId], references: [id])
+}
+
+model DistributionChannel {
+  id        String   @id @default(cuid())
+  name      String
+  kind      String
+  status    String   @default("draft")
+  sku       String?
+  royalty   String?
+  copiesSold Int     @default(0)
+  userId    String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Subscriber {
+  id         String   @id @default(cuid())
+  email      String
+  segment    String   @default("new")
+  joinedAt   DateTime @default(now())
+  authorId   String
+  author     User     @relation(fields: [authorId], references: [id])
+}
+
+model Order {
+  id        String   @id @default(cuid())
+  customer  String
+  location  String?
+  product   String
+  amount    Int
+  createdAt DateTime @default(now())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+}

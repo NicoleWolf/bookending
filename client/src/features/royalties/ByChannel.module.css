@@ -1,0 +1,190 @@
+/* ── View wrapper ────────────────────────────────────────────────── */
+.view {
+  padding: 36px 48px;
+}
+
+/* ── Channel cards grid ──────────────────────────────────────────── */
+.cardsGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0;
+  border: 1px solid var(--rule);
+  margin-bottom: 48px;
+}
+
+.card {
+  padding: 28px 24px;
+  border-right: 1px solid var(--rule);
+}
+
+.card:last-child {
+  border-right: none;
+}
+
+.cardTop {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 20px;
+}
+
+.cardName {
+  font-size: 15px;
+  font-weight: 400;
+  line-height: 1.3;
+}
+
+.cardCut {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 9.5px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 3px 6px;
+  border: 1px solid var(--rule);
+  color: var(--muted);
+}
+
+.cardNetLabel {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 9.5px;
+  color: var(--muted);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+
+.cardNetValue {
+  font-size: 32px;
+  font-weight: 400;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  margin-bottom: 16px;
+}
+
+.cardNetValue[data-nonzero] {
+  color: var(--good);
+}
+
+.cardBar {
+  height: 4px;
+  background: var(--rule);
+  position: relative;
+  margin-bottom: 20px;
+}
+
+.cardBarFill {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: var(--pct, 0%);
+  background: var(--good);
+}
+
+.cardStats {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.cardStat {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+
+.cardStatLabel {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 9.5px;
+  color: var(--muted);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.cardStatValue {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 10.5px;
+  color: var(--paper);
+  letter-spacing: 0.04em;
+}
+
+.cardSchedule {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 9px;
+  color: var(--muted);
+  letter-spacing: 0.06em;
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px solid var(--rule);
+  line-height: 1.4;
+}
+
+/* ── Net comparison ──────────────────────────────────────────────── */
+.comparisonHead {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  color: var(--muted);
+  text-transform: uppercase;
+  margin-bottom: 20px;
+}
+
+.compRows {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.compRow {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.compLabel {
+  font-size: 13px;
+  width: 160px;
+  flex-shrink: 0;
+}
+
+.compBar {
+  flex: 1;
+  height: 6px;
+  background: var(--rule);
+  position: relative;
+}
+
+.compBarFill {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: var(--pct, 0%);
+  background: var(--good);
+}
+
+.compNet {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 11px;
+  color: var(--good);
+  letter-spacing: 0.04em;
+  width: 80px;
+  text-align: right;
+}
+
+.compUnits {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 10px;
+  color: var(--muted);
+  letter-spacing: 0.06em;
+  width: 60px;
+  text-align: right;
+}

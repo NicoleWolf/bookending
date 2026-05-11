@@ -1,0 +1,726 @@
+/* ── Landing: manuscript grid ────────────────────────────────────── */
+.landingWrap {
+  padding: 32px 48px 64px;
+}
+
+.landingGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 24px;
+  grid-auto-rows: auto;
+}
+
+.emptyShelf {
+  padding: 48px;
+  display: flex;
+  justify-content: center;
+}
+
+/* No-search-results message */
+.noResults {
+  grid-column: 1 / -1;
+  padding: 48px 0;
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 15px;
+  color: var(--muted);
+  text-align: center;
+}
+
+.clearSearch {
+  background: none;
+  border: none;
+  color: var(--accent);
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 15px;
+  cursor: pointer;
+  padding: 0;
+  text-decoration: underline;
+}
+
+/* Responsive */
+@media (max-width: 899px) {
+  .landingGrid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+  }
+}
+
+@media (max-width: 599px) {
+  .landingWrap {
+    padding: 20px 20px 48px;
+  }
+
+  .landingGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ── Section header (SectionHead wrapper) ────────────────────────── */
+.sectionHeader {
+  padding: 40px 48px 0;
+}
+
+/* ── Edit view: back nav ─────────────────────────────────────────── */
+.backNav {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 12px 48px;
+  border-bottom: 1px solid var(--rule);
+  background: var(--ink-2);
+}
+
+.backBtn {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 9.5px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  flex-shrink: 0;
+}
+
+.backBtn:hover {
+  color: var(--paper);
+}
+
+.backTitle {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 13px;
+  color: var(--muted-2);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ── Book selector (kept for reference, no longer rendered) ──────── */
+/* ── Book selector ───────────────────────────────────────────────── */
+.bookSelector {
+  display: flex;
+  align-items: stretch;
+  padding: 0 48px;
+  border-bottom: 1px solid var(--rule);
+}
+
+.bookTab {
+  padding: 14px 20px;
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  font-family: var(--sans);
+  font-size: 12px;
+  color: var(--muted);
+  cursor: pointer;
+  letter-spacing: 0.04em;
+  margin-bottom: -1px;
+}
+
+.bookTab[data-active] {
+  color: var(--paper);
+  border-bottom-color: var(--accent);
+}
+
+.bookTab:hover:not([data-active]) {
+  color: var(--paper);
+}
+
+.newBookBtn {
+  margin-left: auto;
+  padding: 14px 0;
+  background: transparent;
+  border: none;
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 9.5px;
+  color: var(--muted);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  cursor: pointer;
+  align-self: center;
+}
+
+.newBookBtn:hover {
+  color: var(--paper);
+}
+
+/* ── Profile layout ──────────────────────────────────────────────── */
+.profileGrid {
+  display: grid;
+  grid-template-columns: 240px 1fr;
+  min-height: 640px;
+  border-bottom: 1px solid var(--rule);
+}
+
+/* ── Cover column ────────────────────────────────────────────────── */
+.coverCol {
+  padding: 36px 28px;
+  border-right: 1px solid var(--rule);
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.coverBox {
+  width: 100%;
+  aspect-ratio: 2 / 3;
+  border: 1px solid var(--rule);
+  margin-bottom: 24px;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+
+.coverBoxOverlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.15s;
+}
+
+.coverBox:hover .coverBoxOverlay {
+  opacity: 1;
+}
+
+.uploadHint {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 8.5px;
+  color: var(--paper);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.coverImg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* ── Spine color picker ──────────────────────────────────────────── */
+.spinePickerWrap {
+  margin-bottom: 24px;
+}
+
+.spinePickerLabel {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 9px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 10px;
+}
+
+.spinePickerRow {
+  display: flex;
+  gap: 8px;
+}
+
+.spineSwatch {
+  flex: 1;
+  aspect-ratio: 2 / 3;
+  border: 1px solid var(--rule);
+  border-radius: 0;
+  cursor: pointer;
+  padding: 0;
+  transition: border-color 0.1s;
+}
+
+.spineSwatch[data-spine="spine-amber"] { background: color-mix(in srgb, var(--accent) 18%, var(--ink)); }
+.spineSwatch[data-spine="spine-slate"] { background: var(--ink-3); }
+.spineSwatch[data-spine="spine-teal"]  { background: var(--teal-deep); }
+.spineSwatch[data-spine="spine-dark"]  { background: color-mix(in srgb, var(--ink-2) 70%, var(--rule)); }
+.spineSwatch[data-spine="spine-muted"] { background: color-mix(in srgb, var(--ink-3) 80%, var(--ink)); }
+
+.spineSwatch[data-active] {
+  border-color: var(--paper);
+  border-width: 2px;
+}
+
+.coverMeta {
+  display: flex;
+  flex-direction: column;
+}
+
+.coverMetaRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 8px;
+  padding: 9px 0;
+  border-bottom: 1px solid var(--rule);
+}
+
+.coverMetaRow:last-child {
+  border-bottom: none;
+}
+
+.coverMetaLabel {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 9px;
+  color: var(--muted);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  flex-shrink: 0;
+}
+
+.coverMetaValue {
+  font-family: var(--sans);
+  font-size: 11px;
+  color: var(--paper);
+  text-align: right;
+}
+
+/* ── Form column ─────────────────────────────────────────────────── */
+.formCol {
+  display: flex;
+  flex-direction: column;
+}
+
+.formSection {
+  border-bottom: 1px solid var(--rule);
+}
+
+.sectionHead {
+  padding: 14px 48px 0;
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 9px;
+  letter-spacing: 0.2em;
+  color: var(--muted);
+  text-transform: uppercase;
+}
+
+/* ── Field rows ──────────────────────────────────────────────────── */
+.fieldRow {
+  display: grid;
+  grid-template-columns: 168px 1fr;
+  border-bottom: 1px solid var(--rule);
+}
+
+.fieldRow:last-child {
+  border-bottom: none;
+}
+
+.fieldLabel {
+  padding: 0 16px 0 48px;
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 9px;
+  color: var(--muted);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  border-right: 1px solid var(--rule);
+}
+
+.fieldInput {
+  background: transparent;
+  border: none;
+  color: var(--paper);
+  font-family: var(--sans);
+  font-size: 13px;
+  padding: 12px 20px;
+  outline: none;
+  width: 100%;
+}
+
+.fieldInput:focus {
+  background: color-mix(in srgb, var(--accent) 4%, transparent);
+}
+
+.fieldInput::placeholder {
+  color: color-mix(in srgb, var(--muted) 40%, transparent);
+}
+
+/* Select dropdowns */
+.fieldSelectWrap {
+  position: relative;
+  display: flex;
+  align-items: stretch;
+  flex: 1;
+}
+
+.fieldSelectWrap::after {
+  content: '▾';
+  position: absolute;
+  right: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--muted);
+  font-size: 9px;
+  pointer-events: none;
+}
+
+.fieldSelect {
+  appearance: none;
+  -webkit-appearance: none;
+  background: transparent;
+  border: none;
+  color: var(--paper);
+  font-family: var(--sans);
+  font-size: 13px;
+  padding: 12px 40px 12px 20px;
+  outline: none;
+  width: 100%;
+  cursor: pointer;
+}
+
+.fieldSelect:focus {
+  background: color-mix(in srgb, var(--accent) 4%, transparent);
+}
+
+.fieldSelect option {
+  background: var(--ink-2);
+  color: var(--paper);
+}
+
+.fieldSelect:disabled {
+  color: var(--muted-2);
+  cursor: default;
+}
+
+.fieldSelect[data-placeholder] {
+  color: color-mix(in srgb, var(--muted) 40%, transparent);
+}
+
+.fieldTextarea {
+  background: transparent;
+  border: none;
+  color: var(--paper);
+  font-family: var(--sans);
+  font-size: 13px;
+  line-height: 1.65;
+  padding: 14px 20px;
+  outline: none;
+  width: 100%;
+  min-height: 110px;
+  resize: vertical;
+}
+
+.fieldTextarea:focus {
+  background: color-mix(in srgb, var(--accent) 4%, transparent);
+}
+
+.fieldTextarea::placeholder {
+  color: color-mix(in srgb, var(--muted) 40%, transparent);
+}
+
+/* Series — two inputs in one cell */
+.seriesRow {
+  display: grid;
+  grid-template-columns: 1fr 80px;
+}
+
+.seriesInput {
+  background: transparent;
+  border: none;
+  border-right: 1px solid var(--rule);
+  color: var(--paper);
+  font-family: var(--sans);
+  font-size: 13px;
+  padding: 12px 20px;
+  outline: none;
+}
+
+.seriesInput:focus {
+  background: color-mix(in srgb, var(--accent) 4%, transparent);
+}
+
+.seriesInput::placeholder {
+  color: color-mix(in srgb, var(--muted) 40%, transparent);
+}
+
+.seriesNumInput {
+  background: transparent;
+  border: none;
+  color: var(--paper);
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 13px;
+  padding: 12px 0;
+  outline: none;
+  text-align: center;
+  width: 100%;
+}
+
+.seriesNumInput:focus {
+  background: color-mix(in srgb, var(--accent) 4%, transparent);
+}
+
+.seriesNumInput::placeholder {
+  color: color-mix(in srgb, var(--muted) 40%, transparent);
+}
+
+/* Pricing — $ prefix */
+.priceRow {
+  display: flex;
+  align-items: center;
+}
+
+.pricePrefix {
+  padding: 12px 4px 12px 20px;
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 11px;
+  color: var(--muted);
+  flex-shrink: 0;
+}
+
+.priceInput {
+  background: transparent;
+  border: none;
+  color: var(--paper);
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 13px;
+  padding: 12px 8px;
+  outline: none;
+  width: 90px;
+}
+
+.priceInput::placeholder {
+  color: color-mix(in srgb, var(--muted) 40%, transparent);
+}
+
+/* Status toggles */
+.statusRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 32px;
+}
+
+.statusBtn {
+  padding: 5px 12px;
+  border: 1px solid var(--rule);
+  background: transparent;
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  cursor: pointer;
+}
+
+.statusBtn:hover {
+  color: var(--paper);
+  border-color: color-mix(in srgb, var(--paper) 30%, transparent);
+}
+
+.statusBtn[data-active] {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 8%, transparent);
+}
+
+/* Visibility hint text */
+.visibilityHint {
+  font-family: var(--sans);
+  font-size: 11px;
+  color: var(--muted-2);
+  margin-left: 8px;
+}
+
+/* Import zone */
+.importZone {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  padding: 18px 32px;
+  cursor: pointer;
+  transition: background 0.1s;
+}
+
+.importZone:hover {
+  background: color-mix(in srgb, var(--paper) 2%, transparent);
+}
+
+.importZoneLabel {
+  font-family: var(--sans);
+  font-size: 12.5px;
+  color: var(--paper);
+}
+
+.importZoneSub {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 9px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted-2);
+}
+
+.autoFilledNote {
+  margin-top: 8px;
+  padding: 6px 10px;
+  background: color-mix(in srgb, var(--accent) 8%, transparent);
+  border-left: 2px solid var(--accent);
+  font-family: var(--sans);
+  font-size: 11px;
+  color: var(--muted);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.autoFilledDismiss {
+  background: none;
+  border: none;
+  color: var(--muted);
+  cursor: pointer;
+  font-size: 14px;
+  line-height: 1;
+  padding: 0;
+  flex-shrink: 0;
+}
+
+/* ── Footer ──────────────────────────────────────────────────────── */
+.formFooter {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 20px;
+  padding: 14px 32px;
+  border-top: 1px solid var(--rule);
+  margin-top: auto;
+}
+
+.savedIndicator {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 9.5px;
+  color: var(--accent);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.saveBtn {
+  padding: 10px 24px;
+  background: var(--accent);
+  border: none;
+  color: var(--ink);
+  font-family: var(--sans);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  cursor: pointer;
+}
+
+.saveBtn:disabled {
+  opacity: 0.3;
+  cursor: default;
+}
+
+/* ── Leave-guard modal ───────────────────────────────────────────── */
+.modalOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+}
+
+.modal {
+  background: var(--ink-2);
+  border: 1px solid var(--rule);
+  padding: 36px 40px;
+  max-width: 420px;
+  width: 100%;
+}
+
+.modalTitle {
+  font-family: var(--sans);
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--paper);
+  margin-bottom: 12px;
+}
+
+.modalBody {
+  font-family: var(--sans);
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--muted);
+  margin: 0 0 28px;
+}
+
+.modalActions {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+}
+
+.modalBtnStay {
+  padding: 9px 20px;
+  background: var(--accent);
+  border: none;
+  color: var(--ink);
+  font-family: var(--sans);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.modalBtnDiscard {
+  padding: 9px 20px;
+  background: transparent;
+  border: 1px solid var(--rule);
+  color: var(--muted);
+  font-family: var(--sans);
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.modalBtnDiscard:hover {
+  color: var(--paper);
+  border-color: color-mix(in srgb, var(--paper) 30%, transparent);
+}
+
+.modalBtnDelete {
+  padding: 9px 20px;
+  background: transparent;
+  border: 1px solid var(--danger, #e05252);
+  color: var(--danger, #e05252);
+  font-family: var(--sans);
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.modalBtnDelete:hover {
+  background: color-mix(in srgb, var(--danger, #e05252) 12%, transparent);
+}
+
+/* ── Delete button in edit footer ───────────────────────────────── */
+.deleteManuscriptBtn {
+  margin-right: auto;
+  padding: 9px 0;
+  background: none;
+  border: none;
+  font-family: var(--sans);
+  font-size: 12px;
+  color: var(--muted);
+  cursor: pointer;
+}
+
+.deleteManuscriptBtn:hover {
+  color: var(--danger, #e05252);
+}

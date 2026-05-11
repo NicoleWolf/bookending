@@ -1,0 +1,305 @@
+/* ── Overlay & modal shell ───────────────────────────────────────── */
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: color-mix(in srgb, var(--ink) 80%, transparent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 200;
+  padding: 24px;
+}
+
+.modal {
+  background: var(--ink-2);
+  border: 1px solid var(--rule);
+  width: 100%;
+  max-width: 520px;
+  display: flex;
+  flex-direction: column;
+  max-height: calc(100vh - 48px);
+  overflow: hidden;
+}
+
+/* ── Header ──────────────────────────────────────────────────────── */
+.head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  padding: 16px 24px;
+  border-bottom: 1px solid var(--rule);
+  flex-shrink: 0;
+  gap: 12px;
+}
+
+.headLeft {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.headTitle {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 9.5px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--paper);
+}
+
+.headSub {
+  font-style: italic;
+  font-family: var(--serif);
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.closeBtn {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--muted);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 2px 4px;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.closeBtn:hover { color: var(--paper); }
+
+/* ── Form body ───────────────────────────────────────────────────── */
+.formBody {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+  overflow-y: auto;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.label {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 9.5px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.input {
+  padding: 9px 12px;
+  background: var(--ink);
+  border: 1px solid var(--rule);
+  color: var(--paper);
+  font-family: var(--sans);
+  font-size: 13px;
+  border-radius: 0;
+  outline: none;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.input:focus { border-color: var(--muted); }
+
+/* ── Status options ──────────────────────────────────────────────── */
+.statusOptions {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.statusOption {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  border: 1px solid var(--rule);
+  cursor: pointer;
+  background: var(--ink);
+}
+
+.statusOption[data-active] {
+  border-color: var(--paper);
+  background: var(--ink-3);
+}
+
+.radio {
+  flex-shrink: 0;
+  accent-color: var(--paper);
+}
+
+.statusOptionText {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+}
+
+.statusLabel {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--paper);
+}
+
+.statusDesc {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 9.5px;
+  color: var(--muted);
+  letter-spacing: 0.04em;
+}
+
+/* ── List price ──────────────────────────────────────────────────── */
+.priceInputRow {
+  display: flex;
+  align-items: center;
+  border: 1px solid var(--rule);
+  background: var(--ink);
+}
+
+.priceCurrency {
+  padding: 0 10px;
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 13px;
+  color: var(--muted);
+  border-right: 1px solid var(--rule);
+  line-height: 1;
+  align-self: stretch;
+  display: flex;
+  align-items: center;
+}
+
+.priceInputRow .input {
+  border: none;
+  background: transparent;
+  flex: 1;
+  min-width: 0;
+}
+
+.priceInputRow .input:focus {
+  border: none;
+  outline: none;
+}
+
+.priceInputRow:focus-within {
+  border-color: var(--muted);
+}
+
+.priceNet {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 10px;
+  color: var(--muted);
+  letter-spacing: 0.04em;
+}
+
+.priceNet strong {
+  color: var(--good);
+  font-weight: 500;
+}
+
+.priceReserves {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 10px;
+  color: var(--accent);
+  letter-spacing: 0.04em;
+}
+
+/* ── Format checkboxes ───────────────────────────────────────────── */
+.formatOptions {
+  display: flex;
+  gap: 6px;
+}
+
+.formatOption {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px;
+  border: 1px solid var(--rule);
+  cursor: pointer;
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+  background: var(--ink);
+}
+
+.formatOption[data-active] {
+  border-color: var(--paper);
+  color: var(--paper);
+  background: var(--ink-3);
+}
+
+.checkbox {
+  flex-shrink: 0;
+  accent-color: var(--paper);
+}
+
+/* ── Field hint ──────────────────────────────────────────────────── */
+.fieldHint {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 9.5px;
+  color: var(--muted);
+  letter-spacing: 0.04em;
+  opacity: 0.75;
+}
+
+/* ── Footer ──────────────────────────────────────────────────────── */
+.foot {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  padding: 16px 24px;
+  border-top: 1px solid var(--rule);
+  flex-shrink: 0;
+}
+
+.btnGhost {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 10.5px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  background: none;
+  border: 1px solid var(--rule);
+  cursor: pointer;
+  padding: 8px 18px;
+  border-radius: 0;
+}
+
+.btnGhost:hover {
+  color: var(--paper);
+  border-color: var(--muted);
+}
+
+.btnPrimary {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 10.5px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink);
+  background: var(--paper);
+  border: 1px solid var(--paper);
+  cursor: pointer;
+  padding: 8px 18px;
+  border-radius: 0;
+}
+
+.btnPrimary:hover {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--ink);
+}

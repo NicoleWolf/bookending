@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Bookending — Reader Empty State (v4)</title>
+</head>
+<body>
+
+<h2 class="sr-only">Reader empty state landing page, v4. Matched pair to the writer v4.</h2>
+
+<style>
+  .bk { font-family: 'Newsreader', Georgia, serif; background: #F0E8D6; color: #2A2520; padding: 28px 32px 32px; border-radius: 12px; }
+  .bk-mono { font-family: 'JetBrains Mono', ui-monospace, monospace; }
+  .bk-sans { font-family: ui-sans-serif, system-ui, sans-serif; }
+  .bk-eyebrow { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: #6B5F47; }
+  .bk-card { background: #F6EFDC; border: 0.5px solid #B8AB8C; border-radius: 8px; padding: 16px 18px; }
+  .bk-btn-secondary { background: transparent; color: #2A2520; border: 1px solid #6B5F47; padding: 9px 16px; border-radius: 6px; font-family: ui-sans-serif, system-ui, sans-serif; font-size: 13px; cursor: pointer; }
+  .bk-pill { display: inline-block; font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; padding: 4px 10px; border-radius: 3px; }
+</style>
+
+<div class="bk">
+
+  <div style="display: flex; justify-content: space-between; align-items: center; padding-bottom: 14px; border-bottom: 0.5px solid #B8AB8C; margin-bottom: 0;">
+    <div style="display: flex; align-items: baseline; gap: 16px;">
+      <span style="font-family: 'Newsreader', Georgia, serif; font-style: italic; font-size: 20px;">Bookending</span>
+      <span class="bk-eyebrow">Vol. III · No. 47 · Saturday</span>
+    </div>
+    <div style="display: flex; gap: 20px; align-items: center;">
+      <span class="bk-eyebrow">The desk</span>
+      <span class="bk-eyebrow" style="color: #B8AB8C;">Library</span>
+      <span class="bk-eyebrow" style="color: #B8AB8C;">Authors</span>
+      <span class="bk-eyebrow" style="color: #B8AB8C;">Community</span>
+      <span style="display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px; border-radius: 50%; background: #1F1B17; color: #FFFFFF; font-family: ui-sans-serif, system-ui, sans-serif; font-size: 11px; font-weight: 500;">JK</span>
+    </div>
+  </div>
+
+  <div style="display: flex; gap: 28px; align-items: baseline; padding: 22px 0 8px; border-bottom: 0.5px solid #B8AB8C; margin-bottom: 32px;">
+    <button style="background: transparent; border: 0; padding: 0 0 12px; cursor: pointer; border-bottom: 2px solid transparent;">
+      <span style="font-family: 'Newsreader', Georgia, serif; font-style: italic; font-size: 28px; color: #6B5F47;">Writing</span>
+    </button>
+    <button style="background: transparent; border: 0; padding: 0 0 12px; cursor: pointer; border-bottom: 2px solid #8A1F15;">
+      <span style="font-family: 'Newsreader', Georgia, serif; font-style: italic; font-size: 28px; color: #2A2520;">Reading</span>
+    </button>
+  </div>
+
+  <div style="background: #1F1B17; color: #F0E8D6; border-radius: 8px; padding: 56px; margin-bottom: 36px;">
+    <div style="display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); gap: 48px; align-items: center;">
+
+      <div>
+        <span class="bk-pill" style="background: #8A1F15; color: #FFFFFF;">Start here</span>
+        <h1 style="font-family: 'Newsreader', Georgia, serif; font-size: 42px; line-height: 1.15; margin: 20px 0 18px; font-style: italic; font-weight: 400; color: #F0E8D6;">There's a manuscript out there waiting for the right reader.</h1>
+        <p style="font-family: ui-sans-serif, system-ui, sans-serif; font-size: 15px; line-height: 1.65; color: #D4C9AB; margin: 0 0 32px;">Authors on Bookending share their works-in-progress with a small circle of readers before publication. You read drafts, leave notes in the margin, and write directly to the author. The book gets better. So does your reading.</p>
+        <button style="background: #8A1F15; color: #FFFFFF; border: 0; padding: 12px 22px; border-radius: 6px; font-family: ui-sans-serif, system-ui, sans-serif; font-size: 14px; font-weight: 500; cursor: pointer;">Discover a manuscript in the Library →</button>
+      </div>
+
+      <div aria-hidden="true" style="display: flex; align-items: center; justify-content: center;">
+        <svg viewBox="0 0 280 320" xmlns="http://www.w3.org/2000/svg" style="width: 100%; max-width: 260px; height: auto;">
+          <line x1="20" y1="200" x2="260" y2="200" stroke="#6B5F47" stroke-width="1"/>
+
+          <rect x="30" y="80" width="28" height="120" fill="#2A2520" stroke="#6B5F47" stroke-width="0.5"/>
+          <line x1="36" y1="100" x2="52" y2="100" stroke="#D4C9AB" stroke-width="0.5"/>
+          <line x1="36" y1="180" x2="52" y2="180" stroke="#8A1F15" stroke-width="1.5"/>
+
+          <rect x="62" y="100" width="32" height="100" fill="#3D3528" stroke="#6B5F47" stroke-width="0.5"/>
+          <line x1="68" y1="120" x2="88" y2="120" stroke="#D4C9AB" stroke-width="0.5"/>
+
+          <rect x="98" y="70" width="30" height="130" fill="#2A2520" stroke="#6B5F47" stroke-width="0.5"/>
+          <line x1="104" y1="90" x2="122" y2="90" stroke="#D4C9AB" stroke-width="0.5"/>
+
+          <rect x="132" y="90" width="28" height="110" fill="#3D3528" stroke="#6B5F47" stroke-width="0.5"/>
+          <line x1="138" y1="110" x2="154" y2="110" stroke="#D4C9AB" stroke-width="0.5"/>
+
+          <rect x="164" y="110" width="34" height="90" fill="#2A2520" stroke="#6B5F47" stroke-width="0.5"/>
+          <line x1="170" y1="130" x2="192" y2="130" stroke="#D4C9AB" stroke-width="0.5"/>
+
+          <rect x="202" y="80" width="30" height="120" fill="#3D3528" stroke="#6B5F47" stroke-width="0.5"/>
+          <line x1="208" y1="100" x2="226" y2="100" stroke="#D4C9AB" stroke-width="0.5"/>
+
+          <rect x="236" y="100" width="14" height="100" fill="#2A2520" stroke="#6B5F47" stroke-width="0.5"/>
+        </svg>
+      </div>
+
+    </div>
+  </div>
+
+  <div style="margin-bottom: 36px;">
+    <div style="margin-bottom: 18px;">
+      <span class="bk-eyebrow">§ How reading works here</span>
+      <h2 style="font-family: 'Newsreader', Georgia, serif; font-style: italic; font-size: 26px; margin: 4px 0 0; font-weight: 400;">Discover, read, connect.</h2>
+    </div>
+
+    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px;">
+
+      <div class="bk-card">
+        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+          <span style="font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.12em; color: #8A1F15; font-weight: 500;">§ 01</span>
+          <span class="bk-eyebrow">Discover</span>
+        </div>
+        <p style="font-family: 'Newsreader', Georgia, serif; font-size: 17px; line-height: 1.4; margin: 0 0 8px; font-style: italic;">Find a manuscript that wants you in the room.</p>
+        <p style="font-family: ui-sans-serif, system-ui, sans-serif; font-size: 13px; line-height: 1.6; color: #5C4A2E; margin: 0;">Browse open beta reads, apply where authors are accepting readers, or set up a public profile so authors can invite you to their work.</p>
+      </div>
+
+      <div class="bk-card">
+        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+          <span style="font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.12em; color: #8A1F15; font-weight: 500;">§ 02</span>
+          <span class="bk-eyebrow">Read</span>
+        </div>
+        <p style="font-family: 'Newsreader', Georgia, serif; font-size: 17px; line-height: 1.4; margin: 0 0 8px; font-style: italic;">Read in the margin. Notes are part of the work.</p>
+        <p style="font-family: ui-sans-serif, system-ui, sans-serif; font-size: 13px; line-height: 1.6; color: #5C4A2E; margin: 0;">Inline notes, replies, passage shares. Read at your own pace — there are no due dates, just the conversation while it's warm.</p>
+      </div>
+
+      <div class="bk-card">
+        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+          <span style="font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.12em; color: #8A1F15; font-weight: 500;">§ 03</span>
+          <span class="bk-eyebrow">Connect</span>
+        </div>
+        <p style="font-family: 'Newsreader', Georgia, serif; font-size: 17px; line-height: 1.4; margin: 0 0 8px; font-style: italic;">Write to the author. Stay for the next book.</p>
+        <p style="font-family: ui-sans-serif, system-ui, sans-serif; font-size: 13px; line-height: 1.6; color: #5C4A2E; margin: 0;">When you finish, send a Letter through Correspondence. Authors hear directly from the readers who shaped the book.</p>
+      </div>
+
+    </div>
+  </div>
+
+  <div style="background: #F6EFDC; border: 0.5px solid #B8AB8C; border-radius: 8px; padding: 28px 32px; margin-bottom: 36px;">
+    <div style="display: grid; grid-template-columns: 1.4fr 1fr; gap: 32px; align-items: center;">
+      <div>
+        <span class="bk-eyebrow">§ Three ways authors invite readers</span>
+        <h3 style="font-family: 'Newsreader', Georgia, serif; font-style: italic; font-size: 24px; margin: 6px 0 14px; font-weight: 400;">Authors choose who joins each beta read.</h3>
+        <div style="display: grid; grid-template-columns: 1fr; gap: 10px;">
+          <div style="display: flex; gap: 12px; align-items: baseline;">
+            <span style="font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.1em; color: #8A1F15; font-weight: 500; min-width: 100px;">OPEN APPLY</span>
+            <p style="font-family: ui-sans-serif, system-ui, sans-serif; font-size: 13px; line-height: 1.55; color: #5C4A2E; margin: 0;">Anyone can apply. Authors review applications and accept readers who fit.</p>
+          </div>
+          <div style="display: flex; gap: 12px; align-items: baseline;">
+            <span style="font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.1em; color: #8A1F15; font-weight: 500; min-width: 100px;">PROFILE MATCH</span>
+            <p style="font-family: ui-sans-serif, system-ui, sans-serif; font-size: 13px; line-height: 1.55; color: #5C4A2E; margin: 0;">Authors browse public reader profiles and send invitations directly.</p>
+          </div>
+          <div style="display: flex; gap: 12px; align-items: baseline;">
+            <span style="font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.1em; color: #8A1F15; font-weight: 500; min-width: 100px;">CIRCLE</span>
+            <p style="font-family: ui-sans-serif, system-ui, sans-serif; font-size: 13px; line-height: 1.55; color: #5C4A2E; margin: 0;">When readers in your circle join a beta, you'll see it in your Library.</p>
+          </div>
+        </div>
+      </div>
+      <div style="text-align: right;">
+        <button class="bk-btn-secondary" style="font-size: 14px; padding: 10px 18px;">Set up your reader profile →</button>
+      </div>
+    </div>
+  </div>
+
+  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 28px;">
+
+    <div class="bk-card" style="padding: 22px 24px;">
+      <span class="bk-eyebrow">§ Books, too</span>
+      <h3 style="font-family: 'Newsreader', Georgia, serif; font-style: italic; font-size: 20px; margin: 6px 0 10px; font-weight: 400;">Buy from the authors you read.</h3>
+      <p style="font-family: ui-sans-serif, system-ui, sans-serif; font-size: 13px; line-height: 1.6; color: #5C4A2E; margin: 0 0 14px;">Bookending storefronts let authors sell directly. When a book you helped shape ships, you'll be the first to know.</p>
+      <button class="bk-btn-secondary" style="font-size: 12px; padding: 7px 12px;">Browse the storefront →</button>
+    </div>
+
+    <div class="bk-card" style="padding: 22px 24px;">
+      <span class="bk-eyebrow">§ Write while you read</span>
+      <h3 style="font-family: 'Newsreader', Georgia, serif; font-style: italic; font-size: 20px; margin: 6px 0 10px; font-weight: 400;">Your writing side is already on.</h3>
+      <p style="font-family: ui-sans-serif, system-ui, sans-serif; font-size: 13px; line-height: 1.6; color: #5C4A2E; margin: 0 0 14px;">Working on a manuscript of your own? Switch to the Writing side to start a draft or import one you've already written.</p>
+      <button class="bk-btn-secondary" style="font-size: 12px; padding: 7px 12px;">Switch to writing →</button>
+    </div>
+
+  </div>
+
+  <div style="text-align: center; padding: 20px 0; border-top: 0.5px solid #B8AB8C; border-bottom: 0.5px solid #B8AB8C; margin-bottom: 24px;">
+    <p style="font-family: 'Newsreader', Georgia, serif; font-style: italic; font-size: 16px; margin: 0; color: #5C4A2E;">New to beta reading? <button style="background: transparent; border: 0; font-family: 'Newsreader', Georgia, serif; font-style: italic; font-size: 16px; color: #8A1F15; cursor: pointer; text-decoration: underline; padding: 0;">Read about being a Bookending reader →</button></p>
+  </div>
+
+  <div style="display: flex; justify-content: space-between; align-items: baseline;">
+    <span class="bk-mono" style="font-size: 10px; letter-spacing: 0.12em; color: #6B5F47;">BOOKENDING · A WORKBENCH FOR SELF-PUBLISHERS · MMXXVI</span>
+    <span class="bk-mono" style="font-size: 10px; letter-spacing: 0.12em; color: #6B5F47;">SET IN NEWSREADER &amp; INTER · PRINTED FROM PORTLAND</span>
+  </div>
+
+</div>
+</body>
+</html>

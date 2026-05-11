@@ -1,0 +1,147 @@
+.dropdown {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  width: 360px;
+  background: var(--ink-2);
+  border: 1px solid var(--rule);
+  z-index: 200;
+}
+
+.head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--rule);
+}
+
+.headTitle {
+  font-family: var(--mono);
+  font-size: 9.5px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.markAll {
+  font-family: var(--mono);
+  font-size: 9.5px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+}
+
+.markAll:hover {
+  color: var(--paper);
+}
+
+.list {
+  max-height: 420px;
+  overflow-y: auto;
+}
+
+.item {
+  display: grid;
+  grid-template-columns: 8px 1fr;
+  gap: 12px;
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--rule);
+  cursor: pointer;
+}
+
+.item:last-child {
+  border-bottom: none;
+}
+
+.item[data-unread] {
+  background: color-mix(in srgb, var(--accent) 5%, transparent);
+}
+
+.dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: transparent;
+  margin-top: 5px;
+  flex-shrink: 0;
+}
+
+.item[data-unread] .dot {
+  background: var(--accent);
+}
+
+.item[data-unread][data-type="DEADLINE_WARNING"] .dot {
+  background: var(--danger);
+}
+
+.item[data-unread][data-type="ENCOURAGEMENT"] .dot {
+  background: var(--good);
+}
+
+.body {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.stage {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.message {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 13.5px;
+  line-height: 1.4;
+  color: var(--paper);
+  margin: 0;
+}
+
+.item:not([data-unread]) .message {
+  color: var(--muted);
+}
+
+.time {
+  font-family: var(--mono);
+  font-size: 9.5px;
+  color: var(--muted-2);
+  letter-spacing: 0.05em;
+}
+
+.cta {
+  display: inline-block;
+  margin-top: 6px;
+  font-family: var(--sans);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  color: var(--accent);
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  text-align: left;
+}
+
+.cta:hover {
+  text-decoration: underline;
+}
+
+.empty {
+  padding: 32px 16px;
+  text-align: center;
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 14px;
+  color: var(--muted);
+}

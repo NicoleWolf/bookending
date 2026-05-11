@@ -1,0 +1,474 @@
+/* ── Header ──────────────────────────────────────────────── */
+.viewHeader {
+  padding: 20px 28px;
+  border-bottom: 1px solid var(--rule);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.viewTitle {
+  font-style: italic;
+  font-size: 18px;
+  margin-bottom: 4px;
+}
+
+.viewSubtitle {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 10.5px;
+  color: var(--muted);
+  letter-spacing: 0.1em;
+}
+
+/* ── Table ───────────────────────────────────────────────── */
+.tableHead {
+  display: grid;
+  grid-template-columns: 2fr 1.4fr 0.8fr 0.8fr 1.6fr 1.2fr;
+  padding: 10px 28px;
+  border-bottom: 1px solid var(--rule);
+  background: color-mix(in srgb, var(--ink) 96%, var(--paper));
+}
+
+.tableHeadCell {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.isbnRow {
+  display: grid;
+  grid-template-columns: 2fr 1.4fr 0.8fr 0.8fr 1.6fr 1.2fr;
+  padding: 16px 28px;
+  border-bottom: 1px solid var(--rule);
+  align-items: center;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.isbnRow[data-expanded] {
+  background: color-mix(in srgb, var(--ink) 94%, var(--paper));
+}
+
+/* ── Expanded panel ──────────────────────────────────────────── */
+.isbnExpanded {
+  padding: 20px 28px 24px;
+  border-bottom: 1px solid var(--rule);
+  background: color-mix(in srgb, var(--ink) 94%, var(--paper));
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.expandSection {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.expandLabel {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.channelNote {
+  font-style: italic;
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--muted);
+  margin: 0;
+  max-width: 560px;
+}
+
+/* ── Barcode canvas ──────────────────────────────────────────── */
+.barcodeWrap {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: flex-start;
+}
+
+.barcodeCanvas {
+  display: block;
+  width: 300px;
+  height: auto;
+  border: 1px solid var(--rule);
+  background: #ffffff;
+}
+
+.barcodeActions {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.copyBtn {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 9.5px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  background: none;
+  border: 1px solid var(--rule);
+  cursor: pointer;
+  padding: 5px 10px;
+  border-radius: 0;
+  flex-shrink: 0;
+}
+
+.copyBtn:hover {
+  color: var(--paper);
+  border-color: var(--muted);
+}
+
+.copyBtn[data-copied] {
+  color: var(--good);
+  border-color: var(--good);
+}
+
+.copyBtnTxt {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 9.5px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 5px 4px;
+  border-radius: 0;
+  opacity: 0.6;
+}
+
+.copyBtnTxt:hover { opacity: 1; }
+
+.copyBtnTxt[data-copied] { color: var(--good); opacity: 1; }
+
+.barcodeNote {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 10px;
+  letter-spacing: 0.04em;
+  color: var(--muted);
+  max-width: 480px;
+  line-height: 1.5;
+}
+
+/* ── Assign checklist ───────────────────────────────────────── */
+.checklist {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.checkItem {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+  color: var(--muted);
+  cursor: pointer;
+  user-select: none;
+}
+
+.checkItem:hover { color: var(--paper); }
+.checkItem:hover .checkDot:not([data-checked]) { border-color: var(--muted); }
+
+.checkItem[data-checked] {
+  color: var(--muted-2);
+  text-decoration: line-through;
+  text-decoration-color: var(--muted);
+}
+
+.checkDot {
+  width: 14px;
+  height: 14px;
+  border: 1px solid var(--rule);
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 9px;
+  font-family: var(--sans);
+  line-height: 1;
+}
+
+.checkDot[data-checked] {
+  border-color: var(--good);
+  color: var(--good);
+}
+
+.checklistNote {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 9.5px;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+  font-style: italic;
+}
+
+.isbnCode {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 12px;
+  letter-spacing: 0.04em;
+}
+
+.isbnTitle {
+  font-weight: 500;
+}
+
+.isbnFormat {
+  font-style: italic;
+  color: var(--muted);
+}
+
+.isbnMeta {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 10.5px;
+  color: var(--muted);
+  letter-spacing: 0.06em;
+}
+
+/* ── Channel assignment ──────────────────────────────────── */
+.assignChannelOptions {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.assignChannelOpt {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  border: 1px solid var(--rule);
+  cursor: pointer;
+  background: var(--ink);
+}
+
+.assignChannelOpt[data-active] {
+  border-color: var(--paper);
+  background: var(--ink-3);
+}
+
+.assignChannelInfo {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.assignChannelName {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--paper);
+}
+
+.assignChannelKind {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 11px;
+  color: var(--muted);
+}
+
+/* ── Reserve form ────────────────────────────────────────── */
+.reserveField {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.reserveFieldLabel {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 9.5px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.reserveTitleOptions {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.reserveTitleOption {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  border: 1px solid var(--rule);
+  cursor: pointer;
+  background: var(--ink);
+}
+
+.reserveTitleOption[data-active] {
+  border-color: var(--paper);
+  background: var(--ink-3);
+}
+
+.reserveTitleText {
+  font-style: italic;
+  font-size: 14px;
+  color: var(--paper);
+}
+
+.reserveFormatRow {
+  display: flex;
+  gap: 6px;
+}
+
+.reserveFormatOpt {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 14px;
+  border: 1px solid var(--rule);
+  cursor: pointer;
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+  background: var(--ink);
+}
+
+.reserveFormatOpt[data-active] {
+  border-color: var(--paper);
+  color: var(--paper);
+  background: var(--ink-3);
+}
+
+.reserveRadio {
+  flex-shrink: 0;
+  accent-color: var(--paper);
+}
+
+.reserveActions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding-top: 4px;
+}
+
+.reserveCancel {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 10.5px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  background: none;
+  border: 1px solid var(--rule);
+  cursor: pointer;
+  padding: 7px 16px;
+  border-radius: 0;
+}
+
+.reserveCancel:hover {
+  color: var(--paper);
+  border-color: var(--muted);
+}
+
+.reservePrimary {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 10.5px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink);
+  background: var(--paper);
+  border: 1px solid var(--paper);
+  cursor: pointer;
+  padding: 7px 16px;
+  border-radius: 0;
+}
+
+.reservePrimary:hover {
+  background: var(--accent);
+  border-color: var(--accent);
+}
+
+.reservePrimary[data-disabled] {
+  opacity: 0.32;
+  cursor: default;
+}
+
+.reservePrimary[data-disabled]:hover {
+  background: var(--paper);
+  border-color: var(--paper);
+}
+
+/* ── Prefix info box ─────────────────────────────────────── */
+/* ── Edit form ───────────────────────────────────────────────────── */
+.editSection {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.editInput {
+  padding: 9px 12px;
+  background: var(--ink);
+  border: 1px solid var(--rule);
+  color: var(--paper);
+  font-family: var(--sans);
+  font-size: 13px;
+  width: 100%;
+  box-sizing: border-box;
+  outline: none;
+  border-radius: 0;
+}
+
+.editInput:focus { border-color: var(--muted); }
+
+/* ── Reserved actions row (Assign + Edit side-by-side) ──────────── */
+.reservedActions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+/* ── Prefix info box ─────────────────────────────────────────────── */
+.prefixBox {
+  padding: 28px;
+  border-top: 1px solid var(--rule);
+  background: color-mix(in srgb, var(--ink) 96%, var(--paper));
+}
+
+.prefixLabel {
+  margin-bottom: 12px;
+}
+
+.prefixText {
+  font-style: italic;
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--muted);
+  margin: 0 0 16px;
+  max-width: 560px;
+}
+
+.prefixCode {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-style: normal;
+  font-size: 12px;
+}
+
+.prefixBtns {
+  display: flex;
+  gap: 8px;
+}

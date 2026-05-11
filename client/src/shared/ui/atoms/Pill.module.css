@@ -1,0 +1,23 @@
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 8px;
+  border-width: 1px;
+  border-style: solid;
+  border-radius: 0;
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 10.5px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.pill[data-tone="neutral"] { background: transparent;  border-color: var(--rule);   color: var(--muted); }
+.pill[data-tone="paper"]   { background: var(--paper); border-color: var(--paper);  color: var(--ink); }
+.pill[data-tone="accent"]  { background: transparent;  border-color: var(--accent); color: var(--accent); }
+.pill[data-tone="good"]    { background: transparent;  border-color: var(--good);   color: var(--good); }
+.pill[data-tone="danger"]  { background: transparent;  border-color: var(--danger); color: var(--danger); }
+.pill[data-tone="solid"]   { background: var(--ink-3); border-color: var(--ink-3);  color: var(--paper); }
+.pill[data-tone="plum"]         { background: transparent;  border-color: var(--plum);   color: var(--plum); }
+.pill[data-tone="accent-solid"] { background: var(--accent);  border-color: var(--accent); color: #fff; }

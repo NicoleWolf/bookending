@@ -3,45 +3,154 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+enum UserRole {
+  AUTHOR
+  READER
 }
 
 model User {
-  id        String   @id @default(cuid())
-  email     String   @unique
-  name      String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id          String    @id
+  email       String    @unique
+  name        String
+  role        UserRole  @default(AUTHOR)
+  lastLoginAt DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
 
-  manuscripts  Manuscript[]
-  subscribers  Subscriber[]
-  orders       Order[]
+  manuscripts          Manuscript[]
+  subscribers          Subscriber[]
+  orders               Order[]
+  notifications        Notification[]
+  distributionChannels DistributionChannel[]
+  dispatches           Dispatch[]
+  products             Product[]
+  betaReaders          BetaReader[]
+  annotations          Annotation[]
+  readingProgress      ReadingProgress[]
+  shelfEntries         ShelfEntry[]
+  storefrontSettings   StorefrontSettings?
+  authorQa             AuthorQA[]
+  formattingProjects   FormattingProject[]
+  manuscriptVersions   ManuscriptVersion[]
+
+  bio            String?
+  location       String?
+  genres         String?
+  writingProcess String?
+
+  isAdmin     Boolean  @default(false)
+  status      String   @default("active")
+  sentInvites Invite[] @relation("InvitedBy")
+}
+
+model Notification {
+  id          String             @id @default(cuid())
+  userId      String
+  user        User               @relation(fields: [userId], references: [id])
+  type        NotificationType
+  stage       String
+  message     String
+  scheduledAt DateTime
+  sentAt      DateTime?
+  status      NotificationStatus @default(PENDING)
+  createdAt   DateTime           @default(now())
+  updatedAt   DateTime           @updatedAt
+}
+
+enum NotificationType {
+  MILESTONE_REMINDER
+  STAGE_NUDGE
+  DEADLINE_WARNING
+  ENCOURAGEMENT
+}
+
+enum NotificationStatus {
+  PENDING
+  SENT
+  DISMISSED
 }
 
 model Manuscript {
-  id        String   @id @default(cuid())
-  title     String
-  subtitle  String?
-  status    String   @default("draft")
-  wordCount Int      @default(0)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id             String           @id @default(cuid())
+  title          String
+  subtitle       String?
+  status         ManuscriptStatus @default(DRAFTING)
+  visibility     Visibility       @default(PRIVATE)
+  seriesName     String?
+  seriesNumber   Int?
+  genre          String?
+  subgenre       String?
+  description    String?
+  targetAudience String?
+  contentRating  String?
+  keywords       String?
+  isbnEbook      String?
+  isbnPrint      String?
+  isbnPending    Boolean          @default(false)
+  priceEbook     String?
+  pricePaperback String?
+  language       String           @default("English")
+  estimatedPages Int?
+  spineColor     String           @default("spine-amber")
+  coverUrl       String?
+  wordCount      Int              @default(0)
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
 
-  authorId  String
-  author    User     @relation(fields: [authorId], references: [id])
-
+  authorId    String
+  author      User         @relation(fields: [authorId], references: [id])
   betaReaders BetaReader[]
   chapters    Chapter[]
+  products    Product[]
+  formattingProjects FormattingProject[]
+  versions    ManuscriptVersion[]
+}
+
+enum ManuscriptStatus {
+  DRAFTING
+  IN_REVISION
+  PUBLISHED
+}
+
+enum Visibility {
+  PRIVATE
+  PUBLIC
 }
 
 model Chapter {
-  id           String     @id @default(cuid())
+  id           String        @id @default(cuid())
   number       Int
   title        String
-  wordCount    Int        @default(0)
+  content      String?
+  wordCount    Int           @default(0)
+  releasedAt   DateTime?
+  expectedAt   DateTime?
   manuscriptId String
-  manuscript   Manuscript @relation(fields: [manuscriptId], references: [id])
+  manuscript   Manuscript    @relation(fields: [manuscriptId], references: [id])
+  notes        ChapterNote[]
+
+  @@unique([manuscriptId, number])
+}
+
+enum NoteStatus {
+  ACTIVE
+  ARCHIVED
+}
+
+model ChapterNote {
+  id        String     @id @default(cuid())
+  chapterId String
+  chapter   Chapter    @relation(fields: [chapterId], references: [id])
+  anchor    String?
+  body      String
+  status    NoteStatus @default(ACTIVE)
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
 }
 
 model BetaReader {
@@ -55,37 +164,259 @@ model BetaReader {
   lastSeenAt   DateTime?
   manuscriptId String
   manuscript   Manuscript @relation(fields: [manuscriptId], references: [id])
+  userId       String?
+  user         User?      @relation(fields: [userId], references: [id])
 }
 
 model DistributionChannel {
-  id        String   @id @default(cuid())
-  name      String
-  kind      String
-  status    String   @default("draft")
-  sku       String?
-  royalty   String?
-  copiesSold Int     @default(0)
-  userId    String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id         String   @id @default(cuid())
+  name       String
+  kind       String
+  status     String   @default("draft")
+  sku        String?
+  royalty    String?
+  copiesSold Int      @default(0)
+  listPrice  Float?
+  formats    String   @default("")
+  userId     String
+  user       User     @relation(fields: [userId], references: [id])
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 }
 
 model Subscriber {
   id         String   @id @default(cuid())
   email      String
+  name       String   @default("")
+  location   String   @default("")
   segment    String   @default("new")
   joinedAt   DateTime @default(now())
   authorId   String
   author     User     @relation(fields: [authorId], references: [id])
 }
 
+enum DispatchStatus {
+  DRAFT
+  SCHEDULED
+  SENT
+}
+
+model Dispatch {
+  id         String         @id @default(cuid())
+  issue      String
+  subject    String
+  body       String         @default("")
+  recipients String         @default("all")
+  status     DispatchStatus @default(DRAFT)
+  sentAt     DateTime?
+  authorId   String
+  author     User           @relation(fields: [authorId], references: [id])
+  createdAt  DateTime       @default(now())
+  updatedAt  DateTime       @updatedAt
+}
+
+enum ProductStatus {
+  LIVE
+  DRAFT
+  LOW_STOCK
+  SOLD_OUT
+  PRE_ORDER
+}
+
+model Product {
+  id           String        @id @default(cuid())
+  title        String
+  type         String
+  price        Float
+  status       ProductStatus @default(DRAFT)
+  featured     Boolean       @default(false)
+  digital      Boolean       @default(false)
+  stockCount   Int?
+  manuscriptId String?
+  manuscript   Manuscript?   @relation(fields: [manuscriptId], references: [id])
+  authorId     String
+  author       User          @relation(fields: [authorId], references: [id])
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+}
+
 model Order {
-  id        String   @id @default(cuid())
-  customer  String
-  location  String?
-  product   String
-  amount    Int
-  createdAt DateTime @default(now())
-  userId    String
-  user      User     @relation(fields: [userId], references: [id])
+  id              String   @id @default(cuid())
+  num             String
+  customer        String
+  location        String   @default("")
+  product         String
+  amount          Int
+  status          String   @default("new")
+  notes           String?
+  signedRequested Boolean  @default(false)
+  letterRequested Boolean  @default(false)
+  digital         Boolean  @default(false)
+  addressLine1    String?
+  addressCity     String?
+  addressCountry  String?
+  addressPostal   String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  userId          String
+  user            User     @relation(fields: [userId], references: [id])
+}
+
+model Annotation {
+  id            String            @id @default(cuid())
+  manuscriptRef String
+  chapterId     Int
+  paraId        Int
+  selectedText  String
+  note          String            @default("")
+  status        String            @default("submitted")
+  userId        String
+  user          User              @relation(fields: [userId], references: [id])
+  replies       AnnotationReply[]
+  createdAt     DateTime          @default(now())
+  updatedAt     DateTime          @updatedAt
+}
+
+model AnnotationReply {
+  id           String     @id @default(cuid())
+  annotationId String
+  annotation   Annotation @relation(fields: [annotationId], references: [id], onDelete: Cascade)
+  authorRole   String     // "reader" | "writer"
+  body         String
+  readAt       DateTime?
+  createdAt    DateTime   @default(now())
+}
+
+model ImpressionPoint {
+  id            String   @id @default(cuid())
+  userId        String
+  manuscriptRef String
+  chapterNum    Int
+  stance        String
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@unique([userId, manuscriptRef, chapterNum])
+}
+
+model ReadingProgress {
+  id              String    @id @default(cuid())
+  manuscriptRef   String
+  doneChapters    String    @default("[]")
+  mood            String?
+  stars           Int?
+  message         String?
+  submittedAt     DateTime?
+  finishedAt      DateTime?
+  verdict         String?
+  lastOpenedAt    DateTime?
+  lastActivityAt  DateTime?
+  userId          String
+  user            User      @relation(fields: [userId], references: [id])
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  @@unique([userId, manuscriptRef])
+}
+
+model ShelfEntry {
+  id                      String   @id @default(cuid())
+  manuscriptRef           String
+  userId                  String
+  source                  String   // self_saved | recommended_algo | recommended_editorial | recommended_circle
+  recommendationDimension String?
+  addedAt                 DateTime @default(now())
+  user                    User     @relation(fields: [userId], references: [id])
+
+  @@unique([userId, manuscriptRef])
+}
+
+model StorefrontSettings {
+  id              String   @id @default(cuid())
+  shopName        String   @default("")
+  shopSlug        String   @default("")
+  shopTagline     String   @default("")
+  shipsFrom       String   @default("")
+  notifPerOrder   Boolean  @default(true)
+  notifDigest     Boolean  @default(false)
+  webhookUrl      String?
+  collectVat      Boolean  @default(false)
+  iossNumber      String?
+  ukVatNumber     String?
+  lowStockAt      Int      @default(5)
+  emailTemplate   String   @default("")
+  packingTemplate String   @default("")
+  letterTemplate  String   @default("")
+  refundPolicy    String   @default("")
+  returnWindow    Int      @default(14)
+  returnShipping  String   @default("buyer")
+  digitalRefunds  Boolean  @default(false)
+  userId          String   @unique
+  user            User     @relation(fields: [userId], references: [id])
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model AuthorQA {
+  id          String    @id @default(cuid())
+  question    String
+  answer      String?
+  askedByName String?
+  authorId    String
+  author      User      @relation(fields: [authorId], references: [id])
+  publishedAt DateTime?
+  createdAt   DateTime  @default(now())
+}
+
+model FormattingProject {
+  id             String   @id @default(cuid())
+  manuscriptId   String
+  manuscript     Manuscript @relation(fields: [manuscriptId], references: [id])
+  userId         String
+  user           User       @relation(fields: [userId], references: [id])
+  currentStep    Int      @default(1)
+  source         String?  // "EDITOR" | "DOCX" | "PASTE"
+  encoding       String   @default("AUTO")
+  smartQuotes    String   @default("CONVERT")
+  uploadedDocxUrl String?
+  pastedContent  String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  @@unique([userId, manuscriptId])
+}
+
+model ManuscriptVersion {
+  id           String   @id @default(cuid())
+  manuscriptId String
+  manuscript   Manuscript @relation(fields: [manuscriptId], references: [id], onDelete: Cascade)
+  userId       String
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  number       Int
+  label        String
+  createdAt    DateTime @default(now())
+  chapters     ManuscriptVersionChapter[]
+
+  @@unique([manuscriptId, userId, number])
+}
+
+model ManuscriptVersionChapter {
+  id         String            @id @default(cuid())
+  versionId  String
+  version    ManuscriptVersion @relation(fields: [versionId], references: [id], onDelete: Cascade)
+  chapterNum Int
+  title      String
+  content    String
+  wordCount  Int               @default(0)
+}
+
+model Invite {
+  id          String    @id @default(cuid())
+  email       String
+  token       String    @unique
+  expiresAt   DateTime
+  usedAt      DateTime?
+  invitedById String
+  invitedBy   User      @relation("InvitedBy", fields: [invitedById], references: [id], onDelete: Cascade)
+  createdAt   DateTime  @default(now())
 }

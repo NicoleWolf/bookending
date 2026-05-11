@@ -12,15 +12,20 @@ You own everything in `client/`. Do not touch `server/`.
 ## Component structure
 ```
 src/
-├── components/
-│   ├── atoms/          # Shared primitives: Pill, Btn, Avatar, SectionHead, Spark, Bars, Folio
-│   ├── icons/          # SVG icon components (stroke-based, 1.5px, currentColor)
-│   ├── masthead/       # Top-of-page hero + nav
-│   ├── beta-readers/   # §01 Reading room
-│   ├── distribution/   # §02 Print & distribution
-│   ├── storefront/     # §03 Direct sales shop
-│   ├── audience/       # §04 Mailing list
-│   └── community/      # §05 Author community
+├── features/
+│   ├── masthead/              # Top-of-page hero + nav
+│   ├── landing/               # Landing page
+│   ├── dashboard/             # Dashboard overview
+│   ├── editing/               # §01 Editing / beta-reading
+│   ├── reading/               # §01 Reading room
+│   ├── print-distribution/    # §02 Print & distribution
+│   ├── storefront/            # §03 Direct sales shop
+│   ├── audience/              # §04 Mailing list & brand
+│   └── community/             # §05 Author community
+├── shared/
+│   └── ui/
+│       ├── atoms/      # Shared primitives: Pill, Btn, Avatar, SectionHead, Spark, Bars, Folio
+│       └── icons.tsx   # SVG icon components (stroke-based, 1.5px, currentColor)
 ├── styles/
 │   └── tokens.css      # ALL design tokens — never hardcode colors or fonts
 └── App.tsx             # Root composition
@@ -29,12 +34,20 @@ src/
 ## Design rules
 - Import tokens via CSS custom properties, never hardcode hex values
 - Use `className="mono"`, `"serif"`, `"label"`, `"smallcaps"`, `"rule"`, `"rule-thick"` utility classes (defined in tokens.css)
-- All inline styles use `var(--token-name)` for colors
+- CSS Modules are the styling pattern — colocate a `ComponentName.module.css` file next to each component
 - Zero border-radius on all UI elements
-- Inline styles are the pattern — don't add CSS modules or styled-components
+- Truly dynamic values (computed colors, percentages from data) stay as inline `style={{}}` props; everything static goes in the module CSS
+
+## CSS Modules conventions
+- Use `data-*` attribute selectors for variant/state-based styles: `[data-active]`, `[data-draft]`, `[data-zero]` etc.
+- Use CSS custom properties as a bridge for computed JS values: `style={{ '--foo': value } as CSSProperties}` consumed via `var(--foo)` in CSS
+- Compose global utility classes with module classes: `className={\`serif \${styles.title}\`}`
+- Use `:last-child` / `:not(:last-child)` instead of index-based conditional borders in JSX
+- Use child selectors for coupled parent→child state: `.parent[data-active] .child { font-weight: 600; }`
+- Light-theme preview areas (store preview, press release thumbnail) use hardcoded dark-on-light hex values — no tokens exist for these
 
 ## Atom components (already built)
-All in `src/components/atoms/index.tsx`:
+All in `src/shared/ui/atoms/` — imported from `../../shared/ui/atoms`:
 - `Folio` — page number display
 - `SectionHead` — section header with eyebrow, title, kicker, and optional action buttons
 - `Pill` — status badge (tones: neutral, paper, accent, good, danger, solid)
@@ -45,7 +58,7 @@ All in `src/components/atoms/index.tsx`:
 - `Avatar` — circular avatar with initials (tones: ink, paper, accent, gold, muted)
 
 ## Icon components (already built)
-All in `src/components/icons/index.tsx` — named exports like `IconArrow`, `IconBell`, etc.
+All in `src/shared/ui/icons.tsx` — imported as `import { IconArrow, IconBell, ... } from '../../shared/ui/icons'`
 
 ## Adding new features
 1. Add routes in a `src/router.tsx` file using `createBrowserRouter`

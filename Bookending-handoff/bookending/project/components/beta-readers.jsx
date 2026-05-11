@@ -1,11 +1,11 @@
 // Beta-readers panel — the editorial heart, where community manifests.
 
 const READERS = [
-  { name:'Marisol Vega', initials:'MV', tone:'accent', progress: 0.78, chapter:'Ch. 14', verdict:'enthralled', last:'2h', notes:14, since:'4 books' },
-  { name:'Tomás Reyes', initials:'TR', tone:'gold', progress: 0.92, chapter:'Ch. 17', verdict:'pacing flag', last:'5h', notes:31, since:'2 books' },
-  { name:'Imani Okafor', initials:'IO', tone:'muted', progress: 0.41, chapter:'Ch. 8', verdict:'on track', last:'1d', notes:7, since:'first book' },
-  { name:'Henrik Lund', initials:'HL', tone:'ink', progress: 1.00, chapter:'Done', verdict:'4★ — sent letter', last:'2d', notes:42, since:'7 books' },
-  { name:'Priya Anand', initials:'PA', tone:'paper', progress: 0.23, chapter:'Ch. 4', verdict:'just started', last:'6h', notes:2, since:'first book' },
+  { name:'Marisol Vega', initials:'MV', tone:'accent', progress: 0.78, chapter:'Ch. 14', verdict:'enthralled', last:'2h', feedback:14, since:'4 books' },
+  { name:'Tomás Reyes', initials:'TR', tone:'gold', progress: 0.92, chapter:'Ch. 17', verdict:'pacing flag', last:'5h', feedback:31, since:'2 books' },
+  { name:'Imani Okafor', initials:'IO', tone:'muted', progress: 0.41, chapter:'Ch. 8', verdict:'on track', last:'1d', feedback:7, since:'first book' },
+  { name:'Henrik Lund', initials:'HL', tone:'ink', progress: 1.00, chapter:'Done', verdict:'4★ — sent letter', last:'2d', feedback:42, since:'7 books' },
+  { name:'Priya Anand', initials:'PA', tone:'paper', progress: 0.23, chapter:'Ch. 4', verdict:'just started', last:'6h', feedback:2, since:'first book' },
 ];
 
 const verdictTone = {
@@ -21,7 +21,7 @@ const BetaReaders = () => {
         title="The reading room"
         kicker="Five trusted readers are inside The Lantern Keeper's Daughter — your second draft, dated April 28."
       >
-        <Btn tone="ghost"><IconQuote size={14}/> Notes inbox · 96</Btn>
+        <Btn tone="ghost"><IconQuote size={14}/> Feedback inbox · 96</Btn>
         <Btn tone="primary" icon={<IconArrow size={14}/>}>Invite reader</Btn>
       </SectionHead>
 
@@ -37,7 +37,7 @@ const BetaReaders = () => {
             <div className="label">Reader</div>
             <div className="label">Where they are</div>
             <div className="label">Verdict so far</div>
-            <div className="label">Notes</div>
+            <div className="label">Feedback</div>
             <div className="label" style={{textAlign:'right'}}>·</div>
           </div>
           {READERS.map((r,i)=>(
@@ -71,7 +71,7 @@ const BetaReaders = () => {
                 <Pill tone={verdictTone[r.verdict] || 'neutral'}>{r.verdict}</Pill>
               </div>
 
-              <div className="serif" style={{fontStyle:'italic', fontSize:18, color:'var(--paper)'}}>{r.notes}</div>
+              <div className="serif" style={{fontStyle:'italic', fontSize:18, color:'var(--paper)'}}>{r.feedback}</div>
               <button style={{color:'var(--muted)', justifySelf:'end'}}><IconMore size={16}/></button>
             </div>
           ))}
@@ -111,7 +111,7 @@ const BetaReaders = () => {
           <div style={{border:'1px solid var(--rule)', padding:24}}>
             <div style={{display:'flex', justifyContent:'space-between', alignItems:'baseline', marginBottom:18}}>
               <div className="smallcaps">Manuscript heat</div>
-              <span className="mono" style={{fontSize:10, color:'var(--muted)'}}>96 NOTES · 22 CHAPTERS</span>
+              <span className="mono" style={{fontSize:10, color:'var(--muted)'}}>96 FEEDBACK · 22 CHAPTERS</span>
             </div>
             <div style={{display:'flex', alignItems:'flex-end', gap:3, height:60}}>
               {[3,5,2,8,12,4,6,9,15,11,3,7,14,18,9,4,2,5,8,3,1,2].map((v,i)=>(

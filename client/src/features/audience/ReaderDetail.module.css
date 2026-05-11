@@ -1,0 +1,320 @@
+/* ── Back link ────────────────────────────────────────────── */
+.backBtn {
+  display: block;
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 18px 32px;
+  border-bottom: 1px solid var(--rule);
+  width: 100%;
+  text-align: left;
+  transition: color 0.12s;
+}
+
+.backBtn:hover {
+  color: var(--paper);
+}
+
+/* ── Profile strip ────────────────────────────────────────── */
+.profile {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 28px 32px;
+  border-bottom: 1px solid var(--rule);
+}
+
+.profileInfo {
+  flex: 1;
+  min-width: 0;
+}
+
+.profileName {
+  font-size: 20px;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.championMark {
+  color: var(--honey);
+  font-style: normal;
+}
+
+.profileMeta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 10.5px;
+  color: var(--muted);
+  letter-spacing: 0.04em;
+}
+
+.metaDot {
+  color: var(--rule);
+}
+
+.profileStats {
+  display: flex;
+  gap: 0;
+  border-left: 1px solid var(--rule);
+}
+
+.statItem {
+  padding: 0 24px;
+  border-right: 1px solid var(--rule);
+  text-align: center;
+}
+
+.statItem:last-child {
+  border-right: none;
+}
+
+.statValue {
+  font-style: italic;
+  font-size: 28px;
+  font-weight: 300;
+  letter-spacing: -0.01em;
+  line-height: 1;
+}
+
+.statValuePatron {
+  font-style: italic;
+  font-size: 28px;
+  font-weight: 300;
+  letter-spacing: -0.01em;
+  line-height: 1;
+  color: var(--honey);
+}
+
+.statLabel {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 9.5px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-top: 5px;
+}
+
+/* ── Body ─────────────────────────────────────────────────── */
+.body {
+  display: grid;
+  grid-template-columns: 1fr 300px;
+}
+
+.mainCol {
+  border-right: 1px solid var(--rule);
+  padding: 32px;
+}
+
+.sideCol {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+/* ── Sections ─────────────────────────────────────────────── */
+.section {
+  margin-bottom: 0;
+}
+
+.sectionLabel {
+  margin-bottom: 18px;
+}
+
+.emptyNote {
+  font-style: italic;
+  font-size: 13px;
+  color: var(--muted);
+  margin: 0;
+}
+
+/* ── Timeline ─────────────────────────────────────────────── */
+.timeline {
+  display: flex;
+  flex-direction: column;
+}
+
+.timelineRow {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+.timelineDate {
+  width: 80px;
+  flex-shrink: 0;
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 9.5px;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+  padding-top: 2px;
+  text-align: right;
+}
+
+.timelineLine {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.timelineDot {
+  width: 10px;
+  height: 10px;
+  border: 2px solid var(--accent);
+  background: color-mix(in srgb, var(--accent) 30%, var(--ink));
+  flex-shrink: 0;
+}
+
+.timelineConnector {
+  width: 1px;
+  flex: 1;
+  min-height: 28px;
+  background: var(--rule);
+}
+
+.timelineBody {
+  flex: 1;
+  font-style: italic;
+  font-size: 13.5px;
+  color: var(--paper);
+  padding-bottom: 24px;
+  line-height: 1.5;
+}
+
+/* ── Identity matches ─────────────────────────────────────── */
+.matchList {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.matchRow {
+  padding: 12px 14px;
+  border: 1px solid var(--rule);
+}
+
+.matchRow[data-confidence="medium"] {
+  border-color: color-mix(in srgb, var(--accent) 40%, transparent);
+}
+
+.matchPlatform {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 9.5px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 4px;
+}
+
+.matchHandle {
+  font-size: 13px;
+  font-weight: 500;
+  margin-bottom: 4px;
+}
+
+.matchConfidence {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 9.5px;
+  letter-spacing: 0.04em;
+}
+
+.matchConfidence[data-confidence="high"] {
+  color: var(--good);
+}
+
+.matchConfidence[data-confidence="medium"] {
+  color: var(--accent);
+}
+
+.matchDetail {
+  font-style: italic;
+  font-size: 11.5px;
+  color: var(--muted);
+  margin-top: 6px;
+  line-height: 1.4;
+}
+
+.matchActions {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.matchConfirmBtn {
+  font-family: var(--sans);
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--good);
+  background: transparent;
+  border: 1px solid color-mix(in srgb, var(--good) 50%, transparent);
+  padding: 4px 10px;
+  cursor: pointer;
+  transition: background 0.12s, color 0.12s;
+}
+
+.matchConfirmBtn:hover {
+  background: var(--good);
+  color: var(--ink);
+}
+
+.matchDismissBtn {
+  font-family: var(--sans);
+  font-size: 11px;
+  color: var(--muted);
+  background: transparent;
+  border: 1px solid var(--rule);
+  padding: 4px 10px;
+  cursor: pointer;
+  transition: color 0.12s;
+}
+
+.matchDismissBtn:hover {
+  color: var(--paper);
+}
+
+/* ── Channels ─────────────────────────────────────────────── */
+.channelList {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.channelTag {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 10.5px;
+  letter-spacing: 0.04em;
+  color: var(--paper);
+  border: 1px solid var(--rule);
+  padding: 5px 10px;
+}
+
+/* ── Champion note ────────────────────────────────────────── */
+.championNote {
+  font-style: italic;
+  font-size: 12.5px;
+  color: var(--muted);
+  margin: 0;
+  line-height: 1.5;
+  border-left: 2px solid var(--honey);
+  padding-left: 12px;
+}
+
+/* ── Page wrapper ─────────────────────────────────────────── */
+.page {
+  min-height: 100%;
+}

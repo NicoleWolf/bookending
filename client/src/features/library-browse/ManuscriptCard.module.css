@@ -1,0 +1,114 @@
+.card {
+  background: var(--ink);
+  display: flex;
+  flex-direction: column;
+  transition: background 0.12s;
+}
+
+.card:hover {
+  background: color-mix(in srgb, var(--paper) 2%, var(--ink));
+}
+
+.cover {
+  aspect-ratio: 2 / 3;
+  position: relative;
+  overflow: hidden;
+  border-bottom: 1px solid var(--rule);
+}
+
+.body {
+  padding: 14px 16px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  flex: 1;
+}
+
+.ownBadge {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 8px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 6px;
+}
+
+.subgenre {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 8px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--muted-2);
+}
+
+.title {
+  font-style: italic;
+  font-size: 14px;
+  line-height: 1.25;
+  color: var(--paper);
+}
+
+.author {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 9px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.excerpt {
+  font-size: 11.5px;
+  line-height: 1.6;
+  color: var(--muted);
+  margin: 4px 0 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.footer {
+  margin-top: auto;
+  padding-top: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 1px solid var(--rule);
+}
+
+.slots {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 8px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted-2);
+}
+
+.slots[data-status="open"]     { color: var(--good); }
+.slots[data-status="waitlist"] { color: var(--accent); }
+
+.cta {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 8.5px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--accent);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+}
+
+.cta:hover:not(:disabled) {
+  color: var(--paper);
+}
+
+.cta:disabled {
+  color: var(--muted-2);
+  cursor: default;
+}

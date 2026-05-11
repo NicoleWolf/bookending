@@ -1,0 +1,468 @@
+/* ── Compose chooser ──────────────────────────────────────── */
+.chooser {
+  padding: 48px 40px;
+  max-width: 580px;
+}
+
+.chooserHeader {
+  margin-bottom: 32px;
+}
+
+.chooserEyebrow {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  color: var(--muted);
+  margin-bottom: 12px;
+}
+
+.chooserTitle {
+  font-style: italic;
+  font-weight: 400;
+  font-size: 24px;
+  margin: 0;
+  letter-spacing: -0.01em;
+}
+
+.optionList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 28px;
+}
+
+.option {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 14px 18px;
+  border: 1px solid var(--rule);
+  cursor: pointer;
+  text-align: left;
+  width: 100%;
+  background: transparent;
+  transition: border-color 0.12s, background 0.12s;
+}
+
+.option:hover {
+  border-color: var(--paper);
+  background: color-mix(in srgb, var(--ink) 96%, var(--paper));
+}
+
+.optionBody {
+  flex: 1;
+  min-width: 0;
+}
+
+.optionTitle {
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 3px;
+  color: var(--paper);
+}
+
+.optionDesc {
+  font-style: italic;
+  font-size: 12.5px;
+  color: var(--muted);
+  line-height: 1.4;
+}
+
+.optionArrow {
+  color: var(--muted);
+  font-size: 14px;
+  flex-shrink: 0;
+}
+
+.chooserBackBtn {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  transition: color 0.12s;
+}
+
+.chooserBackBtn:hover {
+  color: var(--paper);
+}
+
+/* ── Sent success state ───────────────────────────────────── */
+.sentState {
+  padding: 80px 48px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  text-align: center;
+}
+
+.sentIcon {
+  width: 48px;
+  height: 48px;
+  border: 1px solid var(--good);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--good);
+}
+
+.sentTitle {
+  font-style: italic;
+  font-weight: 400;
+  font-size: 36px;
+  margin: 0;
+  letter-spacing: -0.01em;
+}
+
+.sentText {
+  font-style: italic;
+  color: var(--muted);
+  font-size: 16px;
+  margin: 0;
+}
+
+/* ── Compose layout ───────────────────────────────────────── */
+.composeGrid {
+  display: grid;
+  grid-template-columns: 1fr 300px;
+}
+
+.editorPanel {
+  border-right: 1px solid var(--rule);
+  padding: 32px 40px;
+}
+
+.editorHeader {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 28px;
+}
+
+.backBtn {
+  background: none;
+  border: none;
+  color: var(--muted);
+  cursor: pointer;
+  font-size: 12px;
+  font-family: var(--sans);
+  padding: 0;
+  letter-spacing: 0.04em;
+}
+
+.dispatchLabel {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 10px;
+  color: var(--muted);
+  letter-spacing: 0.12em;
+}
+
+.subjectInput {
+  width: 100%;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid var(--rule);
+  color: var(--paper);
+  padding: 0 0 16px;
+  font-size: 22px;
+  font-family: var(--serif);
+  font-style: italic;
+  outline: none;
+  margin-bottom: 28px;
+  box-sizing: border-box;
+}
+
+.bodyTextarea {
+  width: 100%;
+  background: transparent;
+  border: none;
+  color: var(--paper);
+  font-size: 15px;
+  font-family: var(--serif);
+  line-height: 1.75;
+  outline: none;
+  resize: none;
+  box-sizing: border-box;
+}
+
+.editorFooter {
+  border-top: 1px solid var(--rule);
+  padding-top: 18px;
+  display: flex;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+/* ── Side panel ───────────────────────────────────────────── */
+.sidePanel {
+  padding: 32px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+.sideSectionLabel {
+  margin-bottom: 16px;
+}
+
+.recipientList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.recipientOption {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border: 1px solid var(--rule);
+  cursor: pointer;
+}
+
+.recipientOption[data-active] {
+  border-color: var(--paper);
+}
+
+.recipientLabel {
+  font-size: 12.5px;
+  font-weight: 400;
+}
+
+.recipientOption[data-active] .recipientLabel {
+  font-weight: 600;
+}
+
+.recipientSub {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 9.5px;
+  color: var(--muted);
+  letter-spacing: 0.08em;
+  margin-top: 2px;
+}
+
+.checkSectionLabel {
+  margin-bottom: 14px;
+}
+
+.checklistItems {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.checklistItem {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.checkBox {
+  width: 16px;
+  height: 16px;
+  border: 1px solid var(--rule);
+  background: transparent;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.checkBox[data-done] {
+  border-color: var(--good);
+  background: var(--good);
+}
+
+.checkText {
+  font-size: 12.5px;
+  color: var(--muted);
+}
+
+.checklistItem[data-done] .checkText {
+  color: var(--paper);
+}
+
+/* ── Sender box ───────────────────────────────────────────── */
+.senderBox {
+  padding: 14px;
+  border: 1px solid var(--rule);
+}
+
+.senderLabel {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 9.5px;
+  color: var(--muted);
+  letter-spacing: 0.12em;
+  margin-bottom: 10px;
+}
+
+.senderName {
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 2px;
+}
+
+.senderEmail {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 10px;
+  color: var(--muted);
+  letter-spacing: 0.06em;
+}
+
+.issueBox {
+  margin-top: 12px;
+  padding-top: 10px;
+  border-top: 1px solid var(--rule);
+}
+
+.issueBoxLabel {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 9.5px;
+  color: var(--muted);
+  letter-spacing: 0.12em;
+  margin-bottom: 6px;
+}
+
+.issueNum {
+  font-size: 13px;
+}
+
+/* ── Adapt screen ─────────────────────────────────────────── */
+.adaptScreen {
+  padding: 48px 40px;
+  max-width: 680px;
+}
+
+.adaptHeader {
+  margin-bottom: 36px;
+}
+
+.adaptEyebrow {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  color: var(--good);
+  margin-bottom: 12px;
+}
+
+.adaptTitle {
+  font-style: italic;
+  font-weight: 400;
+  font-size: 24px;
+  margin: 0 0 10px;
+  letter-spacing: -0.01em;
+}
+
+.adaptSub {
+  font-style: italic;
+  font-size: 13px;
+  color: var(--muted);
+  margin: 0;
+  line-height: 1.5;
+}
+
+.adaptCards {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-bottom: 32px;
+}
+
+.adaptCard {
+  border: 1px solid var(--rule);
+  padding: 16px 18px;
+}
+
+.adaptCardTop {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.adaptPlatform {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  color: var(--muted);
+}
+
+.adaptScheduleBtn {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  background: transparent;
+  border: 1px solid var(--rule);
+  color: var(--muted);
+  padding: 4px 10px;
+  cursor: pointer;
+  transition: border-color 0.12s, color 0.12s;
+}
+
+.adaptScheduleBtn:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.adaptScheduleBtn[data-scheduled] {
+  border-color: var(--good);
+  color: var(--good);
+}
+
+.adaptTextarea {
+  width: 100%;
+  background: transparent;
+  border: none;
+  border-top: 1px solid var(--rule);
+  color: var(--paper);
+  font-family: var(--serif);
+  font-size: 13.5px;
+  line-height: 1.65;
+  padding-top: 12px;
+  outline: none;
+  resize: none;
+  box-sizing: border-box;
+}
+
+.adaptFooter {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+/* ── Word count ───────────────────────────────────────────── */
+.wordCountLabel {
+  margin-bottom: 8px;
+}
+
+.wordValue {
+  font-style: italic;
+  font-size: 28px;
+  font-weight: 300;
+  letter-spacing: -0.01em;
+}
+
+.wordAvg {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 10px;
+  color: var(--muted);
+  letter-spacing: 0.08em;
+  margin-top: 4px;
+}

@@ -1,0 +1,145 @@
+.sidebar {
+  width: 212px;
+  min-width: 212px;
+  display: flex;
+  flex-direction: column;
+  border-right: 1px solid var(--rule);
+  background: var(--ink);
+}
+
+/* ── Header ─────────────────────────────────────────────────────── */
+
+.header {
+  padding: 22px 20px 16px;
+}
+
+.sectionMark {
+  display: block;
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  color: var(--accent);
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+
+.tagline {
+  font-size: 21px;
+  font-style: italic;
+  line-height: 1.25;
+  color: var(--paper);
+  margin: 0;
+}
+
+/* ── Step list ───────────────────────────────────────────────────── */
+
+.steps {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 6px 0;
+  overflow-y: auto;
+}
+
+.step {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: 9px 20px 9px 22px;
+  text-align: left;
+  background: none;
+  border: none;
+  cursor: pointer;
+  opacity: 0.35;
+}
+
+.step[data-active],
+.step[data-complete] {
+  opacity: 1;
+  cursor: pointer;
+}
+
+.step[data-locked] {
+  opacity: 0.3;
+  cursor: default;
+}
+
+.step:not([data-locked]):not([data-active]):hover {
+  opacity: 0.6;
+}
+
+/* Left accent bar on active step */
+.step[data-active]::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 4px;
+  bottom: 4px;
+  width: 2px;
+  background: var(--accent);
+}
+
+.stepRow {
+  display: flex;
+  align-items: baseline;
+  gap: 7px;
+}
+
+.stepNum {
+  font-size: 10px;
+  letter-spacing: 0.04em;
+  color: var(--muted);
+  flex-shrink: 0;
+}
+
+.stepLabel {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--paper);
+  line-height: 1.2;
+}
+
+.stepSub {
+  font-size: 9px;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+  text-transform: uppercase;
+  padding-left: 17px;
+}
+
+/* ── Footer ─────────────────────────────────────────────────────── */
+
+.footer {
+  padding: 14px 20px 18px;
+  border-top: 1px solid var(--rule);
+}
+
+.savedRow {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin-bottom: 7px;
+}
+
+.savedDot {
+  display: block;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--good);
+  flex-shrink: 0;
+}
+
+.savedText {
+  font-size: 9px;
+  letter-spacing: 0.09em;
+  color: var(--muted-2);
+  text-transform: uppercase;
+}
+
+.savedNote {
+  font-size: 11px;
+  line-height: 1.5;
+  color: var(--muted);
+  margin: 0;
+}

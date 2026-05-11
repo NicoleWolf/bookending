@@ -1,0 +1,22 @@
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px;
+  border-width: 1px;
+  border-style: solid;
+  border-radius: 0;
+  font-family: var(--sans);
+  font-size: 12.5px;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.btn[data-tone="primary"] { background: var(--paper);   color: var(--ink);   border-color: var(--paper); }
+.btn[data-tone="accent"]  { background: var(--accent);  color: var(--ink);   border-color: var(--accent); }
+.btn[data-tone="ghost"]   { background: transparent;    color: var(--paper); border-color: var(--rule); }
+.btn[data-tone="bare"]       { background: transparent; color: var(--muted);         border-color: transparent; }
+.btn[data-tone="ghost-dark"] { background: transparent; color: var(--bk-paper);      border-color: var(--bk-paper-deep); border-width: 1.5px; }
+.btn[data-tone="bare-dark"]  { background: transparent; color: var(--bk-paper-deep); border-color: transparent; }

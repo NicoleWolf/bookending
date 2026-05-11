@@ -1,0 +1,128 @@
+.bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 0 48px;
+  border-top: 1px solid var(--rule);
+  border-bottom: 1px solid var(--rule);
+  flex-wrap: wrap;
+}
+
+/* Filter chips */
+.filters {
+  display: flex;
+  align-items: stretch;
+  gap: 0;
+}
+
+.chip {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 9px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+  background: transparent;
+  border: none;
+  border-right: 1px solid var(--rule);
+  padding: 11px 14px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: color 0.12s, background 0.12s;
+}
+
+.chip:first-child {
+  border-left: 1px solid var(--rule);
+}
+
+.chip:hover:not([data-active]) {
+  color: var(--paper);
+}
+
+.chip[data-active] {
+  background: var(--paper);
+  color: var(--ink);
+}
+
+/* Sort + search */
+.controls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 0;
+  flex-wrap: wrap;
+}
+
+.sortWrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.sort {
+  appearance: none;
+  -webkit-appearance: none;
+  background: transparent;
+  border: 1px solid var(--rule);
+  color: var(--muted);
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 9px;
+  letter-spacing: 0.10em;
+  padding: 6px 28px 6px 10px;
+  cursor: pointer;
+  outline: none;
+}
+
+.sort:focus {
+  border-color: var(--muted-2);
+}
+
+.sort option {
+  background: var(--ink-2);
+  color: var(--paper);
+}
+
+.sortChevron {
+  position: absolute;
+  right: 8px;
+  font-size: 8px;
+  color: var(--muted);
+  pointer-events: none;
+}
+
+.search {
+  background: transparent;
+  border: 1px solid var(--rule);
+  color: var(--paper);
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 9px;
+  letter-spacing: 0.10em;
+  padding: 6px 10px;
+  outline: none;
+  width: 140px;
+}
+
+.search::placeholder {
+  color: var(--muted-2);
+  letter-spacing: 0.10em;
+}
+
+.search:focus {
+  border-color: var(--muted-2);
+}
+
+@media (max-width: 599px) {
+  .bar {
+    padding: 0 20px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .search {
+    width: 100%;
+  }
+}

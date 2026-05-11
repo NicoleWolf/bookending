@@ -1,19 +1,584 @@
-import Masthead from './components/masthead';
-import BetaReaders from './components/beta-readers';
-import Distribution from './components/distribution';
-import Storefront from './components/storefront';
-import Audience from './components/audience';
-import Community from './components/community';
+import { useState, useEffect, useRef } from 'react';
+import { useQuietMode } from './features/quiet-mode/QuietModeContext';
+import Landing from './features/landing';
+import Masthead from './features/masthead';
+import Community from './features/community';
+import PrintDistribution from './features/print-distribution';
+import StorefrontTab from './features/storefront';
+import AudienceTab from './features/audience';
+import EditingHub from './features/editing';
+import Reading from './features/reading';
+import RoyaltiesTab from './features/royalties';
+import { ConnectionsView } from './features/connections';
+import { SeasonsView } from './features/seasons';
+import Library from './features/library';
+import LibraryBrowse from './features/library-browse';
+import type { BookMetadata, BookVisibility, SpineColor } from './features/library/data';
+import ToastStack from './features/notifications/Toast';
+import type { AppNotification } from './features/notifications/data';
+import { useAuth } from './features/auth';
+import { LoginView } from './features/auth';
+import ProfileView from './features/profile/ProfileView';
+import AdminPanel from './features/admin';
+import ReaderProfiles from './features/reader-profiles';
+import DashboardPreview from './features/dashboard-v2';
+import AuthorProfiles from './features/author-profiles';
+import StorefrontHub from './features/storefront-hub';
+import PurchasesView from './features/purchases/PurchasesView';
+import FormatterHub from './features/formatter';
+import type { AuthorProfile, ProfileTab } from './features/author-profiles/types';
+import { api } from './lib/api';
+import type { ManuscriptRecord, NotificationRecord } from '@bookending/shared';
 
-export default function App() {
+type SavedBooks = Record<string, BookMetadata>;
+
+const STATUS_TO_DB: Record<string, string> = {
+  'drafting': 'DRAFTING', 'in-revision': 'IN_REVISION', 'published': 'PUBLISHED',
+};
+const STATUS_FROM_DB: Record<string, string> = {
+  'DRAFTING': 'drafting', 'IN_REVISION': 'in-revision', 'PUBLISHED': 'published',
+};
+
+function toIntOrNull(v: unknown): number | null {
+  if (v == null || v === '') return null;
+  const n = Number(v);
+  return Number.isInteger(n) ? n : null;
+}
+
+function bookToPayload(book: BookMetadata, coverUrl?: string): Record<string, unknown> {
+  return {
+    id:             book.id,
+    title:          book.title,
+    subtitle:       book.subtitle      || null,
+    status:         STATUS_TO_DB[book.status] ?? 'DRAFTING',
+    visibility:     (book.visibility ?? 'private').toUpperCase(),
+    seriesName:     book.seriesName    || null,
+    seriesNumber:   toIntOrNull(book.seriesNumber),
+    genre:          book.genre         || null,
+    subgenre:       book.subgenre      || null,
+    description:    book.description   || null,
+    targetAudience: book.targetAudience || null,
+    contentRating:  book.contentRating || null,
+    keywords:       book.keywords      || null,
+    isbnEbook:      book.isbnEbook      || null,
+    isbnPrint:      book.isbnPrint      || null,
+    isbnPending:    !!book.isbnPending,
+    priceEbook:     book.priceEbook     || null,
+    pricePaperback: book.pricePaperback || null,
+    language:       book.language       || 'English',
+    estimatedPages: toIntOrNull(book.estimatedPages),
+    spineColor:     book.spineColor,
+    coverUrl:       coverUrl           ?? null,
+  };
+}
+
+function recordToBook(m: ManuscriptRecord): BookMetadata {
+  return {
+    id:             m.id,
+    title:          m.title,
+    subtitle:       m.subtitle       ?? '',
+    seriesName:     m.seriesName     ?? '',
+    seriesNumber:   m.seriesNumber   ?? null,
+    genre:          m.genre          ?? '',
+    subgenre:       m.subgenre       ?? '',
+    description:    m.description    ?? '',
+    targetAudience: m.targetAudience ?? '',
+    contentRating:  m.contentRating  ?? '',
+    keywords:       m.keywords       ?? '',
+    isbnEbook:      m.isbnEbook      ?? '',
+    isbnPrint:      m.isbnPrint      ?? '',
+    isbnPending:    m.isbnPending,
+    priceEbook:     m.priceEbook     ?? '',
+    pricePaperback: m.pricePaperback ?? '',
+    language:       m.language,
+    estimatedPages: m.estimatedPages ?? null,
+    status:         (STATUS_FROM_DB[m.status] ?? 'drafting') as BookMetadata['status'],
+    visibility:     m.visibility.toLowerCase() as BookVisibility,
+    coverUploaded:  !!m.coverUrl,
+    spineColor:     (m.spineColor as SpineColor) || 'spine-amber',
+  };
+}
+
+// ── Notification record mapping ───────────────────────────────
+function recordToNotification(r: NotificationRecord): AppNotification {
+  return {
+    id:         r.id,
+    type:       r.type as AppNotification['type'],
+    stage:      r.stage,
+    message:    r.message,
+    read:       r.status === 'SENT',
+    receivedAt: r.scheduledAt,
+  };
+}
+
+async function fetchAndMigrateManuscripts(userId: string): Promise<{ books: BookMetadata[]; apiError: string | null }> {
+  let dbBooks:  BookMetadata[] = [];
+  let dbIds:    Set<string>    = new Set();
+  let apiError: string | null  = null;
+
+  // Phase 1: Try to fetch from the API (non-fatal if it fails)
+  try {
+    const records = await api.get<ManuscriptRecord[]>('/api/manuscripts');
+    dbBooks = records.map(recordToBook);
+    dbIds   = new Set(records.map(r => r.id));
+  } catch (e) {
+    apiError = e instanceof Error ? e.message : 'Could not connect to server';
+  }
+
+  // Phase 2: Read localStorage (always — works even when API is down)
+  let localBooks: BookMetadata[] = [];
+  try {
+    const raw = localStorage.getItem(`bookending_library_v1:${userId}`);
+    if (raw) localBooks = Object.values(JSON.parse(raw) as Record<string, BookMetadata>);
+  } catch { /* corrupt data — ignore */ }
+
+  // Phase 3: Sync localStorage-only books to DB if the API is up
+  const unsynced = localBooks.filter(b => !dbIds.has(b.id) && !!b.title?.trim());
+  for (const book of unsynced) {
+    if (!apiError) {
+      const coverUrl = localStorage.getItem(`bookending_cover_${book.id}`) ?? undefined;
+      try {
+        const created = await api.post<ManuscriptRecord>('/api/manuscripts', bookToPayload(book, coverUrl));
+        dbBooks.push(recordToBook(created));
+        continue;
+      } catch { /* network — fall through */ }
+    }
+    // API unavailable or failed — show the book from localStorage anyway
+    dbBooks.push(book);
+  }
+
+  return { books: dbBooks.filter(b => typeof b.id === 'string' && b.id.length > 0), apiError };
+}
+
+function LoggedOutShell() {
+  const [view, setView] = useState<'landing' | 'login'>('landing');
   return (
     <div>
-      <Masthead />
-      <BetaReaders />
-      <Distribution />
-      <Storefront />
-      <Audience />
-      <Community />
+      <Masthead
+        activeTab={view === 'landing' ? 'Landing' : 'Login'}
+        onTabChange={(tab) => { if (tab === 'Landing') setView('landing'); }}
+        notifications={[]}
+        onMarkRead={() => {}}
+        onMarkAllRead={() => {}}
+        onLogin={() => setView('login')}
+      />
+      {view === 'landing'
+        ? <Landing onEnter={() => setView('login')} onLogin={() => setView('login')} />
+        : <LoginView />
+      }
+    </div>
+  );
+}
+
+// ── Reader shell ──────────────────────────────────────────────────────────────
+
+function ReaderApp() {
+  const { logout } = useAuth();
+  const [activeTab,       setActiveTab]       = useState('Dashboard');
+  const [notifications,   setNotifications]   = useState<AppNotification[]>([]);
+  const [toasts,          setToasts]          = useState<AppNotification[]>([]);
+  const [followedAuthors, setFollowedAuthors] = useState<Set<string>>(new Set());
+  const [authorTarget,    setAuthorTarget]    = useState<{ authorId: string; tab: ProfileTab } | null>(null);
+  const toastTimers = useRef<Map<string, ReturnType<typeof setTimeout>>>(new Map());
+
+  function addToast(n: AppNotification) {
+    setToasts(prev => [...prev, n]);
+    const timer = setTimeout(() => {
+      setToasts(prev => prev.filter(t => t.id !== n.id));
+      toastTimers.current.delete(n.id);
+    }, 5000);
+    toastTimers.current.set(n.id, timer);
+  }
+
+  function dismissToast(id: string) {
+    setToasts(prev => prev.filter(t => t.id !== id));
+    const timer = toastTimers.current.get(id);
+    if (timer) { clearTimeout(timer); toastTimers.current.delete(id); }
+  }
+
+  function addNotification(n: AppNotification) {
+    setNotifications(prev => [n, ...prev]);
+    addToast(n);
+  }
+
+  function handleNotifCta(authorId: string) {
+    setAuthorTarget({ authorId, tab: 'qa' });
+    setActiveTab('Author Profiles');
+  }
+
+  function handleMarkRead(id: string) {
+    setNotifications(prev => prev.map(n => n.id === id ? { ...n, read: true } : n));
+  }
+
+  function handleToggleFollow(author: AuthorProfile) {
+    const isFollowing = followedAuthors.has(author.id);
+    setFollowedAuthors(prev => {
+      const next = new Set(prev);
+      isFollowing ? next.delete(author.id) : next.add(author.id);
+      return next;
+    });
+    addNotification({
+      id: `follow-${author.id}-${Date.now()}`,
+      type: 'AUTHOR_FOLLOW',
+      stage: 'Reading',
+      message: isFollowing
+        ? `You unfollowed ${author.name}.`
+        : `You're now following ${author.name}. You'll be notified when they post updates.`,
+      read: false,
+      receivedAt: new Date().toISOString(),
+    });
+  }
+
+  return (
+    <div>
+      <Masthead
+        activeTab={activeTab}
+        onTabChange={setActiveTab}
+        notifications={notifications}
+        onMarkRead={handleMarkRead}
+        onMarkAllRead={() => setNotifications(prev => prev.map(n => ({ ...n, read: true })))}
+        onLogout={logout}
+        onNotifCta={handleNotifCta}
+        navMode="reader"
+      />
+
+      {activeTab === 'Dashboard' && <DashboardPreview />}
+      {activeTab === 'Reading' && <Reading />}
+      {activeTab === 'Library' && <LibraryBrowse savedBooks={{}} />}
+      {activeTab === 'Author Profiles' && (
+        <AuthorProfiles
+          followedAuthors={followedAuthors}
+          onToggleFollow={handleToggleFollow}
+          onNotify={addNotification}
+          target={authorTarget}
+          onTargetConsumed={() => setAuthorTarget(null)}
+        />
+      )}
+      {activeTab === 'Purchases' && <PurchasesView />}
+      {activeTab === 'Community' && <Community section="mentorship" />}
+      {activeTab === 'Profile' && (
+        <ProfileView onBack={() => setActiveTab('Reading')} />
+      )}
+
+      <ToastStack toasts={toasts} onDismiss={dismissToast} onCta={handleNotifCta} />
+
+      <footer style={{ padding: '30px 48px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: '1px solid var(--rule)' }}>
+        <span className="mono" style={{ fontSize: 10.5, color: 'var(--muted)', letterSpacing: '0.18em' }}>BOOKENDING · A COMMUNITY FOR READERS & WRITERS · MMXXVI</span>
+        <span className="mono" style={{ fontSize: 10.5, color: 'var(--muted)', letterSpacing: '0.18em' }}>SET IN NEWSREADER & INTER · PRINTED FROM PORTLAND</span>
+      </footer>
+    </div>
+  );
+}
+
+// ── Author shell ──────────────────────────────────────────────────────────────
+
+function AuthorApp() {
+  const { currentUser, logout } = useAuth();
+  const { isQuiet, deferred, clearDeferred, addDeferred } = useQuietMode();
+
+  const [activeTab,         setActiveTab]         = useState('Dashboard');
+  const [savedBooks,        setSavedBooks]        = useState<SavedBooks>({});
+  const [dbBookIds,         setDbBookIds]         = useState<Set<string>>(new Set());
+  const [manuscriptsDirty,  setManuscriptsDirty]  = useState(false);
+  const [loadError,         setLoadError]         = useState<string | null>(null);
+  const [pendingTab,        setPendingTab]        = useState<string | null>(null);
+  const [openNewManuscript, setOpenNewManuscript] = useState(false);
+  const [notifications,     setNotifications]     = useState<AppNotification[]>([]);
+  const [toasts,            setToasts]            = useState<AppNotification[]>([]);
+  const [followedAuthors,   setFollowedAuthors]   = useState<Set<string>>(new Set());
+  const [authorTarget,      setAuthorTarget]      = useState<{ authorId: string; tab: ProfileTab } | null>(null);
+  const toastTimers = useRef<Map<string, ReturnType<typeof setTimeout>>>(new Map());
+
+  // Load manuscripts + goal from API whenever the logged-in user changes
+  useEffect(() => {
+    if (!currentUser) {
+      setSavedBooks({}); setDbBookIds(new Set()); return;
+    }
+    setLoadError(null);
+    const userId = currentUser.id;
+    void (async () => {
+      const { books, apiError } = await fetchAndMigrateManuscripts(userId);
+      setSavedBooks(Object.fromEntries(books.map(b => [b.id, b])));
+      setDbBookIds(new Set(books.map(b => b.id)));
+      if (apiError) setLoadError(apiError);
+
+      try {
+        const notifs = await api.get<NotificationRecord[]>('/api/notifications').catch(() => [] as NotificationRecord[]);
+        setNotifications(notifs.map(recordToNotification));
+      } catch (err) {
+        console.error('Failed to load notifications:', err);
+      }
+    })();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentUser?.id]);
+
+  function addToast(n: AppNotification) {
+    setToasts(prev => [...prev, n]);
+    const timer = setTimeout(() => {
+      setToasts(prev => prev.filter(t => t.id !== n.id));
+      toastTimers.current.delete(n.id);
+    }, 5000);
+    toastTimers.current.set(n.id, timer);
+  }
+
+  function dismissToast(id: string) {
+    setToasts(prev => prev.filter(t => t.id !== id));
+    const timer = toastTimers.current.get(id);
+    if (timer) {
+      clearTimeout(timer);
+      toastTimers.current.delete(id);
+    }
+  }
+
+  useEffect(() => {
+    if (!currentUser) return;
+    const incoming: AppNotification = {
+      id: 'n-live',
+      type: 'DEADLINE_WARNING',
+      stage: 'Publish',
+      message: "You're 14 days from your publish deadline. Is your file upload ready?",
+      read: false,
+      receivedAt: new Date().toISOString(),
+    };
+    const timer = setTimeout(() => {
+      setNotifications(prev => [incoming, ...prev]);
+      addToast(incoming);
+    }, 3000);
+    return () => clearTimeout(timer);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentUser]);
+
+  function addNotification(n: AppNotification) {
+    setNotifications(prev => [n, ...prev]);
+    if (isQuiet) {
+      addDeferred(n);
+    } else {
+      addToast(n);
+    }
+  }
+
+  // Flush deferred toasts when quiet mode ends
+  const wasQuietRef = useRef(false);
+  useEffect(() => {
+    if (wasQuietRef.current && !isQuiet && deferred.length > 0) {
+      deferred.forEach(n => addToast(n));
+      clearDeferred();
+    }
+    wasQuietRef.current = isQuiet;
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isQuiet]);
+
+  function handleNotifCta(authorId: string) {
+    setAuthorTarget({ authorId, tab: 'qa' });
+    setActiveTab('Author Profiles');
+  }
+
+  function patchNotification(id: string) {
+    void api.patch(`/api/notifications/${id}`, { status: 'SENT' }).catch(() => {});
+  }
+
+  function handleMarkRead(id: string) {
+    setNotifications(prev => prev.map(n => n.id === id ? { ...n, read: true } : n));
+    patchNotification(id);
+  }
+
+  function handleMarkAllRead() {
+    const unreadIds = notifications.filter(n => !n.read).map(n => n.id);
+    setNotifications(prev => prev.map(n => ({ ...n, read: true })));
+    unreadIds.forEach(patchNotification);
+  }
+
+  function handleTabChange(tab: string) {
+    if (activeTab === 'Manuscripts' && tab !== 'Manuscripts' && manuscriptsDirty) {
+      setPendingTab(tab);
+      return;
+    }
+    setActiveTab(tab);
+  }
+
+  function handleNewManuscript() {
+    setActiveTab('Manuscripts');
+    setOpenNewManuscript(true);
+  }
+
+  function handleToggleFollow(author: AuthorProfile) {
+    const isFollowing = followedAuthors.has(author.id);
+    setFollowedAuthors(prev => {
+      const next = new Set(prev);
+      isFollowing ? next.delete(author.id) : next.add(author.id);
+      return next;
+    });
+    addNotification({
+      id: `follow-${author.id}-${Date.now()}`,
+      type: 'AUTHOR_FOLLOW',
+      stage: 'Reading',
+      message: isFollowing
+        ? `You unfollowed ${author.name}.`
+        : `You're now following ${author.name}. You'll be notified when they post updates.`,
+      read: false,
+      receivedAt: new Date().toISOString(),
+    });
+  }
+
+  function handleBookDelete(id: string) {
+    if (!currentUser) return;
+    const userId = currentUser.id;
+
+    setSavedBooks(prev => { const next = { ...prev }; delete next[id]; return next; });
+    setDbBookIds(prev => { const next = new Set(prev); next.delete(id); return next; });
+
+    try {
+      const stored = JSON.parse(localStorage.getItem(`bookending_library_v1:${userId}`) ?? '{}') as Record<string, BookMetadata>;
+      delete stored[id];
+      localStorage.setItem(`bookending_library_v1:${userId}`, JSON.stringify(stored));
+    } catch { /* non-fatal */ }
+
+    localStorage.removeItem(`bookending_cover_${id}`);
+    localStorage.removeItem(`bookending_import_${id}`);
+    localStorage.removeItem(`bookending_import_name_${id}`);
+
+    void api.del(`/api/manuscripts/${id}`).catch(err => {
+      console.error('Delete manuscript failed:', err);
+    });
+  }
+
+  function handleBookSave(id: string, book: BookMetadata) {
+    if (!currentUser) return;
+    const userId = currentUser.id;
+
+    setSavedBooks(prev => ({ ...prev, [id]: book }));
+
+    try {
+      const stored = JSON.parse(localStorage.getItem(`bookending_library_v1:${userId}`) ?? '{}') as Record<string, BookMetadata>;
+      stored[id] = book;
+      localStorage.setItem(`bookending_library_v1:${userId}`, JSON.stringify(stored));
+    } catch { /* quota or parse error — non-fatal */ }
+
+    const coverUrl = localStorage.getItem(`bookending_cover_${id}`) ?? undefined;
+    const payload  = bookToPayload(book, coverUrl);
+
+    if (dbBookIds.has(id)) {
+      void api.patch(`/api/manuscripts/${id}`, payload).catch(err => {
+        console.error('Update manuscript failed:', err);
+        addNotification({
+          id: `save-err-${id}-${Date.now()}`,
+          type: 'STAGE_NUDGE',
+          stage: 'Manuscripts',
+          message: `Could not save "${book.title}". Check your connection and try again.`,
+          read: false,
+          receivedAt: new Date().toISOString(),
+        });
+      });
+    } else {
+      void api.post<ManuscriptRecord>('/api/manuscripts', payload)
+        .then(() => setDbBookIds(prev => new Set([...prev, id])))
+        .catch(err => {
+          console.error('Create manuscript failed:', err);
+          addNotification({
+            id: `save-err-${id}-${Date.now()}`,
+            type: 'STAGE_NUDGE',
+            stage: 'Manuscripts',
+            message: `Could not save "${book.title}". Your changes are visible but not yet stored — try saving again.`,
+            read: false,
+            receivedAt: new Date().toISOString(),
+          });
+        });
+    }
+  }
+
+  return (
+    <div>
+      <Masthead
+        activeTab={activeTab}
+        onTabChange={handleTabChange}
+        notifications={notifications}
+        onMarkRead={handleMarkRead}
+        onMarkAllRead={handleMarkAllRead}
+        savedBooks={savedBooks}
+        onNewManuscript={handleNewManuscript}
+        onLogout={logout}
+        onNotifCta={handleNotifCta}
+        navMode="author"
+      />
+      {loadError && (
+        <div role="alert" style={{ background: 'var(--danger)', color: '#fff', fontFamily: 'var(--sans)', fontSize: 13, padding: '10px 48px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <span>Could not load your manuscripts: {loadError}</span>
+          <button onClick={() => setLoadError(null)} style={{ background: 'none', border: 'none', color: '#fff', cursor: 'pointer', fontSize: 16, lineHeight: 1 }}>×</button>
+        </div>
+      )}
+
+      {activeTab === 'Landing' && <Landing onEnter={() => setActiveTab('Dashboard')} />}
+      {activeTab === 'Dashboard' && <DashboardPreview />}
+      {activeTab === 'Manuscripts' && (
+        <Library
+          savedBooks={savedBooks}
+          onSave={handleBookSave}
+          onDelete={handleBookDelete}
+          openNewManuscript={openNewManuscript}
+          onOpenNewHandled={() => setOpenNewManuscript(false)}
+          onDirtyChange={setManuscriptsDirty}
+        />
+      )}
+      {activeTab === 'Editing & Beta-readers' && <EditingHub savedBooks={savedBooks} onTabChange={setActiveTab} />}
+      {activeTab === 'Reading' && <Reading />}
+      {activeTab === 'Library' && <LibraryBrowse savedBooks={savedBooks} />}
+      {activeTab === 'Readers' && <ReaderProfiles savedBooks={savedBooks} />}
+      {activeTab === 'The Bindery' && <FormatterHub />}
+      {activeTab === 'Storefront' && <StorefrontHub />}
+      {activeTab === 'Purchases' && <PurchasesView />}
+      {activeTab === 'Author Profiles' && (
+        <AuthorProfiles
+          followedAuthors={followedAuthors}
+          onToggleFollow={handleToggleFollow}
+          onNotify={addNotification}
+          target={authorTarget}
+          onTargetConsumed={() => setAuthorTarget(null)}
+        />
+      )}
+      {(activeTab === 'Community' || activeTab === 'Mentorship' || activeTab === 'Writing Circle') && (
+        <Community section={
+          activeTab === 'Writing Circle' ? 'circle' : 'mentorship'
+        } />
+      )}
+      {activeTab === 'Print & Distribution' && <PrintDistribution />}
+      {activeTab === 'My Store' && <StorefrontTab savedBooks={savedBooks} onTabChange={setActiveTab} />}
+      {activeTab === 'Audience' && <AudienceTab savedBooks={savedBooks} onOpenSeasons={() => setActiveTab('Seasons')} />}
+      {activeTab === 'Seasons' && <SeasonsView onCompose={() => setActiveTab('Audience')} />}
+      {activeTab === 'Connections' && <ConnectionsView />}
+      {activeTab === 'Royalties' && <RoyaltiesTab savedBooks={savedBooks} />}
+      {activeTab === 'Profile' && (
+        <ProfileView onBack={() => setActiveTab('Dashboard')} />
+      )}
+      {activeTab === 'Admin' && currentUser?.isAdmin && <AdminPanel />}
+
+      {pendingTab && (
+        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.7)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 200 }}>
+          <div style={{ background: 'var(--ink-2)', border: '1px solid var(--rule)', padding: '36px 40px', maxWidth: 420, width: '100%' }}>
+            <div style={{ fontFamily: 'var(--sans)', fontSize: 15, fontWeight: 600, color: 'var(--paper)', marginBottom: 12 }}>
+              Unsaved changes
+            </div>
+            <p style={{ fontFamily: 'var(--sans)', fontSize: 13, lineHeight: 1.6, color: 'var(--muted)', margin: '0 0 28px' }}>
+              You have unsaved changes to your manuscript. If you leave, all changes will be lost.
+            </p>
+            <div style={{ display: 'flex', gap: 12, justifyContent: 'flex-end' }}>
+              <button
+                style={{ padding: '9px 20px', background: 'var(--accent)', border: 'none', color: 'var(--ink)', fontFamily: 'var(--sans)', fontSize: 12, fontWeight: 600, cursor: 'pointer' }}
+                onClick={() => setPendingTab(null)}
+              >
+                Stay and save
+              </button>
+              <button
+                style={{ padding: '9px 20px', background: 'transparent', border: '1px solid var(--rule)', color: 'var(--muted)', fontFamily: 'var(--sans)', fontSize: 12, cursor: 'pointer' }}
+                onClick={() => { setActiveTab(pendingTab!); setPendingTab(null); setManuscriptsDirty(false); }}
+              >
+                Discard changes
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      <ToastStack toasts={toasts} onDismiss={dismissToast} onCta={handleNotifCta} />
 
       <footer style={{ padding: '30px 48px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: '1px solid var(--rule)' }}>
         <span className="mono" style={{ fontSize: 10.5, color: 'var(--muted)', letterSpacing: '0.18em' }}>BOOKENDING · A WORKBENCH FOR SELF-PUBLISHERS · MMXXVI</span>
@@ -21,4 +586,27 @@ export default function App() {
       </footer>
     </div>
   );
+}
+
+// ── Root ──────────────────────────────────────────────────────────────────────
+
+export default function App() {
+  const { currentUser, isLoading } = useAuth();
+
+  const params = new URLSearchParams(window.location.search);
+  if (params.has('preview')) {
+    const empty = params.get('empty');
+    return (
+      <DashboardPreview
+        writerEmpty={empty === 'writer'}
+        readerEmpty={empty === 'reader'}
+      />
+    );
+  }
+
+  if (isLoading) return null;
+
+  if (!currentUser) return <LoggedOutShell />;
+
+  return currentUser.role === 'READER' ? <ReaderApp /> : <AuthorApp />;
 }

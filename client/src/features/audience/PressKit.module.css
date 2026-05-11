@@ -1,0 +1,710 @@
+/* ── Press kit layout ─────────────────────────────────────── */
+.pkGrid {
+  display: grid;
+  grid-template-columns: 240px 1fr;
+}
+
+.sidebar {
+  border-right: 1px solid var(--rule);
+  padding: 24px 0;
+}
+
+.sidebarHeader {
+  padding: 0 20px;
+  margin-bottom: 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.sidebarKitLabel {
+  font-size: 10px;
+}
+
+.groupLabel {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 9px;
+  color: var(--muted);
+  letter-spacing: 0.18em;
+  padding: 12px 20px 6px;
+}
+
+.assetBtn {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 10px 20px;
+  border: none;
+  border-left: 2px solid transparent;
+  cursor: pointer;
+  text-align: left;
+  background: transparent;
+}
+
+.assetBtn[data-selected] {
+  border-left-color: var(--accent);
+  background: color-mix(in srgb, var(--ink) 92%, var(--paper));
+}
+
+.assetDot {
+  width: 7px;
+  height: 7px;
+  flex-shrink: 0;
+  background: var(--muted);
+}
+
+.assetDot[data-ready] {
+  background: var(--good);
+}
+
+.assetName {
+  font-size: 12.5px;
+  color: var(--paper);
+  font-weight: 400;
+}
+
+.assetBtn[data-selected] .assetName {
+  font-weight: 600;
+}
+
+.assetFormat {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 9px;
+  color: var(--muted);
+  letter-spacing: 0.06em;
+  margin-top: 2px;
+}
+
+/* ── Shared field / textarea styles ──────────────────────── */
+.field {
+  width: 100%;
+  background: transparent;
+  border: 1px solid var(--rule);
+  color: var(--paper);
+  padding: 9px 12px;
+  font-size: 13px;
+  font-family: var(--sans);
+  outline: none;
+  box-sizing: border-box;
+}
+
+.fieldMono {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 11px;
+}
+
+.fieldSerif {
+  font-family: var(--serif);
+  font-style: italic;
+}
+
+.fieldLarge {
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.fieldSm {
+  font-size: 12px;
+}
+
+.fieldDateline {
+  width: 220px;
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 11px;
+}
+
+.ta {
+  width: 100%;
+  background: transparent;
+  border: 1px solid var(--rule);
+  color: var(--paper);
+  padding: 10px 12px;
+  font-size: 14px;
+  font-family: var(--serif);
+  font-style: italic;
+  line-height: 1.7;
+  outline: none;
+  resize: vertical;
+  box-sizing: border-box;
+}
+
+.taSm {
+  font-size: 12.5px;
+}
+
+.taQuote {
+  border: none;
+  padding: 0;
+  font-size: 15px;
+}
+
+/* ── Image editor ─────────────────────────────────────────── */
+.editorWrapper {
+  padding: 32px 36px;
+}
+
+.editorHeader {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 24px;
+}
+
+.editorFieldLabel {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 9.5px;
+  color: var(--muted);
+  letter-spacing: 0.12em;
+  margin-bottom: 6px;
+}
+
+.editorFieldLabelLg {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 9.5px;
+  color: var(--muted);
+  letter-spacing: 0.12em;
+  margin-bottom: 10px;
+}
+
+.sourceBox {
+  margin-bottom: 28px;
+  border: 1px solid var(--rule);
+  padding: 16px 18px;
+  background: color-mix(in srgb, var(--ink) 96%, var(--paper));
+}
+
+.sourceContent {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.sourceInfo {
+  flex: 1;
+}
+
+.sourceTag {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 9.5px;
+  color: var(--accent);
+  letter-spacing: 0.12em;
+  margin-bottom: 8px;
+}
+
+.sourceText {
+  font-size: 13px;
+  margin-bottom: 4px;
+}
+
+.sourceStatus {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.statusDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.statusDot[data-good] {
+  background: var(--good);
+}
+
+.statusDot:not([data-good]) {
+  background: var(--danger);
+}
+
+.statusLabel {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  color: var(--danger);
+}
+
+.statusLabel[data-good] {
+  color: var(--good);
+}
+
+.coverThumb {
+  width: 52px;
+  height: 78px;
+  flex-shrink: 0;
+  position: relative;
+  overflow: hidden;
+}
+
+.sourceActions {
+  display: flex;
+  gap: 8px;
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px solid var(--rule);
+}
+
+.overrideLink {
+  background: none;
+  border: none;
+  color: var(--muted);
+  font-size: 11px;
+  font-family: var(--sans);
+  cursor: pointer;
+  padding: 0;
+  letter-spacing: 0.04em;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  margin-left: auto;
+}
+
+.overrideBanner {
+  margin-bottom: 20px;
+  padding: 10px 14px;
+  border: 1px solid var(--rule);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.overrideNote {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 10px;
+  color: var(--muted);
+  letter-spacing: 0.08em;
+}
+
+.overrideRevert {
+  background: none;
+  border: none;
+  color: var(--accent);
+  font-size: 11px;
+  font-family: var(--sans);
+  cursor: pointer;
+  padding: 0;
+  letter-spacing: 0.04em;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.fileGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 32px;
+  margin-bottom: 28px;
+}
+
+.fileGrid[data-cover] {
+  grid-template-columns: 200px 1fr;
+}
+
+.currentFile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border: 1px solid var(--rule);
+}
+
+.currentFileLabel {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 8px;
+  letter-spacing: 0.18em;
+  color: #8a7a5e;
+}
+
+.currentFileTitleText {
+  font-style: italic;
+  font-size: 13px;
+  color: #e8d9b8;
+  text-align: center;
+  line-height: 1.2;
+  padding: 0 16px;
+}
+
+.fileFormat {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 9.5px;
+  color: var(--muted);
+  letter-spacing: 0.08em;
+  margin-top: 8px;
+}
+
+.replaceCol {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.dropZone {
+  border: 1px dashed var(--rule);
+  padding: 28px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  color: var(--muted);
+}
+
+.dropText {
+  font-size: 12.5px;
+}
+
+.dropSpec {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 9.5px;
+  letter-spacing: 0.08em;
+  opacity: 0.6;
+}
+
+.usageSection {
+  border-top: 1px solid var(--rule);
+  padding-top: 18px;
+}
+
+.editActions {
+  display: flex;
+  gap: 8px;
+  margin-top: 20px;
+}
+
+/* ── Bio editor ───────────────────────────────────────────── */
+.bioHeader {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.bioSub {
+  font-style: italic;
+  color: var(--muted);
+  font-size: 13.5px;
+  margin-bottom: 24px;
+}
+
+.bioFooter {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 12px;
+  margin-bottom: 24px;
+}
+
+.bioFooterLeft {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.bioProgress {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 10.5px;
+  color: var(--muted);
+  letter-spacing: 0.08em;
+}
+
+.bioProgress[data-over] {
+  color: var(--danger);
+}
+
+.progressBar {
+  width: 120px;
+  height: 3px;
+  background: var(--rule);
+  position: relative;
+}
+
+.progressFill {
+  position: absolute;
+  inset: 0;
+}
+
+.bioActions {
+  display: flex;
+  gap: 8px;
+}
+
+.voiceGuide {
+  border-top: 1px solid var(--rule);
+  padding-top: 20px;
+}
+
+.voiceLabel {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 9.5px;
+  color: var(--muted);
+  letter-spacing: 0.12em;
+  margin-bottom: 14px;
+}
+
+.voiceGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.voiceItem {
+  padding: 10px 12px;
+  border: 1px solid var(--rule);
+}
+
+.voiceItemLabel {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 9px;
+  color: var(--muted);
+  letter-spacing: 0.08em;
+  margin-bottom: 4px;
+}
+
+.voiceItemVal {
+  font-style: italic;
+  font-size: 12.5px;
+}
+
+.bioSaveBtn {
+  margin-top: 20px;
+}
+
+/* ── Press release editor ─────────────────────────────────── */
+.prGrid {
+  display: grid;
+  grid-template-columns: 1fr 320px;
+}
+
+.prPanel {
+  padding: 32px 36px;
+  border-right: 1px solid var(--rule);
+}
+
+.prHeader {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 24px;
+}
+
+.prToggle {
+  margin-bottom: 20px;
+}
+
+.prToggleBtns {
+  display: flex;
+  gap: 8px;
+}
+
+.prToggleBtns[data-embargo] {
+  margin-bottom: 10px;
+}
+
+.releaseBtn {
+  width: auto;
+  background: transparent;
+  border: 1px solid var(--rule);
+  color: var(--muted);
+  padding: 9px 12px;
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  font-weight: 400;
+  cursor: pointer;
+  outline: none;
+  box-sizing: border-box;
+}
+
+.releaseBtn[data-active] {
+  font-weight: 700;
+  border-color: var(--paper);
+  color: var(--paper);
+}
+
+.prFields {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.quoteBox {
+  border: 1px solid var(--rule);
+  padding: 16px 18px;
+}
+
+.quoteBoxLabel {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 9.5px;
+  color: var(--muted);
+  letter-spacing: 0.12em;
+  margin-bottom: 10px;
+}
+
+.quoteAttr {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 10px;
+  color: var(--muted);
+  letter-spacing: 0.08em;
+  margin-top: 8px;
+}
+
+.aboutBox {
+  padding: 14px 16px;
+  background: color-mix(in srgb, var(--ink) 94%, var(--paper));
+  border: 1px solid var(--rule);
+}
+
+.aboutBoxLabel {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 9.5px;
+  color: var(--muted);
+  letter-spacing: 0.12em;
+  margin-bottom: 6px;
+}
+
+.aboutBio {
+  font-style: italic;
+  font-size: 13.5px;
+  line-height: 1.6;
+  color: var(--muted);
+}
+
+.editLink {
+  background: none;
+  border: none;
+  color: var(--accent);
+  font-size: 11px;
+  font-family: var(--sans);
+  cursor: pointer;
+  padding: 0;
+  margin-top: 8px;
+  letter-spacing: 0.04em;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.prActions {
+  display: flex;
+  gap: 8px;
+  margin-top: 24px;
+}
+
+/* ── PR side panel ────────────────────────────────────────── */
+.prSidePanel {
+  padding: 32px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+.contactList {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* ── Document preview ─────────────────────────────────────── */
+.previewBox {
+  border: 1px solid var(--rule);
+  padding: 16px 14px;
+  background: var(--paper);
+  color: var(--ink);
+}
+
+.previewRelease {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 7.5px;
+  letter-spacing: 0.14em;
+  color: #00000066;
+  margin-bottom: 10px;
+}
+
+.previewHeadline {
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 1.3;
+  margin-bottom: 6px;
+  color: #1a1612;
+}
+
+.previewSubhead {
+  font-size: 9px;
+  font-style: italic;
+  color: #3a3530;
+  margin-bottom: 8px;
+  line-height: 1.4;
+}
+
+.previewDateline {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 8px;
+  color: #00000066;
+  margin-bottom: 8px;
+}
+
+.previewLines {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.previewLine {
+  height: 1.5px;
+  background: #00000020;
+}
+
+.previewQuoteSection {
+  margin-top: 8px;
+  padding-top: 6px;
+  border-top: 1px solid #00000015;
+}
+
+.previewQuoteMark {
+  font-size: 7px;
+  font-style: italic;
+  color: #00000066;
+}
+
+.previewQuoteLines {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-top: 2px;
+}
+
+.previewQuoteLine {
+  height: 1.5px;
+  background: #00000015;
+}
+
+/* ── Send section ─────────────────────────────────────────── */
+.pressListText {
+  font-style: italic;
+  font-size: 13px;
+  color: var(--muted);
+  line-height: 1.5;
+  margin-bottom: 14px;
+}

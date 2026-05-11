@@ -1,0 +1,11 @@
+.folio {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  color: var(--muted);
+  font-size: 11px;
+  letter-spacing: 0.18em;
+}
+
+.slash {
+  opacity: 0.4;
+}

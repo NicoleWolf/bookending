@@ -1,0 +1,416 @@
+.header {
+  border-bottom: 1px solid var(--rule);
+  transition: opacity 0.2s ease;
+}
+
+.header[data-quiet] {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.topNav {
+  display: flex;
+  align-items: stretch;
+  border-bottom: 1px solid var(--rule);
+  padding: 0 48px;
+}
+
+.wordmark {
+  font-style: italic;
+  font-size: 17px;
+  letter-spacing: -0.01em;
+  color: var(--paper);
+  padding: 11px 20px 11px 0;
+  border-right: 1px solid var(--rule);
+  display: flex;
+  align-items: center;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.nav {
+  display: flex;
+  align-items: stretch;
+  flex: 1;
+}
+
+/* Logged-out login button — far right of the topNav */
+.loginBtn {
+  margin-left: auto;
+  padding: 0 20px;
+  font-family: var(--sans);
+  font-size: 11.5px;
+  letter-spacing: 0.02em;
+  color: var(--muted);
+  background: none;
+  border: none;
+  border-left: 1px solid var(--rule);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: color 0.1s;
+}
+
+.loginBtn:hover {
+  color: var(--paper);
+}
+
+/* flat link and dropdown trigger share the same visual style */
+.navLink {
+  padding: 0 16px;
+  font-family: var(--sans);
+  font-size: 11.5px;
+  font-weight: 400;
+  color: var(--muted);
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+  text-decoration: none;
+  background: none;
+  border-top: none;
+  border-left: none;
+  border-right: 1px solid var(--rule);
+  border-radius: 0;
+  height: 100%;
+  box-sizing: border-box;
+}
+
+/* groups hold the border instead of the button inside them */
+.navGroup {
+  position: relative;
+  display: flex;
+  align-items: stretch;
+  border-right: 1px solid var(--rule);
+}
+
+.navGroup .navLink {
+  border-right: none;
+  width: 100%;
+}
+
+/* last direct child of nav loses its right border */
+.nav > .navLink:last-child,
+.nav > .navGroup:last-child {
+  border-right: none;
+}
+
+.navLink[data-active="true"] {
+  font-weight: 600;
+  color: var(--paper);
+  border-bottom-color: var(--accent);
+}
+
+.navLink[data-open="true"] {
+  color: var(--paper);
+  background: var(--ink-3);
+}
+
+.navChevron {
+  font-size: 9px;
+  line-height: 1;
+  opacity: 0.5;
+  display: inline-block;
+  transition: transform 0.15s;
+}
+
+.navLink[data-open="true"] .navChevron {
+  transform: rotate(180deg);
+  opacity: 0.8;
+}
+
+/* ── Dropdown panel ───────────────────────────────────────────────── */
+.navDropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background: var(--ink-2);
+  border: 1px solid var(--rule);
+  border-top: none;
+  min-width: 220px;
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+}
+
+.navDropdownItem {
+  padding: 10px 16px;
+  font-family: var(--sans);
+  font-size: 11.5px;
+  font-weight: 400;
+  color: var(--muted);
+  background: none;
+  border: none;
+  border-bottom: 1px solid var(--rule);
+  cursor: pointer;
+  text-align: left;
+  letter-spacing: 0.02em;
+  border-radius: 0;
+}
+
+.navDropdownItem:last-child {
+  border-bottom: none;
+}
+
+.navDropdownItem:hover {
+  color: var(--paper);
+  background: var(--ink-3);
+}
+
+.navDropdownItem[data-active="true"] {
+  font-weight: 600;
+  color: var(--paper);
+}
+
+.navActions {
+  display: flex;
+  align-items: center;
+  border-left: 1px solid var(--rule);
+  padding-left: 16px;
+}
+
+.iconBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  background: transparent;
+  border: 1px solid var(--rule);
+  color: var(--muted);
+  font-size: 11.5px;
+  font-family: var(--sans);
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  border-radius: 0;
+}
+
+.iconBtn + .iconBtn {
+  border-left: none;
+}
+
+.notifWrap {
+  position: relative;
+}
+
+.iconBtn[data-active] {
+  color: var(--paper);
+  background: var(--ink-3);
+}
+
+.notifCount {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 14px;
+  height: 14px;
+  padding: 0 3px;
+  background: var(--accent);
+  color: var(--ink);
+  font-size: 9px;
+  font-weight: 700;
+  font-family: var(--mono);
+  letter-spacing: 0;
+  line-height: 1;
+}
+
+.divider {
+  width: 1px;
+  height: 20px;
+  background: var(--rule);
+  margin: 0 14px;
+}
+
+.userWrap {
+  position: relative;
+  border-left: 1px solid var(--rule);
+  margin-left: 10px;
+}
+
+.user {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding-left: 12px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+}
+
+.user[data-active] {
+  background: var(--ink-3);
+}
+
+.userMenu {
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  background: var(--ink-2);
+  border: 1px solid var(--rule);
+  min-width: 200px;
+  z-index: 50;
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.userMenuProfile {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  background: none;
+  border: none;
+  padding: 4px 6px;
+  margin: -4px -6px;
+  cursor: pointer;
+  text-align: left;
+  border-radius: 0;
+}
+
+.userMenuProfile:hover .userMenuName { color: var(--accent); }
+
+.userMenuName {
+  font-family: var(--sans);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--paper);
+}
+
+.userMenuEmail {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 9.5px;
+  color: var(--muted);
+  letter-spacing: 0.06em;
+}
+
+.userMenuRule {
+  height: 1px;
+  background: var(--rule);
+  margin: 8px 0;
+}
+
+.userMenuSignOut {
+  background: none;
+  border: none;
+  font-family: var(--sans);
+  font-size: 12px;
+  color: var(--muted);
+  cursor: pointer;
+  padding: 0;
+  text-align: left;
+}
+
+.userMenuSignOut:hover {
+  color: var(--danger);
+}
+
+.userInfo {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.15;
+}
+
+.userName {
+  font-size: 11.5px;
+  font-weight: 600;
+}
+
+.userMeta {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 9.5px;
+  color: var(--muted);
+  letter-spacing: 0.1em;
+}
+
+.editorial {
+  padding: 24px 48px 0;
+}
+
+.colophon {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding-bottom: 14px;
+}
+
+.colophonItem {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 11px;
+  color: var(--muted);
+  letter-spacing: 0.18em;
+}
+
+.titleBlock {
+  display: grid;
+  grid-template-columns: 1.6fr 1fr;
+  gap: 48px;
+  padding: 40px 0 36px;
+  align-items: flex-end;
+}
+
+.titleLabel {
+  margin-bottom: 18px;
+}
+
+.titleH1 {
+  font-style: italic;
+  font-weight: 400;
+  font-size: clamp(56px, 7vw, 104px);
+  line-height: 0.95;
+  margin: 0;
+  letter-spacing: -0.02em;
+  color: var(--paper);
+}
+
+.tagline {
+  margin-top: 18px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.taglineText {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 11px;
+  color: var(--muted);
+  letter-spacing: 0.18em;
+}
+
+.taglineLine {
+  flex: 1;
+  height: 1px;
+  background: var(--rule);
+}
+
+.titleRight {
+  border-left: 1px solid var(--rule);
+  padding-left: 32px;
+}
+
+.todaysLeader {
+  margin-bottom: 14px;
+}
+
+.leaderTitle {
+  font-weight: 400;
+  font-size: 28px;
+  line-height: 1.2;
+  margin: 0;
+  letter-spacing: -0.005em;
+}
+
+.leaderKicker {
+  font-style: italic;
+  color: var(--muted);
+  font-size: 15.5px;
+  line-height: 1.45;
+  margin: 14px 0 0;
+}

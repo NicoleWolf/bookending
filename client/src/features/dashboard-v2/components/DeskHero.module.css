@@ -1,0 +1,37 @@
+.header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.context {
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--bk-paper-deep);
+}
+
+.headline {
+  font-style: italic;
+  font-size: 22px;
+  line-height: 1.35;
+  margin: 0 0 12px;
+  color: var(--bk-paper);
+}
+
+.reasoning {
+  font-family: var(--sans);
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--bk-paper-deep);
+  margin: 0 0 18px;
+  max-width: 560px;
+}
+
+.actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  align-items: center;
+}

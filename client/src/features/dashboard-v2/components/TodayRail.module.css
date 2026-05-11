@@ -1,0 +1,52 @@
+.rail {
+  background: var(--ink-2);
+  border: 1px solid var(--rule);
+  padding: 18px 20px;
+  align-self: stretch;
+}
+
+.eyebrow {
+  font-size: 10.5px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted-2);
+}
+
+.kicker {
+  font-style: italic;
+  font-size: 15px;
+  margin: 4px 0 16px;
+  color: var(--paper-dim);
+}
+
+.list {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 16px;
+}
+
+.item {
+  padding-bottom: 12px;
+  margin-bottom: 12px;
+  border-bottom: 1px solid var(--bk-rule-soft);
+}
+
+.item:last-child {
+  border-bottom: 0;
+  margin-bottom: 0;
+  padding-bottom: 0;
+}
+
+.feedBtn {
+  display: block;
+  width: 100%;
+  font-size: 10.5px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--paper-dim);
+  background: transparent;
+  border: 1px solid var(--rule);
+  padding: 8px;
+  cursor: pointer;
+  text-align: center;
+}

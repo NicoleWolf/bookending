@@ -1,0 +1,119 @@
+.backBar {
+  padding: 14px 32px;
+  border-bottom: 1px solid var(--rule);
+}
+
+.backBtn {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  transition: color 0.12s;
+}
+
+.backBtn:hover {
+  color: var(--paper);
+}
+
+/* ── Header ───────────────────────────────────────────────── */
+.header {
+  padding: 32px 32px 28px;
+  border-bottom: 1px solid var(--rule);
+  max-width: 680px;
+}
+
+.title {
+  font-size: 26px;
+  font-weight: 400;
+  font-style: italic;
+  margin: 0 0 14px;
+  letter-spacing: -0.01em;
+}
+
+.summary {
+  font-style: italic;
+  font-size: 14px;
+  color: var(--muted);
+  line-height: 1.65;
+  margin: 0;
+}
+
+/* ── Two-note grid ────────────────────────────────────────── */
+.noteGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  border-bottom: 1px solid var(--rule);
+}
+
+.noteCard {
+  padding: 28px 32px;
+}
+
+.noteCard:not(:last-child) {
+  border-right: 1px solid var(--rule);
+}
+
+.noteLabel {
+  margin-bottom: 14px;
+}
+
+.noteSubject {
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 16px;
+  letter-spacing: 0.01em;
+}
+
+.noteBody {
+  font-style: italic;
+  font-size: 14px;
+  line-height: 1.75;
+  color: var(--paper-dim);
+  white-space: pre-wrap;
+  margin: 0 0 20px;
+}
+
+.keepBtn {
+  display: inline-block;
+  padding: 6px 14px;
+  border: 1px solid var(--rule);
+  font-size: 12.5px;
+  font-family: var(--sans);
+  color: var(--muted);
+  margin-bottom: 10px;
+}
+
+.keepNote {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 9.5px;
+  color: var(--muted);
+  letter-spacing: 0.06em;
+  margin: 0;
+}
+
+/* ── Footer ───────────────────────────────────────────────── */
+.footer {
+  padding: 24px 32px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 32px;
+}
+
+.footerNote {
+  font-style: italic;
+  font-size: 13px;
+  color: var(--muted);
+  margin: 0;
+  flex: 1;
+  line-height: 1.5;
+}
+
+.footerActions {
+  display: flex;
+  gap: 10px;
+  flex-shrink: 0;
+}

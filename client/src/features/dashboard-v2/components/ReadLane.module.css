@@ -1,0 +1,214 @@
+.lane { margin-bottom: 28px; }
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 14px;
+}
+
+.eyebrow {
+  font-size: 10.5px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted-2);
+}
+
+.title {
+  font-style: italic;
+  font-size: 28px;
+  margin: 4px 0 0;
+  font-weight: 400;
+  color: var(--paper);
+}
+
+.meta { text-align: right; }
+
+.metaTitle {
+  font-family: var(--sans);
+  font-size: 12px;
+  color: var(--muted-2);
+  margin: 0 0 4px;
+}
+
+.metaStats {
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  color: var(--paper);
+  margin: 0;
+}
+
+.card {
+  background: var(--ink-2);
+  border: 1px solid var(--rule);
+}
+
+.section { padding: 16px 20px; }
+
+.section:not(:last-child) {
+  border-bottom: 1px solid var(--bk-rule-soft);
+}
+
+.sectionHead {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 12px;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.tr:not(:first-child) td {
+  border-top: 1px solid var(--bk-rule-soft);
+}
+
+.tr td { padding: 7px 0; vertical-align: middle; }
+
+.tdAvatar { width: 30px; padding-right: 14px !important; }
+
+.tdTitle { padding-right: 14px !important; }
+
+.mTitle {
+  font-size: 15px;
+  margin: 0;
+  color: var(--paper);
+}
+
+.mMeta {
+  font-family: var(--sans);
+  font-size: 11px;
+  color: var(--muted-2);
+  margin: 0;
+}
+
+.tdProgress { padding-right: 14px !important; }
+
+.progressLabel {
+  font-size: 10.5px;
+  letter-spacing: 0.06em;
+  color: var(--muted-2);
+  display: block;
+  margin-bottom: 4px;
+}
+
+.track {
+  height: 4px;
+  background: var(--bk-rule-soft);
+  overflow: hidden;
+}
+
+.fill {
+  height: 100%;
+  width: var(--pct);
+  background: var(--accent);
+}
+
+.fill[data-muted] { background: var(--muted-2); }
+
+.tdPill { width: 110px; padding-right: 14px !important; }
+
+.tdOpen { width: 70px; }
+
+.openBtn {
+  font-size: 10.5px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--accent);
+  font-weight: 500;
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+  padding: 5px 10px;
+}
+
+.moreBtn {
+  display: block;
+  width: 100%;
+  text-align: center;
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted-2);
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+  font-weight: 500;
+  margin-top: 10px;
+  padding: 4px 0;
+}
+
+/* Hotspot histogram */
+.histogram {
+  display: flex;
+  align-items: flex-end;
+  gap: 3px;
+  height: 56px;
+  padding-bottom: 4px;
+  border-bottom: 1px solid var(--bk-rule-soft);
+}
+
+.bar {
+  flex: 1;
+  height: var(--h);
+  background: var(--paper);
+}
+
+.bar[data-hot] { background: var(--accent); }
+
+.bar[data-unread] { background: var(--bk-rule-soft); }
+
+.histogramLabels {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 4px;
+}
+
+.histLabel {
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  color: var(--muted-2);
+}
+
+.histLabelHot {
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  color: var(--accent);
+  font-weight: 500;
+}
+
+.histLabelDim {
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  color: var(--bk-rule);
+}
+
+/* Reading rhythm */
+.rhythm {
+  border-left: 1px solid var(--bk-rule-soft);
+  padding-left: 20px;
+}
+
+.rhythmList { margin-top: 10px; }
+
+.rhythmRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.rhythmLabel {
+  font-family: var(--sans);
+  font-size: 12px;
+  color: var(--paper);
+}
+
+.rhythmValue {
+  font-size: 10.5px;
+  color: var(--muted-2);
+}
+
+.rhythmValue[data-accent] { color: var(--good); }

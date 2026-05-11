@@ -1,11 +1,13 @@
 {
   "name": "bookending",
   "private": true,
-  "workspaces": ["client", "server"],
+  "workspaces": ["client", "server", "packages/shared"],
   "scripts": {
     "dev": "npm run dev --workspace=client",
     "dev:server": "npm run dev --workspace=server",
     "build": "npm run build --workspace=client",
-    "install:all": "npm install"
+    "install:all": "npm install",
+    "test": "npm run test --workspaces --if-present",
+    "test:coverage": "npm run test:coverage --workspaces --if-present"
   }
 }

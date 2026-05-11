@@ -1,0 +1,208 @@
+/* ── Section header ──────────────────────────────────────── */
+.sectionHeader {
+  padding: 40px 48px 0;
+}
+
+/* ── Filter bar ───────────────────────────────────────────── */
+
+.filterBar {
+  padding: 16px 48px;
+  border-bottom: 1px solid var(--rule);
+  display: flex;
+  align-items: center;
+}
+
+.filterBtns {
+  display: flex;
+  gap: 6px;
+}
+
+.filterBtn {
+  padding: 5px 12px;
+  background: transparent;
+  cursor: pointer;
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 11px;
+  letter-spacing: 0.02em;
+  border: 1px solid var(--rule);
+  color: var(--muted);
+  transition: border-color 0.1s, color 0.1s;
+}
+
+.filterBtn[data-active] {
+  border-color: var(--paper);
+  color: var(--paper);
+}
+
+.filterCount {
+  font-size: 10px;
+  opacity: 0.7;
+}
+
+/* ── Table ────────────────────────────────────────────────── */
+
+.tableHead {
+  display: grid;
+  grid-template-columns: 96px 180px 1.6fr 0.5fr 0.9fr 110px 1fr;
+  padding: 10px 48px;
+  border-bottom: 1px solid var(--rule);
+  background: color-mix(in srgb, var(--ink) 96%, var(--paper));
+}
+
+.tableHeadCell {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+  display: flex;
+  align-items: center;
+}
+
+.purchaseRow {
+  display: grid;
+  grid-template-columns: 96px 180px 1.6fr 0.5fr 0.9fr 110px 1fr;
+  padding: 14px 48px;
+  border-bottom: 1px solid var(--rule);
+  align-items: center;
+  font-size: 13px;
+}
+
+/* ── Row cells ────────────────────────────────────────────── */
+
+.orderNum {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--paper);
+  letter-spacing: 0.04em;
+}
+
+.authorName {
+  font-weight: 500;
+  color: var(--paper);
+  font-size: 13px;
+}
+
+.storeName {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 10px;
+  color: var(--muted);
+  letter-spacing: 0.04em;
+  margin-top: 3px;
+}
+
+.itemLabel {
+  font-size: 13px;
+  font-style: italic;
+  color: var(--paper);
+  line-height: 1.3;
+}
+
+.formatTags {
+  display: flex;
+  gap: 4px;
+  margin-top: 5px;
+  flex-wrap: wrap;
+}
+
+.formatTag {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 8px;
+  letter-spacing: 0.1em;
+  color: var(--muted);
+  border: 1px solid var(--rule);
+  padding: 1px 5px;
+  text-transform: uppercase;
+}
+
+.formatTag[data-digital] {
+  color: var(--accent);
+  border-color: color-mix(in srgb, var(--accent) 40%, transparent);
+}
+
+.total {
+  font-size: 17px;
+  color: var(--paper);
+}
+
+.date {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 10.5px;
+  color: var(--muted);
+  letter-spacing: 0.02em;
+}
+
+/* ── Row actions ──────────────────────────────────────────── */
+
+.actions {
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-end;
+}
+
+.downloadBtn {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink);
+  background: var(--accent);
+  border: 1px solid var(--accent);
+  padding: 4px 10px;
+  cursor: pointer;
+  transition: opacity 0.1s;
+}
+
+.downloadBtn:hover {
+  opacity: 0.85;
+}
+
+.tracking {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  text-align: right;
+}
+
+.trackingLabel {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.trackingNum {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 9.5px;
+  color: var(--paper);
+  letter-spacing: 0.02em;
+  word-break: break-all;
+}
+
+.deliveredNote {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+/* ── Empty state ──────────────────────────────────────────── */
+
+.empty {
+  padding: 60px 48px;
+  text-align: center;
+  color: var(--muted);
+}

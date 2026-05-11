@@ -1,0 +1,439 @@
+/* ── Layout ───────────────────────────────────────────────── */
+.identityGrid {
+  display: grid;
+  grid-template-columns: 1fr 360px;
+}
+
+.leftPane {
+  border-right: 1px solid var(--rule);
+}
+
+.identitySection {
+  padding: 32px 36px;
+  border-bottom: 1px solid var(--rule);
+}
+
+.sectionLabel {
+  margin-bottom: 24px;
+}
+
+/* ── Author header ────────────────────────────────────────── */
+.authorHeader {
+  display: flex;
+  gap: 28px;
+  align-items: flex-start;
+}
+
+.avatarBox {
+  width: 88px;
+  height: 88px;
+  flex-shrink: 0;
+  background: color-mix(in srgb, var(--ink) 80%, var(--paper));
+  border: 1px solid var(--rule);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  cursor: pointer;
+}
+
+.avatarLabel {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 8px;
+  color: var(--muted);
+  letter-spacing: 0.1em;
+}
+
+.authorFields {
+  flex: 1;
+}
+
+.nameGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  margin-bottom: 14px;
+}
+
+.fieldLabel {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 9.5px;
+  color: var(--muted);
+  letter-spacing: 0.12em;
+  margin-bottom: 6px;
+}
+
+/* ── Shared field / textarea styles ──────────────────────── */
+.field {
+  width: 100%;
+  background: transparent;
+  border: 1px solid var(--rule);
+  color: var(--paper);
+  padding: 9px 12px;
+  font-size: 13px;
+  font-family: var(--sans);
+  outline: none;
+  box-sizing: border-box;
+}
+
+.fieldSerif {
+  font-family: var(--serif);
+  font-style: italic;
+}
+
+.fieldSm {
+  font-size: 12.5px;
+}
+
+.ta {
+  width: 100%;
+  background: transparent;
+  border: 1px solid var(--rule);
+  color: var(--paper);
+  padding: 10px 12px;
+  font-size: 14px;
+  font-family: var(--serif);
+  font-style: italic;
+  line-height: 1.7;
+  outline: none;
+  resize: vertical;
+  box-sizing: border-box;
+}
+
+/* ── Bio section ──────────────────────────────────────────── */
+.bioSection {
+  padding: 28px 36px;
+  border-bottom: 1px solid var(--rule);
+}
+
+.bioHeader {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.bioModeBtns {
+  display: flex;
+}
+
+.bioModeBtn {
+  padding: 4px 12px;
+  background: transparent;
+  cursor: pointer;
+  font-family: var(--sans);
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  border: 1px solid var(--rule);
+  color: var(--muted);
+}
+
+.bioModeBtn + .bioModeBtn {
+  margin-left: -1px;
+}
+
+.bioModeBtn[data-active] {
+  border-color: var(--paper);
+  color: var(--paper);
+}
+
+.bioFooter {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 10px;
+}
+
+.bioCount {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 10px;
+  color: var(--muted);
+  letter-spacing: 0.08em;
+}
+
+/* ── Genre section ────────────────────────────────────────── */
+.genreSection {
+  padding: 28px 36px;
+  border-bottom: 1px solid var(--rule);
+}
+
+.genreLabel {
+  margin-bottom: 20px;
+}
+
+.genreGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 14px;
+}
+
+/* ── Social section ───────────────────────────────────────── */
+.socialSection {
+  padding: 28px 36px;
+}
+
+.socialHeader {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.socialRow {
+  display: grid;
+  grid-template-columns: 1.2fr 1.6fr 44px 1.1fr 0.7fr;
+  padding: 12px 0;
+  align-items: center;
+  gap: 16px;
+  border-bottom: 1px solid var(--rule);
+}
+
+.socialRow:last-child {
+  border-bottom: none;
+}
+
+.socialPlatform {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 10.5px;
+  color: var(--muted);
+  letter-spacing: 0.08em;
+}
+
+.socialHandle {
+  font-size: 13px;
+  font-family: var(--sans);
+  color: var(--paper);
+}
+
+.socialHandle[data-inactive] {
+  color: var(--muted);
+  font-style: italic;
+}
+
+.socialSpark {
+  display: flex;
+  align-items: center;
+}
+
+.socialStat {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 11px;
+  color: var(--paper);
+  display: flex;
+  align-items: baseline;
+  gap: 5px;
+  flex-wrap: wrap;
+}
+
+.socialStatSuffix {
+  color: var(--muted);
+  font-size: 10px;
+}
+
+.socialDelta {
+  font-size: 10px;
+}
+
+.socialDelta[data-positive] {
+  color: var(--good);
+}
+
+.socialDelta[data-negative] {
+  color: var(--danger);
+}
+
+.socialDelta[data-muted] {
+  color: var(--muted);
+}
+
+/* keep for any legacy references */
+.socialFollowers {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 11px;
+  color: var(--muted);
+}
+
+/* ── Subscribe page copy section ─────────────────────────── */
+.subscribeSection {
+  padding: 28px 36px 36px;
+  border-top: 1px solid var(--rule);
+}
+
+.subscribeLabel {
+  margin-bottom: 10px;
+}
+
+.subscribeSub {
+  font-style: italic;
+  font-size: 13px;
+  color: var(--muted);
+  margin: 0 0 24px;
+  line-height: 1.5;
+}
+
+.subscribeGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 32px;
+  align-items: start;
+}
+
+.subscribeFields {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.subscribeField {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.subscribeSaveRow {
+  display: flex;
+  gap: 10px;
+  padding-top: 4px;
+}
+
+/* ── Reader-facing preview card ───────────────────────────── */
+.subscribePreviewWrap {
+  position: sticky;
+  top: 24px;
+}
+
+.previewEyebrow {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 9.5px;
+  color: var(--muted);
+  letter-spacing: 0.12em;
+  margin-bottom: 10px;
+}
+
+.previewCard {
+  background:  #F4ECD8;
+  border: 1px solid #C8B991;
+  padding: 28px 24px 24px;
+  color: #1F1611;
+}
+
+.previewNewsletter {
+  font-family: "Newsreader", Georgia, serif;
+  font-size: 20px;
+  font-weight: 400;
+  letter-spacing: -0.01em;
+  color: #1F1611;
+  margin-bottom: 4px;
+}
+
+.previewAuthor {
+  font-family: "Inter", system-ui, sans-serif;
+  font-size: 11.5px;
+  color: #8B7857;
+  letter-spacing: 0.02em;
+  margin-bottom: 16px;
+}
+
+.previewRule {
+  height: 1px;
+  background: #C8B991;
+  margin-bottom: 16px;
+}
+
+.previewWhat {
+  font-family: "Newsreader", Georgia, serif;
+  font-style: italic;
+  font-size: 14px;
+  line-height: 1.65;
+  color: #1F1611;
+  margin: 0 0 12px;
+}
+
+.previewFreq {
+  font-family: "Inter", system-ui, sans-serif;
+  font-size: 11.5px;
+  color: #8B7857;
+  letter-spacing: 0.03em;
+  margin: 0 0 12px;
+}
+
+.previewDistinct {
+  font-family: "Newsreader", Georgia, serif;
+  font-style: italic;
+  font-size: 12.5px;
+  color: #5A4536;
+  line-height: 1.6;
+  margin: 0 0 20px;
+}
+
+.previewCta {
+  display: inline-block;
+  padding: 9px 20px;
+  background: #9A3324;
+  color: #F4ECD8;
+  font-family: "Inter", system-ui, sans-serif;
+  font-size: 12.5px;
+  font-weight: 500;
+  letter-spacing: 0.03em;
+  cursor: pointer;
+}
+
+/* ── Right pane — media mentions ──────────────────────────── */
+.rightPane {
+  padding: 28px;
+}
+
+.mentionsHeader {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 18px;
+}
+
+.mention {
+  padding: 14px 0;
+  border-bottom: 1px solid var(--rule);
+}
+
+.mention:last-child {
+  border-bottom: none;
+}
+
+.mentionHead {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 5px;
+}
+
+.mentionOutlet {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 10px;
+  color: var(--muted);
+  letter-spacing: 0.08em;
+}
+
+.mentionPiece {
+  font-style: italic;
+  font-size: 13.5px;
+  line-height: 1.4;
+  margin-bottom: 4px;
+}
+
+.mentionDate {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 9.5px;
+  color: var(--muted);
+  letter-spacing: 0.08em;
+}

@@ -1,0 +1,51 @@
+.root {
+  display: flex;
+  flex-direction: column;
+  min-height: calc(100vh - 62px);
+  background: var(--ink);
+}
+
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 12px 48px;
+  border-bottom: 1px solid var(--rule);
+  background: var(--ink-2);
+  overflow: hidden;
+}
+
+.breadcrumbPath {
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+  text-transform: uppercase;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.breadcrumbManuscript {
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  color: var(--paper-dim);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+/* ── Three-column layout ─────────────────────────────────────────── */
+
+.columns {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+}
+
+.content {
+  flex: 1;
+  min-width: 0;
+  padding: 32px 48px;
+  border-right: 1px solid var(--rule);
+}
+

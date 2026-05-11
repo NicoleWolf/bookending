@@ -1,0 +1,154 @@
+.panel {
+  width: 264px;
+  min-width: 264px;
+  display: flex;
+  flex-direction: column;
+  border-left: 1px solid var(--rule);
+  background: var(--ink-2);
+}
+
+/* ── Header ─────────────────────────────────────────────────────── */
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--rule);
+}
+
+.headerLabel {
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  color: var(--paper);
+  text-transform: uppercase;
+}
+
+.headerMeta {
+  font-size: 10px;
+  letter-spacing: 0.04em;
+  color: var(--muted);
+}
+
+/* ── Device toggle ───────────────────────────────────────────────── */
+
+.deviceToggle {
+  display: flex;
+  border-bottom: 1px solid var(--rule);
+}
+
+.deviceBtn {
+  flex: 1;
+  padding: 7px 4px;
+  font-size: 9px;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--muted);
+  background: none;
+  border: none;
+  border-right: 1px solid var(--rule);
+  cursor: pointer;
+  transition: color 0.1s, background 0.1s;
+}
+
+.deviceBtn:last-child {
+  border-right: none;
+}
+
+.deviceBtn[data-active] {
+  color: var(--paper);
+  background: var(--ink-3);
+}
+
+.deviceBtn:not([data-active]):hover {
+  color: var(--paper-dim);
+}
+
+/* ── Device frame ────────────────────────────────────────────────── */
+
+.frameWrap {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px 16px;
+  min-height: 0;
+}
+
+.deviceFrame {
+  border: 1px solid var(--rule);
+  background: var(--ink);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.deviceFrame[data-device="paperwhite"] {
+  width: 176px;
+  height: 234px;
+}
+
+.deviceFrame[data-device="phone"] {
+  width: 136px;
+  height: 260px;
+}
+
+.deviceFrame[data-device="tablet"] {
+  width: 196px;
+  height: 248px;
+}
+
+.frameEmpty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+}
+
+.frameEmptyText {
+  font-size: 9px;
+  letter-spacing: 0.07em;
+  color: var(--muted);
+  text-transform: uppercase;
+}
+
+/* ── EPUBCheck ───────────────────────────────────────────────────── */
+
+.epubcheck {
+  padding: 12px 16px 16px;
+  border-top: 1px solid var(--rule);
+}
+
+.epubcheckHeader {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+
+.epubcheckLabel {
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  color: var(--paper);
+  text-transform: uppercase;
+}
+
+.epubcheckSep {
+  font-size: 9px;
+  color: var(--muted);
+}
+
+.epubcheckMeta {
+  font-size: 9px;
+  letter-spacing: 0.07em;
+  color: var(--muted);
+  text-transform: uppercase;
+}
+
+.epubcheckStatus {
+  font-size: 10px;
+  line-height: 1.55;
+  color: var(--muted);
+  margin: 8px 0 0;
+}

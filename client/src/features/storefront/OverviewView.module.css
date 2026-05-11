@@ -1,0 +1,616 @@
+/* ── Action queue ─────────────────────────────────────────────── */
+
+.actionRow {
+  display: flex;
+  align-items: stretch;
+  border-bottom: 1px solid var(--rule);
+}
+
+.actionQueue {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  flex: 1;
+  border-right: 1px solid var(--rule);
+}
+
+.actionCell {
+  padding: 22px 24px;
+  border-right: 1px solid var(--rule);
+  background: none;
+  border-top: none;
+  border-bottom: none;
+  border-left: none;
+  border-right: 1px solid var(--rule);
+  cursor: pointer;
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  transition: background 0.1s;
+}
+
+.actionCell:last-child {
+  border-right: none;
+}
+
+.actionCell:hover:not([data-zero]) {
+  background: var(--ink-2);
+}
+
+.actionCell[data-zero] {
+  cursor: default;
+}
+
+.actionCount {
+  font-size: 38px;
+  font-weight: 300;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  color: var(--muted);
+  margin-bottom: 6px;
+}
+
+.actionCell:not([data-zero])[data-tone="accent"] .actionCount {
+  color: var(--accent);
+}
+
+.actionCell:not([data-zero])[data-tone="danger"] .actionCount {
+  color: var(--danger);
+}
+
+.actionLabel {
+  font-family: var(--mono);
+  font-size: 9.5px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--paper);
+}
+
+.actionCell[data-zero] .actionLabel {
+  color: var(--muted);
+}
+
+.actionSub {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.04em;
+  color: var(--muted);
+}
+
+.revenueCallout {
+  padding: 22px 28px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 5px;
+  min-width: 160px;
+  flex-shrink: 0;
+}
+
+.revenueCalloutLabel {
+  font-family: var(--mono);
+  font-size: 9.5px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.revenueCalloutValue {
+  font-size: 30px;
+  font-weight: 300;
+  line-height: 1;
+  letter-spacing: -0.02em;
+}
+
+.revenueCalloutSub {
+  font-family: var(--mono);
+  font-size: 9px;
+  color: var(--good);
+}
+
+/* ── Main grid ────────────────────────────────────────────────── */
+
+.mainGrid {
+  display: grid;
+  grid-template-columns: 1fr 380px;
+}
+
+.leftPanel {
+  border-right: 1px solid var(--rule);
+}
+
+/* ── Cumulative line chart ────────────────────────────────────── */
+
+.chartSection {
+  padding: 24px 32px;
+  border-bottom: 1px solid var(--rule);
+}
+
+.chartHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 18px;
+}
+
+.chartLegend {
+  display: flex;
+  gap: 18px;
+  align-items: center;
+}
+
+.legendThis,
+.legendPrev {
+  font-family: var(--mono);
+  font-size: 9.5px;
+  letter-spacing: 0.08em;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.legendThis::before,
+.legendPrev::before {
+  content: '';
+  display: inline-block;
+  width: 20px;
+  height: 1.5px;
+}
+
+.legendThis::before { background: var(--accent); }
+.legendPrev::before { background: var(--muted); }
+.legendThis { color: var(--accent); }
+.legendPrev { color: var(--muted); }
+
+.lineChart {
+  display: block;
+  width: 100%;
+  height: 72px;
+  overflow: visible;
+}
+
+.lineChartCurrent {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 1.5;
+}
+
+.lineChartPrev {
+  fill: none;
+  stroke: var(--muted);
+  stroke-width: 1.5;
+  stroke-dasharray: 4 3;
+}
+
+.chartDates {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 8px;
+}
+
+.chartDate {
+  font-family: var(--mono);
+  font-size: 9.5px;
+  color: var(--muted);
+  letter-spacing: 0.06em;
+}
+
+/* ── Conversion funnel ────────────────────────────────────────── */
+
+.funnelSection {
+  padding: 24px 32px;
+  border-bottom: 1px solid var(--rule);
+}
+
+.funnelStep {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.funnelStep:last-child {
+  margin-bottom: 0;
+}
+
+.funnelLabel {
+  font-family: var(--mono);
+  font-size: 9.5px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted);
+  width: 100px;
+  flex-shrink: 0;
+}
+
+.funnelBar {
+  flex: 1;
+  height: 3px;
+  background: var(--ink-3);
+  position: relative;
+}
+
+.funnelBar::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: var(--w);
+  background: var(--accent);
+}
+
+.funnelNum {
+  font-size: 16px;
+  font-weight: 300;
+  line-height: 1;
+  color: var(--paper);
+  width: 52px;
+  text-align: right;
+  flex-shrink: 0;
+}
+
+.funnelRate {
+  font-family: var(--mono);
+  font-size: 9.5px;
+  color: var(--muted);
+  width: 36px;
+  text-align: right;
+  flex-shrink: 0;
+}
+
+/* ── Recent orders ────────────────────────────────────────────── */
+
+.ordersHeader {
+  padding: 14px 32px;
+  border-bottom: 1px solid var(--rule);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.ordersHeaderSub {
+  font-family: var(--mono);
+  font-size: 9.5px;
+  color: var(--muted);
+  letter-spacing: 0.06em;
+}
+
+.orderRow {
+  display: grid;
+  grid-template-columns: 0.8fr 1.4fr 1fr 1.4fr 0.7fr 0.9fr;
+  padding: 12px 32px;
+  border-bottom: 1px solid var(--rule);
+  align-items: center;
+  font-size: 13px;
+}
+
+.orderRow:last-child {
+  border-bottom: none;
+}
+
+.orderNum {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  color: var(--muted);
+}
+
+.orderCustomer {
+  font-weight: 500;
+}
+
+.orderLocation {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--muted);
+}
+
+.orderItems {
+  font-style: italic;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.orderTotal {
+  font-style: italic;
+  font-size: 15px;
+}
+
+/* ── Right panel ──────────────────────────────────────────────── */
+
+.rightPanel {
+  padding: 24px 24px 32px;
+  display: flex;
+  flex-direction: column;
+}
+
+.rightHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 12px;
+}
+
+.visitLink {
+  background: transparent;
+  border: none;
+  color: var(--accent);
+  font-size: 11px;
+  font-family: var(--sans);
+  cursor: pointer;
+  letter-spacing: 0.04em;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+/* ── Cover warning ────────────────────────────────────────────── */
+
+.coverWarning {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  border: 1px solid var(--danger);
+  padding: 10px 12px;
+  margin-bottom: 12px;
+  background: var(--ink-3);
+}
+
+.coverWarningIcon {
+  font-family: var(--mono);
+  font-size: 9px;
+  font-weight: 600;
+  color: var(--danger);
+  width: 14px;
+  height: 14px;
+  border: 1px solid var(--danger);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.coverWarningText {
+  font-family: var(--sans);
+  font-size: 11.5px;
+  line-height: 1.55;
+  color: var(--paper);
+}
+
+/* ── Store preview (light-theme thumbnail) ────────────────────── */
+
+.storePreview {
+  border: 1px solid var(--rule);
+  background: #faf8f4;
+  color: #1a1814;
+  padding: 14px 12px;
+  margin-bottom: 12px;
+}
+
+.previewNav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #00000015;
+}
+
+.previewNavTitle {
+  font-style: italic;
+  font-size: 14px;
+  font-weight: 500;
+  color: #1a1814;
+}
+
+.previewNavLinks {
+  font-family: var(--mono);
+  font-size: 7.5px;
+  letter-spacing: 0.18em;
+  color: #00000055;
+}
+
+.previewGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.productCover {
+  aspect-ratio: 3 / 4;
+  background: #1a1612;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 8px;
+  position: relative;
+  margin-bottom: 6px;
+  overflow: hidden;
+}
+
+.productNoCover {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--mono);
+  font-size: 6.5px;
+  letter-spacing: 0.2em;
+  color: #4a3e30;
+  border: 1px dashed #3a2e22;
+}
+
+.productStockTag {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  font-family: var(--mono);
+  font-size: 6px;
+  letter-spacing: 0.12em;
+  color: #e8d9b8;
+  border: 1px solid #8a7a5e;
+  padding: 2px 4px;
+}
+
+.productAuthor {
+  font-family: var(--mono);
+  font-size: 5.5px;
+  letter-spacing: 0.18em;
+  color: #8a7a5e;
+  position: relative;
+  z-index: 1;
+}
+
+.productTitle {
+  font-style: italic;
+  font-size: 9px;
+  color: #e8d9b8;
+  line-height: 1.1;
+  position: relative;
+  z-index: 1;
+}
+
+.productMeta {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+
+.productType {
+  font-family: var(--mono);
+  font-size: 7.5px;
+  letter-spacing: 0.04em;
+  color: #00000088;
+  text-transform: uppercase;
+}
+
+.productPrice {
+  font-style: italic;
+  font-size: 12px;
+  font-weight: 500;
+  color: #1a1814;
+}
+
+.previewFooter {
+  text-align: center;
+  padding-top: 8px;
+  border-top: 1px solid #00000015;
+}
+
+.previewFooterText {
+  font-family: var(--mono);
+  font-size: 7px;
+  letter-spacing: 0.12em;
+  color: #00000055;
+}
+
+/* ── Preview actions + URL bar ────────────────────────────────── */
+
+.previewActions {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.urlBar {
+  padding: 11px 14px;
+  border: 1px solid var(--rule);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+}
+
+.urlLabel {
+  font-family: var(--mono);
+  font-size: 9.5px;
+  color: var(--muted);
+  letter-spacing: 0.1em;
+  margin-bottom: 3px;
+}
+
+.urlValue {
+  font-family: var(--mono);
+  font-size: 12px;
+}
+
+/* ── Geography ────────────────────────────────────────────────── */
+
+.geoSection {
+  border-top: 1px solid var(--rule);
+  padding-top: 20px;
+  margin-bottom: 24px;
+}
+
+.geoRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 9px;
+}
+
+.geoRow:last-child {
+  margin-bottom: 0;
+}
+
+.geoCountry {
+  font-family: var(--sans);
+  font-size: 11.5px;
+  color: var(--paper);
+  width: 108px;
+  flex-shrink: 0;
+}
+
+.geoBar {
+  flex: 1;
+  height: 3px;
+  background: var(--ink-3);
+  position: relative;
+}
+
+.geoBarFill {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: var(--pct);
+  background: var(--accent);
+}
+
+.geoPct {
+  font-family: var(--mono);
+  font-size: 9.5px;
+  color: var(--muted);
+  width: 28px;
+  text-align: right;
+  flex-shrink: 0;
+}
+
+/* ── Repeat customers ─────────────────────────────────────────── */
+
+.repeatSection {
+  border-top: 1px solid var(--rule);
+  padding-top: 20px;
+}
+
+.repeatDisplay {
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+}
+
+.repeatRate {
+  font-size: 38px;
+  font-weight: 300;
+  line-height: 1;
+  letter-spacing: -0.02em;
+}
+
+.repeatSub {
+  font-family: var(--mono);
+  font-size: 9.5px;
+  color: var(--muted);
+  line-height: 1.6;
+}

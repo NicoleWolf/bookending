@@ -1,0 +1,301 @@
+/* ── Toolbar ──────────────────────────────────────────────── */
+.toolbar {
+  padding: 16px 28px;
+  border-bottom: 1px solid var(--rule);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+}
+
+.searchBox {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+  max-width: 320px;
+  border: 1px solid var(--rule);
+  padding: 7px 12px;
+}
+
+.searchInput {
+  background: transparent;
+  border: none;
+  outline: none;
+  color: var(--paper);
+  font-size: 12.5px;
+  font-family: var(--sans);
+  width: 100%;
+}
+
+.toolbarRight {
+  display: flex;
+  gap: 8px;
+}
+
+.productCount {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 10.5px;
+  color: var(--muted);
+  align-self: center;
+  letter-spacing: 0.08em;
+}
+
+/* ── Table ───────────────────────────────────────────────── */
+.tableHead {
+  display: grid;
+  grid-template-columns: 2.4fr 1.4fr 0.7fr 0.9fr 0.8fr 0.8fr 40px;
+  padding: 10px 28px;
+  border-bottom: 1px solid var(--rule);
+  background: color-mix(in srgb, var(--ink) 96%, var(--paper));
+}
+
+.tableHeadCell {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.productRow {
+  display: grid;
+  grid-template-columns: 2.4fr 1.4fr 0.7fr 0.9fr 0.8fr 0.8fr 40px;
+  padding: 16px 28px;
+  border-bottom: 1px solid var(--rule);
+  align-items: center;
+  font-size: 13px;
+}
+
+.productRow:last-child {
+  border-bottom: none;
+}
+
+/* ── Product cell ────────────────────────────────────────── */
+.productCell {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.productThumb {
+  width: 28px;
+  height: 40px;
+  flex-shrink: 0;
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #1a1612;
+}
+
+.thumbLabel {
+  font-style: italic;
+  font-size: 5px;
+  color: #8a7a5e;
+  text-align: center;
+  line-height: 1.2;
+  padding: 0 3px;
+}
+
+.productName {
+  font-weight: 600;
+}
+
+.productMeta {
+  display: flex;
+  gap: 8px;
+  margin-top: 3px;
+}
+
+.productFeatured {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 9px;
+  color: var(--accent);
+  letter-spacing: 0.1em;
+}
+
+.productCoverStatus {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 9px;
+  color: var(--muted);
+  letter-spacing: 0.1em;
+}
+
+.productType {
+  font-style: italic;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.productPrice {
+  font-style: italic;
+  font-size: 17px;
+}
+
+.productStock {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 11px;
+  color: var(--muted);
+  letter-spacing: 0.06em;
+}
+
+.productSold {
+  font-style: italic;
+  font-size: 17px;
+}
+
+.productMore {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--muted);
+  justify-self: end;
+  padding: 0;
+}
+
+/* ── Empty state ─────────────────────────────────────────── */
+.emptyState {
+  padding: 48px 28px;
+  text-align: center;
+}
+
+.emptyText {
+  font-style: italic;
+  color: var(--muted);
+  font-size: 16px;
+}
+
+/* ── Cover images section ────────────────────────────────── */
+.coversSection {
+  border-top: 1px solid var(--rule);
+  margin-top: 8px;
+}
+
+.coversHeader {
+  padding: 14px 28px;
+  border-bottom: 1px solid var(--rule);
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+}
+
+.coversHeaderSub {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 10px;
+  color: var(--muted);
+  letter-spacing: 0.12em;
+}
+
+.coversGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  border-top: 1px solid var(--rule);
+}
+
+.coverItem {
+  padding: 24px 28px;
+  display: flex;
+  gap: 20px;
+  align-items: flex-start;
+  border-bottom: 1px solid var(--rule);
+}
+
+.coverItem:nth-child(odd) {
+  border-right: 1px solid var(--rule);
+}
+
+.coverThumb {
+  width: 64px;
+  height: 96px;
+  flex-shrink: 0;
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.coverInfo {
+  flex: 1;
+  min-width: 0;
+}
+
+.coverInfoHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+
+.coverInfoTitle {
+  font-weight: 600;
+  font-size: 13px;
+}
+
+.coverStatus {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 10px;
+  color: var(--muted);
+  letter-spacing: 0.08em;
+  margin-bottom: 14px;
+}
+
+.coverActions {
+  display: flex;
+  gap: 8px;
+}
+
+.coverManageHint {
+  font-family: var(--sans);
+  font-size: 12px;
+  color: var(--muted);
+  margin-bottom: 10px;
+}
+
+.coverManageLink {
+  background: none;
+  border: none;
+  padding: 0;
+  font-family: var(--sans);
+  font-size: 12px;
+  color: var(--accent);
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.coverManageLink:hover {
+  color: var(--paper);
+}
+
+.coverLinked {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.coverLinked[data-spaced] {
+  margin-top: 10px;
+}
+
+.coverDot {
+  width: 6px;
+  height: 6px;
+  background: var(--accent);
+  border-radius: 50%;
+}
+
+.coverLinkedText {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 9.5px;
+  color: var(--muted);
+  letter-spacing: 0.08em;
+}

@@ -1,0 +1,1441 @@
+/* ── Section wrapper ─────────────────────────────────────────────── */
+.section {
+  padding: 0;
+  border-bottom: 1px solid var(--rule);
+}
+
+/* ── Reading room chrome (back button + header) ───────────────────── */
+.backBtn {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+  background: none;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+  display: block;
+  margin-bottom: 16px;
+  transition: color 0.1s;
+}
+
+.backBtn:hover { color: var(--paper); }
+
+.roomHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 0;
+  padding: 28px 48px 24px;
+  border-bottom: 1px solid var(--rule);
+}
+
+.roomHeaderLeft {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.roomEyebrow {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+  text-transform: uppercase;
+}
+
+.roomTitle {
+  font-family: var(--serif);
+  font-size: 26px;
+  font-weight: 500;
+  color: var(--paper);
+}
+
+.roomKicker {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 11px;
+  color: var(--muted);
+  letter-spacing: 0.04em;
+}
+
+.roomHeaderActions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+/* ── Picker: stats panel ─────────────────────────────────────────── */
+.pickerStats {
+  border: 1px solid var(--rule);
+  margin-bottom: 32px;
+}
+
+.pickerStatsGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  border-bottom: 1px solid var(--rule);
+}
+
+.pickerStatCell {
+  padding: 20px 24px;
+  border-right: 1px solid var(--rule);
+}
+
+.pickerStatCell:last-child {
+  border-right: none;
+}
+
+.statLabel {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 9.5px;
+  color: var(--muted);
+  letter-spacing: 0.1em;
+  margin-bottom: 8px;
+}
+
+.statValue {
+  font-size: 28px;
+  font-style: italic;
+  font-weight: 400;
+  line-height: 1;
+  margin-bottom: 6px;
+}
+
+.statSub {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 10px;
+  color: var(--muted);
+  letter-spacing: 0.06em;
+}
+
+.progressStrip {
+  padding: 16px 24px;
+  display: flex;
+  align-items: center;
+  gap: 32px;
+}
+
+.progressBarOuter {
+  flex: 1;
+}
+
+.progressTrack {
+  height: 3px;
+  background: var(--rule);
+  position: relative;
+}
+
+.progressFill {
+  position: absolute;
+  inset: 0;
+  width: var(--progress, 0%);
+  background: var(--accent);
+  transition: width 0.4s ease;
+}
+
+.moodSummary {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+}
+
+.moodSummaryLabel {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 10px;
+  color: var(--muted);
+  letter-spacing: 0.08em;
+}
+
+.moodNone {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 10px;
+  color: var(--muted-2);
+  letter-spacing: 0.06em;
+}
+
+.moodPill {
+  padding: 3px 10px;
+  border: 1px solid var(--mood-c, var(--rule));
+  color: var(--mood-c, var(--muted));
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 10px;
+  letter-spacing: 0.06em;
+}
+
+/* ── Picker: manuscript cards ────────────────────────────────────── */
+.msGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+
+.msCard {
+  border: 1px solid var(--rule);
+  padding: 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  cursor: pointer;
+}
+
+.msCardHead {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+.msCoverWrap {
+  width: 44px;
+  height: 56px;
+  border: 1px solid var(--rule);
+  background: var(--ink-2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  position: relative;
+}
+
+.msCoverStrip {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: var(--rule);
+}
+
+.msCoverStrip[data-started] {
+  background: var(--accent);
+}
+
+.msCardInfo {
+  flex: 1;
+  min-width: 0;
+}
+
+.msCardTitle {
+  font-weight: 600;
+  font-size: 14px;
+  margin-bottom: 4px;
+}
+
+.msCardMeta {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 10px;
+  color: var(--muted);
+  letter-spacing: 0.08em;
+}
+
+.msBadgeGroup {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 5px;
+  flex-shrink: 0;
+}
+
+.serialBadge {
+  padding: 2px 8px;
+  border: 1px solid var(--accent);
+  color: var(--accent);
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 9px;
+  letter-spacing: 0.1em;
+}
+
+.newChBadge {
+  padding: 2px 8px;
+  background: var(--accent);
+  color: var(--ink);
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 9px;
+  letter-spacing: 0.1em;
+}
+
+.moodBadgeCard {
+  padding: 2px 8px;
+  border: 1px solid var(--mood-c, var(--rule));
+  color: var(--mood-c, var(--muted));
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 9px;
+  letter-spacing: 0.06em;
+}
+
+.msProgressRow {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+
+.msProgressLabel {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 9.5px;
+  color: var(--muted);
+  letter-spacing: 0.06em;
+}
+
+.msProgressPct {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 9.5px;
+  color: var(--muted);
+  letter-spacing: 0.06em;
+}
+
+.msProgressPct[data-complete] {
+  color: var(--accent);
+}
+
+.msBarTrack {
+  height: 3px;
+  background: var(--rule);
+  position: relative;
+}
+
+.msBarFill {
+  position: absolute;
+  inset: 0;
+  width: var(--progress, 0%);
+  background: var(--accent);
+  transition: width 0.4s ease;
+}
+
+.msNotes {
+  display: flex;
+  gap: 20px;
+}
+
+.msNoteItem {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.msNoteCount {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 10px;
+  color: var(--muted);
+  letter-spacing: 0.06em;
+}
+
+.msNoteCount[data-hasnotes] {
+  color: var(--paper);
+}
+
+.msStarRating {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 10px;
+  color: var(--accent);
+  letter-spacing: 0.06em;
+}
+
+.msMsgSent {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 10px;
+  color: var(--muted);
+  letter-spacing: 0.06em;
+}
+
+.chStrip {
+  display: flex;
+  gap: 3px;
+}
+
+.chSegment {
+  flex: 1;
+  height: 6px;
+  background: var(--rule);
+}
+
+.chSegment[data-done] {
+  background: var(--accent);
+}
+
+.chSegment[data-unreleased] {
+  background: color-mix(in srgb, var(--rule) 60%, transparent);
+  opacity: 0.4;
+}
+
+.msCTA {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 2px;
+}
+
+/* ── Release panel (writer mode) ─────────────────────────────────── */
+.releasePanel {
+  border: 1px solid var(--rule);
+  margin-bottom: 32px;
+}
+
+.releaseHeader {
+  padding: 14px 24px;
+  border-bottom: 1px solid var(--rule);
+  background: color-mix(in srgb, var(--ink) 94%, var(--paper));
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.releaseCount {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 10px;
+  color: var(--muted);
+  letter-spacing: 0.1em;
+}
+
+.releaseRow {
+  display: grid;
+  grid-template-columns: 32px 1fr 160px 180px;
+  padding: 14px 24px;
+  border-bottom: 1px solid var(--rule);
+  align-items: center;
+  gap: 16px;
+  background: transparent;
+}
+
+.releaseRow:last-child {
+  border-bottom: none;
+}
+
+.releaseRow[data-next] {
+  background: color-mix(in srgb, var(--ink) 97%, var(--accent));
+}
+
+.releaseNum {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 10px;
+  color: var(--muted);
+  letter-spacing: 0.08em;
+}
+
+.releaseTitle {
+  font-weight: 400;
+  color: var(--muted);
+  font-size: 13.5px;
+}
+
+.releaseTitle[data-released] {
+  font-weight: 500;
+  color: var(--paper);
+}
+
+.releaseParaCount {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 9.5px;
+  color: var(--muted);
+  letter-spacing: 0.06em;
+  margin-top: 3px;
+}
+
+.releaseLive {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.liveDot {
+  width: 6px;
+  height: 6px;
+  background: var(--good);
+  border-radius: 50%;
+}
+
+.liveText {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 9.5px;
+  color: var(--good);
+  letter-spacing: 0.08em;
+}
+
+.draftText {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 9.5px;
+  color: var(--muted);
+  letter-spacing: 0.08em;
+  opacity: 0.6;
+}
+
+.releaseRowActions {
+  justify-self: end;
+}
+
+.withdrawBtn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--muted);
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 9.5px;
+  letter-spacing: 0.06em;
+  padding: 0;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.releaseFooter {
+  padding: 14px 24px;
+  border-top: 1px solid var(--rule);
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.releaseURL {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 10px;
+  color: var(--muted);
+  letter-spacing: 0.08em;
+}
+
+/* ── Reading progress bar ─────────────────────────────────────────── */
+.readingProgress {
+  margin-bottom: 24px;
+}
+
+.readingProgressRow {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+
+.readingProgressLabel {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 10px;
+  color: var(--muted);
+  letter-spacing: 0.08em;
+}
+
+.readingProgressPct {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 10px;
+  color: var(--muted);
+  letter-spacing: 0.08em;
+}
+
+.readingProgressPct[data-complete] {
+  color: var(--accent);
+}
+
+.readingBarTrack {
+  height: 2px;
+  background: var(--rule);
+  position: relative;
+}
+
+.readingBarFill {
+  position: absolute;
+  inset: 0;
+  width: var(--progress, 0%);
+  background: var(--accent);
+  transition: width 0.4s ease;
+}
+
+/* ── Chapter tabs ────────────────────────────────────────────────── */
+.chTabs {
+  display: flex;
+  border-bottom: 1px solid var(--rule);
+  overflow-x: auto;
+  padding: 0 48px;
+}
+
+.chTab {
+  padding: 10px 18px;
+  white-space: nowrap;
+  background: transparent;
+  color: var(--muted);
+  font-family: var(--serif);
+  font-size: 12px;
+  font-style: italic;
+  font-weight: 400;
+  border: none;
+  border-right: 1px solid var(--rule);
+  border-bottom: 2px solid transparent;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+}
+
+.chTab:last-child {
+  border-right: none;
+}
+
+.chTab[data-active] {
+  color: var(--paper);
+  border-bottom-color: var(--accent);
+}
+
+.chTab[data-locked] {
+  cursor: default;
+}
+
+.chTabTitle {
+  font-family: var(--serif);
+  font-size: 12px;
+  font-style: italic;
+}
+
+.chTabLocked {
+  font-family: var(--serif);
+  font-size: 11px;
+  font-style: italic;
+  color: color-mix(in srgb, var(--muted) 55%, transparent);
+}
+
+.chUnreadDot {
+  display: inline-block;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--accent);
+  flex-shrink: 0;
+}
+
+.chNewBadge {
+  background: var(--accent);
+  color: var(--ink);
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 7.5px;
+  letter-spacing: 0.1em;
+  padding: 1px 5px;
+}
+
+/* ── Body grid ───────────────────────────────────────────────────── */
+.bodyGrid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 220px;
+  gap: 0;
+  align-items: start;
+  padding: 0 48px;
+}
+
+.bodyMain {
+  padding: 32px 40px 40px 0;
+  border-right: 1px solid var(--rule);
+}
+
+.instrBox {
+  border: 1px solid var(--rule);
+  padding: 16px 20px;
+  margin-bottom: 28px;
+  background: var(--ink-2);
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+}
+
+.instrLabel {
+  margin-bottom: 8px;
+}
+
+.instrText {
+  margin: 0;
+  font-size: 12.5px;
+  line-height: 1.7;
+  white-space: pre-line;
+  color: var(--muted);
+}
+
+.instrClose {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--muted);
+  font-size: 14px;
+  padding: 4px;
+  flex-shrink: 0;
+  line-height: 1;
+}
+
+.showInstrBtn {
+  margin-bottom: 20px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--muted);
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  padding: 0;
+}
+
+.chTitle {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin: 0 0 32px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid var(--rule);
+}
+
+.chTitleNum {
+  font-family: var(--serif);
+  font-style: italic;
+  font-weight: 400;
+  font-size: 22px;
+  color: var(--paper);
+}
+
+.chTitleName {
+  font-family: var(--serif);
+  font-style: italic;
+  font-weight: 400;
+  font-size: 18px;
+  color: var(--muted);
+}
+
+.chPara {
+  font-family: var(--serif);
+  font-size: 16px;
+  line-height: 1.8;
+  margin-bottom: 20px;
+  max-width: 68ch;
+  user-select: text;
+  cursor: text;
+}
+
+.chParaFirst::first-letter {
+  font-family: var(--serif);
+  font-size: 42px;
+  line-height: 0.85;
+  float: left;
+  margin: 4px 6px 0 0;
+  padding: 0;
+}
+
+.highlight {
+  border-bottom: 2px solid var(--accent);
+  background: var(--ink-3);
+  cursor: pointer;
+}
+
+.chNavRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 32px;
+  padding-top: 20px;
+  border-top: 1px solid var(--rule);
+}
+
+.chNavPage {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 10px;
+  color: var(--muted);
+  letter-spacing: 0.08em;
+}
+
+.caughtUpBox {
+  margin-top: 28px;
+  padding: 20px 24px;
+  border: 1px solid var(--rule);
+  background: color-mix(in srgb, var(--ink) 96%, var(--paper));
+}
+
+.caughtUpFlex {
+  display: flex;
+  align-items: flex-start;
+  gap: 20px;
+}
+
+.caughtUpLabel {
+  margin-bottom: 8px;
+}
+
+.caughtUpText {
+  font-style: italic;
+  font-size: 15px;
+  line-height: 1.6;
+  margin: 0 0 16px;
+  color: var(--muted);
+}
+
+.caughtUpRight {
+  text-align: right;
+  flex-shrink: 0;
+}
+
+.caughtUpCount {
+  font-size: 36px;
+  font-weight: 300;
+  line-height: 1;
+  letter-spacing: -0.02em;
+}
+
+.caughtUpCountOf {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 13px;
+  font-weight: 400;
+  color: var(--muted);
+}
+
+.caughtUpSub {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 9.5px;
+  color: var(--muted);
+  letter-spacing: 0.08em;
+  margin-top: 4px;
+}
+
+/* ── Notes sidebar ───────────────────────────────────────────────── */
+.notesPanel {
+  position: sticky;
+  top: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.newNoteBox {
+  border: 1px solid var(--accent);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.newNoteLabel {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 10.5px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.newNoteQuote {
+  margin: 0;
+  font-style: italic;
+  font-size: 13px;
+  line-height: 1.5;
+  padding-left: 12px;
+  border-left: 2px solid var(--accent);
+}
+
+/* ── Theme select (new note form) ────────────────────────────────── */
+.noteThemeSelect {
+  width: 100%;
+  padding: 7px 10px;
+  background: var(--ink-2);
+  border: 1px solid var(--rule);
+  color: var(--muted);
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  border-radius: 0;
+  outline: none;
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%236E6557'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  padding-right: 28px;
+}
+
+.noteThemeSelect[data-set] {
+  color: var(--paper);
+  border-color: var(--accent);
+}
+
+.noteThemeSelect:focus {
+  border-color: var(--muted);
+}
+
+.noteTextarea {
+  width: 100%;
+  min-height: 80px;
+  padding: 8px 10px;
+  resize: vertical;
+  background: var(--ink-2);
+  border: 1px solid var(--rule);
+  color: var(--paper);
+  font-family: var(--serif);
+  font-size: 13px;
+  line-height: 1.6;
+  border-radius: 0;
+  outline: none;
+  box-sizing: border-box;
+}
+
+.notesBox {
+  border: 1px solid var(--rule);
+}
+
+.notesHeader {
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--rule);
+  background: var(--ink-2);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.notesHeaderLabel {
+  flex-shrink: 0;
+}
+
+.notesTotal {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 10px;
+  color: var(--muted);
+}
+
+.notesEmpty {
+  padding: 28px 16px;
+  text-align: center;
+}
+
+.notesEmptyText {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 10px;
+  color: var(--muted);
+  letter-spacing: 0.1em;
+}
+
+.noteItem {
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--rule);
+  user-select: none;
+}
+
+.noteItem:last-child {
+  border-bottom: none;
+}
+
+.noteItemMeta {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 9.5px;
+  color: var(--muted);
+  letter-spacing: 0.06em;
+  margin-bottom: 6px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* ── Theme badge (saved note) ────────────────────────────────────── */
+.noteThemeBadge {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 8.5px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 2px 6px;
+  border: 1px solid;
+  border-radius: 0;
+}
+
+.noteThemeBadge[data-theme="pacing"]    { color: var(--danger);  border-color: var(--danger);  background: color-mix(in srgb, var(--danger)  8%, transparent); }
+.noteThemeBadge[data-theme="prose"]     { color: var(--accent);  border-color: var(--accent);  background: color-mix(in srgb, var(--accent)  8%, transparent); }
+.noteThemeBadge[data-theme="character"] { color: var(--muted);   border-color: var(--rule);    background: transparent; }
+.noteThemeBadge[data-theme="plot"]      { color: var(--muted);   border-color: var(--rule);    background: transparent; }
+.noteThemeBadge[data-theme="other"]     { color: var(--muted-2); border-color: var(--rule);    background: transparent; }
+
+.noteQuote {
+  margin: 0 0 8px;
+  font-style: italic;
+  font-size: 12.5px;
+  line-height: 1.5;
+  padding-left: 10px;
+  border-left: 2px solid var(--accent);
+}
+
+.noteEditTextarea {
+  width: 100%;
+  min-height: 72px;
+  padding: 6px 8px;
+  resize: vertical;
+  background: var(--ink-2);
+  border: 1px solid var(--rule);
+  color: var(--paper);
+  font-family: var(--serif);
+  font-size: 12.5px;
+  line-height: 1.6;
+  border-radius: 0;
+  outline: none;
+  box-sizing: border-box;
+  margin-bottom: 8px;
+}
+
+.noteText {
+  margin: 0 0 8px;
+  font-size: 12.5px;
+  line-height: 1.6;
+  color: var(--muted);
+}
+
+.noteEmpty {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 10px;
+  color: var(--muted-2);
+  letter-spacing: 0.06em;
+  margin: 0 0 8px;
+}
+
+.noteActions {
+  display: flex;
+  gap: 10px;
+}
+
+.noteActionBtn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 9.5px;
+  color: var(--muted);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+/* ── Impression / mood selector ──────────────────────────────────── */
+.impressionBox {
+  border: 1px solid var(--rule);
+  padding: 10px 16px;
+  background: var(--ink-2);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.impressionLabel {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 10.5px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+  flex-shrink: 0;
+}
+
+.impressionSelect {
+  flex: 1;
+  padding: 6px 10px;
+  background: var(--ink-2);
+  border: 1px solid var(--mood-c, var(--rule));
+  color: var(--mood-c, var(--muted));
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 10.5px;
+  letter-spacing: 0.06em;
+  border-radius: 0;
+  outline: none;
+  cursor: pointer;
+}
+
+/* ── Completion panel ────────────────────────────────────────────── */
+.completion {
+  margin-top: 40px;
+  border: 1px solid var(--rule);
+  padding: 32px;
+}
+
+.alreadySub {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.submitLabel {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 10.5px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.submitTitle {
+  font-style: italic;
+  font-weight: 400;
+  font-size: 22px;
+  margin: 0;
+  line-height: 1.3;
+}
+
+.submitSummary {
+  margin: 0;
+  font-size: 13px;
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+.finishHeader {
+  display: flex;
+  align-items: baseline;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.moodBadge {
+  padding: 2px 10px;
+  border: 1px solid var(--mood-c, var(--rule));
+  color: var(--mood-c, var(--muted));
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 10px;
+  letter-spacing: 0.06em;
+}
+
+.finishGrid {
+  display: grid;
+  grid-template-columns: 1fr 1.5fr;
+  gap: 36px;
+  align-items: start;
+}
+
+.starsLabel {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 10px;
+  color: var(--muted);
+  letter-spacing: 0.1em;
+  margin-bottom: 12px;
+}
+
+.starsRow {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+
+.compStarBtn {
+  width: 36px;
+  height: 36px;
+  cursor: pointer;
+  border: 1px solid var(--rule);
+  background: transparent;
+  color: var(--muted);
+  font-family: var(--serif);
+  font-size: 20px;
+  border-radius: 0;
+}
+
+.compStarBtn[data-lit] {
+  border-color: var(--accent);
+  background: var(--ink-3);
+  color: var(--accent);
+}
+
+.starRatingLabel {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 10px;
+  color: var(--muted);
+  letter-spacing: 0.06em;
+}
+
+.msgSection {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.msgLabel {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 10px;
+  color: var(--muted);
+  letter-spacing: 0.1em;
+}
+
+.msgTextarea {
+  width: 100%;
+  min-height: 110px;
+  padding: 8px 10px;
+  resize: vertical;
+  background: var(--ink-2);
+  border: 1px solid var(--rule);
+  color: var(--paper);
+  font-family: var(--serif);
+  font-size: 13px;
+  line-height: 1.6;
+  border-radius: 0;
+  outline: none;
+  box-sizing: border-box;
+}
+
+.noRatingHint {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 9.5px;
+  color: var(--muted);
+  letter-spacing: 0.06em;
+}
+
+/* ── Chapter tab note indicator ──────────────────────────────────── */
+.chTabNoteDot {
+  display: inline-block;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--accent);
+  flex-shrink: 0;
+}
+
+/* ── Author note card (right panel) ─────────────────────────────── */
+.authorNoteBox {
+  border: 1px solid var(--rule);
+  border-left: 3px solid color-mix(in srgb, var(--accent) 55%, transparent);
+  background: color-mix(in srgb, var(--accent) 4%, transparent);
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+}
+
+.authorNoteHead {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 9px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.authorNoteText {
+  font-family: var(--serif);
+  font-size: 13.5px;
+  line-height: 1.65;
+  color: var(--paper);
+  margin: 0;
+  font-style: italic;
+}
+
+/* ── Masthead reply pill ─────────────────────────────────────────── */
+.replyPill {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border: 1px solid var(--rule);
+  padding: 8px 14px;
+  align-self: flex-start;
+  flex-shrink: 0;
+  margin-top: 8px;
+}
+
+.replyPillAvatar {
+  width: 24px;
+  height: 24px;
+  background: var(--accent);
+  color: var(--ink);
+  font-family: var(--mono);
+  font-size: 9px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.replyPillText {
+  font-family: var(--serif);
+  font-size: 13px;
+  font-style: italic;
+  color: var(--paper);
+}
+
+/* ── Reader instructions (details/summary) ───────────────────────── */
+.instrDetails {
+  border-left: 2px solid color-mix(in srgb, var(--accent) 35%, transparent);
+  background: color-mix(in srgb, var(--accent) 3%, transparent);
+  padding: 12px 16px;
+  margin-bottom: 28px;
+}
+
+.instrSummary {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+  cursor: pointer;
+  list-style: none;
+  user-select: none;
+}
+
+.instrSummary::-webkit-details-marker { display: none; }
+
+.instrBody {
+  margin-top: 10px;
+}
+
+.instrText {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.7;
+  white-space: pre-line;
+  color: var(--muted);
+  font-style: italic;
+}
+
+/* ── Compose popover (inline, positioned in article) ─────────────── */
+.composePopover {
+  position: absolute;
+  left: 0;
+  right: 0;
+  z-index: 10;
+  background: var(--ink);
+  border: 1px solid var(--accent);
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+}
+
+.composeQuote {
+  margin: 0;
+  font-family: var(--serif);
+  font-size: 13px;
+  font-style: italic;
+  color: var(--muted);
+  line-height: 1.5;
+  padding-left: 10px;
+  border-left: 2px solid color-mix(in srgb, var(--accent) 50%, transparent);
+}
+
+.composeTextarea {
+  width: 100%;
+  min-height: 80px;
+  padding: 8px 10px;
+  resize: vertical;
+  background: var(--ink-2);
+  border: 1px solid var(--rule);
+  color: var(--paper);
+  font-family: var(--serif);
+  font-size: 14px;
+  line-height: 1.6;
+  border-radius: 0;
+  outline: none;
+  box-sizing: border-box;
+}
+
+.composeActions {
+  display: flex;
+  gap: 8px;
+}
+
+/* ── Submit card ─────────────────────────────────────────────────── */
+.submitCard {
+  margin-top: 36px;
+  border: 1px solid var(--rule);
+  border-left: 3px solid var(--accent);
+  padding: 20px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  background: color-mix(in srgb, var(--accent) 4%, var(--ink));
+}
+
+.submitCardHead {
+  font-family: var(--serif);
+  font-size: 16px;
+  font-style: italic;
+  font-weight: 400;
+  color: var(--paper);
+  margin: 0;
+}
+
+.submitCardBody {
+  font-family: var(--sans);
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--muted);
+  margin: 0;
+}
+
+/* ── Prev / next pagination ──────────────────────────────────────── */
+.chPagination {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 40px;
+  padding-top: 20px;
+  border-top: 1px solid var(--rule);
+}
+
+.chPaginationBtn {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-family: var(--serif);
+  font-size: 13px;
+  font-style: italic;
+  color: var(--muted);
+  padding: 0;
+  transition: color 0.15s;
+}
+
+.chPaginationBtn:hover {
+  color: var(--paper);
+}
+
+.chPaginationBtn[data-next] {
+  text-align: right;
+}
+
+/* ── Highlight hint ──────────────────────────────────────────────── */
+.highlightHint {
+  font-family: var(--serif);
+  font-size: 12px;
+  font-style: italic;
+  color: var(--muted);
+  text-align: center;
+  padding: 20px 0;
+  opacity: 0.7;
+}
+
+/* ── Room footer ─────────────────────────────────────────────────── */
+.roomFooter {
+  padding: 16px 48px;
+  border-top: 1px solid var(--rule);
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+  text-align: center;
+}

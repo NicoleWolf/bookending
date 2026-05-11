@@ -1,0 +1,207 @@
+.panel {
+  display: flex;
+  flex-direction: column;
+  border-left: 1px solid var(--rule);
+  background: var(--ink-2);
+  overflow: hidden;
+}
+
+/* ── Header ──────────────────────────────────────────────────────── */
+.head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 18px;
+  border-bottom: 1px solid var(--rule);
+  flex-shrink: 0;
+}
+
+.headTitle {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 9.5px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--paper);
+}
+
+.headBadge {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 9.5px;
+  letter-spacing: 0.1em;
+  color: var(--muted);
+  min-width: 18px;
+  text-align: right;
+}
+
+.headBadge[data-active] {
+  color: var(--accent);
+}
+
+/* ── Hint (no selection) ─────────────────────────────────────────── */
+.hint {
+  padding: 18px;
+  border-bottom: 1px solid var(--rule);
+  flex-shrink: 0;
+}
+
+.hintText {
+  font-size: 12.5px;
+  line-height: 1.6;
+  color: var(--muted);
+  margin: 0;
+  font-style: italic;
+}
+
+/* ── Annotation form (selection active) ─────────────────────────── */
+.form {
+  padding: 16px 18px;
+  border-bottom: 1px solid var(--rule);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  flex-shrink: 0;
+  background: color-mix(in srgb, var(--accent) 5%, transparent);
+  border-left: 3px solid var(--accent);
+}
+
+.formLabel {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 9px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.passage {
+  font-size: 13px;
+  font-style: italic;
+  line-height: 1.55;
+  color: var(--paper);
+  margin: 0;
+  border-left: 2px solid var(--rule);
+  padding-left: 10px;
+}
+
+.noteInput {
+  padding: 9px 10px;
+  background: var(--ink);
+  border: 1px solid var(--rule);
+  color: var(--paper);
+  font-family: var(--serif);
+  font-size: 13px;
+  line-height: 1.55;
+  border-radius: 0;
+  outline: none;
+  resize: none;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.noteInput:focus {
+  border-color: var(--muted);
+}
+
+.formActions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.clearBtn {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0 4px;
+}
+
+.clearBtn:hover {
+  color: var(--paper);
+}
+
+.submitBtn {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 9.5px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink);
+  background: var(--paper);
+  border: none;
+  cursor: pointer;
+  padding: 6px 14px;
+  border-radius: 0;
+}
+
+.submitBtn:hover {
+  background: var(--accent);
+}
+
+.submitBtn[data-disabled] {
+  opacity: 0.35;
+  cursor: default;
+}
+
+.submitBtn[data-disabled]:hover {
+  background: var(--paper);
+}
+
+/* ── Annotation list ─────────────────────────────────────────────── */
+.list {
+  flex: 1;
+  overflow-y: auto;
+}
+
+.empty {
+  padding: 20px 18px;
+  font-size: 12.5px;
+  font-style: italic;
+  color: var(--muted);
+  margin: 0;
+}
+
+.card {
+  padding: 14px 18px;
+  border-bottom: 1px solid var(--rule);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.card:last-child {
+  border-bottom: none;
+}
+
+.cardPassage {
+  font-size: 12.5px;
+  font-style: italic;
+  line-height: 1.5;
+  color: var(--paper);
+  margin: 0;
+  border-left: 2px solid var(--accent);
+  padding-left: 10px;
+}
+
+.cardNote {
+  font-size: 12.5px;
+  line-height: 1.55;
+  color: var(--muted);
+  margin: 0;
+}
+
+.cardTime {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 9px;
+  letter-spacing: 0.06em;
+  color: var(--muted-2);
+}

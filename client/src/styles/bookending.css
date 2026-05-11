@@ -1,0 +1,325 @@
+/* ─────────────────────────────────────────────────────────────────
+   Bookending Design System — Component Library
+   Global utility classes using --bk-* tokens.
+   Use these for new components that live on the warm-cream surface.
+   Existing components continue to use the --ink/--paper token set.
+   ───────────────────────────────────────────────────────────────── */
+
+/* ── Typography ──────────────────────────────────────────────────── */
+
+.bk-serif { font-family: var(--bk-serif); }
+.bk-sans  { font-family: var(--bk-sans);  }
+.bk-mono  { font-family: var(--bk-mono); font-feature-settings: "ss01"; letter-spacing: 0.02em; }
+.bk-hand  { font-family: var(--bk-hand); font-weight: 500; }
+
+.bk-label {
+  font-family: var(--bk-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--bk-muted-2);
+}
+
+.bk-smallcaps {
+  font-family: var(--bk-sans);
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  font-size: 10.5px;
+  font-weight: 600;
+  color: var(--bk-muted-2);
+}
+
+/* Display masthead — use once per page */
+.bk-display {
+  font-family: var(--bk-serif);
+  font-style: italic;
+  font-weight: 300;
+  font-size: clamp(96px, 14vw, 200px);
+  line-height: 0.86;
+  letter-spacing: -0.04em;
+  color: var(--bk-ink);
+}
+
+/* Section headline */
+.bk-h1 {
+  font-family: var(--bk-serif);
+  font-style: italic;
+  font-weight: 400;
+  font-size: clamp(38px, 4.4vw, 58px);
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  color: var(--bk-ink);
+  text-wrap: balance;
+}
+
+.bk-h2 {
+  font-family: var(--bk-serif);
+  font-style: italic;
+  font-weight: 500;
+  font-size: 24px;
+  line-height: 1.22;
+  letter-spacing: -0.01em;
+  color: var(--bk-ink);
+}
+
+.bk-lede {
+  font-family: var(--bk-serif);
+  font-size: 17px;
+  line-height: 1.55;
+  color: var(--bk-ink-soft);
+  text-wrap: pretty;
+}
+
+/* Drop cap — oxblood first letter */
+.bk-dropcap::first-letter {
+  font-family: var(--bk-serif);
+  font-style: italic;
+  font-weight: 500;
+  font-size: 4.2em;
+  line-height: 0.85;
+  float: left;
+  padding: 0.05em 0.1em 0 0;
+  color: var(--bk-oxblood);
+}
+
+/* Hand-drawn underline */
+.bk-underline {
+  background-image: linear-gradient(to right, var(--bk-oxblood) 0, var(--bk-oxblood) 100%);
+  background-repeat: no-repeat;
+  background-position: 0 92%;
+  background-size: 100% 3px;
+  padding-bottom: 2px;
+}
+
+/* Pullquote */
+.bk-pullquote {
+  font-family: var(--bk-serif);
+  font-style: italic;
+  font-weight: 400;
+  font-size: 28px;
+  line-height: 1.32;
+  color: var(--bk-ink);
+  text-wrap: pretty;
+  letter-spacing: -0.005em;
+  margin: 0;
+}
+.bk-pullquote::before {
+  content: "\201C";
+  font-family: var(--bk-hand);
+  color: var(--bk-oxblood);
+  font-size: 1.6em;
+  line-height: 0.5;
+  vertical-align: -0.1em;
+  margin-right: 0.1em;
+}
+
+/* Display stat */
+.bk-stat {
+  font-family: var(--bk-serif);
+  font-weight: 300;
+  font-size: 54px;
+  line-height: 1;
+  letter-spacing: -0.025em;
+  color: var(--bk-ink);
+}
+.bk-stat--xl { font-size: 84px; letter-spacing: -0.03em; }
+
+/* ── Rules ───────────────────────────────────────────────────────── */
+
+.bk-rule        { height: 1px; background: var(--bk-rule); border: 0; }
+.bk-rule-thick  { height: 2px; background: var(--bk-ink);  border: 0; }
+.bk-rule-double {
+  height: 5px;
+  border-top: 1px solid var(--bk-ink);
+  border-bottom: 1px solid var(--bk-ink);
+  border-left: 0;
+  border-right: 0;
+  background: transparent;
+}
+
+/* Section ornament divider */
+.bk-divider {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  justify-content: center;
+  padding: 14px 0;
+  color: var(--bk-oxblood);
+}
+.bk-divider::before,
+.bk-divider::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: currentColor;
+  opacity: 0.25;
+}
+
+/* Fleuron ornament */
+.bk-fleuron::before {
+  content: "❦";
+  color: var(--bk-oxblood);
+  margin: 0 0.3em;
+}
+
+/* ── Pill / status ───────────────────────────────────────────────── */
+
+.bk-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 9px;
+  border: 1px solid var(--bk-rule);
+  background: transparent;
+  color: var(--bk-muted-2);
+  font-family: var(--bk-mono);
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  border-radius: 0;
+}
+.bk-pill--paper       { background: var(--bk-paper-2); color: var(--bk-ink); }
+.bk-pill--oxblood     { border-color: var(--bk-oxblood); color: var(--bk-oxblood); }
+.bk-pill--oxblood-solid { background: var(--bk-oxblood); border-color: var(--bk-oxblood); color: var(--bk-paper); }
+.bk-pill--moss        { border-color: var(--bk-moss); color: var(--bk-moss); }
+.bk-pill--moss-solid  { background: var(--bk-moss); border-color: var(--bk-moss); color: var(--bk-paper); }
+.bk-pill--honey       { border-color: var(--bk-honey); color: var(--bk-honey); }
+.bk-pill--solid       { background: var(--bk-ink); border-color: var(--bk-ink); color: var(--bk-paper); }
+
+/* ── Button ──────────────────────────────────────────────────────── */
+
+.bk-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 16px;
+  border: 1px solid var(--bk-rule-strong);
+  background: transparent;
+  color: var(--bk-ink);
+  font-family: var(--bk-sans);
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  border-radius: 0;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.bk-btn--sm       { padding: 6px 11px; font-size: 11.5px; }
+.bk-btn--primary  { background: var(--bk-ink); border-color: var(--bk-ink); color: var(--bk-paper); }
+.bk-btn--oxblood  { background: var(--bk-oxblood); border-color: var(--bk-oxblood); color: var(--bk-paper); }
+.bk-btn--moss     { background: var(--bk-moss); border-color: var(--bk-moss); color: var(--bk-paper); }
+.bk-btn--soft     { background: var(--bk-paper-2); border-color: var(--bk-rule); color: var(--bk-ink); }
+.bk-btn--bare     { border-color: transparent; color: var(--bk-muted-2); }
+.bk-btn--link     { border-color: transparent; color: var(--bk-oxblood); }
+
+/* ── Avatar ──────────────────────────────────────────────────────── */
+
+.bk-avatar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--bk-ink);
+  color: var(--bk-paper);
+  font-family: var(--bk-serif);
+  font-style: italic;
+  font-weight: 500;
+  font-size: 13px;
+  flex-shrink: 0;
+  box-shadow: inset 0 0 0 1px rgba(0,0,0,0.05);
+  position: relative;
+}
+.bk-avatar--paper   { background: var(--bk-paper-3); color: var(--bk-ink); }
+.bk-avatar--oxblood { background: var(--bk-oxblood); color: var(--bk-paper); }
+.bk-avatar--moss    { background: var(--bk-moss); color: var(--bk-paper); }
+.bk-avatar--honey   { background: var(--bk-honey); color: var(--bk-ink); }
+.bk-avatar--plum    { background: var(--bk-plum); color: var(--bk-paper); }
+.bk-avatar--sand    { background: #A89065; color: var(--bk-ink); }
+.bk-avatar--rust    { background: #B85C3E; color: var(--bk-paper); }
+.bk-avatar--sage    { background: #7A8F75; color: var(--bk-ink); }
+.bk-avatar--ochre   { background: #9A7A3D; color: var(--bk-paper); }
+.bk-avatar--online::after {
+  content: "";
+  position: absolute;
+  right: -1px; bottom: -1px;
+  width: 9px; height: 9px;
+  border-radius: 50%;
+  background: var(--bk-moss);
+  box-shadow: 0 0 0 2px var(--bk-paper);
+}
+
+/* Avatar stack */
+.bk-avatar-stack { display: inline-flex; align-items: center; }
+.bk-avatar-stack > * + * { margin-left: -9px; }
+
+/* ── Card ────────────────────────────────────────────────────────── */
+
+.bk-card {
+  background: var(--bk-paper);
+  border: 1px solid var(--bk-rule);
+  padding: 24px;
+  box-shadow: var(--bk-shadow-paper);
+  border-radius: 0;
+}
+.bk-card--ink    { background: var(--bk-ink);  color: var(--bk-paper); border-color: var(--bk-ink); }
+.bk-card--moss   { background: var(--bk-moss); color: var(--bk-paper); border-color: var(--bk-moss); }
+.bk-card--accent { border: 1px solid var(--bk-ink); box-shadow: var(--bk-shadow-card-accent); }
+.bk-card--quiet  { box-shadow: none; background: var(--bk-paper-2); }
+
+/* ── Sticky note ─────────────────────────────────────────────────── */
+
+.bk-sticky {
+  background: var(--bk-paper-3);
+  transform: rotate(-1.2deg);
+  padding: 14px 18px;
+  box-shadow: var(--bk-shadow-sticky);
+  font-family: var(--bk-hand);
+  font-size: 22px;
+  color: var(--bk-ink);
+  line-height: 1.2;
+}
+
+/* ── Table — magazine ledger ─────────────────────────────────────── */
+
+.bk-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--bk-paper);
+  border: 1px solid var(--bk-rule);
+  font-size: 13px;
+}
+.bk-table thead { background: var(--bk-paper-2); }
+.bk-table th, .bk-table td {
+  padding: 14px 18px;
+  border-bottom: 1px solid var(--bk-rule);
+  text-align: left;
+  vertical-align: middle;
+}
+.bk-table th {
+  font-family: var(--bk-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--bk-muted-2);
+  font-weight: 400;
+}
+.bk-table tr:last-child td { border-bottom: 0; }
+
+/* ── Section head pattern ────────────────────────────────────────── */
+
+.bk-section-head { margin-bottom: 24px; }
+.bk-section-head .bk-label { display: block; margin-bottom: 12px; }
+.bk-section-head h2 { margin: 0; }
+.bk-section-head .bk-lede { margin-top: 20px; max-width: 680px; }
+
+/* ── Spark row — chart label layout ─────────────────────────────── */
+
+.bk-spark-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 14px;
+}

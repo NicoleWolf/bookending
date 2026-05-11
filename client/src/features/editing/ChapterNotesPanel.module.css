@@ -1,0 +1,198 @@
+.panel {
+  display: flex;
+  flex-direction: column;
+  border-left: 1px solid var(--rule);
+  background: var(--ink-2);
+  overflow: hidden;
+}
+
+/* ── Header ──────────────────────────────────────────────────────── */
+.head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 18px;
+  border-bottom: 1px solid var(--rule);
+  flex-shrink: 0;
+}
+
+.headTitle {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 9.5px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--paper);
+}
+
+.headStatus {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.headStatus[data-good] {
+  color: var(--good);
+}
+
+.headStatus[data-danger] {
+  color: var(--danger);
+}
+
+/* ── Chapter label ───────────────────────────────────────────────── */
+.chapterLabel {
+  padding: 9px 18px;
+  border-bottom: 1px solid var(--rule);
+  flex-shrink: 0;
+  background: color-mix(in srgb, var(--accent) 5%, transparent);
+  border-left: 3px solid var(--accent);
+}
+
+.chapterLabelText {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 9px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+/* ── Loading ─────────────────────────────────────────────────────── */
+.loading {
+  padding: 20px 18px;
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  color: var(--muted-2);
+  text-transform: uppercase;
+}
+
+/* ── Saved note card (view mode) ─────────────────────────────────── */
+.noteCard {
+  padding: 14px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.noteCardBody {
+  font-family: var(--serif);
+  font-size: 13px;
+  font-style: italic;
+  line-height: 1.6;
+  color: var(--paper);
+  margin: 0;
+  border-left: 2px solid var(--accent);
+  padding-left: 10px;
+}
+
+.noteCardTime {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 9px;
+  letter-spacing: 0.06em;
+  color: var(--muted-2);
+}
+
+.noteCardActions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 2px;
+}
+
+/* ── Edit form (compact) ─────────────────────────────────────────── */
+.body {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  padding: 16px 18px;
+}
+
+.textarea {
+  height: 140px;
+  padding: 10px 12px;
+  background: var(--ink);
+  border: 1px solid var(--rule);
+  color: var(--paper);
+  font-family: var(--serif);
+  font-size: 13.5px;
+  line-height: 1.65;
+  border-radius: 0;
+  outline: none;
+  resize: none;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.textarea:focus {
+  border-color: var(--muted);
+}
+
+.textarea::placeholder {
+  font-style: italic;
+  color: var(--muted-2);
+}
+
+/* ── Actions ─────────────────────────────────────────────────────── */
+.actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  padding: 12px 18px;
+  border-top: 1px solid var(--rule);
+  flex-shrink: 0;
+}
+
+.archiveBtn {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0 4px;
+  margin-right: auto;
+}
+
+.archiveBtn:hover {
+  color: var(--danger);
+}
+
+.saveBtn,
+.editBtn {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 9.5px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink);
+  background: var(--paper);
+  border: none;
+  cursor: pointer;
+  padding: 6px 14px;
+  border-radius: 0;
+}
+
+.saveBtn:hover,
+.editBtn:hover {
+  background: var(--accent);
+}
+
+.saveBtn[data-disabled] {
+  opacity: 0.35;
+  cursor: default;
+}
+
+.saveBtn[data-disabled]:hover {
+  background: var(--paper);
+}

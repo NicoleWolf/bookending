@@ -1,25 +1,115 @@
-@import url('https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500;0,6..72,600;0,6..72,700;1,6..72,400;1,6..72,500&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+/* Fonts loaded via <link> in index.html */
 
+/* ─────────────────────────────────────────────────────────────────
+   Default = light (warm cream — Bookending Design System)
+   All component CSS uses --ink* for surfaces and --paper for text,
+   so the semantic flip propagates automatically into every module.
+   ───────────────────────────────────────────────────────────────── */
 :root {
+  /* ── Surfaces — warm cream paper ────────────────────────────── */
+  --ink:       #F4ECD8;   /* primary surface — warm cream */
+  --ink-2:     #EDE2C7;   /* recessed / secondary */
+  --ink-3:     #E5D6B5;   /* cards / sticky */
+  --rule:      #C8B991;   /* hairline rules */
+  --rule-soft: rgba(200,185,145,0.15);
+
+  /* ── Text — deep brown ──────────────────────────────────────── */
+  --paper:     #1F1611;   /* primary text */
+  --paper-dim: #3A2A1E;   /* secondary text */
+  --muted:     #8B7857;   /* metadata */
+  --muted-2:   #6E5C40;   /* labels */
+
+  /* ── Accents ─────────────────────────────────────────────────── */
+  --accent:    #9A3324;   /* oxblood — lead accent */
+  --accent-2:  #BF4B3A;   /* lighter oxblood */
+  --good:      #3D5440;   /* moss — success / live */
+  --danger:    #BF4010;   /* error / destructive */
+  --moss:      #3D5440;   /* community moments */
+  --honey:     #C8941F;   /* warmth */
+  --plum:      #6B3A52;   /* secondary character */
+
+  /* Extended */
+  --teal-soft: #9AD3DA;
+  --teal-deep: #03444A;
+
+  /* ── Typography ─────────────────────────────────────────────── */
+  --serif: "Newsreader", "Iowan Old Style", Georgia, serif;
+  --sans:  "Inter", system-ui, sans-serif;
+  --mono:  "JetBrains Mono", ui-monospace, Menlo, monospace;
+  --hand:  "Caveat", "Newsreader", cursive;
+
+  /* ── Theme utilities ─────────────────────────────────────────── */
+  --body-grain:      var(--bk-grain);   /* paper texture — on by default */
+  --scrollbar-thumb: #C8B991;
+
+  /* ── Design system token layer (--bk-* prefix) ───────────────
+     Full warm-cream palette, always fixed regardless of theme.
+     Use these for new components built on the paper surface.
+     ─────────────────────────────────────────────────────────── */
+  --bk-paper:        #F4ECD8;
+  --bk-paper-2:      #EDE2C7;
+  --bk-paper-3:      #E5D6B5;
+  --bk-paper-deep:   #DCC99C;
+  --bk-ink:          #1F1611;
+  --bk-ink-2:        #3A2A1E;
+  --bk-ink-soft:     #5A4536;
+  --bk-muted:        #8B7857;
+  --bk-muted-2:      #6E5C40;
+  --bk-rule:         #C8B991;
+  --bk-rule-soft:    #D8CCA8;
+  --bk-rule-strong:  #5A4536;
+  --bk-oxblood:      #9A3324;
+  --bk-oxblood-deep: #6E2419;
+  --bk-moss:         #3D5440;
+  --bk-moss-soft:    #6B8568;
+  --bk-honey:        #C8941F;
+  --bk-plum:         #6B3A52;
+  --bk-serif: "Newsreader", "Iowan Old Style", Georgia, serif;
+  --bk-sans:  "Inter", system-ui, -apple-system, sans-serif;
+  --bk-mono:  "JetBrains Mono", ui-monospace, Menlo, monospace;
+  --bk-hand:  "Caveat", "Newsreader", cursive;
+  --bk-shadow-paper:       2px 2px 0 var(--bk-paper-deep);
+  --bk-shadow-card:        4px 4px 0 var(--bk-paper-deep);
+  --bk-shadow-card-accent: 4px 4px 0 var(--bk-oxblood);
+  --bk-shadow-sticky:      0 1px 0 rgba(31,22,17,0.08), 0 8px 18px rgba(31,22,17,0.10);
+  --bk-grain: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='280' height='280'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.78' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.18  0 0 0 0 0.13  0 0 0 0 0.09  0 0 0 0.06 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)' opacity='0.85'/></svg>");
+  --bk-radius: 0;
+  --bk-s-1: 4px;  --bk-s-2: 8px;   --bk-s-3: 12px;  --bk-s-4: 16px;
+  --bk-s-5: 24px; --bk-s-6: 32px;  --bk-s-7: 48px;  --bk-s-8: 56px;
+  --bk-s-9: 72px;
+
+  /* Manuscript card — soft invitation links */
+  --bk-invite:       #C9B58A;
+  --bk-invite-hover: #8A7B5C;
+}
+
+/* ─────────────────────────────────────────────────────────────────
+   Dark theme — deep editorial
+   ───────────────────────────────────────────────────────────────── */
+:root[data-theme="dark"] {
   --ink:       #0E0E10;
   --ink-2:     #16161A;
   --ink-3:     #1E1E23;
   --rule:      #2A2A30;
-  --rule-soft: #20202610;
+  --rule-soft: rgba(32,32,38,0.065);
   --paper:     #F4EFE6;
   --paper-dim: #D9D2C5;
   --muted:     #9A8E7A;
   --muted-2:   #6E6557;
-  --accent:    oklch(0.72 0.16 55);
-  --accent-2:  oklch(0.85 0.10 90);
-  --danger:    oklch(0.65 0.18 25);
-  --good:      oklch(0.78 0.12 145);
-
-  --serif: "Newsreader", "Iowan Old Style", Georgia, serif;
-  --sans:  "Inter", system-ui, sans-serif;
-  --mono:  "JetBrains Mono", ui-monospace, Menlo, monospace;
+  --accent:    #9A3324;   /* oxblood */
+  --accent-2:  #BF4B3A;
+  --good:      #00A8A8;   /* teal reads better on dark */
+  --danger:    #BF4010;
+  --moss:      #3D5440;
+  --honey:     #C8941F;
+  --plum:      #6B3A52;
+  --body-grain:      none;
+  --scrollbar-thumb: #2a2a30;
 }
 
+/* ─────────────────────────────────────────────────────────────────
+   Base
+   ───────────────────────────────────────────────────────────────── */
 *, *::before, *::after {
   box-sizing: border-box;
 }
@@ -36,6 +126,8 @@ body {
   font-size: 14px;
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
+  background-image: var(--body-grain);
+  background-attachment: fixed;
 }
 
 ::selection {
@@ -57,9 +149,12 @@ button {
 }
 
 ::-webkit-scrollbar { width: 10px; height: 10px; }
-::-webkit-scrollbar-thumb { background: #2a2a30; border-radius: 0; }
+::-webkit-scrollbar-thumb { background: var(--scrollbar-thumb); border-radius: 0; }
 ::-webkit-scrollbar-track { background: transparent; }
 
+/* ─────────────────────────────────────────────────────────────────
+   Global utility classes
+   ───────────────────────────────────────────────────────────────── */
 .mono {
   font-family: var(--mono);
   font-feature-settings: "ss01";
@@ -67,6 +162,11 @@ button {
 }
 
 .serif { font-family: var(--serif); }
+
+.hand {
+  font-family: var(--hand);
+  font-weight: 500;
+}
 
 .smallcaps {
   font-family: var(--sans);

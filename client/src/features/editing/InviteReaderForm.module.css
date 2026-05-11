@@ -1,0 +1,29 @@
+.form {
+  border: 1px solid var(--rule);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.inputs {
+  display: flex;
+  gap: 8px;
+}
+
+.input {
+  flex: 1;
+  padding: 8px 12px;
+  background: var(--ink-2);
+  border: 1px solid var(--rule);
+  color: var(--paper);
+  font-family: var(--sans);
+  font-size: 12.5px;
+  border-radius: 0;
+  outline: none;
+}
+
+.btns {
+  display: flex;
+  gap: 8px;
+}

@@ -1,0 +1,15 @@
+.grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr);
+  gap: var(--bk-s-7);
+  align-items: center;
+}
+
+.left  { min-width: 0; }
+
+.right {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

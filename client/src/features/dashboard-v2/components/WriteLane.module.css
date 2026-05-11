@@ -1,0 +1,206 @@
+.lane { margin-bottom: 28px; }
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 14px;
+}
+
+.eyebrow {
+  font-size: 10.5px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted-2);
+}
+
+.title {
+  font-style: italic;
+  font-size: 28px;
+  margin: 4px 0 0;
+  font-weight: 400;
+  color: var(--paper);
+}
+
+.meta { text-align: right; }
+
+.metaTitle {
+  font-family: var(--sans);
+  font-size: 12px;
+  color: var(--muted-2);
+  margin: 0 0 4px;
+}
+
+.metaStats {
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  color: var(--paper);
+  margin: 0;
+}
+
+.card {
+  background: var(--ink-2);
+  border: 1px solid var(--rule);
+}
+
+.section {
+  padding: 16px 20px;
+}
+
+.section:not(:last-child) {
+  border-bottom: 1px solid var(--bk-rule-soft);
+}
+
+.sectionHead {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 12px;
+}
+
+/* Reading room table */
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.tr:not(:first-child) td {
+  border-top: 1px solid var(--bk-rule-soft);
+}
+
+.tr td {
+  padding: 6px 0;
+  vertical-align: middle;
+}
+
+.tdAvatar { width: 28px; padding-right: 14px !important; }
+
+.tdName { padding-right: 14px !important; }
+
+.name {
+  font-size: 15px;
+  margin: 0;
+  color: var(--paper);
+}
+
+.nameMeta {
+  font-family: var(--sans);
+  font-size: 11px;
+  color: var(--muted-2);
+  margin: 0;
+}
+
+.tdProgress { padding-right: 14px !important; }
+
+.progressLabel {
+  font-size: 10.5px;
+  letter-spacing: 0.06em;
+  color: var(--muted-2);
+  display: block;
+  margin-bottom: 4px;
+}
+
+.track {
+  height: 4px;
+  background: var(--bk-rule-soft);
+  overflow: hidden;
+}
+
+.fill {
+  height: 100%;
+  width: var(--pct);
+  background: var(--accent);
+}
+
+.fill[data-muted] { background: var(--muted-2); }
+
+.tdPill { width: 110px; padding-right: 14px !important; }
+
+.tdNotes {
+  width: 50px;
+  font-style: italic;
+  font-size: 18px;
+  text-align: right;
+  color: var(--paper);
+}
+
+.moreBtn {
+  display: block;
+  width: 100%;
+  text-align: center;
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted-2);
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+  font-weight: 500;
+  margin-top: 10px;
+  padding: 4px 0;
+}
+
+/* Hotspot histogram */
+.histogram {
+  display: flex;
+  align-items: flex-end;
+  gap: 3px;
+  height: 56px;
+  padding-bottom: 4px;
+  border-bottom: 1px solid var(--bk-rule-soft);
+}
+
+.bar {
+  flex: 1;
+  height: var(--h);
+  background: var(--bk-rule);
+}
+
+.bar[data-hot] { background: var(--accent); }
+
+.histogramLabels {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 4px;
+}
+
+.histLabel {
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  color: var(--muted-2);
+}
+
+.histLabelHot {
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  color: var(--accent);
+  font-weight: 500;
+}
+
+/* Themes */
+.themes {
+  border-left: 1px solid var(--bk-rule-soft);
+  padding-left: 20px;
+}
+
+.themeList { margin-top: 10px; }
+
+.themeRow { margin-bottom: 8px; }
+
+.themeTopRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 4px;
+}
+
+.themeLabel {
+  font-family: var(--sans);
+  font-size: 12px;
+  color: var(--paper);
+}
+
+.themeCount {
+  font-size: 10.5px;
+  color: var(--muted-2);
+}

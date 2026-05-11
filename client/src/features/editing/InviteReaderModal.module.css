@@ -1,0 +1,398 @@
+/* ── Overlay & modal shell ───────────────────────────────────────── */
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: color-mix(in srgb, var(--ink) 80%, transparent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 200;
+  padding: 24px;
+}
+
+.modal {
+  background: var(--ink-2);
+  border: 1px solid var(--rule);
+  width: 100%;
+  max-width: 560px;
+  display: flex;
+  flex-direction: column;
+  max-height: calc(100vh - 48px);
+  overflow: hidden;
+}
+
+/* ── Header ──────────────────────────────────────────────────────── */
+.head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 24px;
+  border-bottom: 1px solid var(--rule);
+  flex-shrink: 0;
+}
+
+.headTitle {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 9.5px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--paper);
+}
+
+.closeBtn {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--muted);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 2px 4px;
+  line-height: 1;
+}
+
+.closeBtn:hover {
+  color: var(--paper);
+}
+
+/* ── Form body ───────────────────────────────────────────────────── */
+.formBody {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  overflow-y: auto;
+}
+
+.row2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.label {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 9.5px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.labelOpt {
+  text-transform: none;
+  letter-spacing: 0;
+  font-size: 9.5px;
+  color: var(--muted-2);
+}
+
+.input {
+  padding: 9px 12px;
+  background: var(--ink);
+  border: 1px solid var(--rule);
+  color: var(--paper);
+  font-family: var(--sans);
+  font-size: 13px;
+  border-radius: 0;
+  outline: none;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.input:focus {
+  border-color: var(--muted);
+}
+
+.textarea {
+  padding: 10px 12px;
+  background: var(--ink);
+  border: 1px solid var(--rule);
+  color: var(--paper);
+  font-family: var(--serif);
+  font-size: 13px;
+  line-height: 1.6;
+  border-radius: 0;
+  outline: none;
+  resize: vertical;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.textarea:focus {
+  border-color: var(--muted);
+}
+
+/* ── Manuscript options ──────────────────────────────────────────── */
+.msOptions {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.msOption {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 12px 14px;
+  border: 1px solid var(--rule);
+  cursor: pointer;
+  background: var(--ink);
+}
+
+.msOption[data-active] {
+  border-color: var(--paper);
+  background: var(--ink-3);
+}
+
+.radio {
+  margin-top: 2px;
+  flex-shrink: 0;
+  accent-color: var(--paper);
+}
+
+.msOptionText {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.msOptionTitle {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 14px;
+  color: var(--paper);
+  line-height: 1.3;
+}
+
+.msOptionMeta {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 9px;
+  color: var(--muted);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+/* ── Footer ──────────────────────────────────────────────────────── */
+.foot {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  padding: 16px 24px;
+  border-top: 1px solid var(--rule);
+  flex-shrink: 0;
+}
+
+/* ── Shared button styles ────────────────────────────────────────── */
+.btnGhost {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 10.5px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  background: none;
+  border: 1px solid var(--rule);
+  cursor: pointer;
+  padding: 8px 18px;
+  border-radius: 0;
+}
+
+.btnGhost:hover {
+  color: var(--paper);
+  border-color: var(--muted);
+}
+
+.btnPrimary {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 10.5px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink);
+  background: var(--paper);
+  border: 1px solid var(--paper);
+  cursor: pointer;
+  padding: 8px 18px;
+  border-radius: 0;
+}
+
+.btnPrimary:hover {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--ink);
+}
+
+.btnPrimary[data-disabled] {
+  opacity: 0.32;
+  cursor: default;
+}
+
+.btnPrimary[data-disabled]:hover {
+  background: var(--paper);
+  border-color: var(--paper);
+  color: var(--ink);
+}
+
+/* ── Preview step ────────────────────────────────────────────────── */
+.previewBody {
+  padding: 24px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.previewHint {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 10px;
+  color: var(--muted);
+  letter-spacing: 0.08em;
+  margin: 0;
+}
+
+/* Light-theme invite card (simulates email / browser) */
+.inviteCard {
+  border: 1px solid #d6d0c6;
+  background: #faf8f4;
+  color: #1a1814;
+}
+
+.inviteCardHead {
+  padding: 14px 22px;
+  background: #f0ece3;
+  border-bottom: 1px solid #d6d0c6;
+}
+
+.inviteCardBrand {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 15px;
+  color: #1a1814;
+  letter-spacing: 0.01em;
+}
+
+.inviteCardBody {
+  padding: 28px 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.inviteCardHeading {
+  font-family: var(--serif);
+  font-size: 21px;
+  font-weight: 400;
+  color: #1a1814;
+  margin: 0;
+  line-height: 1.3;
+}
+
+.inviteCardMs {
+  background: #ede8de;
+  padding: 14px 16px;
+  border-left: 3px solid var(--bk-oxblood);
+}
+
+.inviteCardMsTitle {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 16px;
+  color: #1a1814;
+  margin-bottom: 5px;
+}
+
+.inviteCardMsMeta {
+  font-family: var(--mono);
+  font-size: 9px;
+  color: #6b6258;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.inviteCardNote {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 14px;
+  line-height: 1.6;
+  color: #3a3530;
+  margin: 0;
+  padding-left: 14px;
+  border-left: 2px solid var(--bk-oxblood);
+}
+
+.inviteCardFrom {
+  font-size: 13px;
+  color: #6b6258;
+  margin: 0;
+}
+
+.inviteCardFrom strong {
+  color: #1a1814;
+  font-weight: 600;
+}
+
+.inviteCardCta {
+  display: inline-block;
+  padding: 10px 22px;
+  background: #1a1814;
+  color: #faf8f4;
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  cursor: default;
+  align-self: flex-start;
+}
+
+/* ── Sent confirmation ───────────────────────────────────────────── */
+.sentBody {
+  padding: 48px 32px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  text-align: center;
+}
+
+.sentIcon {
+  width: 48px;
+  height: 48px;
+  border: 1px solid var(--good);
+  color: var(--good);
+  font-size: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--serif);
+}
+
+.sentTitle {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 22px;
+  color: var(--paper);
+  margin: 0;
+}
+
+.sentSub {
+  font-size: 13.5px;
+  color: var(--muted);
+  margin: 0;
+  line-height: 1.6;
+  max-width: 320px;
+}
+
+.sentActions {
+  display: flex;
+  gap: 10px;
+  margin-top: 8px;
+}

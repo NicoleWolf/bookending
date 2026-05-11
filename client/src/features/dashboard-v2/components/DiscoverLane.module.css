@@ -1,0 +1,66 @@
+.lane {}
+
+.header { margin-bottom: 10px; }
+
+.eyebrow {
+  font-size: 10.5px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted-2);
+  display: block;
+}
+
+.title {
+  font-style: italic;
+  font-size: 18px;
+  margin: 2px 0 0;
+  font-weight: 400;
+}
+
+.card {
+  background: var(--ink-2);
+  border: 1px solid var(--rule);
+  padding: 16px 18px;
+}
+
+.cardHead {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 10px;
+}
+
+.cardEyebrow {
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  color: var(--muted-2);
+}
+
+.list {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 12px;
+}
+
+.item {
+  font-size: 14px;
+  margin-bottom: 4px;
+  color: var(--paper);
+}
+
+.status {
+  font-size: 12px;
+  font-style: normal;
+  color: var(--muted-2);
+}
+
+.btn {
+  font-size: 10.5px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--paper-dim);
+  background: transparent;
+  border: 1px solid var(--rule);
+  padding: 7px 12px;
+  cursor: pointer;
+}

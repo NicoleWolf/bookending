@@ -1,0 +1,218 @@
+.wrap {
+  padding: 32px 48px;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.loading {
+  padding: 32px 48px;
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted-2);
+}
+
+/* ── Section ─────────────────────────────────────────────────────── */
+.section {
+  border: 1px solid var(--rule);
+  margin-bottom: 16px;
+}
+
+.sectionHead {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 18px;
+  border-bottom: 1px solid var(--rule);
+  background: var(--ink-2);
+
+  /* reset button styles when used as toggle */
+  width: 100%;
+  text-align: left;
+  font: inherit;
+  color: inherit;
+  cursor: default;
+}
+
+.sectionHead[data-toggle] {
+  cursor: pointer;
+  border-bottom: none;
+}
+
+.sectionHead[data-toggle]:hover .sectionTitle {
+  color: var(--paper);
+}
+
+.sectionTitle {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 9.5px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--paper);
+  flex: 1;
+}
+
+.sectionCount {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 9.5px;
+  letter-spacing: 0.1em;
+  color: var(--muted);
+}
+
+.toggleIcon {
+  font-family: var(--mono);
+  font-size: 9px;
+  color: var(--muted-2);
+  margin-left: 4px;
+}
+
+/* ── Empty state ─────────────────────────────────────────────────── */
+.empty {
+  padding: 18px 18px;
+  font-size: 12.5px;
+  font-style: italic;
+  color: var(--muted);
+  line-height: 1.55;
+}
+
+/* ── Note list ───────────────────────────────────────────────────── */
+.noteList {
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── Note card ───────────────────────────────────────────────────── */
+.noteCard {
+  padding: 16px 18px;
+  border-bottom: 1px solid var(--rule);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.noteCard:last-child {
+  border-bottom: none;
+}
+
+.noteCard[data-archived] {
+  opacity: 0.7;
+}
+
+.noteCard[data-archived]:hover {
+  opacity: 1;
+}
+
+.noteCardHead {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.noteCardChapter {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 9px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.noteCardTime {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 9px;
+  letter-spacing: 0.06em;
+  color: var(--muted-2);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.noteCardBody {
+  font-family: var(--serif);
+  font-size: 14px;
+  line-height: 1.65;
+  color: var(--paper);
+  margin: 0;
+}
+
+.noteCardError {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 9.5px;
+  color: var(--danger);
+  letter-spacing: 0.04em;
+  margin: 0;
+}
+
+/* ── Card actions ────────────────────────────────────────────────── */
+.noteCardActions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.actionBtn {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+}
+
+.actionBtn:hover {
+  color: var(--paper);
+}
+
+.actionBtnRestore {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--accent);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+}
+
+.actionBtnRestore:hover {
+  opacity: 0.8;
+}
+
+.actionBtnDanger {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--danger);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+}
+
+.actionBtnDanger:hover {
+  opacity: 0.75;
+}
+
+.confirmText {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 9px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted);
+}

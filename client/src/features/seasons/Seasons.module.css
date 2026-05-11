@@ -1,0 +1,357 @@
+/* ── Header ───────────────────────────────────────────────── */
+.header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  padding: 32px 32px 24px;
+  border-bottom: 1px solid var(--rule);
+}
+
+.headerMeta {
+  flex: 1;
+}
+
+.headerEyebrow {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  color: var(--muted);
+  margin-bottom: 10px;
+}
+
+.headerTitle {
+  font-style: italic;
+  font-weight: 400;
+  font-size: 32px;
+  margin: 0 0 14px;
+  letter-spacing: -0.015em;
+}
+
+.headerDates {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 11px;
+  color: var(--muted);
+  letter-spacing: 0.06em;
+}
+
+.dateSep {
+  color: var(--rule);
+}
+
+.dateLabel {
+  margin-left: 6px;
+  padding: 2px 8px;
+  border: 1px solid var(--rule);
+  font-size: 9.5px;
+  letter-spacing: 0.1em;
+  color: var(--accent);
+}
+
+/* ── Stats strip ──────────────────────────────────────────── */
+.headerStats {
+  display: flex;
+  gap: 0;
+  border-left: 1px solid var(--rule);
+  margin-left: 24px;
+}
+
+.statBox {
+  padding: 0 28px;
+  border-right: 1px solid var(--rule);
+  text-align: center;
+}
+
+.statBox:last-child {
+  border-right: none;
+}
+
+.statNum {
+  font-size: 36px;
+  font-weight: 300;
+  letter-spacing: -0.02em;
+  line-height: 1;
+  color: var(--muted);
+}
+
+.statNum[data-active] {
+  color: var(--accent);
+}
+
+.statLabel {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 9.5px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-top: 6px;
+}
+
+/* ── Channel strip ────────────────────────────────────────── */
+.channelStrip {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 32px;
+  border-bottom: 1px solid var(--rule);
+  background: color-mix(in srgb, var(--ink) 96%, var(--paper));
+}
+
+.channelLabel {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 9.5px;
+  letter-spacing: 0.1em;
+  color: var(--muted);
+  margin-right: 4px;
+}
+
+.channelTag {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 9.5px;
+  letter-spacing: 0.06em;
+  color: var(--paper);
+  border: 1px solid var(--rule);
+  padding: 2px 8px;
+}
+
+/* ── Tabs ─────────────────────────────────────────────────── */
+.tabs {
+  display: flex;
+  border-bottom: 1px solid var(--rule);
+}
+
+.tab {
+  padding: 12px 20px;
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  cursor: pointer;
+  font-family: var(--sans);
+  font-size: 11.5px;
+  letter-spacing: 0.02em;
+  color: var(--muted);
+  transition: color 0.12s, border-color 0.12s;
+}
+
+.tab:hover {
+  color: var(--paper);
+}
+
+.tab[data-active] {
+  color: var(--paper);
+  border-bottom-color: var(--accent);
+}
+
+/* ── Checklist tab ────────────────────────────────────────── */
+.checklist {
+  display: flex;
+  flex-direction: column;
+}
+
+.taskRow {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  padding: 18px 32px;
+  border-bottom: 1px solid var(--rule);
+  transition: background 0.1s;
+}
+
+.taskRow:last-child {
+  border-bottom: none;
+}
+
+.taskRow:hover {
+  background: color-mix(in srgb, var(--ink) 96%, var(--paper));
+}
+
+.taskRow[data-status="done"] {
+  opacity: 0.6;
+}
+
+.taskCheck {
+  width: 20px;
+  height: 20px;
+  border: 1px solid var(--rule);
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 1px;
+}
+
+.taskCheck[data-status="done"] {
+  background: var(--good);
+  border-color: var(--good);
+}
+
+.taskCheck[data-status="in-progress"] {
+  border-color: var(--accent);
+}
+
+.taskBody {
+  flex: 1;
+  min-width: 0;
+}
+
+.taskWeek {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 9.5px;
+  letter-spacing: 0.1em;
+  color: var(--muted);
+  margin-bottom: 5px;
+}
+
+.taskText {
+  font-size: 13.5px;
+  line-height: 1.45;
+}
+
+.taskDue {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 9.5px;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+  margin-top: 6px;
+}
+
+.taskDue[data-this-week] {
+  color: var(--accent);
+}
+
+.taskRight {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.taskAction {
+  font-family: var(--sans);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.03em;
+  color: var(--accent);
+  background: transparent;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+/* ── Channels tab ─────────────────────────────────────────── */
+.channelsTab {
+  display: flex;
+  flex-direction: column;
+}
+
+.channelRow {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 18px 32px;
+  border-bottom: 1px solid var(--rule);
+}
+
+.channelRow:last-child {
+  border-bottom: none;
+}
+
+.channelRowName {
+  width: 120px;
+  flex-shrink: 0;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.channelRowNote {
+  flex: 1;
+  font-style: italic;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+/* ── Timeline tab ─────────────────────────────────────────── */
+.timelineTab {
+  padding: 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.timelineRow {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+.timelineWeek {
+  width: 100px;
+  flex-shrink: 0;
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 9.5px;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+  padding-top: 3px;
+  text-align: right;
+}
+
+.timelineLine {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.timelineDot {
+  width: 12px;
+  height: 12px;
+  border: 2px solid var(--rule);
+  background: var(--ink);
+  flex-shrink: 0;
+}
+
+.timelineDot[data-status="done"] {
+  background: var(--good);
+  border-color: var(--good);
+}
+
+.timelineDot[data-status="in-progress"] {
+  border-color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 30%, var(--ink));
+}
+
+.timelineConnector {
+  width: 2px;
+  flex: 1;
+  min-height: 32px;
+  background: var(--rule);
+}
+
+.timelineTask {
+  flex: 1;
+  font-size: 13px;
+  color: var(--muted);
+  padding-bottom: 28px;
+  line-height: 1.45;
+}
+
+.timelineRow[data-status="done"] .timelineTask {
+  opacity: 0.55;
+}
+
+.timelineRow[data-status="in-progress"] .timelineTask,
+.timelineRow[data-status="upcoming"] .timelineTask {
+  color: var(--paper);
+}

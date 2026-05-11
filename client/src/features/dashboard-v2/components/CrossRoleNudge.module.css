@@ -1,0 +1,47 @@
+.nudge {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  background: var(--ink-2);
+  border-left: 3px solid var(--accent);
+  padding: 10px 16px;
+  margin-bottom: 22px;
+}
+
+.message {
+  font-style: italic;
+  font-size: 13px;
+  color: var(--paper-dim);
+  margin: 0;
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+}
+
+.switchBtn {
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--accent);
+  font-weight: 500;
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.dismissBtn {
+  font-size: 14px;
+  letter-spacing: 0;
+  color: var(--muted-2);
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+  line-height: 1;
+  padding: 0 2px;
+}

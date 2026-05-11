@@ -1,0 +1,95 @@
+.stack {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  z-index: 500;
+  pointer-events: none;
+}
+
+.toast {
+  pointer-events: auto;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 14px;
+  align-items: start;
+  padding: 14px 16px;
+  width: 340px;
+  background: var(--ink-2);
+  border: 1px solid var(--rule);
+  border-left: 3px solid var(--accent);
+  animation: slideIn 0.2s ease;
+}
+
+@keyframes slideIn {
+  from { transform: translateX(20px); opacity: 0; }
+  to   { transform: translateX(0);    opacity: 1; }
+}
+
+.toast[data-type="DEADLINE_WARNING"] {
+  border-left-color: var(--danger);
+}
+
+.toast[data-type="ENCOURAGEMENT"] {
+  border-left-color: var(--good);
+}
+
+.body {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.stage {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.message {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 13.5px;
+  line-height: 1.4;
+  color: var(--paper);
+  margin: 0;
+}
+
+.cta {
+  display: inline-block;
+  margin-top: 6px;
+  font-family: var(--sans);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  color: var(--accent);
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  text-align: left;
+}
+
+.cta:hover {
+  text-decoration: underline;
+}
+
+.dismiss {
+  color: var(--muted-2);
+  font-size: 13px;
+  padding: 0;
+  line-height: 1;
+  background: none;
+  border: none;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.dismiss:hover {
+  color: var(--paper);
+}

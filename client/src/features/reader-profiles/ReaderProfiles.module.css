@@ -1,0 +1,875 @@
+/* ── Section header ─────────────────────────────────────────────── */
+.sectionHeader {
+  padding: 40px 48px 0;
+}
+
+/* ── Filter bar ──────────────────────────────────────────────────── */
+
+.filterBar {
+  display: flex;
+  align-items: flex-start;
+  gap: 32px;
+  padding: 24px 48px 24px;
+  flex-wrap: wrap;
+}
+
+.filterGroup {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.filterLabel {
+  font-family: var(--mono);
+  font-size: 9.5px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
+  padding-top: 6px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.filterPills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.filterPill {
+  font-family: var(--mono);
+  font-size: 9.5px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+  background: none;
+  border: 1px solid var(--rule);
+  padding: 4px 10px;
+  cursor: pointer;
+  transition: border-color 0.1s, color 0.1s;
+}
+
+.filterPill:hover {
+  color: var(--paper);
+  border-color: var(--muted);
+}
+
+.filterPill[data-active] {
+  color: var(--ink);
+  background: var(--paper);
+  border-color: var(--paper);
+}
+
+.filterToggle {
+  display: flex;
+  border: 1px solid var(--rule);
+}
+
+.filterToggleBtn {
+  font-family: var(--mono);
+  font-size: 9.5px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+  background: none;
+  border: none;
+  padding: 5px 14px;
+  cursor: pointer;
+  transition: background 0.1s, color 0.1s;
+}
+
+.filterToggleBtn:not(:last-child) {
+  border-right: 1px solid var(--rule);
+}
+
+.filterToggleBtn[data-active] {
+  color: var(--ink);
+  background: var(--paper);
+}
+
+/* ── Directory grid ──────────────────────────────────────────────── */
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1px;
+  background: var(--rule);
+  border: 1px solid var(--rule);
+  margin: 0 48px 48px;
+}
+
+.emptyState {
+  padding: 64px 48px;
+  font-family: var(--sans);
+  font-size: 13px;
+  color: var(--muted);
+  text-align: center;
+}
+
+/* ── Reader card ─────────────────────────────────────────────────── */
+
+.card {
+  background: var(--ink);
+  padding: 24px 24px 20px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  transition: background 0.1s;
+}
+
+.card:hover {
+  background: var(--ink-2);
+}
+
+.cardHead {
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+}
+
+.cardAvatarWrap {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.availPip {
+  position: absolute;
+  bottom: 2px;
+  right: 2px;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--muted);
+  border: 2px solid var(--ink);
+}
+
+.availPip[data-open] {
+  background: var(--good);
+}
+
+.card:hover .availPip {
+  border-color: var(--ink-2);
+}
+
+.cardMeta {
+  flex: 1;
+  min-width: 0;
+}
+
+.cardName {
+  font-family: var(--sans);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--paper);
+  line-height: 1.3;
+}
+
+.cardLocation {
+  font-family: var(--sans);
+  font-size: 11px;
+  color: var(--muted);
+  margin-top: 2px;
+}
+
+.cardGenres {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: 6px;
+}
+
+.genreTag {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+  background: var(--ink-3);
+  padding: 2px 6px;
+  border: 1px solid var(--rule);
+}
+
+.cardBio {
+  font-family: var(--sans);
+  font-size: 12.5px;
+  line-height: 1.65;
+  color: var(--muted);
+  margin: 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.labelsRow {
+  min-height: 24px;
+  padding: 8px 0 2px;
+}
+
+.readerLabel {
+  font-style: italic;
+  font-size: 13.5px;
+  color: var(--paper);
+  line-height: 1;
+}
+
+.labelDot {
+  font-family: var(--serif);
+  font-size: 13.5px;
+  color: var(--muted);
+}
+
+.cardFoot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: auto;
+}
+
+.cardInviteBtn {
+  font-family: var(--sans);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  color: var(--accent);
+  background: none;
+  border: 1px solid var(--accent);
+  padding: 5px 14px;
+  cursor: pointer;
+  transition: background 0.1s, color 0.1s;
+}
+
+.cardInviteBtn:hover {
+  background: var(--accent);
+  color: var(--ink);
+}
+
+.cardInviteBtn[data-disabled] {
+  color: var(--muted);
+  border-color: var(--rule);
+  cursor: default;
+}
+
+.cardInviteBtn[data-disabled]:hover {
+  background: none;
+  color: var(--muted);
+}
+
+/* ── Profile page ────────────────────────────────────────────────── */
+
+.profileWrap {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 32px 48px 64px;
+}
+
+.backBtn {
+  font-family: var(--sans);
+  font-size: 12px;
+  color: var(--muted);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  margin-bottom: 28px;
+  letter-spacing: 0.02em;
+}
+
+.backBtn:hover {
+  color: var(--paper);
+}
+
+.profileHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 24px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid var(--rule);
+}
+
+.profileHeaderLeft {
+  display: flex;
+  align-items: flex-start;
+  gap: 20px;
+}
+
+.profileAvatarWrap {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.profileAvailPip {
+  position: absolute;
+  bottom: 3px;
+  right: 3px;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--muted);
+  border: 3px solid var(--ink);
+}
+
+.profileAvailPip[data-open] {
+  background: var(--good);
+}
+
+.profileName {
+  font-family: var(--serif);
+  font-size: 26px;
+  color: var(--paper);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.profileYou {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  background: var(--ink-3);
+  border: 1px solid var(--rule);
+  padding: 2px 7px;
+  vertical-align: middle;
+}
+
+.profileLocation {
+  font-family: var(--sans);
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 4px;
+}
+
+.profileGenres {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: 8px;
+}
+
+.profileJoined {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--muted);
+  letter-spacing: 0.05em;
+  margin-top: 8px;
+}
+
+.profileHeaderRight {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 14px;
+  flex-shrink: 0;
+}
+
+.inviteBtnLarge {
+  font-family: var(--sans);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--ink);
+  background: var(--accent);
+  border: 1px solid var(--accent);
+  padding: 9px 24px;
+  cursor: pointer;
+  transition: opacity 0.1s;
+}
+
+.inviteBtnLarge:hover {
+  opacity: 0.85;
+}
+
+.inviteBtnLarge[data-disabled] {
+  background: var(--ink-3);
+  border-color: var(--rule);
+  color: var(--muted);
+  cursor: default;
+}
+
+.inviteBtnLarge[data-disabled]:hover {
+  opacity: 1;
+}
+
+/* ── Profile labels strip ────────────────────────────────────────── */
+
+.profileLabelsStrip {
+  display: flex;
+  align-items: stretch;
+  border-top: 1px solid var(--rule);
+  border-bottom: 1px solid var(--rule);
+  margin-bottom: 36px;
+}
+
+.profileLabelCell {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  padding: 20px 16px;
+}
+
+.profileLabelCategory {
+  font-family: var(--mono);
+  font-size: 8.5px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.profileLabelValue {
+  font-style: italic;
+  font-size: 20px;
+  color: var(--paper);
+  line-height: 1;
+}
+
+.stripDiv {
+  width: 1px;
+  background: var(--rule);
+  margin: 12px 0;
+  flex-shrink: 0;
+}
+
+/* ── Profile body ────────────────────────────────────────────────── */
+
+.profileBody {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+.profileSection {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.profileSectionLabel {
+  font-family: var(--mono);
+  font-size: 9.5px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
+  border-bottom: 1px solid var(--rule);
+  padding-bottom: 8px;
+}
+
+.profileBio {
+  font-size: 15px;
+  line-height: 1.75;
+  color: var(--paper);
+  margin: 0;
+  max-width: 640px;
+}
+
+.genreList {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  max-width: 400px;
+}
+
+.genreListItem {
+  display: flex;
+  align-items: center;
+  padding: 10px 14px;
+  background: var(--ink-2);
+  border: 1px solid var(--rule);
+}
+
+.genreListName {
+  font-family: var(--sans);
+  font-size: 13px;
+  color: var(--paper);
+}
+
+/* ── Invite modal ────────────────────────────────────────────────── */
+
+.inviteOverlay {
+  position: fixed;
+  inset: 0;
+  background: color-mix(in srgb, var(--ink) 80%, transparent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 200;
+  padding: 24px;
+}
+
+.inviteModal {
+  background: var(--ink-2);
+  border: 1px solid var(--rule);
+  width: 100%;
+  max-width: 560px;
+  display: flex;
+  flex-direction: column;
+  max-height: calc(100vh - 48px);
+  overflow: hidden;
+}
+
+.inviteHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 24px;
+  border-bottom: 1px solid var(--rule);
+  flex-shrink: 0;
+}
+
+.inviteHeadTitle {
+  font-family: var(--mono);
+  font-size: 9.5px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--paper);
+}
+
+.inviteClose {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--muted);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 2px 4px;
+  line-height: 1;
+}
+
+.inviteClose:hover {
+  color: var(--paper);
+}
+
+.inviteFormBody {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  overflow-y: auto;
+}
+
+.inviteNoMs {
+  font-family: var(--sans);
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--muted);
+  margin: 0;
+  padding: 16px 0;
+}
+
+.inviteReaderRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  background: var(--ink-3);
+  border: 1px solid var(--rule);
+}
+
+.inviteReaderName {
+  font-family: var(--sans);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--paper);
+}
+
+.inviteReaderMeta {
+  font-family: var(--mono);
+  font-size: 9.5px;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+  margin-top: 2px;
+}
+
+.inviteField {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.inviteLabel {
+  font-family: var(--mono);
+  font-size: 9.5px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.inviteLabelOpt {
+  text-transform: none;
+  letter-spacing: 0;
+  font-size: 9.5px;
+  color: var(--muted-2);
+}
+
+.inviteMsOptions {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.inviteMsOption {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 12px 14px;
+  border: 1px solid var(--rule);
+  cursor: pointer;
+  background: var(--ink);
+}
+
+.inviteMsOption[data-active] {
+  border-color: var(--paper);
+  background: var(--ink-3);
+}
+
+.inviteRadio {
+  margin-top: 2px;
+  flex-shrink: 0;
+  accent-color: var(--paper);
+}
+
+.inviteMsOptionText {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.inviteMsTitle {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 14px;
+  color: var(--paper);
+  line-height: 1.3;
+}
+
+.inviteMsMeta {
+  font-family: var(--mono);
+  font-size: 9px;
+  color: var(--muted);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.inviteTextarea {
+  padding: 10px 12px;
+  background: var(--ink);
+  border: 1px solid var(--rule);
+  color: var(--paper);
+  font-family: var(--serif);
+  font-size: 13px;
+  line-height: 1.6;
+  outline: none;
+  resize: vertical;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.inviteTextarea:focus {
+  border-color: var(--muted);
+}
+
+.inviteFoot {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  padding: 16px 24px;
+  border-top: 1px solid var(--rule);
+  flex-shrink: 0;
+}
+
+.inviteBtnGhost {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  background: none;
+  border: 1px solid var(--rule);
+  cursor: pointer;
+  padding: 8px 18px;
+}
+
+.inviteBtnGhost:hover {
+  color: var(--paper);
+  border-color: var(--muted);
+}
+
+.inviteBtnPrimary {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink);
+  background: var(--paper);
+  border: 1px solid var(--paper);
+  cursor: pointer;
+  padding: 8px 18px;
+}
+
+.inviteBtnPrimary:hover {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--ink);
+}
+
+/* ── Preview step ────────────────────────────────────────────────── */
+
+.invitePreviewBody {
+  padding: 24px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.invitePreviewHint {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--muted);
+  letter-spacing: 0.08em;
+  margin: 0;
+}
+
+/* Light-theme invite card — matches InviteReaderModal exactly */
+.inviteCard {
+  border: 1px solid #d6d0c6;
+  background: #faf8f4;
+  color: #1a1814;
+}
+
+.inviteCardHead {
+  padding: 14px 22px;
+  background: #f0ece3;
+  border-bottom: 1px solid #d6d0c6;
+}
+
+.inviteCardBrand {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 15px;
+  color: #1a1814;
+}
+
+.inviteCardBody {
+  padding: 28px 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.inviteCardHeading {
+  font-family: var(--serif);
+  font-size: 21px;
+  font-weight: 400;
+  color: #1a1814;
+  margin: 0;
+  line-height: 1.3;
+}
+
+.inviteCardMs {
+  background: #ede8de;
+  padding: 14px 16px;
+  border-left: 3px solid var(--bk-oxblood, #6b2737);
+}
+
+.inviteCardMsTitle {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 16px;
+  color: #1a1814;
+  margin-bottom: 5px;
+}
+
+.inviteCardMsMeta {
+  font-family: var(--mono);
+  font-size: 9px;
+  color: #6b6258;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.inviteCardNote {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 14px;
+  line-height: 1.6;
+  color: #3a3530;
+  margin: 0;
+  padding-left: 14px;
+  border-left: 2px solid var(--bk-oxblood, #6b2737);
+}
+
+.inviteCardFrom {
+  font-size: 13px;
+  color: #6b6258;
+  margin: 0;
+}
+
+.inviteCardFrom strong {
+  color: #1a1814;
+  font-weight: 600;
+}
+
+.inviteCardCta {
+  display: inline-block;
+  padding: 10px 22px;
+  background: #1a1814;
+  color: #faf8f4;
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  cursor: default;
+  align-self: flex-start;
+}
+
+/* ── Sent confirmation ───────────────────────────────────────────── */
+
+.inviteSentBody {
+  padding: 48px 32px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  text-align: center;
+}
+
+.inviteSentIcon {
+  width: 48px;
+  height: 48px;
+  border: 1px solid var(--good);
+  color: var(--good);
+  font-size: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--serif);
+}
+
+.inviteSentTitle {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 22px;
+  color: var(--paper);
+  margin: 0;
+}
+
+.inviteSentSub {
+  font-size: 13.5px;
+  color: var(--muted);
+  margin: 0;
+  line-height: 1.6;
+  max-width: 320px;
+}
+
+.inviteSentActions {
+  display: flex;
+  gap: 10px;
+  margin-top: 8px;
+}

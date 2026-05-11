@@ -1,0 +1,7 @@
+.card {
+  background: var(--bk-ink);
+  color: var(--bk-paper);
+}
+
+.card[data-density="full"]    { padding: var(--bk-s-8); }
+.card[data-density="compact"] { padding: var(--bk-s-5) var(--bk-s-6); }

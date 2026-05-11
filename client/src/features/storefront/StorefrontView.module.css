@@ -1,0 +1,455 @@
+/* ── Root ──────────────────────────────────────────────── */
+
+.root {
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+}
+
+/* ── Edit bar ──────────────────────────────────────────── */
+
+.editBar {
+  background: var(--ink-2);
+  border-bottom: 1px solid var(--rule);
+  padding: 0 48px;
+  height: 46px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  flex-shrink: 0;
+}
+
+.editBarLeft {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.editBarDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--muted-2);
+  flex-shrink: 0;
+  transition: background 0.2s;
+}
+
+.editBarDot[data-active] {
+  background: var(--accent);
+}
+
+.editBarUrl {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--muted);
+  letter-spacing: 0.08em;
+}
+
+.editBarCenter {
+  display: flex;
+  justify-content: center;
+}
+
+.editToggle {
+  font-family: var(--mono);
+  font-size: 9.5px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 6px 18px;
+  border: 1px solid var(--rule);
+  color: var(--muted);
+  background: none;
+  cursor: pointer;
+  transition: border-color 0.1s, color 0.1s;
+}
+
+.editToggle:hover,
+.editToggle[data-active] {
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
+.editBarRight {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 220px;
+  justify-content: flex-end;
+}
+
+.editBarDiscard {
+  font-family: var(--mono);
+  font-size: 9.5px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  background: none;
+  border: 1px solid var(--rule);
+  padding: 5px 14px;
+  cursor: pointer;
+}
+
+.editBarDiscard:hover {
+  color: var(--paper);
+  border-color: var(--muted);
+}
+
+.editBarSave {
+  font-family: var(--mono);
+  font-size: 9.5px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink);
+  background: var(--paper);
+  border: 1px solid var(--paper);
+  padding: 5px 14px;
+  cursor: pointer;
+  transition: background 0.1s;
+}
+
+.editBarSave:hover {
+  background: var(--accent);
+  border-color: var(--accent);
+}
+
+/* ── Storefront (light theme) ──────────────────────────── */
+
+.storefront {
+  background: #faf8f4;
+  color: #1a1814;
+  flex: 1;
+}
+
+/* Nav */
+.sfNav {
+  padding: 22px 64px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.sfNavBrand {
+  font-style: italic;
+  font-size: 22px;
+  font-weight: 500;
+  color: #1a1814;
+}
+
+.sfNavLinks {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.22em;
+  color: #00000044;
+}
+
+.sfRule {
+  border: none;
+  border-top: 1px solid #d6d0c6;
+  margin: 0;
+}
+
+/* Hero */
+.sfHero {
+  padding: 52px 64px 48px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+.sfHeroBody {
+  max-width: 640px;
+}
+
+.sfHeroName {
+  font-size: 52px;
+  font-weight: 400;
+  color: #1a1814;
+  line-height: 1.05;
+  letter-spacing: -0.01em;
+  margin-bottom: 18px;
+}
+
+.sfHeroTagline {
+  font-style: italic;
+  font-size: 22px;
+  color: #3a3530;
+  line-height: 1.4;
+  margin-bottom: 12px;
+}
+
+.sfHeroLocation {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: #8a7a5e;
+}
+
+/* Products */
+.sfProducts {
+  padding: 40px 64px 64px;
+}
+
+.sfProductsHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 28px;
+}
+
+.sfProductsLabel {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #00000044;
+}
+
+.sfProductGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 28px;
+}
+
+.sfProduct {
+  display: flex;
+  flex-direction: column;
+}
+
+.sfProductCover {
+  aspect-ratio: 2 / 3;
+  background: #1a1612;
+  margin-bottom: 12px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 14px 12px;
+}
+
+.sfProductAuthor {
+  font-family: var(--mono);
+  font-size: 7px;
+  letter-spacing: 0.2em;
+  color: #8a7a5e;
+}
+
+.sfProductTitle {
+  font-style: italic;
+  font-size: 13px;
+  color: #e8d9b8;
+  line-height: 1.2;
+}
+
+.sfProductType {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #8a7a5e;
+  margin-bottom: 10px;
+}
+
+.sfProductFooter {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: auto;
+}
+
+.sfProductPrice {
+  font-style: italic;
+  font-size: 20px;
+  color: #1a1814;
+}
+
+.sfProductCta {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #faf8f4;
+  background: #1a1814;
+  border: none;
+  padding: 7px 14px;
+  cursor: pointer;
+  transition: background 0.1s;
+}
+
+.sfProductCta:hover {
+  background: #3a3530;
+}
+
+.emptyFeatured {
+  font-family: var(--sans);
+  font-size: 13px;
+  color: #8a7a5e;
+  padding: 32px 0;
+  font-style: italic;
+}
+
+/* Footer */
+.sfFooter {
+  padding: 22px 64px;
+  border-top: 1px solid #d6d0c6;
+  text-align: center;
+}
+
+.sfFooterText {
+  font-family: var(--mono);
+  font-size: 8.5px;
+  letter-spacing: 0.2em;
+  color: #00000035;
+}
+
+/* ── Edit controls (overlaid on light theme) ─────────────── */
+
+.sectionEditBtn {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #6b6258;
+  background: none;
+  border: 1px solid #d6d0c6;
+  padding: 5px 14px;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: border-color 0.1s, color 0.1s;
+}
+
+.sectionEditBtn:hover {
+  color: #1a1814;
+  border-color: #8a7a5e;
+}
+
+.sectionEditPanel {
+  background: #f0ece3;
+  border: 1px solid #d6d0c6;
+  border-top: none;
+  padding: 20px 64px;
+}
+
+.editPanelRow {
+  display: flex;
+  gap: 16px;
+}
+
+.editPanelField {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex: 1;
+}
+
+.editPanelLabel {
+  font-family: var(--mono);
+  font-size: 9.5px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #6b6258;
+}
+
+.editPanelInput {
+  font-family: var(--sans);
+  font-size: 13px;
+  color: #1a1814;
+  background: #faf8f4;
+  border: 1px solid #d6d0c6;
+  padding: 8px 10px;
+  outline: none;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.editPanelInput:focus {
+  border-color: #8a7a5e;
+}
+
+.editPanelActions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+  margin-top: 16px;
+}
+
+.editPanelCancel {
+  font-family: var(--mono);
+  font-size: 9.5px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #6b6258;
+  background: none;
+  border: 1px solid #d6d0c6;
+  padding: 6px 14px;
+  cursor: pointer;
+}
+
+.editPanelApply {
+  font-family: var(--mono);
+  font-size: 9.5px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #faf8f4;
+  background: #1a1814;
+  border: 1px solid #1a1814;
+  padding: 6px 14px;
+  cursor: pointer;
+}
+
+/* Product checklist */
+.productCheckList {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  margin-bottom: 4px;
+}
+
+.productCheckRow {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 10px 0;
+  border-bottom: 1px solid #d6d0c6;
+  cursor: pointer;
+}
+
+.productCheckRow:last-child {
+  border-bottom: none;
+}
+
+.productCheckbox {
+  accent-color: #1a1814;
+  flex-shrink: 0;
+}
+
+.productCheckTitle {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 14px;
+  color: #1a1814;
+  flex: 1;
+}
+
+.productCheckType {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #6b6258;
+  width: 160px;
+  flex-shrink: 0;
+}
+
+.productCheckPrice {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 14px;
+  color: #1a1814;
+  width: 40px;
+  text-align: right;
+  flex-shrink: 0;
+}

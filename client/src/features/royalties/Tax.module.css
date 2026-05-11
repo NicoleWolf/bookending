@@ -1,0 +1,239 @@
+/* ── View wrapper ────────────────────────────────────────────────── */
+.view {
+  padding: 36px 48px;
+}
+
+/* ── Year tabs ───────────────────────────────────────────────────── */
+.yearTabs {
+  display: flex;
+  gap: 0;
+  border-bottom: 1px solid var(--rule);
+  margin-bottom: 32px;
+}
+
+.yearTab {
+  padding: 10px 20px;
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  color: var(--muted);
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  cursor: pointer;
+  margin-bottom: -1px;
+}
+
+.yearTab[data-active] {
+  color: var(--paper);
+  border-bottom-color: var(--accent);
+}
+
+.yearNote {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 9.5px;
+  color: var(--accent);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 10px 0;
+  margin-left: 16px;
+  align-self: center;
+}
+
+/* ── Summary strip ───────────────────────────────────────────────── */
+.summaryStrip {
+  display: flex;
+  border: 1px solid var(--rule);
+  margin-bottom: 40px;
+}
+
+.summaryCell {
+  flex: 1;
+  padding: 20px 24px;
+  border-right: 1px solid var(--rule);
+}
+
+.summaryCell:last-child {
+  border-right: none;
+}
+
+.summaryLabel {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 9.5px;
+  color: var(--muted);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+
+.summaryValue {
+  font-size: 32px;
+  font-weight: 400;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  margin-bottom: 5px;
+}
+
+.summaryValue[data-danger] {
+  color: var(--danger);
+}
+
+.summaryValue[data-good] {
+  color: var(--good);
+}
+
+.summarySub {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 9.5px;
+  color: var(--muted);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+/* ── Per-channel table ───────────────────────────────────────────── */
+.tableHead,
+.tableRow,
+.totalsRow {
+  display: grid;
+  grid-template-columns: 200px 100px 100px 100px 80px;
+  gap: 12px;
+  align-items: center;
+}
+
+.tableHead {
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--rule);
+  margin-bottom: 2px;
+}
+
+.tableRow {
+  padding: 10px 0;
+  border-bottom: 1px solid var(--rule);
+}
+
+.tableRow:last-child {
+  border-bottom: none;
+}
+
+.totalsRow {
+  padding: 12px 0 0;
+  border-top: 2px solid var(--paper);
+  margin-top: 4px;
+}
+
+.colHead {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 9px;
+  letter-spacing: 0.14em;
+  color: var(--muted);
+  text-transform: uppercase;
+  text-align: right;
+}
+
+.colHead:first-child {
+  text-align: left;
+}
+
+.cellChannel {
+  font-size: 13px;
+  color: var(--paper);
+}
+
+.cellGross {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 10.5px;
+  color: var(--muted);
+  text-align: right;
+  letter-spacing: 0.04em;
+}
+
+.cellFees {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 10.5px;
+  color: var(--danger);
+  text-align: right;
+  letter-spacing: 0.04em;
+}
+
+.cellNet {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 10.5px;
+  color: var(--good);
+  text-align: right;
+  letter-spacing: 0.04em;
+  font-weight: 500;
+}
+
+.cellPct {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 10px;
+  color: var(--muted);
+  text-align: right;
+  letter-spacing: 0.04em;
+}
+
+.totalsLabel {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 9.5px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.totalsGross {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 11px;
+  text-align: right;
+  letter-spacing: 0.04em;
+  color: var(--paper);
+}
+
+.totalsFees {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 11px;
+  text-align: right;
+  letter-spacing: 0.04em;
+  color: var(--danger);
+}
+
+.totalsNet {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 11px;
+  text-align: right;
+  letter-spacing: 0.04em;
+  color: var(--good);
+}
+
+/* ── Export row ──────────────────────────────────────────────────── */
+.exportRow {
+  display: flex;
+  gap: 12px;
+  margin-top: 36px;
+  padding-top: 28px;
+  border-top: 1px solid var(--rule);
+}
+
+/* ── Disclaimer ──────────────────────────────────────────────────── */
+.disclaimer {
+  margin-top: 24px;
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 9.5px;
+  color: var(--muted);
+  letter-spacing: 0.06em;
+  line-height: 1.6;
+  max-width: 520px;
+}

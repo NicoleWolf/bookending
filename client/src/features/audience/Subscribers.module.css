@@ -1,0 +1,239 @@
+/* ── Toolbar ──────────────────────────────────────────────── */
+.toolbar {
+  padding: 16px 28px;
+  border-bottom: 1px solid var(--rule);
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.searchBox {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid var(--rule);
+  padding: 7px 12px;
+  max-width: 280px;
+  flex: 1;
+}
+
+.searchInput {
+  background: transparent;
+  border: none;
+  outline: none;
+  color: var(--paper);
+  font-size: 12.5px;
+  font-family: var(--sans);
+  width: 100%;
+}
+
+.filterBtns {
+  display: flex;
+  gap: 6px;
+  align-items: stretch;
+}
+
+.filterDivider {
+  width: 1px;
+  background: var(--rule);
+  margin: 0 4px;
+  align-self: stretch;
+}
+
+.filterBtn {
+  padding: 5px 12px;
+  background: transparent;
+  cursor: pointer;
+  font-family: var(--sans);
+  font-size: 11.5px;
+  letter-spacing: 0.02em;
+  border: 1px solid var(--rule);
+  color: var(--muted);
+}
+
+.filterBtn[data-active] {
+  border-color: var(--paper);
+  color: var(--paper);
+}
+
+.filterBtnPatron {
+  padding: 5px 12px;
+  background: transparent;
+  cursor: pointer;
+  font-family: var(--sans);
+  font-size: 11.5px;
+  letter-spacing: 0.02em;
+  color: var(--muted);
+  border: 1px solid var(--rule);
+  border-bottom: 2px solid color-mix(in srgb, var(--accent) 40%, transparent);
+}
+
+.filterBtnPatron[data-active] {
+  color: var(--accent);
+  border-color: transparent;
+  border-bottom: 2px solid var(--accent);
+}
+
+.filterBtnChampion {
+  padding: 5px 12px;
+  background: transparent;
+  cursor: pointer;
+  font-family: var(--sans);
+  font-size: 11.5px;
+  letter-spacing: 0.02em;
+  color: var(--muted);
+  border: 1px solid var(--rule);
+  border-bottom: 2px solid color-mix(in srgb, var(--honey) 40%, transparent);
+}
+
+.filterBtnChampion[data-active] {
+  color: var(--honey);
+  border-color: transparent;
+  border-bottom: 2px solid var(--honey);
+}
+
+.exportWrap {
+  position: relative;
+}
+
+.exportMenu {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  margin-top: 4px;
+  background: var(--ink);
+  border: 1px solid var(--rule);
+  z-index: 10;
+  min-width: 220px;
+}
+
+.exportMenuItem {
+  display: block;
+  width: 100%;
+  padding: 9px 16px;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid var(--rule);
+  text-align: left;
+  font-family: var(--sans);
+  font-size: 12px;
+  color: var(--muted);
+  cursor: pointer;
+  transition: color 0.1s, background 0.1s;
+}
+
+.exportMenuItem:last-child {
+  border-bottom: none;
+}
+
+.exportMenuItem:hover {
+  color: var(--paper);
+  background: color-mix(in srgb, var(--ink) 90%, var(--paper));
+}
+
+.count {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 10.5px;
+  color: var(--muted);
+  letter-spacing: 0.08em;
+  margin-left: auto;
+}
+
+/* ── Table ───────────────────────────────────────────────── */
+.tableHead {
+  display: grid;
+  grid-template-columns: 2fr 1.2fr 1fr 0.9fr 0.7fr 0.7fr 0.7fr;
+  padding: 10px 28px;
+  border-bottom: 1px solid var(--rule);
+  background: color-mix(in srgb, var(--ink) 96%, var(--paper));
+}
+
+.tableHeadCell {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.subRow {
+  display: grid;
+  grid-template-columns: 2fr 1.2fr 1fr 0.9fr 0.7fr 0.7fr 0.7fr;
+  padding: 13px 28px;
+  border-bottom: 1px solid var(--rule);
+  align-items: center;
+  font-size: 13px;
+}
+
+.subRow:last-child {
+  border-bottom: none;
+}
+
+.subCell {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.subName {
+  font-weight: 500;
+}
+
+.subChampionMark {
+  color: var(--honey);
+  font-style: normal;
+}
+
+.subChannels {
+  display: flex;
+  gap: 4px;
+  margin-top: 3px;
+}
+
+.subChannel {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 9px;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+  border: 1px solid var(--rule);
+  padding: 1px 4px;
+}
+
+.subLocation {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 10.5px;
+  color: var(--muted);
+  letter-spacing: 0.04em;
+}
+
+.subJoined {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 10.5px;
+  color: var(--muted);
+}
+
+.subOpens {
+  font-style: italic;
+  font-size: 17px;
+}
+
+.subReplies {
+  font-style: italic;
+  font-size: 17px;
+}
+
+.subSpent {
+  font-style: italic;
+  font-size: 15px;
+  color: var(--muted);
+}
+
+.subSpent[data-patron] {
+  font-size: 17px;
+  color: var(--honey);
+}

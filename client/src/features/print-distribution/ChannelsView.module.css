@@ -1,0 +1,346 @@
+/* ── Stats strip ─────────────────────────────────────────────────── */
+.statsGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  border-bottom: 1px solid var(--rule);
+}
+
+.statCell {
+  padding: 24px 28px;
+  border-right: 1px solid var(--rule);
+}
+
+.statCell:last-child {
+  border-right: none;
+}
+
+.statLabel {
+  margin-bottom: 10px;
+}
+
+.statValue {
+  font-size: 42px;
+  font-weight: 300;
+  line-height: 1;
+  letter-spacing: -0.02em;
+}
+
+.statBottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 14px;
+}
+
+.statSub {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 10.5px;
+  color: var(--muted);
+}
+
+/* ── Main grid ───────────────────────────────────────────────────── */
+.mainGrid {
+  display: grid;
+  grid-template-columns: 1fr 300px;
+}
+
+.channelsList {
+  border-right: 1px solid var(--rule);
+}
+
+/* ── Table ───────────────────────────────────────────────────────── */
+.tableHead {
+  display: grid;
+  grid-template-columns: 1.6fr 1fr 0.8fr 0.7fr 0.8fr 0.8fr 36px;
+  padding: 10px 24px;
+  border-bottom: 1px solid var(--rule);
+  background: color-mix(in srgb, var(--ink) 96%, var(--paper));
+}
+
+.tableHeadCell {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.channelRow {
+  display: grid;
+  grid-template-columns: 1.6fr 1fr 0.8fr 0.7fr 0.8fr 0.8fr 36px;
+  padding: 16px 24px;
+  border-bottom: 1px solid var(--rule);
+  align-items: center;
+  cursor: pointer;
+  background: transparent;
+}
+
+.channelRow[data-expanded] {
+  background: color-mix(in srgb, var(--ink) 94%, var(--paper));
+}
+
+.channelName {
+  font-weight: 600;
+  font-size: 13.5px;
+}
+
+.channelSku {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 9.5px;
+  color: var(--muted);
+  letter-spacing: 0.08em;
+  margin-top: 3px;
+}
+
+.channelKind {
+  font-style: italic;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.channelRoyalty {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 12.5px;
+}
+
+.channelMoved {
+  font-style: italic;
+  font-size: 17px;
+}
+
+.channelRevenue {
+  font-size: 13px;
+}
+
+.channelMore {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--muted);
+  padding: 0;
+  justify-self: end;
+}
+
+.expandedRow {
+  padding: 16px 24px 20px;
+  border-bottom: 1px solid var(--rule);
+  background: color-mix(in srgb, var(--ink) 94%, var(--paper));
+  display: grid;
+  grid-template-columns: 1.2fr 0.7fr 0.8fr 1fr;
+  gap: 24px;
+}
+
+.expandedLabel {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 8px;
+}
+
+.expandedText {
+  font-size: 13px;
+}
+
+.expandedFormats {
+  display: flex;
+  gap: 6px;
+}
+
+.expandedActions {
+  display: flex;
+  gap: 8px;
+  align-items: flex-end;
+}
+
+/* ── Pricing section ─────────────────────────────────────────────── */
+.pricingGrid {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.pricingItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.pricingKey {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 9.5px;
+  color: var(--muted);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.pricingVal {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 12px;
+  letter-spacing: 0.02em;
+}
+
+.pricingNet {
+  color: var(--good);
+}
+
+.pricingReserves {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 9.5px;
+  color: var(--accent);
+  letter-spacing: 0.04em;
+  margin-top: 4px;
+}
+
+.priceNotSet {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  color: var(--muted);
+  border: 1px dashed var(--rule);
+  padding: 4px 8px;
+  display: inline-block;
+}
+
+.addChannelBar {
+  padding: 14px 24px;
+}
+
+/* ── Proof panel ─────────────────────────────────────────────────── */
+.proofPanel {
+  padding: 28px 24px;
+}
+
+.proofHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 20px;
+}
+
+.proofMini {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.proofBook {
+  width: 56px;
+  flex-shrink: 0;
+  aspect-ratio: 2/3;
+  background: #1a1612;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 10px 8px;
+}
+
+.proofBookAuthor {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 6px;
+  letter-spacing: 0.18em;
+  color: #8a7a5e;
+}
+
+.proofBookTitle {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 9px;
+  color: #e8d9b8;
+  line-height: 1.1;
+}
+
+.proofBookLine {
+  width: 16px;
+  height: 1px;
+  background: #8a7a5e;
+  margin: 6px 0 4px;
+}
+
+.proofBookTag {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 5px;
+  letter-spacing: 0.15em;
+  color: #8a7a5e;
+}
+
+.proofTitle {
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 2px;
+}
+
+.proofVersion {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 10px;
+  color: var(--muted);
+  letter-spacing: 0.08em;
+  margin-bottom: 12px;
+}
+
+.specRow {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.specKey {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 9.5px;
+  color: var(--muted);
+  letter-spacing: 0.06em;
+}
+
+.specVal {
+  font-style: italic;
+  font-size: 12px;
+}
+
+.specsTable {
+  border-top: 1px solid var(--rule);
+  padding-top: 14px;
+  margin-bottom: 16px;
+}
+
+.specsRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.specsKey {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 9.5px;
+  color: var(--muted);
+  letter-spacing: 0.08em;
+}
+
+.specsVal {
+  font-style: italic;
+  font-size: 13px;
+}
+
+.proofBtns {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}

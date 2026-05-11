@@ -1,0 +1,361 @@
+/* ── Back bar ─────────────────────────────────────────────── */
+
+.backBar {
+  background: var(--ink-2);
+  border-bottom: 1px solid var(--rule);
+  padding: 0 28px;
+  height: 46px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-shrink: 0;
+}
+
+.backBtn {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 9.5px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  transition: color 0.1s;
+}
+
+.backBtn:hover {
+  color: var(--paper);
+}
+
+.backRight {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.backNum {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--paper);
+  letter-spacing: 0.06em;
+}
+
+/* ── Body layout ──────────────────────────────────────────── */
+
+.body {
+  display: grid;
+  grid-template-columns: 1fr 300px;
+}
+
+.left {
+  padding: 36px 40px 56px;
+  border-right: 1px solid var(--rule);
+  display: flex;
+  flex-direction: column;
+  gap: 36px;
+}
+
+.right {
+  padding: 36px 36px 56px;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* ── From ─────────────────────────────────────────────────── */
+
+.fromAuthor {
+  font-size: 18px;
+  font-weight: 500;
+  color: var(--paper);
+}
+
+.fromStore {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+  margin-top: -6px;
+}
+
+/* ── Receipt ──────────────────────────────────────────────── */
+
+.receiptTable {
+  border: 1px solid var(--rule);
+}
+
+.receiptRow {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  padding: 11px 16px;
+  border-bottom: 1px solid var(--rule);
+  gap: 16px;
+}
+
+.receiptRow:last-child {
+  border-bottom: none;
+}
+
+.receiptItem {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  flex: 1;
+}
+
+.receiptTitle {
+  font-size: 15px;
+  color: var(--paper);
+}
+
+.receiptFormat {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+}
+
+.receiptPrice {
+  font-size: 16px;
+  color: var(--paper);
+  white-space: nowrap;
+}
+
+.receiptMeta {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 11px;
+  color: var(--muted);
+  letter-spacing: 0.04em;
+}
+
+.receiptTotal {
+  background: color-mix(in srgb, var(--ink) 96%, var(--paper));
+}
+
+.receiptTotalLabel {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.receiptTotalAmount {
+  font-size: 24px;
+  color: var(--paper);
+}
+
+/* ── Delivery ─────────────────────────────────────────────── */
+
+.digitalNote {
+  font-family: var(--sans);
+  font-size: 13px;
+  color: var(--muted);
+  font-style: italic;
+}
+
+.address {
+  font-style: normal;
+  font-size: 13px;
+  color: var(--paper);
+  line-height: 1.8;
+}
+
+.trackingBlock {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  margin-top: 4px;
+}
+
+.trackingLabel {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 9px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.trackingNum {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 11px;
+  color: var(--paper);
+  letter-spacing: 0.02em;
+}
+
+/* ── Downloads ────────────────────────────────────────────── */
+
+.downloadList {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.downloadRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--rule);
+  gap: 16px;
+}
+
+.downloadRow:last-child {
+  border-bottom: none;
+}
+
+.downloadMeta {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.downloadTitle {
+  font-size: 14px;
+  color: var(--paper);
+}
+
+.downloadFormat {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+}
+
+.downloadBtn {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink);
+  background: var(--accent);
+  border: 1px solid var(--accent);
+  padding: 5px 12px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: opacity 0.1s;
+  flex-shrink: 0;
+}
+
+.downloadBtn:hover {
+  opacity: 0.85;
+}
+
+/* ── Author note ──────────────────────────────────────────── */
+
+.authorNote {
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--paper);
+  margin: 0;
+  border-left: 2px solid var(--rule);
+  padding-left: 14px;
+  font-style: italic;
+}
+
+/* ── Fulfilment checklist (read-only) ─────────────────────── */
+
+.checklistHeader {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+}
+
+.checklistProgress {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 10.5px;
+  color: var(--muted);
+  letter-spacing: 0.08em;
+  transition: color 0.2s;
+}
+
+.checklistHeader[data-complete] .checklistProgress {
+  color: var(--accent);
+}
+
+.checklistItems {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.checklistRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 0;
+  border-bottom: 1px solid var(--rule);
+}
+
+.checklistRow:last-child {
+  border-bottom: none;
+}
+
+.checklistMark {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--muted);
+  flex-shrink: 0;
+  width: 14px;
+  text-align: center;
+  transition: color 0.15s;
+}
+
+.checklistRow[data-done] .checklistMark {
+  color: var(--accent);
+}
+
+.checklistLabel {
+  font-family: var(--sans);
+  font-size: 13px;
+  color: var(--muted);
+  transition: color 0.15s;
+}
+
+.checklistRow[data-done] .checklistLabel {
+  color: var(--paper);
+}
+
+/* ── Payment ──────────────────────────────────────────────── */
+
+.paymentRow {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.paymentCard {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 12px;
+  color: var(--paper);
+  letter-spacing: 0.06em;
+}
+
+.paymentDate {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 10.5px;
+  color: var(--muted);
+  letter-spacing: 0.04em;
+}

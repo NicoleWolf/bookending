@@ -1,0 +1,261 @@
+/* ── Stats strip ─────────────────────────────────────────────────── */
+.statsStrip {
+  display: flex;
+  border-bottom: 1px solid var(--rule);
+}
+
+.statCell {
+  flex: 1;
+  padding: 20px 28px;
+  border-right: 1px solid var(--rule);
+}
+
+.statCell:last-child {
+  border-right: none;
+}
+
+.statLabel {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 9.5px;
+  color: var(--muted);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+
+.statValue {
+  font-size: 36px;
+  font-weight: 400;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  margin-bottom: 6px;
+}
+
+.statSub {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 9.5px;
+  color: var(--muted);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.statDetail {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 9.5px;
+  color: var(--muted);
+  letter-spacing: 0.08em;
+  margin-top: 2px;
+}
+
+/* ── Main grid ───────────────────────────────────────────────────── */
+.mainGrid {
+  display: grid;
+  grid-template-columns: 1fr 260px;
+}
+
+/* ── Left panel ──────────────────────────────────────────────────── */
+.leftPanel {
+  padding: 36px 40px;
+  border-right: 1px solid var(--rule);
+}
+
+.chartSection {
+  margin-bottom: 36px;
+  padding-bottom: 36px;
+  border-bottom: 1px solid var(--rule);
+}
+
+.chartHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 16px;
+}
+
+.chartTitle {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  color: var(--muted);
+  text-transform: uppercase;
+}
+
+.chartRange {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 9.5px;
+  color: var(--muted);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.chartDates {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 8px;
+}
+
+.chartDate {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 9px;
+  color: var(--muted);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+/* ── Recent sales table ──────────────────────────────────────────── */
+.tableHead {
+  display: grid;
+  grid-template-columns: 60px 150px 40px 80px 80px;
+  gap: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--rule);
+  margin-bottom: 2px;
+}
+
+.tableRow {
+  display: grid;
+  grid-template-columns: 60px 150px 40px 80px 80px;
+  gap: 12px;
+  padding: 7px 0;
+  border-bottom: 1px solid var(--rule);
+  align-items: center;
+}
+
+.tableRow:last-child {
+  border-bottom: none;
+}
+
+.colHeader {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 9px;
+  letter-spacing: 0.14em;
+  color: var(--muted);
+  text-transform: uppercase;
+  text-align: right;
+}
+
+.colHeader:first-child,
+.colHeader:nth-child(2) {
+  text-align: left;
+}
+
+.cellDate {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 10px;
+  color: var(--muted);
+  letter-spacing: 0.06em;
+}
+
+.cellChannel {
+  font-size: 12.5px;
+  color: var(--paper);
+}
+
+.cellUnits {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 10.5px;
+  color: var(--muted);
+  text-align: right;
+  letter-spacing: 0.04em;
+}
+
+.cellGross {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 10.5px;
+  color: var(--muted);
+  text-align: right;
+  letter-spacing: 0.04em;
+}
+
+.cellNet {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 10.5px;
+  color: var(--good);
+  text-align: right;
+  letter-spacing: 0.04em;
+  font-weight: 500;
+}
+
+/* ── Channel sidebar ─────────────────────────────────────────────── */
+.channelSidebar {
+  padding: 28px 24px;
+}
+
+.sidebarHead {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  color: var(--muted);
+  text-transform: uppercase;
+  margin-bottom: 24px;
+}
+
+.channelRows {
+  display: flex;
+  flex-direction: column;
+}
+
+.channelRow {
+  padding: 12px 0;
+  border-bottom: 1px solid var(--rule);
+}
+
+.channelRow:last-child {
+  border-bottom: none;
+}
+
+.channelRowTop {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 6px;
+}
+
+.channelName {
+  font-size: 12.5px;
+  color: var(--paper);
+}
+
+.channelNet {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 11px;
+  color: var(--good);
+  letter-spacing: 0.04em;
+}
+
+.channelBar {
+  height: 3px;
+  background: var(--rule);
+  position: relative;
+  margin-bottom: 5px;
+}
+
+.channelBarFill {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: var(--pct, 0%);
+  background: var(--good);
+}
+
+.channelPct {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 9.5px;
+  color: var(--muted);
+  letter-spacing: 0.08em;
+}

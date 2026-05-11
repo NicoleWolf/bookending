@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Bookending — Dashboard, Writer Side</title>
+</head>
+<body>
+
+<h2 class="sr-only">Bookending Dashboard, Writer side. Section header tabs let users switch between Writing and Reading. The Desk hero surfaces the most pressing item with a recommended action. Three lifecycle lanes follow. A Today rail caps at hero height; everything below the hero spans full width. An empty state version is shown beneath for users with no manuscripts.</h2>
+
+<style>
+  .bk { font-family: 'Newsreader', Georgia, serif; background: #F0E8D6; color: #2A2520; padding: 28px 32px 32px; border-radius: 12px; }
+  .bk-mono { font-family: 'JetBrains Mono', ui-monospace, monospace; }
+  .bk-sans { font-family: ui-sans-serif, system-ui, sans-serif; }
+  .bk-eyebrow { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: #6B5F47; }
+  .bk-card { background: #F6EFDC; border: 0.5px solid #B8AB8C; border-radius: 8px; padding: 16px 18px; }
+  .bk-btn-primary { background: #8A1F15; color: #FFFFFF; border: 0; padding: 10px 18px; border-radius: 6px; font-family: ui-sans-serif, system-ui, sans-serif; font-size: 13px; font-weight: 500; cursor: pointer; }
+  .bk-btn-secondary { background: transparent; color: #2A2520; border: 1px solid #6B5F47; padding: 9px 16px; border-radius: 6px; font-family: ui-sans-serif, system-ui, sans-serif; font-size: 13px; cursor: pointer; }
+  .bk-btn-ghost { background: transparent; color: #5C4A2E; border: 0; padding: 9px 14px; font-family: ui-sans-serif, system-ui, sans-serif; font-size: 13px; cursor: pointer; }
+  .bk-bar { height: 4px; background: #C9BC9D; border-radius: 2px; overflow: hidden; }
+  .bk-bar-fill { height: 100%; background: #8A1F15; }
+  .bk-bar-fill-muted { height: 100%; background: #6B5F47; }
+  .bk-bar-fill-green { height: 100%; background: #3F5C30; }
+  .bk-pill { display: inline-block; font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; padding: 3px 8px; border-radius: 3px; }
+</style>
+
+<div class="bk">
+
+  <div style="display: flex; justify-content: space-between; align-items: center; padding-bottom: 14px; border-bottom: 0.5px solid #B8AB8C; margin-bottom: 0;">
+    <div style="display: flex; align-items: baseline; gap: 16px;">
+      <span style="font-family: 'Newsreader', Georgia, serif; font-style: italic; font-size: 20px;">Bookending</span>
+      <span class="bk-eyebrow">Vol. III · No. 47 · Saturday</span>
+    </div>
+    <div style="display: flex; gap: 20px; align-items: center;">
+      <span class="bk-eyebrow">The desk</span>
+      <span class="bk-eyebrow" style="color: #B8AB8C;">Manuscripts</span>
+      <span class="bk-eyebrow" style="color: #B8AB8C;">Storefront</span>
+      <span class="bk-eyebrow" style="color: #B8AB8C;">Community</span>
+      <span style="display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px; border-radius: 50%; background: #8A1F15; color: #FFFFFF; font-family: ui-sans-serif, system-ui, sans-serif; font-size: 11px; font-weight: 500;">BW</span>
+    </div>
+  </div>
+
+  <div style="display: flex; gap: 28px; align-items: baseline; padding: 22px 0 8px; border-bottom: 0.5px solid #B8AB8C; margin-bottom: 24px;">
+    <button style="background: transparent; border: 0; padding: 0 0 12px; cursor: pointer; border-bottom: 2px solid #8A1F15; position: relative;">
+      <span style="font-family: 'Newsreader', Georgia, serif; font-style: italic; font-size: 28px; color: #2A2520;">Writing</span>
+    </button>
+    <button style="background: transparent; border: 0; padding: 0 0 12px; cursor: pointer; border-bottom: 2px solid transparent; position: relative;">
+      <span style="font-family: 'Newsreader', Georgia, serif; font-style: italic; font-size: 28px; color: #6B5F47;">Reading</span>
+      <span style="position: absolute; top: 4px; right: -10px; width: 7px; height: 7px; border-radius: 50%; background: #8A1F15;" aria-label="2 unread items on Reading side"></span>
+    </button>
+  </div>
+
+  <div style="background: #F6EFDC; border-left: 3px solid #8A1F15; border-radius: 0; padding: 10px 16px; margin-bottom: 22px; display: flex; justify-content: space-between; align-items: center;">
+    <p style="font-family: 'Newsreader', Georgia, serif; font-style: italic; font-size: 13px; margin: 0; color: #5C4A2E;">2 items waiting on your reading side — Henrik replied to your Ch. 4 note, and Marcus shipped a new chapter of <em>Hollow Meridian</em>.</p>
+    <button style="background: transparent; border: 0; font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: #8A1F15; cursor: pointer; font-weight: 500;">Switch to reading →</button>
+  </div>
+
+  <div style="display: grid; grid-template-columns: minmax(0, 1fr) 240px; gap: 28px; align-items: start; margin-bottom: 32px;">
+
+    <div>
+      <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 12px;">
+        <span class="bk-eyebrow">§ The desk · what matters today</span>
+        <span class="bk-eyebrow">3 items · sorted by urgency</span>
+      </div>
+
+      <div style="background: #1F1B17; color: #F0E8D6; border-radius: 8px; padding: 24px 26px; margin-bottom: 12px;">
+        <div style="display: flex; gap: 10px; align-items: center; margin-bottom: 14px;">
+          <span class="bk-pill" style="background: #8A1F15; color: #FFFFFF;">Pacing flag · 3 readers</span>
+          <span style="font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: #D4C9AB;">Ch. 17 · p. 184 · 11 min ago</span>
+        </div>
+        <p style="font-family: 'Newsreader', Georgia, serif; font-size: 22px; line-height: 1.35; margin: 0 0 12px; font-style: italic; color: #F0E8D6;">Three readers flagged the lighthouse scene for pacing. It's the same passage Tomás called out — worth a look before your next revision pass.</p>
+        <p style="font-family: ui-sans-serif, system-ui, sans-serif; font-size: 13px; line-height: 1.6; color: #D4C9AB; margin: 0 0 18px; max-width: 560px;">Tomás Reyes, Marisol Vega, and one open reader all paused or commented on pp. 182–186. When 3+ readers converge on a passage, revision usually pays off — your last hotspot at Ch. 9 led to your strongest reader response yet.</p>
+        <div style="display: flex; gap: 10px;">
+          <button class="bk-btn-primary">Open the scene →</button>
+          <button style="background: transparent; color: #F0E8D6; border: 1.5px solid #D4C9AB; padding: 9px 16px; border-radius: 6px; font-family: ui-sans-serif, system-ui, sans-serif; font-size: 13px; cursor: pointer;">See all 3 notes</button>
+          <button style="background: transparent; color: #D4C9AB; border: 0; padding: 9px 14px; font-family: ui-sans-serif, system-ui, sans-serif; font-size: 13px; cursor: pointer;">Dismiss</button>
+        </div>
+      </div>
+
+      <div style="background: #F6EFDC; border: 0.5px solid #B8AB8C; border-radius: 8px; overflow: hidden;">
+        <div style="display: grid; grid-template-columns: minmax(0, 1fr); padding: 14px 18px; border-bottom: 0.5px solid #C9BC9D;">
+          <div style="display: flex; align-items: baseline; gap: 12px; margin-bottom: 4px;">
+            <span class="bk-pill" style="background: #C9BC9D; color: #3D3528;">Next</span>
+            <p style="font-family: 'Newsreader', Georgia, serif; font-size: 15px; margin: 0;">Henrik finished his read — he's ready for a thank-you letter.</p>
+          </div>
+          <div style="display: flex; justify-content: space-between; align-items: center; padding-left: 50px;">
+            <p class="bk-sans" style="font-size: 12px; color: #6B5F47; margin: 0;">4★ verdict, sent 2 days ago. Bookending drafted opening lines based on his notes.</p>
+            <button class="bk-btn-ghost" style="padding: 4px 0; font-size: 12px; color: #8A1F15; font-weight: 500;">Draft letter →</button>
+          </div>
+        </div>
+        <div style="display: grid; grid-template-columns: minmax(0, 1fr); padding: 14px 18px;">
+          <div style="display: flex; align-items: baseline; gap: 12px; margin-bottom: 4px;">
+            <span class="bk-pill" style="background: #C9BC9D; color: #3D3528;">Then</span>
+            <p style="font-family: 'Newsreader', Georgia, serif; font-size: 15px; margin: 0;">Two readers applied to join — review their profiles and decide.</p>
+          </div>
+          <div style="display: flex; justify-content: space-between; align-items: center; padding-left: 50px;">
+            <p class="bk-sans" style="font-size: 12px; color: #6B5F47; margin: 0;">Both have public reader profiles. You set the bar for who joins your beta.</p>
+            <button class="bk-btn-ghost" style="padding: 4px 0; font-size: 12px; color: #8A1F15; font-weight: 500;">Review applicants →</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <aside style="background: #F6EFDC; border: 0.5px solid #B8AB8C; border-radius: 8px; padding: 18px 20px; align-self: stretch;">
+      <span class="bk-eyebrow">§ Today</span>
+      <p style="font-family: 'Newsreader', Georgia, serif; font-style: italic; font-size: 15px; margin: 4px 0 16px; color: #5C4A2E;">Live from your circle</p>
+
+      <div style="margin-bottom: 14px; padding-bottom: 12px; border-bottom: 0.5px solid #C9BC9D;">
+        <div style="display: flex; gap: 8px; align-items: flex-start; margin-bottom: 4px;">
+          <span style="width: 6px; height: 6px; border-radius: 50%; background: #8A1F15; margin-top: 6px; flex-shrink: 0;" aria-hidden="true"></span>
+          <p style="font-family: 'Newsreader', Georgia, serif; font-size: 13px; line-height: 1.45; margin: 0; color: #2A2520;">Mira H. shared a passage from Ch. 4</p>
+        </div>
+        <p class="bk-mono" style="font-size: 10px; letter-spacing: 0.1em; color: #6B5F47; margin: 0 0 0 14px;">2H AGO</p>
+      </div>
+
+      <div style="margin-bottom: 14px; padding-bottom: 12px; border-bottom: 0.5px solid #C9BC9D;">
+        <div style="display: flex; gap: 8px; align-items: flex-start; margin-bottom: 4px;">
+          <span style="width: 6px; height: 6px; border-radius: 50%; background: #3F5C30; margin-top: 6px; flex-shrink: 0;" aria-hidden="true"></span>
+          <p style="font-family: 'Newsreader', Georgia, serif; font-size: 13px; line-height: 1.45; margin: 0;">3 new subscribers from your last dispatch</p>
+        </div>
+        <p class="bk-mono" style="font-size: 10px; letter-spacing: 0.1em; color: #6B5F47; margin: 0 0 0 14px;">5H AGO</p>
+      </div>
+
+      <div style="margin-bottom: 14px; padding-bottom: 12px; border-bottom: 0.5px solid #C9BC9D;">
+        <div style="display: flex; gap: 8px; align-items: flex-start; margin-bottom: 4px;">
+          <span style="width: 6px; height: 6px; border-radius: 50%; background: #B8AB8C; margin-top: 6px; flex-shrink: 0;" aria-hidden="true"></span>
+          <p style="font-family: 'Newsreader', Georgia, serif; font-size: 13px; line-height: 1.45; margin: 0;">Delphine M. replied to your dispatch</p>
+        </div>
+        <p class="bk-mono" style="font-size: 10px; letter-spacing: 0.1em; color: #6B5F47; margin: 0 0 0 14px;">1D AGO</p>
+      </div>
+
+      <div style="margin-bottom: 16px;">
+        <div style="display: flex; gap: 8px; align-items: flex-start; margin-bottom: 4px;">
+          <span style="width: 6px; height: 6px; border-radius: 50%; background: #8A1F15; margin-top: 6px; flex-shrink: 0;" aria-hidden="true"></span>
+          <p style="font-family: 'Newsreader', Georgia, serif; font-size: 13px; line-height: 1.45; margin: 0;">Writing circle — session notes posted</p>
+        </div>
+        <p class="bk-mono" style="font-size: 10px; letter-spacing: 0.1em; color: #6B5F47; margin: 0 0 0 14px;">2D AGO</p>
+      </div>
+
+      <button class="bk-btn-secondary" style="width: 100%; font-size: 12px; padding: 8px;">Open the full feed →</button>
+    </aside>
+
+  </div>
+
+  <div style="margin-bottom: 28px;">
+    <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 14px;">
+      <div>
+        <span class="bk-eyebrow">§ Lane 01 · primary</span>
+        <h2 style="font-family: 'Newsreader', Georgia, serif; font-style: italic; font-size: 28px; margin: 4px 0 0; color: #2A2520; font-weight: 400;">Write &amp; revise</h2>
+      </div>
+      <div style="text-align: right;">
+        <p class="bk-sans" style="font-size: 12px; color: #6B5F47; margin: 0 0 4px;">The Lantern Keeper's Daughter · Draft 2</p>
+        <p class="bk-mono" style="font-size: 11px; color: #2A2520; margin: 0; letter-spacing: 0.08em;">96 NOTES · 5 READERS</p>
+      </div>
+    </div>
+
+    <div class="bk-card" style="padding: 0;">
+
+      <div style="padding: 16px 20px; border-bottom: 0.5px solid #C9BC9D;">
+        <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 12px;">
+          <span class="bk-eyebrow">The reading room</span>
+          <span class="bk-eyebrow">5 readers · 3 active</span>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 24px minmax(0, 1.2fr) minmax(0, 1.4fr) 110px 50px; gap: 14px; padding: 6px 0; align-items: center; font-family: ui-sans-serif, system-ui, sans-serif; font-size: 13px;">
+          <span style="display: inline-flex; align-items: center; justify-content: center; width: 24px; height: 24px; border-radius: 50%; background: #8A1F15; color: #FFFFFF; font-size: 10px; font-weight: 500;">MV</span>
+          <div>
+            <p style="font-family: 'Newsreader', Georgia, serif; font-size: 15px; margin: 0;">Marisol Vega</p>
+            <p style="font-size: 11px; color: #6B5F47; margin: 0;">4 books read · public profile</p>
+          </div>
+          <div>
+            <div class="bk-mono" style="font-size: 11px; color: #6B5F47; margin-bottom: 4px; letter-spacing: 0.06em;">CH. 14 · 78%</div>
+            <div class="bk-bar"><div class="bk-bar-fill" style="width: 78%;"></div></div>
+          </div>
+          <span class="bk-pill" style="background: transparent; border: 1px solid #3F5C30; color: #3F5C30;">Enthralled</span>
+          <span style="font-family: 'Newsreader', Georgia, serif; font-size: 18px; font-style: italic; text-align: right;">14</span>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 24px minmax(0, 1.2fr) minmax(0, 1.4fr) 110px 50px; gap: 14px; padding: 6px 0; align-items: center; border-top: 0.5px solid #C9BC9D; font-family: ui-sans-serif, system-ui, sans-serif; font-size: 13px;">
+          <span style="display: inline-flex; align-items: center; justify-content: center; width: 24px; height: 24px; border-radius: 50%; background: #8A1F15; color: #FFFFFF; font-size: 10px; font-weight: 500;">TR</span>
+          <div>
+            <p style="font-family: 'Newsreader', Georgia, serif; font-size: 15px; margin: 0;">Tomás Reyes</p>
+            <p style="font-size: 11px; color: #6B5F47; margin: 0;">2 books read · invited</p>
+          </div>
+          <div>
+            <div class="bk-mono" style="font-size: 11px; color: #6B5F47; margin-bottom: 4px; letter-spacing: 0.06em;">CH. 17 · 92%</div>
+            <div class="bk-bar"><div class="bk-bar-fill" style="width: 92%;"></div></div>
+          </div>
+          <span class="bk-pill" style="background: transparent; border: 1px solid #8A1F15; color: #8A1F15;">Pacing flag</span>
+          <span style="font-family: 'Newsreader', Georgia, serif; font-size: 18px; font-style: italic; text-align: right;">31</span>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 24px minmax(0, 1.2fr) minmax(0, 1.4fr) 110px 50px; gap: 14px; padding: 6px 0; align-items: center; border-top: 0.5px solid #C9BC9D; font-family: ui-sans-serif, system-ui, sans-serif; font-size: 13px;">
+          <span style="display: inline-flex; align-items: center; justify-content: center; width: 24px; height: 24px; border-radius: 50%; background: #1F1B17; color: #FFFFFF; font-size: 10px; font-weight: 500;">HL</span>
+          <div>
+            <p style="font-family: 'Newsreader', Georgia, serif; font-size: 15px; margin: 0;">Henrik Lund</p>
+            <p style="font-size: 11px; color: #6B5F47; margin: 0;">7 books read · public profile</p>
+          </div>
+          <div>
+            <div class="bk-mono" style="font-size: 11px; color: #6B5F47; margin-bottom: 4px; letter-spacing: 0.06em;">DONE · 100%</div>
+            <div class="bk-bar"><div class="bk-bar-fill-muted" style="width: 100%;"></div></div>
+          </div>
+          <span class="bk-pill" style="background: transparent; border: 1px solid #3F5C30; color: #3F5C30;">4★ verdict</span>
+          <span style="font-family: 'Newsreader', Georgia, serif; font-size: 18px; font-style: italic; text-align: right;">42</span>
+        </div>
+
+        <div style="text-align: center; margin-top: 10px;">
+          <button style="background: transparent; border: 0; color: #6B5F47; font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; cursor: pointer; font-weight: 500;">+ 2 more readers · view all →</button>
+        </div>
+      </div>
+
+      <div style="padding: 16px 20px; display: grid; grid-template-columns: 1.2fr 1fr; gap: 24px; align-items: end;">
+        <div>
+          <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 8px;">
+            <span class="bk-eyebrow">Where readers are reacting</span>
+            <span class="bk-eyebrow">95 notes · 22 ch.</span>
+          </div>
+          <div style="display: flex; align-items: flex-end; gap: 3px; height: 56px; padding-bottom: 4px; border-bottom: 0.5px solid #C9BC9D;">
+            <div style="flex: 1; height: 18%; background: #B8AB8C;"></div>
+            <div style="flex: 1; height: 12%; background: #B8AB8C;"></div>
+            <div style="flex: 1; height: 22%; background: #B8AB8C;"></div>
+            <div style="flex: 1; height: 28%; background: #B8AB8C;"></div>
+            <div style="flex: 1; height: 35%; background: #B8AB8C;"></div>
+            <div style="flex: 1; height: 25%; background: #B8AB8C;"></div>
+            <div style="flex: 1; height: 30%; background: #B8AB8C;"></div>
+            <div style="flex: 1; height: 42%; background: #B8AB8C;"></div>
+            <div style="flex: 1; height: 38%; background: #1F1B17;"></div>
+            <div style="flex: 1; height: 55%; background: #1F1B17;"></div>
+            <div style="flex: 1; height: 60%; background: #1F1B17;"></div>
+            <div style="flex: 1; height: 95%; background: #8A1F15;"></div>
+            <div style="flex: 1; height: 70%; background: #1F1B17;"></div>
+            <div style="flex: 1; height: 50%; background: #1F1B17;"></div>
+            <div style="flex: 1; height: 32%; background: #B8AB8C;"></div>
+            <div style="flex: 1; height: 28%; background: #B8AB8C;"></div>
+            <div style="flex: 1; height: 22%; background: #B8AB8C;"></div>
+            <div style="flex: 1; height: 25%; background: #B8AB8C;"></div>
+            <div style="flex: 1; height: 18%; background: #B8AB8C;"></div>
+            <div style="flex: 1; height: 14%; background: #B8AB8C;"></div>
+            <div style="flex: 1; height: 12%; background: #B8AB8C;"></div>
+            <div style="flex: 1; height: 10%; background: #B8AB8C;"></div>
+          </div>
+          <div style="display: flex; justify-content: space-between; margin-top: 4px;">
+            <span class="bk-mono" style="font-size: 10px; color: #6B5F47; letter-spacing: 0.06em;">CH. 1</span>
+            <span class="bk-mono" style="font-size: 10px; color: #8A1F15; letter-spacing: 0.06em; font-weight: 500;">CH. 17 — HOTSPOT</span>
+            <span class="bk-mono" style="font-size: 10px; color: #6B5F47; letter-spacing: 0.06em;">CH. 22</span>
+          </div>
+        </div>
+
+        <div style="border-left: 0.5px solid #C9BC9D; padding-left: 20px;">
+          <span class="bk-eyebrow">Feedback by theme</span>
+          <div style="margin-top: 10px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; font-family: ui-sans-serif, system-ui, sans-serif; font-size: 12px; margin-bottom: 4px;"><span>Pacing</span><span class="bk-mono" style="color: #6B5F47;">5</span></div>
+            <div class="bk-bar" style="margin-bottom: 8px;"><div class="bk-bar-fill" style="width: 72%;"></div></div>
+            <div style="display: flex; justify-content: space-between; align-items: center; font-family: ui-sans-serif, system-ui, sans-serif; font-size: 12px; margin-bottom: 4px;"><span>Character</span><span class="bk-mono" style="color: #6B5F47;">4</span></div>
+            <div class="bk-bar" style="margin-bottom: 8px;"><div class="bk-bar-fill" style="width: 58%;"></div></div>
+            <div style="display: flex; justify-content: space-between; align-items: center; font-family: ui-sans-serif, system-ui, sans-serif; font-size: 12px; margin-bottom: 4px;"><span>Prose</span><span class="bk-mono" style="color: #6B5F47;">3</span></div>
+            <div class="bk-bar"><div class="bk-bar-fill" style="width: 42%;"></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px;">
+
+    <div>
+      <div style="margin-bottom: 10px;">
+        <span class="bk-eyebrow">§ Lane 02 · upcoming</span>
+        <h3 style="font-family: 'Newsreader', Georgia, serif; font-style: italic; font-size: 18px; margin: 2px 0 0; font-weight: 400;">Prepare &amp; launch</h3>
+      </div>
+      <div class="bk-card">
+        <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 10px;">
+          <span class="bk-mono" style="font-size: 10px; letter-spacing: 0.1em; color: #6B5F47;">PRE-PUBLISH · 1 OF 5 DONE</span>
+          <span class="bk-mono" style="font-size: 10px; letter-spacing: 0.1em; color: #6B5F47;">UNLOCKS WHEN READY</span>
+        </div>
+        <div class="bk-bar" style="margin-bottom: 14px;"><div class="bk-bar-fill-muted" style="width: 20%;"></div></div>
+        <p style="font-family: 'Newsreader', Georgia, serif; font-size: 14px; line-height: 1.5; margin: 0 0 10px; color: #5C4A2E;">When you're ready, the next steps are cover, pricing, formatting, and proof. Bookending will walk you through each.</p>
+        <button class="bk-btn-secondary" style="font-size: 12px; padding: 7px 12px;">Peek the checklist →</button>
+      </div>
+    </div>
+
+    <div>
+      <div style="margin-bottom: 10px;">
+        <span class="bk-eyebrow">§ Lane 03 · maintenance</span>
+        <h3 style="font-family: 'Newsreader', Georgia, serif; font-style: italic; font-size: 18px; margin: 2px 0 0; font-weight: 400;">Sell &amp; sustain</h3>
+      </div>
+      <div class="bk-card">
+        <div style="display: flex; gap: 18px; margin-bottom: 12px;">
+          <div>
+            <p class="bk-mono" style="font-size: 10px; color: #6B5F47; margin: 0; letter-spacing: 0.1em;">PRIOR TITLE</p>
+            <p style="font-family: 'Newsreader', Georgia, serif; font-size: 22px; font-style: italic; margin: 2px 0 0;">147 sales</p>
+          </div>
+          <div>
+            <p class="bk-mono" style="font-size: 10px; color: #6B5F47; margin: 0; letter-spacing: 0.1em;">UNREPLIED Q&amp;A</p>
+            <p style="font-family: 'Newsreader', Georgia, serif; font-size: 22px; font-style: italic; margin: 2px 0 0; color: #8A1F15;">3</p>
+          </div>
+        </div>
+        <p style="font-family: 'Newsreader', Georgia, serif; font-size: 13px; line-height: 1.5; margin: 0 0 10px; color: #5C4A2E;">3 reader Q&amp;As are open on <em>The Salt Roads</em>. Replies double review conversion.</p>
+        <button class="bk-btn-secondary" style="font-size: 12px; padding: 7px 12px;">Reply now →</button>
+      </div>
+    </div>
+
+  </div>
+
+  <div style="margin: 40px -32px 0; padding: 32px; background: #E5DCC4; border-top: 0.5px solid #B8AB8C;">
+    <span class="bk-eyebrow" style="color: #6B5F47;">§ Empty state · writer side</span>
+    <p style="font-family: 'Newsreader', Georgia, serif; font-style: italic; font-size: 14px; margin: 4px 0 24px; color: #5C4A2E;">What a writer sees on the Dashboard before they have a manuscript</p>
+
+    <div style="background: #1F1B17; color: #F0E8D6; border-radius: 8px; padding: 40px 44px;">
+      <div style="max-width: 620px;">
+        <span class="bk-pill" style="background: #8A1F15; color: #FFFFFF; margin-bottom: 18px;">Start here</span>
+        <p style="font-family: 'Newsreader', Georgia, serif; font-size: 32px; line-height: 1.25; margin: 14px 0 14px; font-style: italic; color: #F0E8D6;">Every book starts with a first page. Yours can start here.</p>
+        <p style="font-family: ui-sans-serif, system-ui, sans-serif; font-size: 14px; line-height: 1.65; color: #D4C9AB; margin: 0 0 28px;">Bookending is built around your manuscript — the desk, the reading room, the launch sequence, and everything in between. Start fresh with a blank draft, or bring in something you've already written.</p>
+        <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+          <button class="bk-btn-primary">Start a new manuscript →</button>
+          <button style="background: transparent; color: #F0E8D6; border: 1.5px solid #D4C9AB; padding: 9px 16px; border-radius: 6px; font-family: ui-sans-serif, system-ui, sans-serif; font-size: 13px; cursor: pointer;">Import from Word, Scrivener, or Docs</button>
+        </div>
+        <p style="font-family: 'Newsreader', Georgia, serif; font-style: italic; font-size: 13px; line-height: 1.5; margin: 24px 0 0; color: #D4C9AB;">Just here to read? Switch to the Reading side above — discovering manuscripts works without a draft of your own.</p>
+      </div>
+    </div>
+  </div>
+
+  <div style="margin-top: 32px; padding-top: 20px; border-top: 0.5px solid #B8AB8C; display: flex; justify-content: space-between; align-items: baseline;">
+    <span class="bk-mono" style="font-size: 10px; letter-spacing: 0.12em; color: #6B5F47;">BOOKENDING · A WORKBENCH FOR SELF-PUBLISHERS · MMXXVI</span>
+    <span class="bk-mono" style="font-size: 10px; letter-spacing: 0.12em; color: #6B5F47;">SET IN NEWSREADER &amp; INTER · PRINTED FROM PORTLAND</span>
+  </div>
+
+</div>
+</body>
+</html>

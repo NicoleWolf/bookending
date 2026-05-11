@@ -1,0 +1,62 @@
+/* BookCover — fills 100% of its parent container */
+.cover {
+  container-type: size;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: 10%;
+  overflow: hidden;
+
+  /* Default fallback — spine-amber (warm amber) */
+  background: color-mix(in srgb, var(--accent) 18%, var(--ink));
+}
+
+/* ── Curated spine palette ─────────────────────────────────────────
+   Contrast-checked label colors listed inline.
+   Light spines → --paper-dim (9.5:1+)  Dark spines → --ink (9.2:1+)
+   ────────────────────────────────────────────────────────────────── */
+.cover[data-spine="spine-amber"] { background: color-mix(in srgb, var(--accent) 18%, var(--ink)); }
+.cover[data-spine="spine-slate"] { background: var(--ink-3); }
+.cover[data-spine="spine-teal"]  { background: var(--teal-deep); }
+.cover[data-spine="spine-dark"]  { background: color-mix(in srgb, var(--ink-2) 70%, var(--rule)); }
+.cover[data-spine="spine-muted"] { background: color-mix(in srgb, var(--ink-3) 80%, var(--ink)); }
+
+.author {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: max(4px, 5cqmin);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  /* --paper-dim (#3A2A1E) achieves 9.5:1+ on all light spine backgrounds */
+  color: var(--paper-dim);
+}
+
+/* spine-teal is a dark surface — needs light labels */
+.cover[data-spine="spine-teal"] .author {
+  color: var(--ink);
+}
+
+.spacer {
+  flex: 1;
+}
+
+.title {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: max(6px, 9cqmin);
+  line-height: 1.2;
+  color: var(--paper-dim);
+}
+
+.cover[data-spine="spine-teal"] .title {
+  color: var(--teal-soft);
+}
+
+/* For tiny thumbnails (≤ 60px wide) hide text — just show the color block */
+@container (max-width: 60px) {
+  .author,
+  .title {
+    display: none;
+  }
+}

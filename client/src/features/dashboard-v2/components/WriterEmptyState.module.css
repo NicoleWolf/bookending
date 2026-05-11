@@ -1,0 +1,201 @@
+.state {}
+
+.heroHeadline {
+  font-style: italic;
+  font-size: 42px;
+  line-height: 1.15;
+  margin: 20px 0 18px;
+  font-weight: 400;
+  color: var(--bk-paper);
+}
+
+.heroBody {
+  font-family: var(--sans);
+  font-size: 15px;
+  line-height: 1.65;
+  color: var(--bk-paper-deep);
+  margin: 0 0 32px;
+}
+
+.heroCtas {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.illustration {
+  width: 100%;
+  max-width: 260px;
+  height: auto;
+}
+
+/* Lifecycle preview */
+.previewSection { margin-bottom: 36px; }
+
+.previewHead { margin-bottom: 18px; }
+
+.eyebrow {
+  font-size: 10.5px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted-2);
+  display: block;
+}
+
+.previewTitle {
+  font-style: italic;
+  font-size: 26px;
+  margin: 4px 0 0;
+  font-weight: 400;
+}
+
+.previewGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 16px;
+}
+
+.previewCard {
+  background: var(--ink-2);
+  border: 1px solid var(--rule);
+  padding: 16px 18px;
+}
+
+.previewCardHead {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.laneNum {
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  color: var(--accent);
+  font-weight: 500;
+}
+
+.laneHeadline {
+  font-style: italic;
+  font-size: 17px;
+  line-height: 1.4;
+  margin: 0 0 8px;
+}
+
+.laneBody {
+  font-family: var(--sans);
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--paper-dim);
+  margin: 0;
+}
+
+/* Import band */
+.importBand {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr;
+  gap: 32px;
+  align-items: center;
+  background: var(--ink-2);
+  border: 1px solid var(--rule);
+  padding: 28px 32px;
+  margin-bottom: 36px;
+}
+
+.importMain {}
+
+.importTitle {
+  font-style: italic;
+  font-size: 24px;
+  margin: 6px 0 10px;
+  font-weight: 400;
+}
+
+.importBody {
+  font-family: var(--sans);
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--paper-dim);
+  margin: 0 0 16px;
+}
+
+.formats {
+  display: flex;
+  gap: 14px;
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  color: var(--muted-2);
+  text-transform: uppercase;
+  flex-wrap: wrap;
+}
+
+.importAction { text-align: right; }
+
+/* Secondary button (on light bg) */
+.secondaryBtn {
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--paper-dim);
+  background: transparent;
+  border: 1px solid var(--muted-2);
+  padding: 9px 16px;
+  cursor: pointer;
+}
+
+/* Tail cards */
+.tailGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 28px;
+}
+
+.tailCard {
+  background: var(--ink-2);
+  border: 1px solid var(--rule);
+  padding: 22px 24px;
+}
+
+.tailTitle {
+  font-style: italic;
+  font-size: 20px;
+  margin: 6px 0 10px;
+  font-weight: 400;
+}
+
+.tailBody {
+  font-family: var(--sans);
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--paper-dim);
+  margin: 0 0 14px;
+}
+
+/* Soft link */
+.softLink {
+  text-align: center;
+  padding: 20px 0;
+  border-top: 1px solid var(--rule);
+  border-bottom: 1px solid var(--rule);
+  margin-bottom: 24px;
+}
+
+.softLinkText {
+  font-style: italic;
+  font-size: 16px;
+  margin: 0;
+  color: var(--paper-dim);
+}
+
+.softLinkBtn {
+  background: transparent;
+  border: 0;
+  font-style: italic;
+  font-size: 16px;
+  color: var(--accent);
+  cursor: pointer;
+  text-decoration: underline;
+  padding: 0;
+  font-family: var(--serif);
+}

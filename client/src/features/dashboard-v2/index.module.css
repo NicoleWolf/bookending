@@ -1,0 +1,61 @@
+.page {
+  padding: 28px 32px 32px;
+}
+
+.deskGrid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 240px;
+  gap: 28px;
+  align-items: start;
+  margin-bottom: 32px;
+}
+
+.deskMain { min-width: 0; }
+
+.deskEyebrow {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 12px;
+}
+
+.eyebrow {
+  font-size: 10.5px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted-2);
+}
+
+.queueWrap { margin-top: 12px; }
+
+.compactLanes {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+/* Dev toolbar — visually de-emphasized, not part of the design */
+.devBar {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 10px 0;
+  margin-top: 16px;
+  border-top: 1px dashed var(--bk-rule-soft);
+}
+
+.devLabel {
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--bk-rule);
+}
+
+.devLink {
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--bk-rule);
+  text-decoration: underline;
+}

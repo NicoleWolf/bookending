@@ -1,0 +1,239 @@
+/* ── Header ───────────────────────────────────────────────── */
+.header {
+  padding: 32px 32px 0;
+  border-bottom: 1px solid var(--rule);
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+}
+
+.headerLeft {
+  padding-bottom: 24px;
+}
+
+.headerEyebrow {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  color: var(--muted);
+  margin-bottom: 10px;
+}
+
+.headerTitle {
+  font-style: italic;
+  font-weight: 400;
+  font-size: 28px;
+  margin: 0 0 8px;
+  letter-spacing: -0.01em;
+}
+
+.headerSub {
+  font-style: italic;
+  font-size: 13px;
+  color: var(--muted);
+  margin: 0;
+}
+
+/* ── Filter bar ───────────────────────────────────────────── */
+.filterBar {
+  display: flex;
+  gap: 0;
+  padding: 0 32px;
+  border-bottom: 1px solid var(--rule);
+}
+
+.filterBtn {
+  padding: 12px 18px;
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  cursor: pointer;
+  font-family: var(--sans);
+  font-size: 11.5px;
+  letter-spacing: 0.02em;
+  color: var(--muted);
+  transition: color 0.12s, border-color 0.12s;
+}
+
+.filterBtn:hover {
+  color: var(--paper);
+}
+
+.filterBtn[data-active] {
+  color: var(--paper);
+  border-bottom-color: var(--accent);
+}
+
+/* ── Cards grid ───────────────────────────────────────────── */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 0;
+  border-left: 1px solid var(--rule);
+}
+
+.card {
+  padding: 22px 24px;
+  border-right: 1px solid var(--rule);
+  border-bottom: 1px solid var(--rule);
+  transition: background 0.12s;
+  min-height: 120px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.card:hover {
+  background: color-mix(in srgb, var(--ink) 95%, var(--paper));
+}
+
+.card[data-status="coming-soon"] {
+  opacity: 0.55;
+}
+
+.cardTop {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.cardName {
+  font-size: 13.5px;
+  font-weight: 600;
+  margin-bottom: 3px;
+}
+
+.cardDesc {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 10px;
+  color: var(--muted);
+  letter-spacing: 0.04em;
+}
+
+.cardStatus {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.cardStatus[data-status="connected"] {
+  color: var(--good);
+}
+
+.cardStatus[data-status="available"] {
+  color: var(--muted);
+}
+
+.cardStatus[data-status="coming-soon"] {
+  color: var(--muted);
+}
+
+/* ── Card stats ───────────────────────────────────────────── */
+.cardStats {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.cardHandle {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 10px;
+  color: var(--muted);
+  letter-spacing: 0.04em;
+}
+
+.cardFollowers {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 11px;
+  color: var(--paper);
+  letter-spacing: 0.04em;
+}
+
+.cardDelta {
+  font-size: 10px;
+  color: var(--muted);
+}
+
+.cardDelta[data-positive] {
+  color: var(--good);
+}
+
+.cardRating {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 11px;
+  color: var(--paper);
+}
+
+.cardRating[data-danger] {
+  color: var(--danger);
+}
+
+.cardRatingDelta {
+  font-size: 10px;
+  color: var(--muted);
+}
+
+.cardRatingDelta[data-negative] {
+  color: var(--danger);
+}
+
+/* ── Card editorial ───────────────────────────────────────── */
+.cardEditorial {
+  font-style: italic;
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.5;
+  margin: 0;
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+  transition: max-height 0.2s ease, opacity 0.2s ease;
+}
+
+.cardEditorial[data-visible] {
+  max-height: 80px;
+  opacity: 1;
+}
+
+/* ── Action buttons ───────────────────────────────────────── */
+.connectBtn {
+  margin-top: auto;
+  align-self: flex-start;
+  font-family: var(--sans);
+  font-size: 11.5px;
+  font-weight: 500;
+  letter-spacing: 0.03em;
+  color: var(--accent);
+  background: transparent;
+  border: 1px solid color-mix(in srgb, var(--accent) 50%, transparent);
+  padding: 5px 12px;
+  cursor: pointer;
+  transition: background 0.12s, color 0.12s;
+}
+
+.connectBtn:hover {
+  background: var(--accent);
+  color: var(--ink);
+}
+
+.notifyBtn {
+  margin-top: auto;
+  align-self: flex-start;
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 9.5px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+  cursor: default;
+}

@@ -1,0 +1,210 @@
+/* ── Header ──────────────────────────────────────────────── */
+.viewHeader {
+  padding: 20px 28px;
+  border-bottom: 1px solid var(--rule);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.viewTitle {
+  font-style: italic;
+  font-size: 18px;
+  margin-bottom: 4px;
+}
+
+.viewSubtitle {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 10.5px;
+  color: var(--muted);
+  letter-spacing: 0.1em;
+}
+
+/* ── Approval log ────────────────────────────────────────── */
+.approvedLink {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 10.5px;
+  color: var(--good);
+  letter-spacing: 0.1em;
+  padding: 0;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.approvalLog {
+  border-bottom: 1px solid var(--rule);
+  background: color-mix(in srgb, var(--ink) 96%, var(--paper));
+  padding: 16px 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.approvalLogHead {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 2px;
+}
+
+.approvalLogRow {
+  display: flex;
+  align-items: baseline;
+  gap: 16px;
+}
+
+.approvalLogFile {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 11px;
+  letter-spacing: 0.03em;
+  min-width: 0;
+}
+
+.approvalLogMeta {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 10px;
+  color: var(--muted);
+  letter-spacing: 0.04em;
+}
+
+/* ── Table ───────────────────────────────────────────────── */
+.tableHead {
+  display: grid;
+  grid-template-columns: 2fr 1.2fr 0.8fr 0.9fr 1fr 0.7fr 0.8fr 1fr;
+  padding: 10px 28px;
+  border-bottom: 1px solid var(--rule);
+  background: color-mix(in srgb, var(--ink) 96%, var(--paper));
+}
+
+.tableHeadCell {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.fileRow {
+  display: grid;
+  grid-template-columns: 2fr 1.2fr 0.8fr 0.9fr 1fr 0.7fr 0.8fr 1fr;
+  padding: 15px 28px;
+  border-bottom: 1px solid var(--rule);
+  align-items: center;
+  font-size: 13px;
+}
+
+.fileRow:last-child {
+  border-bottom: none;
+}
+
+.fileName {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 11px;
+  letter-spacing: 0.03em;
+}
+
+.fileNote {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 9.5px;
+  color: var(--muted);
+  letter-spacing: 0.06em;
+  margin-top: 3px;
+}
+
+.fileNote[data-urgent] {
+  color: var(--danger);
+}
+
+.fileTitle {
+  font-weight: 500;
+}
+
+.fileKind {
+  font-style: italic;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.fileMeta {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 10.5px;
+  color: var(--muted);
+  letter-spacing: 0.06em;
+}
+
+.fileChannels {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  align-items: center;
+}
+
+.channelTag {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 9.5px;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+  border: 1px solid var(--rule);
+  padding: 2px 5px;
+}
+
+.channelNone {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 10.5px;
+  color: var(--muted);
+}
+
+.fileSize {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 10.5px;
+  color: var(--muted);
+}
+
+/* ── Drop zone ───────────────────────────────────────────── */
+.dropZone {
+  margin: 24px 28px 28px;
+  border: 1px dashed var(--rule);
+  padding: 32px 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  color: var(--muted);
+}
+
+.dropLabel {
+  font-size: 13px;
+}
+
+.dropOr {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 10px;
+  letter-spacing: 0.1em;
+}
+
+.dropSpec {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 9.5px;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+  opacity: 0.6;
+}

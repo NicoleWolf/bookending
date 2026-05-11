@@ -19,7 +19,7 @@ const Masthead = ({tweaks}) => {
         <div style={{display:'flex', alignItems:'center', gap:18}}>
           <div className="mono" style={{fontSize:11, color:'var(--muted)', letterSpacing:'0.18em'}}>VOL. III · NO. 47</div>
           <div className="mono" style={{fontSize:11, color:'var(--muted)', letterSpacing:'0.18em'}}>MON · 04 MAY 2026</div>
-          <div className="mono" style={{fontSize:11, color:'var(--muted)', letterSpacing:'0.18em'}}>EST. 2024</div>
+          <div className="mono" style={{fontSize:11, color:'var(--muted)', letterSpacing:'0.18em'}}>EST. 2026</div>
         </div>
         <div style={{display:'flex', alignItems:'center', gap:18}}>
           <button style={navBtn}><IconSearch size={14}/> Search</button>
@@ -27,7 +27,7 @@ const Masthead = ({tweaks}) => {
           <div style={{display:'flex', alignItems:'center', gap:10, paddingLeft:18, borderLeft:'1px solid var(--rule)'}}>
             <Avatar initials="EW" tone="paper" size={28}/>
             <div style={{display:'flex', flexDirection:'column', lineHeight:1.1}}>
-              <span style={{fontSize:12, fontWeight:600}}>Esther Winwood</span>
+              <span style={{fontSize:12, fontWeight:600}}>Billie Wolf</span>
               <span className="mono" style={{fontSize:10, color:'var(--muted)', letterSpacing:'0.1em'}}>3 TITLES · INDIE</span>
             </div>
           </div>
@@ -39,7 +39,7 @@ const Masthead = ({tweaks}) => {
       {/* Title block */}
       <div style={{display:'grid', gridTemplateColumns:'1.6fr 1fr', gap:48, padding:'40px 0 36px', alignItems:'flex-end'}}>
         <div>
-          <div className="label" style={{marginBottom:18}}>The Self-Publisher's Workbench</div>
+          <div className="label" style={{marginBottom:18}}>The Self-Publisher's Community</div>
           <h1 className="serif" style={{
             fontFamily:'var(--serif)', fontStyle:'italic', fontWeight:400,
             fontSize:'clamp(56px, 7vw, 104px)', lineHeight:0.95, margin:0,
@@ -69,7 +69,7 @@ const Masthead = ({tweaks}) => {
       {/* Section nav — like a newspaper's section list */}
       <nav style={{display:'flex', alignItems:'center', gap:0, padding:'14px 0', overflowX:'auto'}}>
         {[
-          {label:'Workbench', active:true},
+          {label:'Dashboard', active:true},
           {label:'Editing & Beta-readers'},
           {label:'Print & Distribution'},
           {label:'Storefront'},

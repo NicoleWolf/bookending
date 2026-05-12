@@ -94,7 +94,7 @@ export function SubscribersView() {
     <div>
       <div className={styles.toolbar}>
         <div className={styles.searchBox}>
-          <IconSearch size={13} style={{ color: 'var(--muted)', flexShrink: 0 }} />
+          <IconSearch size={13} className={styles.searchIcon} />
           <input
             value={search}
             onChange={e => setSearch(e.target.value)}
@@ -153,7 +153,7 @@ export function SubscribersView() {
       </div>
 
       {filtered.map((s) => (
-        <div key={s.id} className={styles.subRow} onClick={() => setSelectedId(s.id)} style={{ cursor: 'pointer' }}>
+        <div key={s.id} className={styles.subRow} onClick={() => setSelectedId(s.id)}>
           <div className={styles.subCell}>
             <Avatar initials={s.initials} tone={s.tone} size={26} />
             <div>

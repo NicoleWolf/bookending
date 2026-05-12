@@ -355,3 +355,5 @@
 .timelineRow[data-status="upcoming"] .timelineTask {
   color: var(--paper);
 }
+
+.iconInk { color: var(--ink); }

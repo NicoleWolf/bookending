@@ -769,3 +769,6 @@
   border-color: var(--danger);
   color: var(--danger);
 }
+
+.btnXs   { font-size: 10.5px; padding: 4px 10px; }
+.btnRsvp { justify-content: center; font-size: 11px; }

@@ -7,26 +7,22 @@ import InviteReaderModal from './InviteReaderModal';
 import ReaderMatcher from './ReaderMatcher';
 import LetterComposer from './LetterComposer';
 import Correspondence from './Correspondence';
-import type { BetaReader, Reader, ReaderRating, CorrespondenceThread, CommentType, Comment } from './types';
+import type { BetaReader, Reader, ReaderRating, CorrespondenceThread, Comment } from './types';
 import type { BookMetadata } from '../library/data';
 import DocumentEditor from './DocumentEditor';
 import NotesArchive from './NotesArchive';
+import PendingRequests from './PendingRequests';
+import WriterSparkline, { type ReaderImpression } from './WriterSparkline';
 import {
   MANUSCRIPT_META, DEFAULT_EDITING_META, MANUSCRIPT_GENRES,
-  INTEGRATIONS, INITIAL_READERS, INITIAL_INSTRUCTIONS,
-  COMMENTS, TONES, RATING_TAGS, typeTone, verdictTone,
+  INTEGRATIONS, INITIAL_READERS, INITIAL_INSTRUCTIONS, INITIAL_IMPRESSIONS,
+  COMMENTS, TONES, RATING_TAGS, verdictTone,
 } from './data';
 import { INITIAL_THREADS } from './correspondence-data';
 import styles from './Editing.module.css';
 
 type HubView = 'editor' | 'feedback' | 'correspondence' | 'notes';
 
-const THEME_ORDER: CommentType[] = ['pacing', 'character', 'prose', 'plot', 'other', 'continuity', 'praise'];
-const THEME_LABEL: Record<CommentType, string> = {
-  pacing: 'Pacing', character: 'Character', prose: 'Prose', plot: 'Plot',
-  other: 'Other', continuity: 'Continuity', praise: 'Praise',
-};
-const TRACKED_THEMES: CommentType[] = ['pacing', 'character', 'prose', 'plot', 'other'];
 
 import { api } from '../../lib/api';
 import type { BetaReaderRecord } from '@bookending/shared';
@@ -60,7 +56,6 @@ export default function EditingHub({ savedBooks, onTabChange }: EditingHubProps)
   );
   const [filterReader, setFilterReader] = useState('All');
   const [showResolved, setShowResolved] = useState(false);
-  const [groupByTheme, setGroupByTheme] = useState(false);
   const [resolved, setResolved]         = useState<Set<number>>(
     () => new Set(COMMENTS.filter(c => c.resolvedDefault).map(c => c.id))
   );
@@ -72,15 +67,15 @@ export default function EditingHub({ savedBooks, onTabChange }: EditingHubProps)
   const [threads, setThreads]           = useState<CorrespondenceThread[]>(INITIAL_THREADS);
   const [composingFor, setComposingFor] = useState<Reader | null>(null);
   const [corrThreadId, setCorrThreadId] = useState<number | null>(null);
-  const [commentTypes, setCommentTypes]  = useState<Record<number, CommentType>>(
-    () => Object.fromEntries(COMMENTS.map(c => [c.id, c.type]))
-  );
-  const [editingTypeFor, setEditingTypeFor] = useState<number | null>(null);
   const [ratings, setRatings]           = useState<Record<string, ReaderRating>>({});
   const [ratingFor, setRatingFor]       = useState<string | null>(null);
   const [ratingStars, setRatingStars]   = useState(0);
   const [ratingTags, setRatingTags]     = useState<string[]>([]);
   const [ratingNote, setRatingNote]     = useState('');
+
+  const [readerImpressions, setReaderImpressions] = useState<ReaderImpression[]>(
+    () => INITIAL_IMPRESSIONS[activeId] ?? []
+  );
 
   // Fetch readers from API whenever the active manuscript changes
   useEffect(() => {
@@ -88,6 +83,10 @@ export default function EditingHub({ savedBooks, onTabChange }: EditingHubProps)
     void api.get<BetaReaderRecord[]>(`/api/manuscripts/${activeId}/readers`)
       .then(records => setReaders(prev => ({ ...prev, [activeId]: records.map(recordToReader) })))
       .catch(() => { /* silently fail */ });
+    setReaderImpressions(INITIAL_IMPRESSIONS[activeId] ?? []);
+    void api.get<ReaderImpression[]>(`/api/manuscripts/${activeId}/reader-impressions`)
+      .then(data => { if (data.length > 0) setReaderImpressions(data); })
+      .catch(() => {});
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeId, session?.token]);
 
@@ -120,6 +119,13 @@ export default function EditingHub({ savedBooks, onTabChange }: EditingHubProps)
     return true;
   });
   const openCount = msComments.filter(c => !resolved.has(c.id)).length;
+
+  const filteredImpressions = filterReader === 'All'
+    ? readerImpressions
+    : readerImpressions.filter(r => r.readerName === filterReader);
+  const totalChapters = readerImpressions.length > 0
+    ? Math.max(...readerImpressions.flatMap(r => r.points.map(p => p.chapterNum)))
+    : 0;
 
   const switchMs = (id: string) => {
     setActiveId(id); setFilterReader('All'); setEditingInstr(false);
@@ -222,9 +228,7 @@ export default function EditingHub({ savedBooks, onTabChange }: EditingHubProps)
   }
 
   function renderCommentRow(c: Comment, isLast: boolean) {
-    const isResolved   = resolved.has(c.id);
-    const currentType  = commentTypes[c.id] ?? c.type;
-    const isPickerOpen = editingTypeFor === c.id;
+    const isResolved = resolved.has(c.id);
     return (
       <div
         key={c.id}
@@ -234,35 +238,6 @@ export default function EditingHub({ savedBooks, onTabChange }: EditingHubProps)
       >
         <div className={styles.commentBody}>
           <div className={styles.commentMeta}>
-            {isPickerOpen ? (
-              <div className={styles.commentTypePicker}>
-                {TRACKED_THEMES.map(t => (
-                  <button
-                    key={t}
-                    className={styles.commentTypeBtn}
-                    data-active={currentType === t ? '' : undefined}
-                    data-tone={typeTone[t]}
-                    onClick={() => {
-                      setCommentTypes(prev => ({ ...prev, [c.id]: t }));
-                      setEditingTypeFor(null);
-                    }}
-                  >
-                    {THEME_LABEL[t]}
-                  </button>
-                ))}
-                <button
-                  className={styles.commentTypeCancel}
-                  onClick={() => setEditingTypeFor(null)}
-                >✕</button>
-              </div>
-            ) : (
-              <button
-                className={styles.commentTypeTrigger}
-                onClick={() => setEditingTypeFor(c.id)}
-              >
-                <Pill tone={typeTone[currentType]}>{THEME_LABEL[currentType]}</Pill>
-              </button>
-            )}
             <span className={styles.commentLocation}>
               {c.chapter.toUpperCase()} · P. {c.page}
             </span>
@@ -280,13 +255,13 @@ export default function EditingHub({ savedBooks, onTabChange }: EditingHubProps)
           </div>
         </div>
         <div className={styles.commentActions}>
-          <Btn tone="ghost" style={{ fontSize: 11, padding: '5px 12px' }}>Reply</Btn>
+          <Btn tone="ghost" className={styles.btnSm}>Reply</Btn>
           {isResolved ? (
-            <Btn tone="ghost" style={{ fontSize: 11, padding: '5px 12px' }} onClick={() => reopen(c.id)}>Reopen</Btn>
+            <Btn tone="ghost" className={styles.btnSm} onClick={() => reopen(c.id)}>Reopen</Btn>
           ) : (
             <Btn
               tone="ghost"
-              style={{ fontSize: 11, padding: '5px 12px', color: 'var(--good)', borderColor: 'var(--good)' }}
+              className={`${styles.btnSm} ${styles.btnResolve}`}
               onClick={() => resolve(c.id)}
             >
               <IconCheck size={11} /> Resolve
@@ -372,7 +347,7 @@ export default function EditingHub({ savedBooks, onTabChange }: EditingHubProps)
             <div className="label">Current manuscript</div>
             <div className={styles.msFileRow}>
               <div className={styles.msCover}>
-                <IconBook size={18} style={{ color: 'var(--muted)' }} />
+                <IconBook size={18} className={styles.iconMuted} />
                 <div className={styles.msCoverAccent} />
               </div>
               <div>
@@ -390,8 +365,8 @@ export default function EditingHub({ savedBooks, onTabChange }: EditingHubProps)
               <div className={styles.dropSub}>Manage manuscript files in Manuscripts →</div>
             </div>
             <div className={styles.btnRow}>
-              <Btn tone="ghost" style={{ flex: 1, justifyContent: 'center' }}>Download .docx</Btn>
-              <Btn tone="ghost" style={{ flex: 1, justifyContent: 'center' }}>Share with readers</Btn>
+              <Btn tone="ghost" className={styles.btnFull}>Download .docx</Btn>
+              <Btn tone="ghost" className={styles.btnFull}>Share with readers</Btn>
             </div>
           </div>
 
@@ -414,7 +389,7 @@ export default function EditingHub({ savedBooks, onTabChange }: EditingHubProps)
                   <div className={styles.toolName}>{tool.name}</div>
                   <div className={styles.toolTagline}>{tool.tagline}</div>
                 </div>
-                <Btn tone={tool.connected ? 'ghost' : 'accent'} style={{ fontSize: 11, padding: '5px 12px' }}>
+                <Btn tone={tool.connected ? 'ghost' : 'accent'} className={styles.btnSm}>
                   {tool.connected ? 'Disconnect' : 'Connect'}
                 </Btn>
               </div>
@@ -434,6 +409,11 @@ export default function EditingHub({ savedBooks, onTabChange }: EditingHubProps)
       )}
 
       {view === 'feedback' && <>
+      {/* ── Pending join requests (REQUEST mode only) ── */}
+      {activeBook?.betaMode === 'REQUEST' && (
+        <PendingRequests manuscriptId={activeId} />
+      )}
+
       {/* ── Beta reader matching ── */}
       <ReaderMatcher
         manuscriptId={activeId}
@@ -449,7 +429,7 @@ export default function EditingHub({ savedBooks, onTabChange }: EditingHubProps)
           <Btn
             tone="primary"
             icon={<IconArrow size={14} />}
-            style={{ fontSize: 11, padding: '5px 12px' }}
+            className={styles.btnSm}
             onClick={() => setShowInviteModal(true)}
           >
             Invite reader
@@ -491,7 +471,7 @@ export default function EditingHub({ savedBooks, onTabChange }: EditingHubProps)
                     </div>
                     <Btn
                       tone="bare"
-                      style={{ fontSize: 11, color: 'var(--danger)', padding: '4px 8px' }}
+                      className={styles.btnRemove}
                       onClick={() => removeReader(r.id)}
                     >
                       Remove
@@ -563,8 +543,8 @@ export default function EditingHub({ savedBooks, onTabChange }: EditingHubProps)
                         onChange={e => setRatingNote(e.target.value)}
                       />
                       <div className={styles.btnRow}>
-                        <Btn tone="primary" style={{ fontSize: 10.5, padding: '4px 10px' }} onClick={() => saveRating(r.id)}>Save rating</Btn>
-                        <Btn tone="ghost" style={{ fontSize: 10.5, padding: '4px 10px' }} onClick={() => setRatingFor(null)}>Cancel</Btn>
+                        <Btn tone="primary" className={styles.btnXs} onClick={() => saveRating(r.id)}>Save rating</Btn>
+                        <Btn tone="ghost" className={styles.btnXs} onClick={() => setRatingFor(null)}>Cancel</Btn>
                       </div>
                     </div>
                   ) : (
@@ -637,39 +617,8 @@ export default function EditingHub({ savedBooks, onTabChange }: EditingHubProps)
         </div>
       </div>
 
-      {/* ── Theme stats ── */}
-      {(() => {
-        const themeStats = TRACKED_THEMES.map(type => ({
-          type,
-          count: msComments.filter(c => (commentTypes[c.id] ?? c.type) === type).length,
-        }));
-        const maxCount = Math.max(...themeStats.map(s => s.count), 1);
-        return (
-          <div className={styles.themeStats}>
-            <div className={styles.themeStatsHead}>
-              <span className="label">Theme breakdown</span>
-              <span className={styles.themeStatsTotal}>{msComments.length} notes</span>
-            </div>
-            <div className={styles.themeStatsList}>
-              {themeStats.map(({ type, count }) => (
-                <div key={type} className={styles.themeStatRow}>
-                  <span className={styles.themeStatLabel}>
-                    <Pill tone={typeTone[type]}>{THEME_LABEL[type]}</Pill>
-                  </span>
-                  <div className={styles.themeBar}>
-                    <div
-                      className={styles.themeBarFill}
-                      data-tone={typeTone[type]}
-                      style={{ '--pct': `${count / maxCount * 100}%` } as CSSProperties}
-                    />
-                  </div>
-                  <span className={styles.themeStatCount}>{count}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-        );
-      })()}
+      {/* ── Reader impressions sparkline ── */}
+      <WriterSparkline readers={filteredImpressions} totalChapters={totalChapters} />
 
       {/* ── Inline comments inbox ── */}
       <div className={styles.commentsBox}>
@@ -687,13 +636,6 @@ export default function EditingHub({ savedBooks, onTabChange }: EditingHubProps)
           <div className={styles.navSpacer} />
           <button
             className={styles.resolvedToggle}
-            data-active={groupByTheme ? 'true' : undefined}
-            onClick={() => setGroupByTheme(v => !v)}
-          >
-            {groupByTheme ? '× FLAT LIST' : '⊞ BY THEME'}
-          </button>
-          <button
-            className={styles.resolvedToggle}
             data-active={showResolved ? 'true' : undefined}
             onClick={() => setShowResolved(v => !v)}
           >
@@ -705,22 +647,7 @@ export default function EditingHub({ savedBooks, onTabChange }: EditingHubProps)
           <div className={styles.commentsEmpty}>
             <span className={styles.commentsEmptyText}>NO OPEN NOTES</span>
           </div>
-        ) : groupByTheme ? (() => {
-          const groups = THEME_ORDER
-            .map(type => ({ type, comments: visible.filter(c => (commentTypes[c.id] ?? c.type) === type) }))
-            .filter(g => g.comments.length > 0);
-          return groups.map(({ type, comments }, gi) =>
-            <div key={type}>
-              <div className={styles.themeGroup}>
-                <Pill tone={typeTone[type]}>{THEME_LABEL[type]}</Pill>
-                <span className={styles.themeGroupCount}>{comments.length}</span>
-              </div>
-              {comments.map((c, ci) => renderCommentRow(
-                c, gi === groups.length - 1 && ci === comments.length - 1
-              ))}
-            </div>
-          );
-        })() : (
+        ) : (
           visible.map((c, i) => renderCommentRow(c, i === visible.length - 1))
         )}
 

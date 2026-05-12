@@ -614,3 +614,6 @@
   color: var(--muted);
   line-height: 1.6;
 }
+
+.labelMb18 { margin-bottom: 18px; }
+.labelMb14 { margin-bottom: 14px; }

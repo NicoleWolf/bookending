@@ -1,18 +1,17 @@
 import { useState, useMemo, useEffect } from 'react';
-import { SectionHead } from '../../shared/ui/atoms';
-import { IconSearch } from '../../shared/ui/icons';
+import { LibraryMasthead } from './LibraryMasthead';
+import type { LibraryView } from './LibraryMasthead';
+import { ManuscriptCard } from './ManuscriptCard';
 import { MANUSCRIPTS, fuzzySearch } from './data';
 import type { CatalogManuscript, ManuscriptStatus } from './data';
 import type { BookMetadata, BookStatus } from '../library/data';
 import { useAuth } from '../auth';
 import { DiscoverView } from './DiscoverView';
 import { BrowseView } from './BrowseView';
-import { ManuscriptCard } from './ManuscriptCard';
 import styles from './LibraryBrowse.module.css';
-
 import { api } from '../../lib/api';
 
-type View = 'discover' | 'browse';
+import type { BrowseRecord } from '@bookending/shared';
 
 const STATUS_MAP: Record<BookStatus, ManuscriptStatus> = {
   'drafting':    'waitlist',
@@ -20,64 +19,66 @@ const STATUS_MAP: Record<BookStatus, ManuscriptStatus> = {
   'published':   'closed',
 };
 
-import type { BrowseRecord } from '@bookending/shared';
-
 function recordToCatalog(r: BrowseRecord, idx: number): CatalogManuscript {
   const status: ManuscriptStatus =
     r.status === 'IN_REVISION' ? 'open' :
     r.status === 'PUBLISHED'   ? 'closed' : 'waitlist';
   return {
-    id:            20000 + idx,
-    title:         r.title,
-    author:        r.author.name,
-    genre:         r.genre ?? 'Fiction',
-    subgenre:      r.subgenre ?? '',
-    description:   r.description ?? '',
-    keywords:      r.keywords ? r.keywords.split(',').map(k => k.trim()).filter(Boolean) : [],
+    id:             r.id,
+    title:          r.title,
+    author:         r.author.name,
+    genre:          r.genre ?? 'Fiction',
+    subgenre:       r.subgenre ?? '',
+    description:    r.description ?? '',
+    keywords:       r.keywords ? r.keywords.split(',').map(k => k.trim()).filter(Boolean) : [],
     status,
-    wordCount:     r.wordCount,
+    wordCount:      r.wordCount,
     estimatedPages: r.estimatedPages ?? 0,
-    contentRating: r.contentRating ?? '',
-    scheme:        idx % 5,
-    readerCount:   r.betaReaders.length,
-    maxReaders:    10,
-    listedAt:      new Date().toISOString().slice(0, 10),
-    themes:        [],
+    contentRating:  r.contentRating ?? '',
+    scheme:         idx % 5,
+    readerCount:    r.readerCount,
+    maxBetaReaders: r.maxBetaReaders,
+    listedAt:       new Date().toISOString().slice(0, 10),
+    themes:         [],
+    betaMode:       r.betaMode as CatalogManuscript['betaMode'],
+    pendingRequest: r.pendingRequest,
   };
 }
 
 function bookToCatalog(book: BookMetadata, index: number): CatalogManuscript {
   return {
-    id:            10000 + index,
-    title:         book.title,
-    author:        'Billie Wolf',
-    genre:         book.genre || 'Fiction',
-    subgenre:      book.subgenre || '',
-    description:   book.description || '',
-    keywords:      book.keywords ? book.keywords.split(',').map(k => k.trim()).filter(Boolean) : [],
-    status:        STATUS_MAP[book.status],
-    wordCount:     book.estimatedPages ? book.estimatedPages * 250 : 0,
+    id:             10000 + index,
+    title:          book.title,
+    author:         'Billie Wolf',
+    genre:          book.genre || 'Fiction',
+    subgenre:       book.subgenre || '',
+    description:    book.description || '',
+    keywords:       book.keywords ? book.keywords.split(',').map(k => k.trim()).filter(Boolean) : [],
+    status:         STATUS_MAP[book.status],
+    wordCount:      book.estimatedPages ? book.estimatedPages * 250 : 0,
     estimatedPages: book.estimatedPages ?? 0,
-    contentRating: book.contentRating || '',
-    scheme:        index % 5,
-    readerCount:   0,
-    maxReaders:    5,
-    listedAt:      new Date().toISOString().slice(0, 10),
-    themes:        [],
-    ownManuscript: true,
+    contentRating:  book.contentRating || '',
+    scheme:         index % 5,
+    readerCount:    0,
+    maxBetaReaders: book.maxBetaReaders,
+    listedAt:       new Date().toISOString().slice(0, 10),
+    themes:         [],
+    betaMode:       book.betaMode as CatalogManuscript['betaMode'],
+    ownManuscript:  true,
   };
 }
 
 interface LibraryBrowseProps {
-  savedBooks: Record<string, BookMetadata>;
+  savedBooks:     Record<string, BookMetadata>;
+  onEditProfile?: () => void;
 }
 
-export default function LibraryBrowse({ savedBooks }: LibraryBrowseProps) {
+export default function LibraryBrowse({ savedBooks, onEditProfile }: LibraryBrowseProps) {
   const { session } = useAuth();
-  const [view,            setView]            = useState<View>('discover');
-  const [query,           setQuery]           = useState('');
-  const [browseGenre,     setBrowseGenre]     = useState<string | null>(null);
-  const [apiManuscripts,  setApiManuscripts]  = useState<CatalogManuscript[]>([]);
+  const [view,           setView]           = useState<LibraryView>('discover');
+  const [query,          setQuery]          = useState('');
+  const [browseGenre,    setBrowseGenre]    = useState<string | null>(null);
+  const [apiManuscripts, setApiManuscripts] = useState<CatalogManuscript[]>([]);
 
   useEffect(() => {
     void (async () => {
@@ -91,111 +92,96 @@ export default function LibraryBrowse({ savedBooks }: LibraryBrowseProps) {
 
   const allManuscripts = useMemo<CatalogManuscript[]>(() => {
     const publicBooks = Object.values(savedBooks)
-      .filter(b => b.visibility === 'public')
+      .filter(b => b.betaMode === 'PUBLIC' || b.betaMode === 'REQUEST')
       .map(bookToCatalog);
-
-    // Prefer API results over static MANUSCRIPTS if we got any
     const baseCatalog = apiManuscripts.length > 0 ? apiManuscripts : MANUSCRIPTS;
     return [...publicBooks, ...baseCatalog];
   }, [savedBooks, apiManuscripts]);
 
+  const openCount  = allManuscripts.filter(m => m.status === 'open').length;
   const isSearching = query.trim().length >= 2;
+  const activeView: LibraryView = isSearching ? 'search' : view;
 
   const results = useMemo(
     () => isSearching ? fuzzySearch(allManuscripts, query) : [],
-    [allManuscripts, query, isSearching]
+    [allManuscripts, query, isSearching],
   );
 
-  function openBrowse(genre: string) {
-    setBrowseGenre(genre || null);
+  function openDiscover() { setView('discover'); setQuery(''); }
+  function openBrowse(genre?: string) {
+    setBrowseGenre(genre ?? null);
     setView('browse');
     setQuery('');
   }
-
-  function openDiscover() {
-    setView('discover');
-    setQuery('');
-  }
-
-  const openCount = allManuscripts.filter(m => m.status === 'open').length;
+  function openSearch() { setView('search'); setQuery(''); }
 
   return (
-    <div>
-      <div className={styles.sectionHeader}>
-        <SectionHead
-          eyebrow="§ 08 · The Reading Room"
-          title="Library"
-          kicker="Manuscripts open for beta readers — browse, discover, and request to read."
+    <div className={styles.shell}>
+      {/* ── Masthead (always visible) ───────────────────────────── */}
+      <div className={styles.mastheadWrap}>
+        <LibraryMasthead
+          totalManuscripts={allManuscripts.length}
+          openManuscripts={openCount}
+          activeView={activeView}
+          onDiscover={openDiscover}
+          onBrowse={() => openBrowse()}
+          onSearch={openSearch}
         />
       </div>
 
-      {/* Action bar */}
-      <div className={styles.actionBar}>
+      {/* ── Search input (shown when Search tab active) ─────────── */}
+      {(isSearching || activeView === 'search') && (
         <div className={styles.searchWrap}>
-          <IconSearch size={13} style={{ color: 'var(--muted)', flexShrink: 0 }} />
           <input
             className={styles.searchInput}
             value={query}
+            autoFocus
             onChange={e => setQuery(e.target.value)}
             placeholder="Search by title, author, genre, or theme…"
+            aria-label="Search manuscripts"
           />
           {query && (
-            <button className={styles.clearBtn} onClick={() => setQuery('')}>
+            <button className={styles.clearBtn} onClick={() => setQuery('')} aria-label="Clear search">
               ×
             </button>
           )}
         </div>
+      )}
 
-        <div className={styles.viewTabs}>
-          <button
-            className={styles.viewTab}
-            data-active={!isSearching && view === 'discover' ? 'true' : undefined}
-            onClick={openDiscover}
-          >
-            Discover
-          </button>
-          <button
-            className={styles.viewTab}
-            data-active={!isSearching && view === 'browse' ? 'true' : undefined}
-            onClick={() => openBrowse('')}
-          >
-            Browse by genre
-          </button>
-        </div>
-
-        <span className={styles.openBadge}>{openCount} open</span>
-      </div>
-
-      {/* Search results */}
-      {isSearching && (
-        <div>
-          <div className={styles.searchMeta}>
-            <span className={styles.resultCount}>
-              {results.length} result{results.length !== 1 ? 's' : ''} for "{query}"
-            </span>
-            <span className={styles.resultRule} />
+      {/* ── Content ─────────────────────────────────────────────── */}
+      <div className={styles.content}>
+        {/* Search results */}
+        {isSearching && (
+          <div className={styles.searchResults}>
+            <div className={styles.searchMeta}>
+              <span className={styles.resultCount}>
+                {results.length} result{results.length !== 1 ? 's' : ''} for &ldquo;{query}&rdquo;
+              </span>
+            </div>
+            {results.length > 0 ? (
+              <div className={styles.searchGrid}>
+                {results.map(m => <ManuscriptCard key={m.id} ms={m} variant="compact" />)}
+              </div>
+            ) : (
+              <p className={`serif ${styles.noResults}`}>
+                No manuscripts match &ldquo;{query}&rdquo;. Try a genre, theme, or author name.
+              </p>
+            )}
           </div>
+        )}
 
-          {results.length > 0 ? (
-            <div className={styles.searchGrid}>
-              {results.map(m => <ManuscriptCard key={m.id} ms={m} />)}
-            </div>
-          ) : (
-            <div className={styles.noResults}>
-              <p className="serif">No manuscripts match "{query}".</p>
-              <p>Try a genre, theme, author name, or keyword like "grief", "historical", or "diaspora".</p>
-            </div>
-          )}
-        </div>
-      )}
-
-      {/* Discover / Browse */}
-      {!isSearching && view === 'discover' && (
-        <DiscoverView onBrowseGenre={openBrowse} manuscripts={allManuscripts} />
-      )}
-      {!isSearching && view === 'browse' && (
-        <BrowseView initialGenre={browseGenre} manuscripts={allManuscripts} />
-      )}
+        {!isSearching && view === 'discover' && (
+          <DiscoverView
+            manuscripts={allManuscripts}
+            totalCount={allManuscripts.length}
+            onBrowseAll={() => openBrowse()}
+            onEditProfile={onEditProfile}
+          />
+        )}
+        {!isSearching && view === 'browse' && (
+          <BrowseView initialGenre={browseGenre} manuscripts={allManuscripts} />
+        )}
+      </div>
     </div>
   );
 }

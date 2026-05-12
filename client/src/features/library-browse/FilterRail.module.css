@@ -1,0 +1,237 @@
+.rail {
+  width: 260px;
+  flex-shrink: 0;
+  background: var(--lib-rail-bg);
+  border-right: 0.5px solid var(--lib-rule);
+  padding: 24px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+  align-self: flex-start;
+  position: sticky;
+  top: 0;
+  max-height: 100vh;
+  overflow-y: auto;
+  scrollbar-width: none;
+}
+.rail::-webkit-scrollbar { display: none; }
+
+/* ── Section ──────────────────────────────────────────────────────── */
+.section { display: flex; flex-direction: column; gap: 12px; }
+
+.sectionLabel {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  color: var(--lib-text-meta);
+  padding-bottom: 8px;
+  border-bottom: 0.5px solid var(--lib-rule);
+}
+
+/* ── Genre list ───────────────────────────────────────────────────── */
+.genreList { display: flex; flex-direction: column; gap: 2px; }
+
+.genreItem {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+  background: none;
+  border: none;
+  padding: 5px 0 5px 14px;
+  cursor: pointer;
+  position: relative;
+  text-align: left;
+  width: 100%;
+}
+
+.genreName {
+  font-family: var(--serif);
+  font-size: 14px;
+  font-weight: 400;
+  color: var(--lib-text-body);
+  line-height: 1.3;
+}
+
+.genreCount {
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  color: var(--lib-text-meta);
+  flex-shrink: 0;
+}
+
+/* Active state: bullet + weight + color */
+.genreItem[data-active] .genreName {
+  color: var(--lib-text);
+  font-weight: 500;
+}
+
+.genreItem[data-active]::before {
+  content: '·';
+  position: absolute;
+  left: 0;
+  color: var(--lib-accent);
+  font-size: 16px;
+  line-height: 1;
+  top: 4px;
+}
+
+/* ── Group label ──────────────────────────────────────────────────── */
+.groupLabel {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  color: var(--lib-text-meta);
+  margin-top: 4px;
+}
+
+/* ── Chip ─────────────────────────────────────────────────────────── */
+.chipRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-bottom: 8px;
+}
+
+.chip {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 5px 10px;
+  border: 0.5px solid var(--lib-rule);
+  background: transparent;
+  color: var(--lib-text-body);
+  cursor: pointer;
+}
+
+.chip:focus-visible { outline: 1.5px solid var(--lib-accent); outline-offset: 1px; }
+
+.chip[data-active] {
+  background: var(--lib-text);
+  color: var(--lib-bg);
+  border-color: var(--lib-text);
+}
+
+/* ── Length helper ────────────────────────────────────────────────── */
+.lengthHelper {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  color: var(--lib-text-meta);
+  margin-top: -4px;
+  margin-bottom: 8px;
+}
+
+/* ── Content notes accordion ──────────────────────────────────────── */
+.cnGroup { display: flex; flex-direction: column; gap: 6px; }
+
+.cnToggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 12px 14px;
+  background: transparent;
+  border: 0.5px solid var(--lib-rule);
+  cursor: pointer;
+  text-align: left;
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  color: var(--lib-text-body);
+}
+.cnToggle:hover { border-color: var(--lib-accent); }
+.cnToggle:focus-visible { outline: 1.5px solid var(--lib-accent); outline-offset: 1px; }
+
+.cnToggleLeft { display: flex; align-items: center; gap: 5px; }
+.cnToggleRight { display: flex; align-items: center; gap: 4px; flex-shrink: 0; }
+
+.cnCount { color: var(--lib-text-meta); }
+.cnCount[data-nonzero] { color: var(--lib-accent); font-weight: 500; }
+
+/* Body hidden by default; visible when open */
+.cnBody { display: none; flex-direction: column; gap: 8px; }
+.cnBody[data-open] { display: flex; }
+
+.cnChips { display: flex; flex-wrap: wrap; gap: 5px; }
+
+.cnMore {
+  font-family: var(--mono);
+  font-size: 10px;
+  font-style: italic;
+  letter-spacing: 0.06em;
+  color: var(--lib-text-meta);
+  background: none;
+  border: none;
+  padding: 5px 10px;
+  cursor: pointer;
+}
+.cnMore:hover { color: var(--lib-accent); }
+
+.cnHelper {
+  font-style: italic;
+  font-size: 12px;
+  color: var(--lib-text-meta);
+  margin: 0;
+  line-height: 1.4;
+}
+
+.cnManage {
+  color: var(--lib-accent);
+  text-decoration: none;
+}
+.cnManage:hover { text-decoration: underline; }
+
+/* ── Available-to-me toggle ───────────────────────────────────────── */
+.toggleRow {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin-top: 4px;
+}
+
+.toggle {
+  position: relative;
+  width: 28px;
+  height: 16px;
+  background: var(--lib-rule);
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  flex-shrink: 0;
+  padding: 0;
+  transition: background 0.15s;
+}
+.toggle[data-on] { background: var(--lib-accent); }
+.toggle:focus-visible { outline: 1.5px solid var(--lib-accent); outline-offset: 2px; }
+
+.toggleKnob {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--lib-bg);
+  transition: left 0.15s;
+}
+.toggle[data-on] .toggleKnob { left: 14px; }
+
+.toggleLabels { display: flex; flex-direction: column; gap: 2px; }
+
+.toggleName {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  color: var(--lib-text);
+}
+
+.toggleHelper {
+  font-style: italic;
+  font-size: 11px;
+  color: var(--lib-text-meta);
+  line-height: 1.3;
+}

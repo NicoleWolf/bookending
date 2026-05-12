@@ -29,8 +29,7 @@ export default function BinderySidebar({ activeStep, onStepChange }: Props) {
               data-active={isActive   ? '' : undefined}
               data-complete={isComplete ? '' : undefined}
               data-locked={isLocked   ? '' : undefined}
-              onClick={() => !isLocked && onStepChange(step.n)}
-              disabled={isLocked}
+              onClick={() => onStepChange(step.n)}
             >
               <div className={styles.stepRow}>
                 <span className={`mono ${styles.stepNum}`}>

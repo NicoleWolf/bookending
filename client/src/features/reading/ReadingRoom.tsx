@@ -1,9 +1,8 @@
-import type { CSSProperties } from 'react';
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { Btn } from '../../shared/ui/atoms';
 import { IconArrow, IconCheck } from '../../shared/ui/icons';
 import type { Highlight, Pending, Submission, AnnotationRecord, ProgressRecord, ImpressionPointRecord } from './types';
-import { MANUSCRIPTS, STAR_LABELS, STANCE_ORDER, STANCE_VALUE } from './data';
+import { MANUSCRIPTS, STAR_LABELS, STANCE_ORDER, STANCE_VALUE, AUTHOR_NOTES } from './data';
 import { useAuth } from '../auth';
 import styles from './Reading.module.css';
 import { api } from '../../lib/api';
@@ -31,10 +30,11 @@ export default function ReadingRoom({ msRef, onBack }: ReadingRoomProps) {
   const [impressionPoints,  setImpressionPoints]  = useState<ImpressionPointRecord[]>([]);
   const [cohortCount,       setCohortCount]       = useState(0);
   const [alreadySub,        setAlreadySub]        = useState<Submission | null>(null);
-  const [authorNoteMap,     setAuthorNoteMap]     = useState<Record<number, string>>({});
+  const [authorNoteMap,     setAuthorNoteMap]     = useState<Record<number, string>>(
+    () => AUTHOR_NOTES[ms?.id ?? -1] ?? {}
+  );
   const [chapterId,         setChapterId]         = useState<number | null>(null);
   const [pending,           setPending]           = useState<Pending | null>(null);
-  const [pendingPos,        setPendingPos]        = useState<{ top: number } | null>(null);
   const [draftNote,         setDraftNote]         = useState('');
   const [editingId,         setEditingId]         = useState<string | null>(null);
   const [editDraft,         setEditDraft]         = useState('');
@@ -43,6 +43,8 @@ export default function ReadingRoom({ msRef, onBack }: ReadingRoomProps) {
   const [stars,             setStars]             = useState(0);
   const [message,           setMessage]           = useState('');
   const [releasedOverrides, setReleasedOverrides] = useState<Record<number, boolean>>({});
+  const [focusedHighlightId, setFocusedHighlightId] = useState<string | null>(null);
+  const [submittedChapters,  setSubmittedChapters]  = useState<Set<number>>(new Set());
   const readingRef = useRef<HTMLDivElement>(null);
   const paraRefMap = useRef<Map<string, HTMLElement>>(new Map());
 
@@ -85,6 +87,9 @@ export default function ReadingRoom({ msRef, onBack }: ReadingRoomProps) {
           thread:       a.replies ?? [],
           time:         new Date(a.createdAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' }),
         })));
+        setSubmittedChapters(new Set(
+          annotations.filter(a => a.status === 'submitted').map(a => a.chapterId)
+        ));
       }
     })();
 
@@ -94,6 +99,7 @@ export default function ReadingRoom({ msRef, onBack }: ReadingRoomProps) {
 
     void api.get<{ chapterNum: number; body: string }[]>(`/api/reading/${msRef}/chapter-notes`)
       .then(notes => {
+        if (notes.length === 0) return;
         const map: Record<number, string> = {};
         notes.forEach(n => { map[n.chapterNum] = n.body; });
         setAuthorNoteMap(map);
@@ -124,11 +130,24 @@ export default function ReadingRoom({ msRef, onBack }: ReadingRoomProps) {
         : doneChapters.size === chapters.length)
     : false;
 
+  useEffect(() => {
+    if (!pending) return;
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setPending(null);
+        setDraftNote('');
+        window.getSelection()?.removeAllRanges();
+      }
+    };
+    document.addEventListener('keydown', onKeyDown);
+    return () => document.removeEventListener('keydown', onKeyDown);
+  }, [pending]);
+
   const goToChapter = (id: number) => {
     setChapterId(id);
     setPending(null);
-    setPendingPos(null);
     setDraftNote('');
+    window.getSelection()?.removeAllRanges();
     setSeenChapters(prev => new Set([...prev, id]));
   };
 
@@ -141,17 +160,14 @@ export default function ReadingRoom({ msRef, onBack }: ReadingRoomProps) {
     let el: Element | null = node instanceof Element ? node : node.parentElement;
     while (el && !el.getAttribute('data-para-id')) el = el.parentElement;
     if (!el) return;
-    const rect = sel.getRangeAt(0).getBoundingClientRect();
-    const containerRect = readingRef.current.getBoundingClientRect();
-    const top = rect.bottom - containerRect.top + 8;
     setPending({ chapterId: Number(el.getAttribute('data-chapter-id')), paraId: Number(el.getAttribute('data-para-id')), text });
-    setPendingPos({ top });
     setDraftNote('');
-    sel.removeAllRanges();
+    // Keep selection active — text stays highlighted in the article
   };
 
   const saveNote = async () => {
     if (!pending) return;
+    window.getSelection()?.removeAllRanges();
     const tempId = `tmp-${Date.now()}`;
     const h: Highlight = {
       id: tempId, chapterId: pending.chapterId, paraId: pending.paraId,
@@ -159,7 +175,7 @@ export default function ReadingRoom({ msRef, onBack }: ReadingRoomProps) {
       status: 'draft', thread: [], time: 'just now',
     };
     setHighlights(p => [...p, h]);
-    setPending(null); setPendingPos(null); setDraftNote('');
+    setPending(null); setDraftNote('');
     if (!firstNoteSaved) {
       setFirstNoteSaved(true);
       localStorage.setItem(`bookending-first-note-${msRef}`, '1');
@@ -200,19 +216,41 @@ export default function ReadingRoom({ msRef, onBack }: ReadingRoomProps) {
 
   const submitChapter = (chapterNum: number) => {
     setHighlights(prev => prev.map(h => h.chapterId === chapterNum ? { ...h, status: 'submitted' as const } : h));
+    setSubmittedChapters(prev => new Set([...prev, chapterNum]));
     if (session?.token) void api.post(`/api/reading/${msRef}/chapters/${chapterNum}/submit`, {}).catch(() => {});
   };
 
   const renderPara = (text: string, cId: number, pId: number) => {
     const hl = highlights.filter(h => h.chapterId === cId && h.paraId === pId);
-    if (hl.length === 0) return text;
+    const hasPending = pending?.chapterId === cId && pending?.paraId === pId;
+    if (hl.length === 0 && !hasPending) return text;
+
     const nodes: (string | JSX.Element)[] = [];
     let rem = text;
+
+    if (hasPending && pending) {
+      const idx = rem.indexOf(pending.text);
+      if (idx !== -1) {
+        if (idx > 0) nodes.push(rem.slice(0, idx));
+        nodes.push(<span key="pending" className={styles.pendingHighlight}>{pending.text}</span>);
+        rem = rem.slice(idx + pending.text.length);
+      }
+    }
+
     for (const h of hl) {
       const idx = rem.indexOf(h.selectedText);
       if (idx === -1) continue;
       if (idx > 0) nodes.push(rem.slice(0, idx));
-      nodes.push(<span key={h.id} className={styles.highlight}>{h.selectedText}</span>);
+      nodes.push(
+        <span
+          key={h.id}
+          className={styles.highlight}
+          data-focused={focusedHighlightId === h.id ? 'true' : undefined}
+          onClick={() => setFocusedHighlightId(prev => prev === h.id ? null : h.id)}
+        >
+          {h.selectedText}
+        </span>
+      );
       rem = rem.slice(idx + h.selectedText.length);
     }
     if (rem) nodes.push(rem);
@@ -222,9 +260,9 @@ export default function ReadingRoom({ msRef, onBack }: ReadingRoomProps) {
   if (!ms) {
     return (
       <section className={styles.section}>
-        <div style={{ padding: '40px 48px' }}>
+        <div className={styles.notFoundWrap}>
           <button onClick={onBack} className={styles.backBtn}>← Back to reading</button>
-          <p style={{ color: 'var(--muted)', marginTop: 24 }}>Manuscript not found.</p>
+          <p className={styles.notFoundMsg}>Manuscript not found.</p>
         </div>
       </section>
     );
@@ -241,6 +279,8 @@ export default function ReadingRoom({ msRef, onBack }: ReadingRoomProps) {
   const draftNotesOnChapter  = currentChapterNum !== null
     ? highlights.filter(h => h.chapterId === currentChapterNum && h.status === 'draft')
     : [];
+  const chapterSent  = chapter !== null && submittedChapters.has(chapter.number);
+  const hasNewDrafts = draftNotesOnChapter.length > 0;
 
   const writerAsks = ms.instructions
     .split('\n').filter(l => /^\d+\./.test(l))
@@ -283,7 +323,7 @@ export default function ReadingRoom({ msRef, onBack }: ReadingRoomProps) {
 
       {/* ── Impression sparkline ──────────────────────────────────── */}
       <ImpressionSparkline
-        chapters={availableChapters}
+        chapters={chapters}
         impressionPoints={impressionPoints}
         currentChapterId={chapterId}
         doneChapters={doneChapters}
@@ -300,13 +340,15 @@ export default function ReadingRoom({ msRef, onBack }: ReadingRoomProps) {
           const released  = !isSerial || isReleased(ch);
           const hasUnread = highlights.some(h =>
             h.chapterId === ch.id && h.thread.some(t => t.authorRole === 'writer' && !t.readAt));
-          const isNewCh   = isSerial && released && !seenChapters.has(ch.id) && ch.id !== chapterId && ch.releasedAt;
+          const isNewCh     = isSerial && released && !seenChapters.has(ch.id) && ch.id !== chapterId && ch.releasedAt;
+          const chSubmitted = submittedChapters.has(ch.number);
           return (
             <button
               key={ch.id}
               className={styles.chTab}
               data-active={active ? 'true' : undefined}
               data-locked={!released ? 'true' : undefined}
+              data-submitted={chSubmitted ? 'true' : undefined}
               onClick={() => released ? goToChapter(ch.id) : undefined}
               disabled={!released}
             >
@@ -315,6 +357,7 @@ export default function ReadingRoom({ msRef, onBack }: ReadingRoomProps) {
                   <span className={styles.chTabTitle}>{ch.title}</span>
                   {hasUnread && <span className={styles.chUnreadDot} />}
                   {isNewCh && <span className={styles.chNewBadge}>NEW</span>}
+                  {chSubmitted && !hasUnread && !isNewCh && <span className={styles.chSentDot} />}
                 </>
               ) : (
                 <span className={styles.chTabLocked}>
@@ -333,7 +376,7 @@ export default function ReadingRoom({ msRef, onBack }: ReadingRoomProps) {
       <div className={styles.bodyGrid}>
         <div className={styles.bodyMain}>
 
-          {/* Pinned reader instructions */}
+          {/* Author guidelines — collapsible, top of reading area */}
           {chapter && ms.instructions && (() => {
             const key = `bookending-instr-${msRef}-ch${chapter.id}`;
             const defaultOpen = !localStorage.getItem(key);
@@ -346,7 +389,7 @@ export default function ReadingRoom({ msRef, onBack }: ReadingRoomProps) {
                 }}
               >
                 <summary className={styles.instrSummary}>
-                  ▾ From {authorFirstName} — what {authorFirstName === 'Izel' ? "she's" : "they're"} listening for in this chapter
+                  ▾ Author's Guidelines
                 </summary>
                 <div className={styles.instrBody}>
                   <p className={`serif ${styles.instrText}`}>{ms.instructions}</p>
@@ -357,7 +400,7 @@ export default function ReadingRoom({ msRef, onBack }: ReadingRoomProps) {
 
           {/* Manuscript body */}
           {chapter && (
-            <article ref={readingRef} onMouseUp={handleMouseUp} style={{ position: 'relative' }}>
+            <article ref={readingRef} onMouseUp={handleMouseUp} className={styles.articleBody}>
               <h2 className={`serif ${styles.chTitle}`}>
                 <span className={styles.chTitleNum}>Chapter {chapter.number}</span>
                 <span className={styles.chTitleName}>{chapter.title}</span>
@@ -379,45 +422,40 @@ export default function ReadingRoom({ msRef, onBack }: ReadingRoomProps) {
                 </p>
               ))}
 
-              {/* Inline compose popover */}
-              {pending && pendingPos && (
-                <div className={styles.composePopover} style={{ top: pendingPos.top } as CSSProperties}>
-                  <p className={`serif ${styles.composeQuote}`}>
-                    "{truncateAtWord(pending.text, 100)}"
-                  </p>
-                  <textarea
-                    autoFocus
-                    className={styles.composeTextarea}
-                    placeholder={`Your note to ${authorFirstName}…`}
-                    value={draftNote}
-                    onChange={e => setDraftNote(e.target.value)}
-                    onKeyDown={e => { if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) void saveNote(); }}
-                  />
-                  <div className={styles.composeActions}>
-                    <Btn tone="primary" onClick={() => { void saveNote(); }}>Save note</Btn>
-                    <Btn tone="ghost" onClick={() => { setPending(null); setPendingPos(null); setDraftNote(''); }}>Dismiss</Btn>
+              {/* Chapter footer — impression picker + send */}
+              <div className={styles.chFooter}>
+                <div className={styles.chFooterRow}>
+                  <span className={styles.chFooterLabel}>YOUR IMPRESSION</span>
+                  <div className={styles.stanceRow}>
+                    {STANCE_ORDER.map(s => (
+                      <button
+                        key={s}
+                        className={styles.stanceBtn}
+                        data-active={currentImpression === s ? 'true' : undefined}
+                        onClick={() => upsertImpression(chapter.number, s)}
+                      >
+                        {s}
+                      </button>
+                    ))}
                   </div>
                 </div>
-              )}
-
-              {/* Submit card — only shown when draft notes exist */}
-              {draftNotesOnChapter.length > 0 && (
-                <div className={styles.submitCard}>
-                  <p className={`serif ${styles.submitCardHead}`}>Send this chapter to {authorFirstName}?</p>
-                  <p className={styles.submitCardBody}>
-                    You've written <strong>{draftNotesOnChapter.length} {draftNotesOnChapter.length === 1 ? 'note' : 'notes'}</strong> on Chapter {chapter.number}.
-                    {prevChapterImpression && currentImpression && prevChapterImpression !== currentImpression
-                      ? ` Your impression has moved from ${prevChapterImpression} to ${currentImpression}.`
-                      : currentImpression ? ` Your impression: ${currentImpression}.` : ''}
-                    {uncoveredAsks.length > 0
-                      ? ` ${authorFirstName} asked about ${uncoveredAsks[0].toLowerCase().replace(/[.!?]$/, '')} — nothing flagged yet. Add anything?`
-                      : ''}
-                  </p>
-                  <Btn tone="accent" onClick={() => submitChapter(chapter.number)}>
-                    Send to {authorFirstName} →
-                  </Btn>
+                <div className={styles.chFooterRow}>
+                  <span className={styles.chFooterNotes} data-sent={chapterSent && !hasNewDrafts ? 'true' : undefined}>
+                    {chapterSent && !hasNewDrafts
+                      ? `Sent to ${authorFirstName}`
+                      : hasNewDrafts
+                        ? `${draftNotesOnChapter.length} note${draftNotesOnChapter.length === 1 ? '' : 's'} drafted`
+                        : 'No notes yet'}
+                  </span>
+                  {chapterSent && !hasNewDrafts ? (
+                    <button className={styles.resendBtn} onClick={() => submitChapter(chapter.number)}>send again</button>
+                  ) : (
+                    <Btn tone="accent" onClick={() => submitChapter(chapter.number)}>
+                      {chapterSent ? 'Send update →' : `Send to ${authorFirstName} →`}
+                    </Btn>
+                  )}
                 </div>
-              )}
+              </div>
 
               {/* Prev / next pagination */}
               <div className={styles.chPagination}>
@@ -442,7 +480,7 @@ export default function ReadingRoom({ msRef, onBack }: ReadingRoomProps) {
               {isSerial && caughtUp && nextUnreleased && (
                 <div className={styles.caughtUpBox}>
                   <div className={styles.caughtUpFlex}>
-                    <div style={{ flex: 1 }}>
+                    <div className={styles.caughtUpBody}>
                       <div className={`label ${styles.caughtUpLabel}`}>You're caught up</div>
                       <p className={`serif ${styles.caughtUpText}`}>Chapter {nextUnreleased.number} hasn't been released yet. Check back soon — or leave your notes on what you've read so far.</p>
                     </div>
@@ -462,19 +500,36 @@ export default function ReadingRoom({ msRef, onBack }: ReadingRoomProps) {
           )}
         </div>
 
-        {/* ── Margin annotations ───────────────────────────────── */}
-        <MarginColumn
-          highlights={chapter ? highlights.filter(h => h.chapterId === chapter.id) : []}
-          paraRefMap={paraRefMap}
-          chapterId={chapterId}
-          onEdit={(id, draft) => { setEditingId(id); setEditDraft(draft); }}
-          onSaveEdit={saveEdit}
-          onDelete={deleteHighlight}
-          editingId={editingId}
-          editDraft={editDraft}
-          setEditDraft={setEditDraft}
-          authorFirstName={authorFirstName}
-        />
+        {/* ── Right column: chapter note + margin annotations ─── */}
+        <div className={styles.rightCol}>
+          {chapter && authorNoteMap[chapter.number] && (
+            <div className={styles.authorNoteBox}>
+              <span className={styles.authorNoteHead}>A chapter note from {authorFirstName}</span>
+              <p className={styles.authorNoteText}>{authorNoteMap[chapter.number]}</p>
+            </div>
+          )}
+          <MarginColumn
+            highlights={chapter ? highlights.filter(h => h.chapterId === chapter.id) : []}
+            paraRefMap={paraRefMap}
+            chapterId={chapterId}
+            onEdit={(id, draft) => { setEditingId(id); setEditDraft(draft); }}
+            onSaveEdit={saveEdit}
+            onDelete={deleteHighlight}
+            editingId={editingId}
+            editDraft={editDraft}
+            setEditDraft={setEditDraft}
+            authorFirstName={authorFirstName}
+            focusedHighlightId={focusedHighlightId}
+            onClearFocus={() => setFocusedHighlightId(null)}
+            pendingDraft={pending ? {
+              pending,
+              draftNote,
+              onNoteChange: setDraftNote,
+              onSave: saveNote,
+              onDismiss: () => { setPending(null); setDraftNote(''); window.getSelection()?.removeAllRanges(); },
+            } : undefined}
+          />
+        </div>
       </div>
 
       {/* ── Manuscript completion panel ──────────────────────────── */}
@@ -504,7 +559,7 @@ export default function ReadingRoom({ msRef, onBack }: ReadingRoomProps) {
                 <div className={styles.msgSection}>
                   <div className={styles.msgLabel}>MESSAGE TO AUTHOR (OPTIONAL)</div>
                   <textarea className={styles.msgTextarea} placeholder="A final note for the writer…" value={message} onChange={e => setMessage(e.target.value)} />
-                  <Btn tone="accent" icon={<IconCheck size={14} />} onClick={submitFinish} style={{ opacity: stars > 0 ? 1 : 0.45 }}>Submit reading</Btn>
+                  <Btn tone="accent" icon={<IconCheck size={14} />} onClick={submitFinish} disabled={stars === 0}>Submit reading</Btn>
                   {stars === 0 && <div className={styles.noRatingHint}>ADD A STAR RATING TO SUBMIT</div>}
                 </div>
               </div>

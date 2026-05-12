@@ -1,149 +1,136 @@
-import { useMemo } from 'react';
-import { BookCover } from '../../shared/ui/atoms';
-import { MANUSCRIPTS, GENRES } from './data';
+import { useState, useMemo } from 'react';
 import type { CatalogManuscript } from './data';
 import { ManuscriptCard } from './ManuscriptCard';
+import { Shelf } from './Shelf';
+import { RequestModal } from './RequestModal';
+import { getVisibleShelves, shouldShowNewReaderPrompt, EMPTY_PROFILE } from './personalization';
+import type { ReaderProfile } from './personalization';
 import styles from './DiscoverView.module.css';
 
 interface Props {
-  onBrowseGenre: (genre: string) => void;
-  manuscripts?: CatalogManuscript[];
+  manuscripts:     CatalogManuscript[];
+  readerProfile?:  ReaderProfile;
+  totalCount:      number;
+  onBrowseAll:     () => void;
+  onEditProfile?:  () => void;
 }
 
-export function DiscoverView({ onBrowseGenre, manuscripts = MANUSCRIPTS }: Props) {
-  const featured = useMemo(() => manuscripts.find(m => m.featured), [manuscripts]);
+export function DiscoverView({
+  manuscripts, readerProfile = EMPTY_PROFILE, totalCount, onBrowseAll, onEditProfile,
+}: Props) {
+  const [pendingIds,   setPendingIds]   = useState<Set<number>>(new Set());
+  const [requestingMs, setRequestingMs] = useState<CatalogManuscript | null>(null);
 
-  const justOpened = useMemo(() =>
-    [...manuscripts]
-      .filter(m => m.status === 'open')
-      .sort((a, b) => b.listedAt.localeCompare(a.listedAt))
-      .slice(0, 7),
-    [manuscripts]
+  const featured = useMemo(
+    () => manuscripts.find(m => m.featured),
+    [manuscripts],
   );
 
-  const readerPicks = useMemo(() =>
-    manuscripts
-      .filter(m => m.status !== 'closed')
-      .sort((a, b) => (b.readerCount / b.maxReaders) - (a.readerCount / a.maxReaders))
-      .slice(0, 3),
-    [manuscripts]
+  const shelves = useMemo(
+    () => getVisibleShelves(manuscripts, readerProfile),
+    [manuscripts, readerProfile],
   );
 
-  const openCount = manuscripts.filter(m => m.status === 'open').length;
+  const showNewReaderPrompt = useMemo(
+    () => shouldShowNewReaderPrompt(manuscripts, readerProfile),
+    [manuscripts, readerProfile],
+  );
+
+  function handleRequestRead(ms: CatalogManuscript) {
+    setRequestingMs(ms);
+  }
+
+  async function handleSubmitRequest(ms: CatalogManuscript, _note: string) {
+    // POST to API (wired in Phase 8) — optimistic update
+    setPendingIds(prev => new Set([...prev, ms.id]));
+    setRequestingMs(null);
+  }
+
+  function handleWithdraw(ms: CatalogManuscript) {
+    setPendingIds(prev => {
+      const next = new Set(prev);
+      next.delete(ms.id);
+      return next;
+    });
+  }
+
+  /* Split shelves around the new-reader prompt insertion point:
+     prompt goes between Editor's Selection and § 02 if § 01 dropped. */
+  const beforePrompt = shelves.filter(s => s.sectionNum === '01');
+  const afterPrompt  = shelves.filter(s => s.sectionNum !== '01');
 
   return (
-    <div>
-      {/* Dateline strip */}
-      <div className={styles.dateline}>
-        <span>VOL. I · ISSUE 4</span>
-        <span className={styles.datelineSep}>—</span>
-        <span>MAY 2026</span>
-        <span className={styles.datelineSep}>—</span>
-        <span>{manuscripts.length} MANUSCRIPTS LISTED</span>
-        <span className={styles.datelineSep}>—</span>
-        <span>{openCount} OPEN FOR READERS</span>
-      </div>
-
-      {/* Editor's selection */}
+    <main className={styles.page}>
+      {/* ── Editor's Selection (hero) ────────────────────────────── */}
       {featured && (
-        <div className={styles.featured}>
-          <div className={styles.sectionHead}>
-            <span className={styles.sectionLabel}>Editor's Selection</span>
-            <span className={styles.sectionRule} />
+        <section className={styles.hero} aria-label="Editor's Selection">
+          <div className={styles.heroHead}>
+            <span className={styles.heroEyebrow}>EDITOR'S SELECTION</span>
+            <hr className={styles.heroRule} />
           </div>
-
-          <div className={styles.featuredBody}>
-            <div className={styles.featuredCoverWrap}>
-              <BookCover title={featured.title} scheme={featured.scheme} />
-            </div>
-
-            <div className={styles.featuredContent}>
-              <div className={styles.featuredMeta}>
-                {featured.genre}
-                <span className={styles.featuredMetaSep}>·</span>
-                {featured.subgenre}
-                <span className={styles.featuredMetaSep}>·</span>
-                {featured.contentRating}
-              </div>
-
-              <h2 className={`serif ${styles.featuredTitle}`}>{featured.title}</h2>
-              <div className={styles.featuredAuthor}>{featured.author}</div>
-
-              <p className={`serif ${styles.featuredDesc}`}>{featured.description}</p>
-
-              {featured.curatorNote && (
-                <blockquote className={styles.featuredQuote}>
-                  <span className={`serif ${styles.featuredQuoteText}`}>"{featured.curatorNote}"</span>
-                  <cite className={styles.featuredCite}>— Bookending editorial</cite>
-                </blockquote>
-              )}
-
-              <div className={styles.featuredStats}>
-                <span className={styles.featuredPages}>{featured.estimatedPages} pp. · {(featured.wordCount / 1000).toFixed(0)}k words</span>
-              </div>
-
-              <div className={styles.featuredFooter}>
-                <span className={styles.featuredSlots} data-status={featured.status}>
-                  {featured.readerCount}/{featured.maxReaders} reader slots · {featured.status.toUpperCase()}
-                </span>
-                <button className={styles.featuredCta}>Request to read →</button>
-              </div>
-            </div>
-          </div>
-        </div>
+          <ManuscriptCard
+            ms={featured}
+            variant="hero"
+            isPending={pendingIds.has(featured.id)}
+            onRequestRead={handleRequestRead}
+            onWithdraw={handleWithdraw}
+          />
+        </section>
       )}
 
-      {/* Just opened rail */}
-      <div className={styles.railSection}>
-        <div className={styles.sectionHead}>
-          <span className={styles.sectionLabel}>Just Opened</span>
-          <span className={styles.sectionRule} />
-          <button className={styles.sectionMore} onClick={() => onBrowseGenre('')}>
-            Browse all →
+      {/* ── § 01 — From your circle (if present) ─────────────────── */}
+      {beforePrompt.map(shelf => (
+        <Shelf
+          key={shelf.sectionNum}
+          {...shelf}
+          pendingIds={pendingIds}
+          onRequestRead={handleRequestRead}
+          onWithdraw={handleWithdraw}
+        />
+      ))}
+
+      {/* ── New reader prompt (§01 AND §03 both absent) ───────────── */}
+      {showNewReaderPrompt && (
+        <aside className={styles.newReaderPrompt}>
+          <p className={`serif ${styles.newReaderText}`}>
+            You're new here. Tell us what you read and we'll listen — your shelves
+            will fill as you do.
+          </p>
+          <button type="button" className={styles.newReaderLink} onClick={onEditProfile}>
+            Edit reading profile →
           </button>
-        </div>
-        <div className={styles.rail}>
-          {justOpened.map(m => (
-            <div key={m.id} className={styles.railSlot}>
-              <ManuscriptCard ms={m} />
-            </div>
-          ))}
-        </div>
-      </div>
+        </aside>
+      )}
 
-      {/* Reader Picks */}
-      <div className={styles.gridSection}>
-        <div className={styles.sectionHead}>
-          <span className={styles.sectionLabel}>Reader Picks</span>
-          <span className={styles.sectionRule} />
-          <span className={styles.sectionSub}>Most requested this month</span>
-        </div>
-        <div className={styles.grid3} style={{ background: 'var(--rule)' }}>
-          {readerPicks.map(m => <ManuscriptCard key={m.id} ms={m} />)}
-        </div>
-      </div>
+      {/* ── Remaining shelves (§02–§05) ───────────────────────────── */}
+      {afterPrompt.map(shelf => (
+        <Shelf
+          key={shelf.sectionNum}
+          {...shelf}
+          pendingIds={pendingIds}
+          onRequestRead={handleRequestRead}
+          onWithdraw={handleWithdraw}
+        />
+      ))}
 
-      {/* Genre rails */}
-      {GENRES.map(genre => {
-        const all  = manuscripts.filter(m => m.genre === genre.label);
-        const show = all.slice(0, 3);
-        if (show.length === 0) return null;
-        return (
-          <div key={genre.label} className={styles.gridSection}>
-            <div className={styles.sectionHead}>
-              <span className={styles.sectionLabel}>{genre.label}</span>
-              <span className={styles.sectionRule} />
-              <span className={styles.sectionCount}>{all.length} manuscripts</span>
-              <button className={styles.sectionMore} onClick={() => onBrowseGenre(genre.label)}>
-                Browse {genre.label} →
-              </button>
-            </div>
-            <div className={styles.grid3} style={{ background: 'var(--rule)' }}>
-              {show.map(m => <ManuscriptCard key={m.id} ms={m} />)}
-            </div>
-          </div>
-        );
-      })}
-    </div>
+      {/* ── Footer ────────────────────────────────────────────────── */}
+      <footer className={styles.footer}>
+        <span className={styles.footerIdentity}>
+          Bookending · The Reading Room · § 08 · Vol. I · Issue 4 · MMXXVI
+        </span>
+        <button className={styles.footerBrowse} onClick={onBrowseAll}>
+          Browse all {totalCount} manuscripts →
+        </button>
+      </footer>
+
+      {/* ── Request modal ─────────────────────────────────────────── */}
+      {requestingMs && (
+        <RequestModal
+          ms={requestingMs}
+          onSubmit={handleSubmitRequest}
+          onCancel={() => setRequestingMs(null)}
+        />
+      )}
+    </main>
   );
 }

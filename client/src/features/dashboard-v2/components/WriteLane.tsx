@@ -66,7 +66,7 @@ export const WriteLane = ({ data }: { data: WriteLaneData }) => {
         </div>
 
         {/* Hotspot + themes */}
-        <div className={styles.section} style={{ display: 'grid', gridTemplateColumns: '1.2fr 1fr', gap: 24 }}>
+        <div className={`${styles.section} ${styles.sectionGrid}`}>
           <div>
             <div className={styles.sectionHead}>
               <span className={`mono ${styles.eyebrow}`}>Where readers are reacting</span>

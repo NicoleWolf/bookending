@@ -176,3 +176,56 @@
   gap: 6px;
   margin-top: 4px;
 }
+
+.noteCard[data-focused] {
+  border-color: var(--accent);
+}
+
+.clearFocusBtn {
+  font-family: var(--mono);
+  font-size: 9px;
+  color: var(--muted);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+}
+
+.clearFocusBtn:hover {
+  color: var(--paper);
+}
+
+.btnXxs { font-size: 10px; padding: 3px 8px; }
+
+/* ── Compose card (pending annotation in margin) ─────────────── */
+
+.composeCard {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  background: var(--ink);
+  border: 1px solid var(--accent);
+  padding: 10px 12px 8px;
+  box-sizing: border-box;
+}
+
+.composeTextarea {
+  width: 100%;
+  min-height: 72px;
+  padding: 6px 8px;
+  resize: vertical;
+  background: var(--ink-2);
+  border: 1px solid var(--rule);
+  color: var(--paper);
+  font-family: var(--serif);
+  font-size: 12px;
+  line-height: 1.6;
+  outline: none;
+  box-sizing: border-box;
+  margin-bottom: 6px;
+}
+
+.composeActions {
+  display: flex;
+  gap: 6px;
+}

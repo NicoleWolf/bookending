@@ -333,7 +333,7 @@ export function ComposeView({ dispatches, onBack, onRouteToWinBack, onSaved }: P
                   value={opt.v}
                   checked={recipients === opt.v}
                   onChange={() => setRecipients(opt.v)}
-                  style={{ accentColor: 'var(--accent)' }}
+                  className={styles.accentCheckbox}
                 />
                 <div>
                   <div className={styles.recipientLabel}>{opt.label}</div>
@@ -358,7 +358,7 @@ export function ComposeView({ dispatches, onBack, onRouteToWinBack, onSaved }: P
                 data-done={item.done ? 'true' : undefined}
               >
                 <div className={styles.checkBox} data-done={item.done ? 'true' : undefined}>
-                  {item.done && <IconCheck size={10} style={{ color: 'var(--ink)' }} />}
+                  {item.done && <IconCheck size={10} className={styles.iconInk} />}
                 </div>
                 <span className={styles.checkText}>{item.text}</span>
               </div>

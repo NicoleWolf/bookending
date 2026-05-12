@@ -33,9 +33,10 @@ vi.mock('../lib/supabase', () => ({
 
 vi.mock('../middleware/auth', () => ({
   requireAuth: (req: Request, _res: Response, next: NextFunction) => {
-    req.user = { id: 'user_1', email: 'author@test.com', role: 'AUTHOR' as const };
+    req.user = { id: 'user_1', email: 'author@test.com', role: 'AUTHOR' as const, isAdmin: false };
     next();
   },
+  optionalAuth: (_req: Request, _res: Response, next: NextFunction) => { next(); },
 }));
 
 import { app } from '../app';

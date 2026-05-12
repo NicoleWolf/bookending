@@ -115,7 +115,7 @@ export function StorefrontView() {
                   onChange={e => setHeroDraft(d => ({ ...d, name: e.target.value }))}
                 />
               </div>
-              <div className={styles.editPanelField} style={{ flex: 2 }}>
+              <div className={`${styles.editPanelField} ${styles.editFieldWide}`}>
                 <label className={styles.editPanelLabel}>Tagline</label>
                 <input
                   className={styles.editPanelInput}
@@ -149,7 +149,7 @@ export function StorefrontView() {
 
           {editMode && editingSection === 'products' && (
             <div className={styles.sectionEditPanel}>
-              <div className={styles.editPanelLabel} style={{ marginBottom: 12 }}>
+              <div className={`${styles.editPanelLabel} ${styles.editLabelSpaced}`}>
                 Select which products to feature in your shop
               </div>
               <div className={styles.productCheckList}>

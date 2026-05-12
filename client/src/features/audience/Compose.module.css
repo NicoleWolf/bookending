@@ -466,3 +466,6 @@
   letter-spacing: 0.08em;
   margin-top: 4px;
 }
+
+.accentCheckbox { accent-color: var(--accent); }
+.iconInk        { color: var(--ink); }

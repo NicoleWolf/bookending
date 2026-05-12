@@ -212,3 +212,5 @@
 }
 
 .rhythmValue[data-accent] { color: var(--good); }
+
+.sectionGrid { display: grid; grid-template-columns: 1.2fr 1fr; gap: 24px; }

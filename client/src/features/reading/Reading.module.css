@@ -600,6 +600,21 @@
   cursor: default;
 }
 
+.chTab[data-submitted] .chTabTitle {
+  color: color-mix(in srgb, var(--accent) 60%, var(--muted));
+}
+
+.chSentDot {
+  display: inline-block;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--accent) 55%, transparent);
+  margin-left: 5px;
+  flex-shrink: 0;
+  vertical-align: middle;
+}
+
 .chTabTitle {
   font-family: var(--serif);
   font-size: 12px;
@@ -644,6 +659,17 @@
 .bodyMain {
   padding: 32px 40px 40px 0;
   border-right: 1px solid var(--rule);
+}
+
+.rightCol {
+  display: flex;
+  flex-direction: column;
+  align-self: start;
+}
+
+.rightCol .authorNoteBox {
+  margin: 16px 0 0 16px;
+  margin-bottom: 4px;
 }
 
 .instrBox {
@@ -736,10 +762,20 @@
   padding: 0;
 }
 
+.pendingHighlight {
+  border-bottom: 2px solid var(--accent);
+  background: color-mix(in srgb, var(--accent) 18%, var(--ink));
+}
+
 .highlight {
   border-bottom: 2px solid var(--accent);
   background: var(--ink-3);
   cursor: pointer;
+}
+
+.highlight[data-focused] {
+  background: color-mix(in srgb, var(--accent) 15%, var(--ink));
+  border-bottom-color: var(--paper);
 }
 
 .chNavRow {
@@ -1388,6 +1424,82 @@
   margin: 0;
 }
 
+/* ── Chapter footer (impression + send) ─────────────────────────── */
+.chFooter {
+  margin-top: 36px;
+  border-top: 1px solid var(--rule);
+  padding-top: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.chFooterRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.chFooterLabel {
+  font-family: var(--mono);
+  font-size: 9.5px;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+  flex-shrink: 0;
+}
+
+.chFooterNotes {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--muted);
+}
+
+.chFooterNotes[data-sent] {
+  color: color-mix(in srgb, var(--accent) 65%, var(--muted));
+}
+
+.resendBtn {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--muted);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.resendBtn:hover {
+  color: var(--paper);
+}
+
+.stanceRow {
+  display: flex;
+  gap: 4px;
+}
+
+.stanceBtn {
+  background: transparent;
+  border: 1px solid var(--rule);
+  color: var(--paper);
+  font-family: var(--serif);
+  font-size: 12px;
+  padding: 3px 10px;
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
+}
+
+.stanceBtn[data-active] {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.stanceBtn:hover {
+  border-color: var(--paper);
+}
+
 /* ── Prev / next pagination ──────────────────────────────────────── */
 .chPagination {
   display: flex;
@@ -1439,3 +1551,9 @@
   color: var(--muted);
   text-align: center;
 }
+
+/* ── Utility ─────────────────────────────────────────────────────── */
+.notFoundWrap  { padding: 40px 48px; }
+.notFoundMsg   { color: var(--muted); margin-top: 24px; }
+.articleBody   { position: relative; }
+.caughtUpBody  { flex: 1; }

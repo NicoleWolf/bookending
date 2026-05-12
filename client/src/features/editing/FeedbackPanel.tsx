@@ -1,46 +1,61 @@
 import { useState } from 'react';
-import { Pill, Avatar } from '../../shared/ui/atoms';
-import { COMMENTS, INITIAL_READERS, typeTone } from './data';
+import { Avatar } from '../../shared/ui/atoms';
+import WriterSparkline, { type ReaderImpression } from './WriterSparkline';
 import styles from './FeedbackPanel.module.css';
 
-interface Props {
-  manuscriptId: number;
-  chapterHtml: string;
-  focusedCommentId: number | null;
-  onClearFocus: () => void;
+interface ReaderAnnotation {
+  id:             string;
+  readerId:       string;
+  readerName:     string;
+  readerInitials: string;
+  chapterId:      number;
+  selectedText:   string;
+  note:           string;
+  createdAt:      string;
 }
 
-// Strip typographic quote wrappers then check if the passage text appears in the chapter HTML
+interface Props {
+  manuscriptId:     string;
+  chapterHtml:      string;
+  readerAnnotations: ReaderAnnotation[];
+  readerImpressions: ReaderImpression[];
+  totalChapters:    number;
+  focusedCommentId: string | null;
+  onClearFocus:     () => void;
+}
+
 function passageInChapter(passage: string, chapterHtml: string): boolean {
   if (!chapterHtml) return true;
-  const text  = passage.replace(/^["""]/, '').replace(/["""]$/, '');
   const plain = chapterHtml.replace(/<[^>]+>/g, ' ');
-  return plain.includes(text);
+  return plain.includes(passage);
 }
 
-export default function FeedbackPanel({ manuscriptId, chapterHtml, focusedCommentId, onClearFocus }: Props) {
+export default function FeedbackPanel({
+  chapterHtml, readerAnnotations, readerImpressions, totalChapters,
+  focusedCommentId, onClearFocus,
+}: Props) {
   const [filter, setFilter] = useState('All');
 
-  const comments = COMMENTS
-    .filter(c => c.manuscriptId === manuscriptId && passageInChapter(c.passage, chapterHtml))
-    .sort((a, b) => {
-      const chA = parseInt(a.chapter.replace(/\D/g, ''), 10) || 0;
-      const chB = parseInt(b.chapter.replace(/\D/g, ''), 10) || 0;
-      return chA !== chB ? chA - chB : a.page - b.page;
-    });
-  // Only show reader filter tabs for readers who have comments in this chapter
-  const chapterReaderNames = [...new Set(comments.map(c => c.reader.name))];
-  const names = ['All', ...chapterReaderNames];
+  const comments    = readerAnnotations.filter(a => passageInChapter(a.selectedText, chapterHtml));
+  const readerNames = [...new Set(comments.map(c => c.readerName))];
+  const names       = ['All', ...readerNames];
+
+  const filteredImpressions = filter === 'All'
+    ? readerImpressions
+    : readerImpressions.filter(r => r.readerName === filter);
 
   const isFocused = focusedCommentId !== null;
   const visible   = isFocused
     ? comments.filter(c => c.id === focusedCommentId)
     : filter === 'All'
       ? comments
-      : comments.filter(c => c.reader.name === filter);
+      : comments.filter(c => c.readerName === filter);
 
   return (
     <div className={styles.panel}>
+      {/* Impression sparkline — writer sees all readers' curves */}
+      <WriterSparkline readers={filteredImpressions} totalChapters={totalChapters} />
+
       <div className={styles.head}>
         <span className={styles.headTitle}>Feedback</span>
         <span className={styles.headCount}>
@@ -70,25 +85,23 @@ export default function FeedbackPanel({ manuscriptId, chapterHtml, focusedCommen
 
       <div className={styles.list}>
         {visible.length === 0 ? (
-          <p className={styles.empty}>No feedback from this reader.</p>
+          <p className={styles.empty}>
+            {readerAnnotations.length === 0 ? 'No reader feedback yet.' : 'No feedback on this chapter.'}
+          </p>
         ) : (
           visible.map(c => (
-            <div key={c.id} className={styles.card} data-focused={isFocused ? '' : undefined} data-theme={isFocused ? c.type : undefined}>
+            <div key={c.id} className={styles.card} data-focused={isFocused ? '' : undefined}>
               <div className={styles.cardTop}>
-                <Pill tone={typeTone[c.type]}>{c.type}</Pill>
-                <span className={styles.location}>
-                  {c.chapter.toUpperCase()} · P.{c.page}
-                </span>
-                {c.flaggedBy > 0 && (
-                  <span className={styles.flagged}>+{c.flaggedBy} also flagged</span>
-                )}
+                <span className={styles.location}>Ch. {c.chapterId}</span>
               </div>
-              <p className={`serif ${styles.passage}`}>{c.passage}</p>
-              <p className={styles.note}>{c.note}</p>
+              <p className={`serif ${styles.passage}`}>"{c.selectedText}"</p>
+              {c.note && <p className={styles.note}>{c.note}</p>}
               <div className={styles.author}>
-                <Avatar initials={c.reader.initials} tone={c.reader.tone} size={20} />
-                <span className={styles.authorName}>{c.reader.name}</span>
-                <span className={styles.authorTime}>{c.time}</span>
+                <Avatar initials={c.readerInitials} tone="accent" size={20} />
+                <span className={styles.authorName}>{c.readerName}</span>
+                <span className={styles.authorTime}>
+                  {new Date(c.createdAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })}
+                </span>
               </div>
             </div>
           ))

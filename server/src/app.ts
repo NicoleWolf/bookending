@@ -16,7 +16,9 @@ import storefrontSettingsRouter from './routes/storefrontSettings';
 import authorsRouter from './routes/authors';
 import formatterRouter from './routes/formatter';
 import adminRouter from './routes/admin';
-import { requireAuth } from './middleware/auth';
+import readerProfileRouter from './routes/reader-profile';
+import authorProfileRouter from './routes/author-profile';
+import { requireAuth, optionalAuth } from './middleware/auth';
 import { zodErrorHandler } from './middleware/zodError';
 
 dotenv.config();
@@ -39,11 +41,13 @@ app.use('/api/orders',       requireAuth, ordersRouter);
 app.use('/api/dispatches',   requireAuth, dispatchesRouter);
 app.use('/api/products',     requireAuth, productsRouter);
 app.use('/api/reading',             requireAuth, readingRouter);
-app.use('/api/browse',             browseRouter);
+app.use('/api/browse',             optionalAuth, browseRouter);
 app.use('/api/dashboard',          requireAuth, dashboardRouter);
 app.use('/api/storefront/settings', requireAuth, storefrontSettingsRouter);
 app.use('/api/authors',   authorsRouter);
-app.use('/api/formatter', requireAuth, formatterRouter);
-app.use('/api/admin',     requireAuth, adminRouter);
+app.use('/api/formatter',      requireAuth, formatterRouter);
+app.use('/api/admin',          requireAuth, adminRouter);
+app.use('/api/reader-profile',  requireAuth, readerProfileRouter);
+app.use('/api/author-profile',  requireAuth, authorProfileRouter);
 
 app.use(zodErrorHandler);

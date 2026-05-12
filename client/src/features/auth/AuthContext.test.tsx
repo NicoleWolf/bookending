@@ -1,44 +1,40 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { render, screen, act, waitFor } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import type { Session } from '@supabase/supabase-js';
 import { AuthProvider, useAuth } from './AuthContext';
+import type { AuthSession } from '../../types/auth';
 
-// ── Hoisted mock (must be defined before vi.mock factory runs) ────
-const mockAuth = vi.hoisted(() => ({
-  getSession:         vi.fn(),
-  signInWithPassword: vi.fn(),
-  signUp:             vi.fn(),
-  signOut:            vi.fn(),
-  updateUser:         vi.fn(),
-  onAuthStateChange:  vi.fn(),
+// ── Hoisted mocks ─────────────────────────────────────────────────
+const mockLogin    = vi.hoisted(() => vi.fn());
+const mockRegister = vi.hoisted(() => vi.fn());
+const mockApiGet   = vi.hoisted(() => vi.fn());
+
+vi.mock('./mockSession', () => ({
+  mockLogin,
+  mockRegister,
+  mockChangePassword: vi.fn(),
+  mockGetUser:        vi.fn(),
 }));
 
-vi.mock('../../lib/supabase', () => ({
-  supabase: { auth: mockAuth },
+vi.mock('../../lib/api', () => ({
+  setApiToken: vi.fn(),
+  api: { get: mockApiGet },
 }));
 
-// ── Auth-state trigger (captured in beforeEach) ───────────────────
-let triggerAuthChange: (session: Session | null) => void = () => {};
+// ── Fixtures ──────────────────────────────────────────────────────
+const SESSION_KEY = 'bookending_session';
 
-// ── Session fixture ───────────────────────────────────────────────
-const MOCK_SESSION: Session = {
-  access_token:  'token123',
-  token_type:    'bearer',
-  expires_in:    3600,
-  expires_at:    Math.floor(Date.now() / 1000) + 3600,
-  refresh_token: 'refresh123',
+const MOCK_SESSION: AuthSession = {
   user: {
-    id:              'usr_billie',
-    app_metadata:    {},
-    user_metadata:   { name: 'Billie Wolf' },
-    aud:             'authenticated',
-    created_at:      '2024-03-01T00:00:00.000Z',
-    email:           'billie@bookending.test',
-    last_sign_in_at: null,
-    role:            'authenticated',
-    updated_at:      '2024-03-01T00:00:00.000Z',
+    id:          'usr_billie',
+    name:        'Billie Wolf',
+    email:       'nlizwolf@gmail.com',
+    role:        'AUTHOR',
+    lastLoginAt: null,
+    isAdmin:     true,
   },
+  token:     'dev:usr_billie:nlizwolf@gmail.com:Billie%20Wolf',
+  expiresAt: null,
 };
 
 // ── Consumer ──────────────────────────────────────────────────────
@@ -55,7 +51,7 @@ function TestConsumer() {
     <div>
       <span data-testid="status">logged-out</span>
       {error && <span data-testid="error">{error.message}</span>}
-      <button onClick={() => login({ email: 'billie@bookending.test', password: 'password' })}>
+      <button onClick={() => login({ email: 'nlizwolf@gmail.com', password: 'password' })}>
         Login valid
       </button>
       <button onClick={() => login({ email: 'bad@test.com', password: 'wrong' })}>
@@ -71,73 +67,67 @@ function wrap() {
 
 beforeEach(() => {
   vi.clearAllMocks();
-  mockAuth.getSession.mockResolvedValue({ data: { session: null } });
-  mockAuth.signInWithPassword.mockResolvedValue({ error: null });
-  mockAuth.signOut.mockResolvedValue({ error: null });
-  mockAuth.onAuthStateChange.mockImplementation(
-    (cb: (event: string, session: Session | null) => void) => {
-      triggerAuthChange = (s) => cb('SIGNED_IN', s);
-      return { data: { subscription: { unsubscribe: vi.fn() } } };
-    },
-  );
+  localStorage.removeItem(SESSION_KEY);
+  // api.get (whoami) fails by default — swallowed non-critically by AuthContext
+  mockApiGet.mockRejectedValue(new Error('server down'));
 });
 
 // ── Tests ─────────────────────────────────────────────────────────
 describe('AuthProvider — initial state', () => {
-  it('shows logged-out when no session exists', async () => {
+  it('shows logged-out synchronously when localStorage has no session', () => {
     wrap();
-    await waitFor(() => expect(screen.getByTestId('status')).toBeInTheDocument());
+    expect(screen.getByTestId('status')).toHaveTextContent('logged-out');
   });
 
-  it('hydrates from Supabase session on mount', async () => {
-    mockAuth.getSession.mockResolvedValue({ data: { session: MOCK_SESSION } });
+  it('hydrates from localStorage session synchronously on mount', () => {
+    localStorage.setItem(SESSION_KEY, JSON.stringify(MOCK_SESSION));
     wrap();
-    await waitFor(() => expect(screen.getByTestId('name')).toHaveTextContent('Billie Wolf'));
+    expect(screen.getByTestId('name')).toHaveTextContent('Billie Wolf');
   });
 });
 
 describe('AuthProvider — login', () => {
-  it('calls signInWithPassword with credentials', async () => {
+  it('calls mockLogin with the provided credentials', async () => {
+    mockLogin.mockResolvedValue(MOCK_SESSION);
     const user = userEvent.setup();
     wrap();
-    await waitFor(() => screen.getByTestId('status'));
     await user.click(screen.getByText('Login valid'));
-    expect(mockAuth.signInWithPassword).toHaveBeenCalledWith({
-      email: 'billie@bookending.test',
+    expect(mockLogin).toHaveBeenCalledWith({
+      email:    'nlizwolf@gmail.com',
       password: 'password',
     });
   });
 
-  it('sets currentUser after successful login via auth state change', async () => {
+  it('sets currentUser after successful login', async () => {
+    mockLogin.mockResolvedValue(MOCK_SESSION);
     const user = userEvent.setup();
     wrap();
-    await waitFor(() => screen.getByTestId('status'));
     await user.click(screen.getByText('Login valid'));
-    act(() => triggerAuthChange(MOCK_SESSION));
     await waitFor(() => expect(screen.getByTestId('name')).toHaveTextContent('Billie Wolf'));
   });
 
   it('sets error for invalid credentials', async () => {
-    mockAuth.signInWithPassword.mockResolvedValue({
-      error: { message: 'Invalid login credentials', status: 400 },
+    mockLogin.mockRejectedValue({
+      code:    'INVALID_CREDENTIALS',
+      message: 'Incorrect email or password.',
     });
     const user = userEvent.setup();
     wrap();
-    await waitFor(() => screen.getByTestId('status'));
     await user.click(screen.getByText('Login invalid'));
-    await waitFor(() => expect(screen.getByTestId('error')).toBeInTheDocument());
+    await waitFor(() =>
+      expect(screen.getByTestId('error')).toHaveTextContent('Incorrect email or password.'),
+    );
   });
 });
 
 describe('AuthProvider — logout', () => {
-  it('calls signOut and clears user', async () => {
-    mockAuth.getSession.mockResolvedValue({ data: { session: MOCK_SESSION } });
+  it('clears currentUser and returns to logged-out state', async () => {
+    localStorage.setItem(SESSION_KEY, JSON.stringify(MOCK_SESSION));
     const user = userEvent.setup();
     wrap();
-    await waitFor(() => screen.getByTestId('name'));
+    expect(screen.getByTestId('name')).toHaveTextContent('Billie Wolf');
     await user.click(screen.getByText('Sign out'));
-    act(() => triggerAuthChange(null));
     await waitFor(() => expect(screen.getByTestId('status')).toBeInTheDocument());
-    expect(mockAuth.signOut).toHaveBeenCalled();
+    expect(screen.queryByTestId('name')).not.toBeInTheDocument();
   });
 });

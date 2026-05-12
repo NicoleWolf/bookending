@@ -1,0 +1,78 @@
+import { Router } from 'express';
+import { z } from 'zod';
+import { prisma } from '../lib/prisma';
+import { parseBody } from '../lib/validate';
+
+const router = Router();
+
+const PROFILE_SELECT = {
+  id:                   true,
+  name:                 true,
+  bio:                  true,
+  location:             true,
+  genres:               true,
+  subgenres:            true,
+  writingProcess:       true,
+  avatarUrl:            true,
+  featuredManuscriptId: true,
+  showActivityPublicly: true,
+  manuscripts: { select: { id: true, title: true } },
+  authorQa: {
+    where:   { answer: { not: null }, publishedAt: { not: null } },
+    select:  { id: true, question: true, answer: true, publishedAt: true },
+    orderBy: { publishedAt: 'desc' as const },
+  },
+} as const;
+
+const PatchAuthorProfileSchema = z.object({
+  name:                 z.string().min(1).max(80).optional(),
+  location:             z.string().max(100).nullable().optional(),
+  bio:                  z.string().max(2000).nullable().optional(),
+  writingProcess:       z.string().max(2000).nullable().optional(),
+  genres:               z.string().nullable().optional(),
+  subgenres:            z.string().nullable().optional(),
+  avatarUrl:            z.string().nullable().optional(),
+  featuredManuscriptId: z.string().nullable().optional(),
+  showActivityPublicly: z.boolean().optional(),
+});
+
+// ── GET /api/author-profile ───────────────────────────────────────────────────
+
+router.get('/', async (req, res) => {
+  const userId = req.user!.id;
+  const user = await prisma.user.findUnique({
+    where:  { id: userId },
+    select: PROFILE_SELECT,
+  });
+  if (!user) { res.status(404).json({ error: 'User not found' }); return; }
+  res.json({ data: user });
+});
+
+// ── PATCH /api/author-profile ─────────────────────────────────────────────────
+
+router.patch('/', async (req, res) => {
+  const userId = req.user!.id;
+  const body = parseBody(PatchAuthorProfileSchema, req.body, res);
+  if (!body) return;
+
+  const data: Record<string, unknown> = {};
+  if (body.name                 !== undefined) data.name                 = body.name;
+  if (body.bio                  !== undefined) data.bio                  = body.bio;
+  if (body.location             !== undefined) data.location             = body.location;
+  if (body.genres               !== undefined) data.genres               = body.genres;
+  if (body.subgenres            !== undefined) data.subgenres            = body.subgenres;
+  if (body.writingProcess       !== undefined) data.writingProcess       = body.writingProcess;
+  if (body.avatarUrl            !== undefined) data.avatarUrl            = body.avatarUrl;
+  if (body.featuredManuscriptId !== undefined) data.featuredManuscriptId = body.featuredManuscriptId;
+  if (body.showActivityPublicly !== undefined) data.showActivityPublicly = body.showActivityPublicly;
+
+  const user = await prisma.user.update({
+    where:  { id: userId },
+    data,
+    select: PROFILE_SELECT,
+  });
+
+  res.json({ data: user });
+});
+
+export default router;

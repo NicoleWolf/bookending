@@ -299,3 +299,5 @@
   color: var(--muted);
   letter-spacing: 0.08em;
 }
+
+.searchIcon { color: var(--muted); flex-shrink: 0; }

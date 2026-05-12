@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { prisma } from '../lib/prisma';
-import type { ManuscriptStatus, Visibility } from '@prisma/client';
+import type { ManuscriptStatus, BetaMode } from '@prisma/client';
 import betaReadersRouter from './beta-readers';
 import chapterNotesRouter from './chapterNotes';
 import versionsRouter from './manuscriptVersions';
@@ -20,7 +20,12 @@ router.get('/', async (req, res) => {
         chapters: { select: { title: true }, orderBy: { number: 'asc' } },
       },
     });
-    res.json({ data: manuscripts });
+    const data = manuscripts.map(m => ({
+      ...m,
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      contentWarnings: JSON.parse((m as any).contentWarnings ?? '[]') as string[],
+    }));
+    res.json({ data });
   } catch {
     res.status(500).json({ error: 'Failed to fetch manuscripts' });
   }
@@ -39,7 +44,8 @@ router.post('/', async (req, res) => {
         title:          body.title,
         subtitle:       body.subtitle       ?? null,
         status:         (body.status        as ManuscriptStatus) ?? 'DRAFTING',
-        visibility:     (body.visibility    as Visibility)       ?? 'PRIVATE',
+        betaMode:       (body.betaMode      as BetaMode)         ?? 'CLOSED',
+        maxBetaReaders: body.maxBetaReaders ?? null,
         seriesName:     body.seriesName     ?? null,
         seriesNumber:   body.seriesNumber   ?? null,
         genre:          body.genre          ?? null,
@@ -79,9 +85,20 @@ router.patch('/:id', async (req, res) => {
   if (!body) return;
 
   try {
+    const { contentWarnings, ...rest } = body as typeof body & { contentWarnings?: string[] };
+    const updateData: Record<string, unknown> = { ...rest };
+    if (contentWarnings !== undefined) {
+      updateData.contentWarnings = JSON.stringify(contentWarnings);
+    }
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const manuscript = await prisma.manuscript.update({ where: { id }, data: body as any });
-    res.json({ data: manuscript });
+    const manuscript = await prisma.manuscript.update({ where: { id }, data: updateData as any });
+    res.json({
+      data: {
+        ...manuscript,
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        contentWarnings: JSON.parse((manuscript as any).contentWarnings ?? '[]') as string[],
+      },
+    });
   } catch {
     res.status(500).json({ error: 'Failed to update manuscript' });
   }
@@ -236,6 +253,100 @@ router.delete('/:id/chapters/:chapterNum', async (req, res) => {
   } catch (err) {
     console.error('[chapters DELETE]', err);
     res.status(500).json({ error: 'Failed to delete chapter' });
+  }
+});
+
+// GET /api/manuscripts/:id/reader-annotations — submitted beta reader annotations (author only)
+router.get('/:id/reader-annotations', async (req, res) => {
+  const authorId = req.user!.id;
+  const { id }   = req.params;
+
+  const ms = await prisma.manuscript.findUnique({ where: { id } });
+  if (!ms)                      { res.status(404).json({ error: 'Manuscript not found' }); return; }
+  if (ms.authorId !== authorId) { res.status(403).json({ error: 'Forbidden' }); return; }
+
+  try {
+    const annotations = await prisma.annotation.findMany({
+      where:   { manuscriptRef: id, status: 'submitted' },
+      orderBy: [{ chapterId: 'asc' }, { createdAt: 'asc' }],
+      include: {
+        user:    { select: { id: true, name: true } },
+        replies: { orderBy: { createdAt: 'asc' } },
+      },
+    });
+
+    const data = annotations.map(a => {
+      const parts    = a.user.name.trim().split(/\s+/);
+      const initials = parts.length >= 2
+        ? `${parts[0][0]}${parts[parts.length - 1][0]}`.toUpperCase()
+        : a.user.name.slice(0, 2).toUpperCase();
+      return {
+        id:             a.id,
+        readerId:       a.user.id,
+        readerName:     a.user.name,
+        readerInitials: initials,
+        chapterId:      a.chapterId,
+        paraId:         a.paraId,
+        selectedText:   a.selectedText,
+        note:           a.note,
+        createdAt:      a.createdAt.toISOString(),
+        replies:        a.replies.map(r => ({
+          id:         r.id,
+          authorRole: r.authorRole,
+          body:       r.body,
+          createdAt:  r.createdAt.toISOString(),
+        })),
+      };
+    });
+
+    res.json({ data });
+  } catch (err) {
+    console.error('[reader-annotations GET]', err);
+    res.status(500).json({ error: 'Failed to fetch reader annotations' });
+  }
+});
+
+// GET /api/manuscripts/:id/reader-impressions — per-reader impression curves (author only)
+router.get('/:id/reader-impressions', async (req, res) => {
+  const authorId = req.user!.id;
+  const { id }   = req.params;
+
+  const ms = await prisma.manuscript.findUnique({ where: { id } });
+  if (!ms)                      { res.status(404).json({ error: 'Manuscript not found' }); return; }
+  if (ms.authorId !== authorId) { res.status(403).json({ error: 'Forbidden' }); return; }
+
+  try {
+    const points = await prisma.impressionPoint.findMany({
+      where:   { manuscriptRef: id },
+      orderBy: { chapterNum: 'asc' },
+    });
+
+    const userIds = [...new Set(points.map(p => p.userId))];
+    const users   = userIds.length > 0
+      ? await prisma.user.findMany({ where: { id: { in: userIds } }, select: { id: true, name: true } })
+      : [];
+    const userMap = new Map(users.map(u => [u.id, u]));
+
+    type ReaderEntry = { readerId: string; readerName: string; readerInitials: string; points: { chapterNum: number; stance: string }[] };
+    const readerMap = new Map<string, ReaderEntry>();
+
+    for (const p of points) {
+      if (!readerMap.has(p.userId)) {
+        const u      = userMap.get(p.userId);
+        const name   = u?.name ?? 'Reader';
+        const parts  = name.trim().split(/\s+/);
+        const initials = parts.length >= 2
+          ? `${parts[0][0]}${parts[parts.length - 1][0]}`.toUpperCase()
+          : name.slice(0, 2).toUpperCase();
+        readerMap.set(p.userId, { readerId: p.userId, readerName: name, readerInitials: initials, points: [] });
+      }
+      readerMap.get(p.userId)!.points.push({ chapterNum: p.chapterNum, stance: p.stance });
+    }
+
+    res.json({ data: Array.from(readerMap.values()) });
+  } catch (err) {
+    console.error('[reader-impressions GET]', err);
+    res.status(500).json({ error: 'Failed to fetch reader impressions' });
   }
 });
 

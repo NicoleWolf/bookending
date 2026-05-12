@@ -681,3 +681,6 @@
   }
   .footerLinks { gap: 20px; flex-wrap: wrap; justify-content: center; }
 }
+
+.signupParaMt  { margin-top: 24px; }
+.roleHighlight { color: var(--accent); }

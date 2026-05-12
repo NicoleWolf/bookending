@@ -30,6 +30,7 @@ model User {
   dispatches           Dispatch[]
   products             Product[]
   betaReaders          BetaReader[]
+  betaJoinRequests     BetaJoinRequest[]
   annotations          Annotation[]
   readingProgress      ReadingProgress[]
   shelfEntries         ShelfEntry[]
@@ -38,10 +39,15 @@ model User {
   formattingProjects   FormattingProject[]
   manuscriptVersions   ManuscriptVersion[]
 
-  bio            String?
-  location       String?
-  genres         String?
-  writingProcess String?
+  bio               String?
+  location          String?
+  genres            String?
+  subgenres         String?
+  writingProcess    String?
+  availableForReads Boolean  @default(true)
+  avatarUrl         String?
+  featuredManuscriptId    String?
+  showActivityPublicly    Boolean  @default(true)
 
   isAdmin     Boolean  @default(false)
   status      String   @default("active")
@@ -80,15 +86,17 @@ model Manuscript {
   title          String
   subtitle       String?
   status         ManuscriptStatus @default(DRAFTING)
-  visibility     Visibility       @default(PRIVATE)
+  betaMode       BetaMode         @default(CLOSED)
+  maxBetaReaders Int?
   seriesName     String?
   seriesNumber   Int?
   genre          String?
   subgenre       String?
   description    String?
   targetAudience String?
-  contentRating  String?
-  keywords       String?
+  contentRating    String?
+  contentWarnings  String  @default("[]")
+  keywords         String?
   isbnEbook      String?
   isbnPrint      String?
   isbnPending    Boolean          @default(false)
@@ -102,13 +110,14 @@ model Manuscript {
   createdAt      DateTime         @default(now())
   updatedAt      DateTime         @updatedAt
 
-  authorId    String
-  author      User         @relation(fields: [authorId], references: [id])
-  betaReaders BetaReader[]
-  chapters    Chapter[]
-  products    Product[]
+  authorId         String
+  author           User              @relation(fields: [authorId], references: [id])
+  betaReaders      BetaReader[]
+  betaJoinRequests BetaJoinRequest[]
+  chapters         Chapter[]
+  products         Product[]
   formattingProjects FormattingProject[]
-  versions    ManuscriptVersion[]
+  versions         ManuscriptVersion[]
 }
 
 enum ManuscriptStatus {
@@ -117,9 +126,32 @@ enum ManuscriptStatus {
   PUBLISHED
 }
 
-enum Visibility {
-  PRIVATE
+enum BetaMode {
+  CLOSED
   PUBLIC
+  REQUEST
+  INVITE_ONLY
+}
+
+enum BetaRequestStatus {
+  PENDING
+  APPROVED
+  DECLINED
+  WITHDRAWN
+}
+
+model BetaJoinRequest {
+  id           String            @id @default(cuid())
+  manuscriptId String
+  manuscript   Manuscript        @relation(fields: [manuscriptId], references: [id], onDelete: Cascade)
+  userId       String
+  user         User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  note         String?
+  status       BetaRequestStatus @default(PENDING)
+  createdAt    DateTime          @default(now())
+  decidedAt    DateTime?
+
+  @@unique([manuscriptId, userId])
 }
 
 model Chapter {

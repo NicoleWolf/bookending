@@ -1,0 +1,108 @@
+.shelf {
+  margin-bottom: 48px;
+}
+
+/* ── Shelf head ───────────────────────────────────────────────────── */
+
+.head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  padding-bottom: 10px;
+}
+
+.headLeft { flex: 1; min-width: 0; }
+
+.headEyebrow {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  color: var(--lib-text-meta);
+  margin-bottom: 4px;
+}
+
+.headTitle {
+  font-style: italic;
+  font-size: 18px;
+  font-weight: 400;
+  color: var(--lib-text);
+  margin: 0 0 2px;
+  line-height: 1.25;
+}
+
+.headHelper {
+  font-style: italic;
+  font-size: 12px;
+  color: var(--lib-text-meta);
+  margin: 0;
+}
+
+.headRight {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.scrollBtn {
+  font-family: var(--mono);
+  font-size: 16px;
+  color: var(--lib-text-meta);
+  background: none;
+  border: 0.5px solid var(--lib-rule);
+  padding: 2px 7px;
+  cursor: pointer;
+  line-height: 1;
+}
+.scrollBtn:hover { color: var(--lib-text); border-color: var(--lib-text); }
+
+.seeAll {
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  color: var(--lib-accent);
+  text-decoration: none;
+  white-space: nowrap;
+}
+.seeAll:hover { text-decoration: underline; }
+
+/* 0.5px rule below head */
+.headRule {
+  height: 0;
+  border: 0;
+  border-top: 0.5px solid var(--lib-rule);
+  margin: 0 0 16px;
+}
+
+/* ── Card rail ────────────────────────────────────────────────────── */
+
+.rail {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+.rail::-webkit-scrollbar { display: none; }
+
+.slot {
+  scroll-snap-align: start;
+  min-width: 240px;
+}
+
+/* Vertical rule between cards */
+.slot:not(:last-child) {
+  border-right: 0.5px solid var(--lib-rule);
+}
+
+@media (max-width: 768px) {
+  .rail { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (max-width: 480px) {
+  .rail { grid-template-columns: minmax(0, 1fr); }
+}

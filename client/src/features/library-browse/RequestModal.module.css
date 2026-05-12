@@ -1,0 +1,134 @@
+.dialog {
+  background: var(--lib-bg);
+  border: 1px solid var(--lib-rule);
+  padding: 0;
+  max-width: 520px;
+  width: 100%;
+  margin: auto;
+}
+
+/* Dim the backdrop */
+.dialog::backdrop {
+  background: rgba(42, 37, 32, 0.55);
+}
+
+.inner {
+  padding: 32px 32px 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.eyebrow {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  color: var(--lib-text-meta);
+}
+
+.title {
+  font-size: 22px;
+  font-weight: 400;
+  color: var(--lib-text);
+  margin: 0;
+  line-height: 1.25;
+}
+
+.body {
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--lib-text-body);
+  margin: 0;
+}
+
+/* Profile preview block */
+.profilePreview {
+  background: var(--lib-tint);
+  border-left: 2px solid var(--lib-rule);
+  padding: 10px 14px;
+}
+
+.profileLabel {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  color: var(--lib-text-meta);
+  margin-bottom: 4px;
+}
+
+.profileNote {
+  font-style: italic;
+  font-size: 12px;
+  color: var(--lib-text-body);
+  margin: 0;
+}
+
+/* Textarea */
+.noteLabel {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  color: var(--lib-text-meta);
+}
+
+.noteInput {
+  font-family: var(--sans);
+  font-size: 13px;
+  color: var(--lib-text);
+  background: var(--lib-bg);
+  border: 0.5px solid var(--lib-rule);
+  padding: 8px 10px;
+  resize: vertical;
+  width: 100%;
+  box-sizing: border-box;
+  line-height: 1.5;
+}
+.noteInput:focus {
+  outline: 1.5px solid var(--lib-accent);
+  outline-offset: 0;
+}
+
+.noteHelper {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  color: var(--lib-text-meta);
+  margin: -6px 0 0;
+}
+
+/* Actions */
+.actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 16px;
+  margin-top: 4px;
+}
+
+.cancelBtn {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  color: var(--lib-text-meta);
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  text-decoration: underline;
+}
+.cancelBtn:hover { color: var(--lib-text); }
+
+.submitBtn {
+  background: var(--lib-accent);
+  color: var(--lib-bg);
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  border: none;
+  padding: 11px 22px;
+  cursor: pointer;
+}
+.submitBtn:hover:not(:disabled) { opacity: 0.88; }
+.submitBtn:disabled { opacity: 0.5; cursor: default; }

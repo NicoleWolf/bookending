@@ -598,3 +598,8 @@
   opacity: 0.4;
   cursor: not-allowed;
 }
+
+/* ── Shared helpers ──────────────────────────────────────────────── */
+
+.btnIcon   { font-size: 11px; }
+.fileInput { display: none; }

@@ -60,8 +60,7 @@
 }
 
 .step[data-locked] {
-  opacity: 0.3;
-  cursor: default;
+  opacity: 0.4;
 }
 
 .step:not([data-locked]):not([data-active]):hover {

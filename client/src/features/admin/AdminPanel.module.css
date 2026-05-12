@@ -521,3 +521,6 @@
 }
 
 .devLinkCopy:hover { color: var(--paper); border-color: var(--muted); }
+
+.tempPwBreak    { font-size: 11px; word-break: break-all; }
+.accentCheckbox { accent-color: var(--accent); }

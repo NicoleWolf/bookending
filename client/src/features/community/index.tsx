@@ -74,13 +74,13 @@ export default function Community({ section = 'mentorship' }: CommunityProps) {
                   <Btn
                     tone={isRequested ? 'ghost' : 'primary'}
                     icon={isRequested ? <IconCheck size={13} /> : <IconArrow size={13} />}
-                    style={{ width: '100%', justifyContent: 'center', fontSize: 11.5 }}
+                    className={styles.btnMentorFull}
                     onClick={() => setRequested(p => { const n = new Set(p); isRequested ? n.delete(m.id) : n.add(m.id); return n; })}
                   >
                     {isRequested ? 'Request sent' : 'Request mentorship'}
                   </Btn>
                 ) : (
-                  <Btn tone="ghost" style={{ width: '100%', justifyContent: 'center', fontSize: 11.5, opacity: 0.5 }}>
+                  <Btn tone="ghost" className={styles.btnMentorFull} disabled>
                     {m.available === 'full' ? 'Roster full' : 'Currently paused'}
                   </Btn>
                 )}
@@ -93,7 +93,7 @@ export default function Community({ section = 'mentorship' }: CommunityProps) {
       {requested.size > 0 && (
         <div className={styles.pendingBox}>
           <div>
-            <div className="label" style={{ marginBottom: 4 }}>Pending requests</div>
+            <div className={`label ${styles.pendingLabel}`}>Pending requests</div>
             <p className={styles.pendingText}>
               {requested.size} request{requested.size !== 1 ? 's' : ''} sent — mentors typically respond within a week.
             </p>
@@ -129,7 +129,7 @@ export function CommunityDashboardCard() {
           <h2 className={`serif ${styles.dashTitle}`}>Authors at your shoulder.</h2>
           <p className={`serif ${styles.dashSubtext}`}>Other independents, working right now. Borrow a beta-reader, swap a cover critique, share a printer who didn't disappoint.</p>
         </div>
-        <Btn tone="bare" icon={<IconArrow size={14} />} style={{ color: 'var(--ink)' }}>Open the common room</Btn>
+        <Btn tone="bare" icon={<IconArrow size={14} />} className={styles.btnInk}>Open the common room</Btn>
       </div>
       <div className={styles.dashCardsGrid}>
         {CARDS.map((c, i) => (
@@ -146,7 +146,7 @@ export function CommunityDashboardCard() {
       </div>
       <div className={styles.karmaBar}>
         <div className={styles.karmaLedger}>
-          <span className="label" style={{ color: 'var(--muted)' }}>Your karma ledger</span>
+          <span className={`label ${styles.karmaLabel}`}>Your karma ledger</span>
           <span className={`serif ${styles.karmaScore}`}>+12</span>
           <span className={styles.karmaDetails}>· 4 critiques given · 2 vendors reviewed · 1 reader vouched</span>
         </div>

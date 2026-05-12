@@ -41,6 +41,18 @@ export interface PendingQuestion {
   submittedAt: string;
 }
 
+export interface FeaturedProject {
+  id: string;
+  title: string;
+  genre: string | null;
+  subgenre: string | null;
+  wordCount: number;
+  status: string;
+  createdAt: string;
+  description: string | null;
+  betaMode: string;
+}
+
 export interface AuthorProfile {
   id: string;
   name: string;
@@ -54,6 +66,7 @@ export interface AuthorProfile {
   followerCount: number;
   titles: number;
   currentProject?: CurrentProject;
+  featuredProject?: FeaturedProject;
   activity: ActivityEvent[];
   qa: QAEntry[];
   pendingQuestions?: PendingQuestion[];

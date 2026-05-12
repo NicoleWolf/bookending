@@ -1,0 +1,107 @@
+.masthead {
+  background: var(--lib-bg);
+  padding: 24px 0 0;
+  border-bottom: 1.5px solid var(--lib-text);
+  margin-bottom: 0;
+}
+
+/* Top row */
+.topRow {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.kicker {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  color: var(--lib-text-meta);
+}
+
+/* Nav */
+.nav {
+  display: flex;
+  gap: 20px;
+  align-items: baseline;
+}
+
+.navItem {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  color: var(--lib-text-meta);
+  background: none;
+  border: none;
+  padding: 0 0 2px;
+  cursor: pointer;
+  text-decoration: none;
+  border-bottom: 1.5px solid transparent;
+}
+
+.navItem[data-active] {
+  color: var(--lib-text);
+  border-bottom-color: var(--lib-accent);
+}
+
+.navItem:hover:not([data-active]) { color: var(--lib-text); }
+
+/* Title */
+.title {
+  font-size: 38px;
+  font-weight: 400;
+  font-style: normal;
+  color: var(--lib-text);
+  margin: 0 0 4px;
+  line-height: 1.1;
+}
+
+/* Subtitle — italic, uses true Newsreader italic */
+.subtitle {
+  font-style: italic;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--lib-text-body);
+  margin: 0 0 16px;
+}
+
+/* Meta band */
+.metaBand {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 0;
+  border-top: 0.5px solid var(--lib-rule);
+}
+
+.metaItems {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.metaItem {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  color: var(--lib-text-meta);
+}
+
+.metaOpen { color: var(--lib-accent); }
+
+.metaSep { color: var(--lib-rule); }
+
+.filterBtn {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  color: var(--lib-text-meta);
+  background: none;
+  border: 0.5px solid var(--lib-rule);
+  padding: 3px 8px;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+.filterBtn:hover { color: var(--lib-text); border-color: var(--lib-text); }

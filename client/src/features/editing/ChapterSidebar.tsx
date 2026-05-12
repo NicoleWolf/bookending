@@ -44,6 +44,12 @@ export default function ChapterSidebar({ chapters, activeIndex, onSwitch, onAdd,
         <p className={styles.tagline}>Chapters</p>
       </div>
 
+      <div className={styles.addRow}>
+        <button className={styles.addBtn} onClick={onAdd}>
+          + New chapter
+        </button>
+      </div>
+
       <nav className={styles.list}>
         {chapters.map((ch, idx) => (
           <div
@@ -88,11 +94,6 @@ export default function ChapterSidebar({ chapters, activeIndex, onSwitch, onAdd,
         ))}
       </nav>
 
-      <div className={styles.footer}>
-        <button className={styles.addBtn} onClick={onAdd}>
-          + New chapter
-        </button>
-      </div>
     </aside>
   );
 }

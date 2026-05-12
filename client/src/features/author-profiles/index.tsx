@@ -4,7 +4,7 @@ import { SectionHead, Avatar, Pill, Btn } from '../../shared/ui/atoms';
 import { IconArrow } from '../../shared/ui/icons';
 import { useAuth } from '../auth';
 import { AUTHOR_PROFILES } from './data';
-import type { AuthorProfile, AuthorTone, ActivityType, QAEntry, PendingQuestion, ProfileTab } from './types';
+import type { AuthorProfile, AuthorTone, ActivityType, QAEntry, PendingQuestion, ProfileTab, FeaturedProject } from './types';
 import type { AppNotification } from '../notifications/data';
 import { timeAgo } from '../notifications/data';
 import styles from './AuthorProfiles.module.css';
@@ -24,19 +24,36 @@ function recordToProfile(r: AuthorRecord): AuthorProfile {
   const initials = ((words[0]?.[0] ?? '') + (words[1]?.[0] ?? '')).toUpperCase();
   let genres: string[] = [];
   try { if (r.genres) genres = JSON.parse(r.genres) as string[]; } catch { /* noop */ }
+
+  const featuredMs = r.featuredManuscriptId
+    ? r.manuscripts.find(m => m.id === r.featuredManuscriptId)
+    : undefined;
+  const featuredProject: FeaturedProject | undefined = featuredMs ? {
+    id:          featuredMs.id,
+    title:       featuredMs.title,
+    genre:       featuredMs.genre ?? null,
+    subgenre:    featuredMs.subgenre ?? null,
+    wordCount:   featuredMs.wordCount ?? 0,
+    status:      featuredMs.status ?? 'DRAFTING',
+    createdAt:   featuredMs.createdAt ?? r.createdAt,
+    description: featuredMs.description ?? null,
+    betaMode:    featuredMs.betaMode ?? 'CLOSED',
+  } : undefined;
+
   return {
-    id:            r.id,
-    name:          r.name,
+    id:             r.id,
+    name:           r.name,
     initials,
-    tone:          toneForId(r.id),
-    location:      r.location ?? '',
-    bio:           r.bio ?? '',
+    tone:           toneForId(r.id),
+    location:       r.location ?? '',
+    bio:            r.bio ?? '',
     writingProcess: r.writingProcess ?? '',
     genres,
-    joinedAt:      r.createdAt,
-    followerCount: 0,
-    titles:        r.manuscripts.length,
-    activity:      [],
+    joinedAt:       r.createdAt,
+    followerCount:  0,
+    titles:         r.manuscripts.length,
+    featuredProject,
+    activity:       [],
     qa: r.authorQa
       .filter(q => q.answer && q.publishedAt)
       .map(q => ({ id: q.id, question: q.question, answer: q.answer!, askedAt: q.publishedAt! })),
@@ -47,15 +64,19 @@ function recordToProfile(r: AuthorRecord): AuthorProfile {
 // ── Helpers ───────────────────────────────────────────────────────
 
 const STATUS_LABEL: Record<string, string> = {
-  drafting:    'Drafting',
+  drafting:      'Drafting',
   'in-revision': 'In Revision',
-  complete:    'Complete',
+  'in_revision': 'In Revision',
+  complete:      'Complete',
+  published:     'Published',
 };
 
 const STATUS_TONE: Record<string, 'neutral' | 'accent' | 'good'> = {
-  drafting:    'accent',
+  drafting:      'accent',
   'in-revision': 'neutral',
-  complete:    'good',
+  'in_revision': 'neutral',
+  complete:      'good',
+  published:     'good',
 };
 
 const ACTIVITY_ICON: Record<ActivityType, string> = {
@@ -174,6 +195,27 @@ function AuthorProfilePage({ author, followed, onToggleFollow, onBack, onNotify,
   const sortedActivity = [...author.activity].sort(
     (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
   );
+
+  // ── Join state ────────────────────────────────────────────────
+  const [joinState, setJoinState] = useState<'idle' | 'loading' | 'joined' | 'requested'>('idle');
+
+  async function handleJoin() {
+    if (!author.featuredProject || !session?.token) return;
+    setJoinState('loading');
+    try {
+      await api.post(`/api/manuscripts/${author.featuredProject.id}/readers/join`);
+      setJoinState('joined');
+    } catch { setJoinState('idle'); }
+  }
+
+  async function handleRequest() {
+    if (!author.featuredProject || !session?.token) return;
+    setJoinState('loading');
+    try {
+      await api.post(`/api/manuscripts/${author.featuredProject.id}/readers/requests`, {});
+      setJoinState('requested');
+    } catch { setJoinState('idle'); }
+  }
 
   // ── Q&A state ────────────────────────────────────────────────
   const [qaList,          setQaList]          = useState<QAEntry[]>(author.qa);
@@ -368,7 +410,52 @@ function AuthorProfilePage({ author, followed, onToggleFollow, onBack, onNotify,
             </div>
 
             <div className={styles.profileSide}>
-              {author.currentProject && (
+              {author.featuredProject && (
+                <div className={styles.projectCard}>
+                  <div className={styles.projectCardLabel}>Featured project</div>
+                  <div className={`serif ${styles.projectTitle}`}>{author.featuredProject.title}</div>
+                  {(author.featuredProject.genre || author.featuredProject.subgenre) && (
+                    <div className={styles.projectGenre}>
+                      {[author.featuredProject.genre, author.featuredProject.subgenre].filter(Boolean).join(' · ')}
+                    </div>
+                  )}
+                  {author.featuredProject.description && (
+                    <p className={styles.projectBlurb}>{author.featuredProject.description}</p>
+                  )}
+                  <div className={styles.projectStatus}>
+                    <Pill tone={STATUS_TONE[author.featuredProject.status.toLowerCase().replace('_', '-')] ?? 'neutral'}>
+                      {STATUS_LABEL[author.featuredProject.status.toLowerCase().replace('_', '-')] ?? author.featuredProject.status}
+                    </Pill>
+                    {author.featuredProject.wordCount > 0 && (
+                      <span className={styles.projectStarted}>
+                        {author.featuredProject.wordCount.toLocaleString()} words
+                      </span>
+                    )}
+                  </div>
+                  {!isOwnProfile && author.featuredProject.betaMode === 'PUBLIC' && (
+                    <button
+                      className={styles.joinBtn}
+                      onClick={() => void handleJoin()}
+                      disabled={joinState !== 'idle'}
+                    >
+                      {joinState === 'loading' ? '…' : joinState === 'joined' ? 'Reading' : 'Join beta read'}
+                    </button>
+                  )}
+                  {!isOwnProfile && author.featuredProject.betaMode === 'REQUEST' && (
+                    <button
+                      className={styles.joinBtn}
+                      onClick={() => void handleRequest()}
+                      disabled={joinState !== 'idle'}
+                    >
+                      {joinState === 'loading' ? '…' : joinState === 'requested' ? 'Requested' : 'Request to read'}
+                    </button>
+                  )}
+                  {!isOwnProfile && author.featuredProject.betaMode === 'INVITE_ONLY' && (
+                    <div className={styles.inviteOnlyLabel}>Invite only</div>
+                  )}
+                </div>
+              )}
+              {!author.featuredProject && author.currentProject && (
                 <div className={styles.projectCard}>
                   <div className={styles.projectCardLabel}>Current project</div>
                   <div className={`serif ${styles.projectTitle}`}>{author.currentProject.title}</div>
@@ -644,9 +731,7 @@ export default function AuthorProfiles({ followedAuthors, onToggleFollow, onNoti
   useEffect(() => {
     void (async () => {
       try {
-        const res = await fetch(`${API_URL}/api/authors`);
-        const json = await res.json() as { data?: AuthorRecord[] };
-        const records = json.data ?? [];
+        const records = await api.get<AuthorRecord[]>('/api/authors');
         if (records.length > 0) setProfiles(records.map(recordToProfile));
       } catch { /* static data remains */ }
     })();

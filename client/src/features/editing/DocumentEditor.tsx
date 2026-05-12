@@ -2,7 +2,7 @@ import { useRef, useState, useEffect, useMemo } from 'react';
 import { useEditor, EditorContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import Placeholder from '@tiptap/extension-placeholder';
-import { INITIAL_CONTENT, MANUSCRIPT_META, COMMENTS } from './data';
+import { INITIAL_CONTENT, MANUSCRIPT_META } from './data';
 import FeedbackPanel from './FeedbackPanel';
 import CommunityPanel from './CommunityPanel';
 import AnnotationPanel from './AnnotationPanel';
@@ -45,13 +45,32 @@ interface VersionDetail {
   chapters: { id: string; chapterNum: number; title: string; content: string; wordCount: number }[];
 }
 
+// ── Reader annotation shape (from /api/manuscripts/:id/reader-annotations) ──
+interface ReaderAnnotation {
+  id:             string;
+  readerId:       string;
+  readerName:     string;
+  readerInitials: string;
+  chapterId:      number;
+  selectedText:   string;
+  note:           string;
+  createdAt:      string;
+}
+
+interface ReaderImpression {
+  readerId:       string;
+  readerName:     string;
+  readerInitials: string;
+  points:         { chapterNum: number; stance: string }[];
+}
+
 // ── Reader highlight helpers ──────────────────────────────────────
 function stripPassageQuotes(s: string): string {
   // U+0022 straight ", U+201C left ", U+201D right "
   return s.replace(/^["“”]/, '').replace(/["“”]$/, '');
 }
 
-function applyHighlight(root: HTMLElement, text: string, theme: string, commentId: number) {
+function applyHighlight(root: HTMLElement, text: string, theme: string, commentId: string) {
   if (!text) return;
   const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
   let node: Text | null;
@@ -216,8 +235,10 @@ export default function DocumentEditor({ manuscriptId }: Props) {
   const [hasSnap, setHasSnap]                   = useState(() => {
     try { return !!localStorage.getItem(chSnapKey(manuscriptId, 0)); } catch { return false; }
   });
-  const [selectedText, setSelectedText]         = useState('');
-  const [focusedCommentId, setFocusedCommentId] = useState<number | null>(null);
+  const [selectedText,      setSelectedText]      = useState('');
+  const [focusedCommentId,  setFocusedCommentId]  = useState<string | null>(null);
+  const [readerAnnotations, setReaderAnnotations] = useState<ReaderAnnotation[]>([]);
+  const [readerImpressions, setReaderImpressions] = useState<ReaderImpression[]>([]);
   const [versions,              setVersions]              = useState<VersionMeta[]>([]);
   const [selectedVersionId,     setSelectedVersionId]     = useState<string | null>(null);
   const [selectedVersionDetail, setSelectedVersionDetail] = useState<VersionDetail | null>(null);
@@ -270,35 +291,61 @@ export default function DocumentEditor({ manuscriptId }: Props) {
   useEffect(() => { editorRef.current = editor; }, [editor]);
 
   // On editor ready: fetch persisted chapters from API, populate chapterNumbersRef,
-  // migrate any localStorage-only content up to the server.
+  // and rebuild chapter state so added chapters survive page reloads.
   useEffect(() => {
     if (!editor) return;
     type ApiChapter = { number: number; title: string; content: string | null };
     api.get<ApiChapter[]>(`/api/manuscripts/${manuscriptId}/chapters`)
       .then(apiChapters => {
-        const chs = chaptersRef.current;
         apiChapters.forEach((ac, pos) => { chapterNumbersRef.current[pos] = ac.number; });
 
-        chs.forEach((ch, idx) => {
-          const apiCh = apiChapters[idx];
-          if (apiCh?.content) {
-            if (idx === activeChapterRef.current) {
-              editor.commands.setContent(apiCh.content, false);
-              try { localStorage.setItem(chDocKey(manuscriptId, idx), apiCh.content); } catch {}
-            }
-          } else {
+        if (apiChapters.length > 0) {
+          // API is source of truth for structure — any chapters added since last
+          // load are only in the DB, not in the localStorage/initial state.
+          const fromApi: ChapterSlice[] = apiChapters.map(ac => ({
+            title: ac.title,
+            html:  ac.content ?? '',
+          }));
+          setChapters(fromApi);
+
+          // Load the active chapter's content into the editor
+          const activeApiCh = apiChapters[activeChapterRef.current];
+          if (activeApiCh?.content) {
+            editor.commands.setContent(activeApiCh.content, false);
+            try { localStorage.setItem(chDocKey(manuscriptId, activeChapterRef.current), activeApiCh.content); } catch {}
+          }
+
+          // Migrate any chapters that have no API content yet (content saved
+          // locally but not yet flushed to the server)
+          apiChapters.forEach((ac, idx) => {
+            if (ac.content) return;
+            const chs   = chaptersRef.current;
             const local = (() => { try { return localStorage.getItem(chDocKey(manuscriptId, idx)); } catch { return null; } })();
-            const activeHtml = idx === activeChapterRef.current ? editor.getHTML() : null;
+            const activeHtml    = idx === activeChapterRef.current ? editor.getHTML() : null;
+            const contentToSave = local ?? activeHtml ?? chs[idx]?.html ?? null;
+            if (contentToSave && contentToSave.trim() && contentToSave !== '<p></p>') {
+              const dbNum = chapterNumbersRef.current[idx] ?? idx;
+              void api.put(`/api/manuscripts/${manuscriptId}/chapters/${dbNum}`, {
+                title: ac.title, content: contentToSave,
+              }).catch(err => console.error('[chapter init save]', err));
+            }
+          });
+        } else {
+          // No DB chapters yet — first ever load. Migrate local/initial content
+          // up to the server so subsequent loads use the API path above.
+          const chs = chaptersRef.current;
+          chs.forEach((ch, idx) => {
+            const local = (() => { try { return localStorage.getItem(chDocKey(manuscriptId, idx)); } catch { return null; } })();
+            const activeHtml    = idx === activeChapterRef.current ? editor.getHTML() : null;
             const contentToSave = local ?? activeHtml ?? ch.html ?? null;
             if (contentToSave && contentToSave.trim() && contentToSave !== '<p></p>') {
               const dbNum = chapterNumbersRef.current[idx] ?? idx;
               void api.put(`/api/manuscripts/${manuscriptId}/chapters/${dbNum}`, {
-                title: ch.title,
-                content: contentToSave,
+                title: ch.title, content: contentToSave,
               }).catch(err => console.error('[chapter init save]', err));
             }
-          }
-        });
+          });
+        }
       })
       .catch(err => console.error('[chapter init fetch]', err));
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -311,6 +358,17 @@ export default function DocumentEditor({ manuscriptId }: Props) {
         setVersions(vs);
         if (vs.length > 0) setSelectedVersionId(vs[0].id);
       })
+      .catch(() => {});
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [manuscriptId]);
+
+  // Fetch submitted reader annotations + impression curves for the feedback panel
+  useEffect(() => {
+    api.get<ReaderAnnotation[]>(`/api/manuscripts/${manuscriptId}/reader-annotations`)
+      .then(data => setReaderAnnotations(data))
+      .catch(() => {});
+    api.get<ReaderImpression[]>(`/api/manuscripts/${manuscriptId}/reader-impressions`)
+      .then(data => setReaderImpressions(data))
       .catch(() => {});
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [manuscriptId]);
@@ -346,14 +404,15 @@ export default function DocumentEditor({ manuscriptId }: Props) {
       return;
     }
     highlightTimer.current = setTimeout(() => {
-      const dom = editor.view.dom as HTMLElement;
+      const dom      = editor.view.dom as HTMLElement;
+      const activeChNum = chapterNumbersRef.current[activeChapterRef.current] ?? (activeChapterRef.current + 1);
       clearHighlights(dom);
-      COMMENTS
-        .filter(c => c.manuscriptId === manuscriptId)
-        .forEach(c => applyHighlight(dom, stripPassageQuotes(c.passage), c.type, c.id));
+      readerAnnotations
+        .filter(a => a.chapterId === activeChNum)
+        .forEach(a => applyHighlight(dom, a.selectedText, 'other', a.id));
     }, 0);
     return () => clearTimeout(highlightTimer.current);
-  }, [mode, editor, manuscriptId]);
+  }, [mode, editor, manuscriptId, readerAnnotations]);
 
   useEffect(() => {
     if (!editor || mode !== 'feedback') return;
@@ -822,7 +881,7 @@ export default function DocumentEditor({ manuscriptId }: Props) {
     const target = e.target as HTMLElement;
     const mark = target.closest('mark.readerHighlight') as HTMLElement | null;
     if (mark) {
-      const id = Number(mark.dataset.commentId);
+      const id = mark.dataset.commentId ?? null;
       setFocusedCommentId(prev => prev === id ? null : id);
     } else {
       setFocusedCommentId(null);
@@ -855,6 +914,9 @@ export default function DocumentEditor({ manuscriptId }: Props) {
             <FeedbackPanel
               manuscriptId={manuscriptId}
               chapterHtml={chapters[activeChapter]?.html ?? ''}
+              readerAnnotations={readerAnnotations}
+              readerImpressions={readerImpressions}
+              totalChapters={chapters.length}
               focusedCommentId={focusedCommentId}
               onClearFocus={() => setFocusedCommentId(null)}
             />

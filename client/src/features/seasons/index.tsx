@@ -23,7 +23,7 @@ function TaskRow({ task }: { task: SeasonTask }) {
   return (
     <div className={styles.taskRow} data-status={task.status}>
       <div className={styles.taskCheck} data-status={task.status}>
-        {task.status === 'done' && <IconCheck size={11} style={{ color: 'var(--ink)' }} />}
+        {task.status === 'done' && <IconCheck size={11} className={styles.iconInk} />}
       </div>
       <div className={styles.taskBody}>
         <div className={styles.taskWeek}>{task.week.toUpperCase()}</div>

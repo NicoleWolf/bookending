@@ -317,7 +317,7 @@ function PressReleaseEditor() {
 
       <div className={styles.prSidePanel}>
         <div>
-          <div className="label" style={{ marginBottom: 16 }}>Media contact</div>
+          <div className={`label ${styles.labelLg}`}>Media contact</div>
           <div className={styles.contactList}>
             {[
               { l: 'NAME',  v: contactName,  set: setContactName },
@@ -341,7 +341,7 @@ function PressReleaseEditor() {
         </div>
 
         <div>
-          <div className="label" style={{ marginBottom: 14 }}>Document preview</div>
+          <div className={`label ${styles.labelMd}`}>Document preview</div>
           <div className={styles.previewBox}>
             <div className={styles.previewRelease}>
               {embargo ? `EMBARGOED UNTIL ${embargoDate || '—'}` : 'FOR IMMEDIATE RELEASE'}
@@ -366,7 +366,7 @@ function PressReleaseEditor() {
         </div>
 
         <div>
-          <div className="label" style={{ marginBottom: 12 }}>Send to press list</div>
+          <div className={`label ${styles.labelSm}`}>Send to press list</div>
           <div className={`serif ${styles.pressListText}`}>
             Share directly with journalists and reviewers in your contacts.
           </div>

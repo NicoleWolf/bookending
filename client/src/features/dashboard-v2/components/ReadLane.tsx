@@ -64,7 +64,7 @@ export const ReadLane = ({ data }: { data: ReadLaneData }) => {
         </div>
 
         {/* Hotspot + rhythm */}
-        <div className={styles.section} style={{ display: 'grid', gridTemplateColumns: '1.2fr 1fr', gap: 24 }}>
+        <div className={`${styles.section} ${styles.sectionGrid}`}>
           <div>
             <div className={styles.sectionHead}>
               <span className={`mono ${styles.eyebrow}`}>{data.hotspotTitle}</span>

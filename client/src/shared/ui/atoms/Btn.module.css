@@ -20,3 +20,8 @@
 .btn[data-tone="bare"]       { background: transparent; color: var(--muted);         border-color: transparent; }
 .btn[data-tone="ghost-dark"] { background: transparent; color: var(--bk-paper);      border-color: var(--bk-paper-deep); border-width: 1.5px; }
 .btn[data-tone="bare-dark"]  { background: transparent; color: var(--bk-paper-deep); border-color: transparent; }
+
+.btn:disabled {
+  opacity: 0.4;
+  cursor: default;
+}

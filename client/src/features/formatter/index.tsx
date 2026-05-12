@@ -1,10 +1,12 @@
 import { useState, useEffect } from 'react';
 import { STEPS } from './steps';
 import { api } from '../../lib/api';
-import type { ManuscriptSummary, FormattingProjectRecord, IngestSettings } from './types';
+import { deriveMockStructure } from './data';
+import type { ManuscriptSummary, FormattingProjectRecord, IngestSettings, DetectedItem } from './types';
 import BinderySidebar from './components/BinderySidebar';
 import LiveProofPanel from './components/LiveProofPanel';
 import BringIn from './components/BringIn';
+import MarkUp from './components/MarkUp';
 import styles from './Formatter.module.css';
 
 export type Device = 'paperwhite' | 'phone' | 'tablet';
@@ -16,6 +18,7 @@ export default function FormatterHub() {
   const [selectedManuscriptId, setSelectedManuscriptId] = useState<string | null>(null);
   const [project,              setProject]              = useState<FormattingProjectRecord | null>(null);
   const [projectLoading,       setProjectLoading]       = useState(false);
+  const [structureItems,       setStructureItems]       = useState<DetectedItem[]>([]);
 
   // Fetch manuscripts on mount; auto-select most recently updated
   useEffect(() => {
@@ -37,11 +40,18 @@ export default function FormatterHub() {
     if (!selectedManuscriptId) return;
     setProjectLoading(true);
     setProject(null);
+    setStructureItems([]);
     api.get<FormattingProjectRecord>(`/api/formatter/${selectedManuscriptId}`)
       .then(data => setProject(data))
       .catch(() => setProject(null))
       .finally(() => setProjectLoading(false));
   }, [selectedManuscriptId]);
+
+  // Derive mock structure whenever the selected manuscript or project changes
+  useEffect(() => {
+    const ms = manuscripts.find(m => m.id === selectedManuscriptId);
+    if (ms) setStructureItems(deriveMockStructure(ms));
+  }, [selectedManuscriptId, manuscripts]);
 
   async function handlePull(manuscriptId: string, settings: IngestSettings) {
     const created = await api.post<FormattingProjectRecord>('/api/formatter', {
@@ -51,7 +61,6 @@ export default function FormatterHub() {
       smartQuotes: settings.smartQuotes.toUpperCase(),
     });
     setProject(created);
-    // Re-fetch manuscripts so the info card reflects the latest word count and chapters
     api.get<ManuscriptSummary[]>('/api/manuscripts')
       .then(data => setManuscripts(data))
       .catch(() => {});
@@ -124,8 +133,8 @@ export default function FormatterHub() {
         </span>
         <span className={`mono ${styles.breadcrumbManuscript}`}>
           {selectedManuscript
-            ? `MANUSCRIPT  ${selectedManuscript.title}  ${selectedManuscript.wordCount.toLocaleString()}W`
-            : 'MANUSCRIPT  —'}
+            ? `MANUSCRIPT  ${selectedManuscript.title}  ${selectedManuscript.wordCount.toLocaleString()}W`
+            : 'MANUSCRIPT  —'}
         </span>
       </div>
 
@@ -147,9 +156,23 @@ export default function FormatterHub() {
               onAdvance={() => setActiveStep(2)}
             />
           )}
+          {activeStep === 2 && (
+            <MarkUp
+              project={project}
+              items={structureItems}
+              onItemsChange={setStructureItems}
+              onBack={() => setActiveStep(1)}
+              onAdvance={() => setActiveStep(3)}
+            />
+          )}
         </main>
 
-        <LiveProofPanel device={device} onDeviceChange={setDevice} />
+        <LiveProofPanel
+          device={device}
+          onDeviceChange={setDevice}
+          activeStep={activeStep}
+          structureItems={structureItems}
+        />
       </div>
     </div>
   );

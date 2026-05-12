@@ -1,268 +1,96 @@
-/* ── Dateline strip ──────────────────────────────────────── */
-.dateline {
+.page {
+  background: var(--lib-bg);
+  color: var(--lib-text);
+  padding: 32px 0 0;
+}
+
+/* ── Hero / Editor's Selection ────────────────────────────────────── */
+
+.hero {
+  margin-bottom: 48px;
+}
+
+.heroHead {
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 10px 48px;
-  border-bottom: 1px solid var(--rule);
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.heroEyebrow {
   font-family: var(--mono);
-  font-feature-settings: "ss01";
-  font-size: 9px;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  color: var(--muted-2);
-}
-
-.datelineSep {
-  color: var(--rule);
-}
-
-/* ── Shared section header row ──────────────────────────── */
-.sectionHead {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  margin-bottom: 0;
-}
-
-.sectionLabel {
-  font-family: var(--mono);
-  font-feature-settings: "ss01";
-  font-size: 9px;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  color: var(--muted);
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  color: var(--lib-text-meta);
   flex-shrink: 0;
 }
 
-.sectionRule {
+.heroRule {
   flex: 1;
-  height: 1px;
-  background: var(--rule);
+  height: 0;
+  border: 0;
+  border-top: 0.5px solid var(--lib-rule);
 }
 
-.sectionMore {
-  font-family: var(--mono);
-  font-feature-settings: "ss01";
-  font-size: 9px;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--accent);
-  background: none;
-  border: none;
-  cursor: pointer;
-  flex-shrink: 0;
-  padding: 0;
+/* ── New-reader prompt ────────────────────────────────────────────── */
+
+.newReaderPrompt {
+  padding: 24px 0 32px;
+  border-bottom: 0.5px solid var(--lib-rule);
+  margin-bottom: 40px;
 }
 
-.sectionMore:hover {
-  color: var(--paper);
-}
-
-.sectionSub {
-  font-family: var(--mono);
-  font-feature-settings: "ss01";
-  font-size: 9px;
-  letter-spacing: 0.08em;
-  color: var(--muted-2);
-  flex-shrink: 0;
-}
-
-.sectionCount {
-  font-family: var(--mono);
-  font-feature-settings: "ss01";
-  font-size: 9px;
-  letter-spacing: 0.08em;
-  color: var(--muted-2);
-  flex-shrink: 0;
-}
-
-/* ── Editor's Selection (featured) ──────────────────────── */
-.featured {
-  padding: 48px;
-  border-bottom: 2px solid var(--paper);
-}
-
-.featuredBody {
-  display: grid;
-  grid-template-columns: 200px 1fr;
-  gap: 52px;
-  align-items: start;
-  margin-top: 32px;
-}
-
-.featuredCoverWrap {
-  aspect-ratio: 2 / 3;
-  position: relative;
-  overflow: hidden;
-}
-
-.featuredContent {
-  display: flex;
-  flex-direction: column;
-  gap: 0;
-}
-
-.featuredMeta {
-  font-family: var(--mono);
-  font-feature-settings: "ss01";
-  font-size: 9px;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  color: var(--muted-2);
-  margin-bottom: 14px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.featuredMetaSep {
-  color: var(--rule);
-}
-
-.featuredTitle {
-  font-size: 40px;
-  font-style: italic;
-  font-weight: 300;
-  line-height: 1.05;
-  color: var(--paper);
-  letter-spacing: -0.01em;
-  margin: 0 0 10px;
-}
-
-.featuredAuthor {
-  font-family: var(--mono);
-  font-feature-settings: "ss01";
-  font-size: 10px;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--muted);
-  margin-bottom: 24px;
-}
-
-.featuredDesc {
-  font-size: 14px;
-  line-height: 1.75;
-  color: color-mix(in srgb, var(--paper) 65%, transparent);
-  margin: 0 0 24px;
-  max-width: 540px;
-}
-
-.featuredQuote {
-  border-left: 2px solid var(--accent);
-  padding: 4px 0 4px 22px;
-  margin: 0 0 28px;
-  max-width: 500px;
-}
-
-.featuredQuoteText {
+.newReaderText {
   font-style: italic;
   font-size: 15px;
-  line-height: 1.65;
-  color: var(--paper-dim);
-  display: block;
-  margin-bottom: 10px;
+  color: var(--lib-text-body);
+  margin: 0 0 10px;
+  line-height: 1.5;
 }
 
-.featuredCite {
+.newReaderLink {
   font-family: var(--mono);
-  font-feature-settings: "ss01";
-  font-size: 8.5px;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--muted-2);
-  font-style: normal;
-  display: block;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  color: var(--lib-accent);
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  text-decoration: none;
 }
+.newReaderLink:hover { text-decoration: underline; }
 
-.featuredStats {
-  margin-bottom: 20px;
-}
+/* ── Footer ───────────────────────────────────────────────────────── */
 
-.featuredPages {
-  font-family: var(--mono);
-  font-feature-settings: "ss01";
-  font-size: 9px;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--muted-2);
-}
-
-.featuredFooter {
+.footer {
   display: flex;
   align-items: center;
-  gap: 28px;
-  padding-top: 20px;
-  border-top: 1px solid var(--rule);
+  justify-content: space-between;
+  border-top: 0.5px solid var(--lib-rule);
+  margin-top: 56px;
+  padding: 20px 0 32px;
+  flex-wrap: wrap;
+  gap: 12px;
 }
 
-.featuredSlots {
+.footerIdentity {
   font-family: var(--mono);
-  font-feature-settings: "ss01";
-  font-size: 9.5px;
+  font-size: 10px;
   letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--muted-2);
+  color: var(--lib-text-meta);
 }
 
-.featuredSlots[data-status="open"] {
-  color: var(--good);
-}
-
-.featuredCta {
-  padding: 11px 28px;
-  background: var(--accent);
+.footerBrowse {
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  color: var(--lib-accent);
+  background: none;
   border: none;
-  color: var(--ink);
-  font-family: var(--sans);
-  font-size: 12px;
-  font-weight: 600;
-  letter-spacing: 0.06em;
+  padding: 0;
   cursor: pointer;
-  transition: background 0.12s;
 }
-
-.featuredCta:hover {
-  background: var(--accent-2);
-}
-
-/* ── Rail (horizontal scroll) ────────────────────────────── */
-.railSection {
-  padding: 36px 48px;
-  border-bottom: 1px solid var(--rule);
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-}
-
-.rail {
-  display: flex;
-  gap: 1px;
-  overflow-x: auto;
-  background: var(--rule);
-  scrollbar-width: none;
-}
-
-.rail::-webkit-scrollbar {
-  display: none;
-}
-
-.railSlot {
-  flex-shrink: 0;
-  width: 195px;
-}
-
-/* ── 3-column grid sections ──────────────────────────────── */
-.gridSection {
-  padding: 36px 48px;
-  border-bottom: 1px solid var(--rule);
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-}
-
-.grid3 {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 1px;
-}
+.footerBrowse:hover { text-decoration: underline; }

@@ -1,0 +1,18 @@
+/* Library surface tokens — Discover & Browse views
+   Prefix: --lib-* avoids collision with global --bk-* tokens in tokens.css */
+
+:root {
+  --lib-bg:                #F5EEDC;   /* cream paper */
+  --lib-text:              #2A2520;   /* primary text */
+  --lib-text-body:         #4A3F2E;   /* body / secondary text */
+  --lib-text-meta:         #6B5F47;   /* eyebrows, meta, helper text */
+  --lib-rule:              #B8AB8C;   /* primary dividers and borders */
+  --lib-rule-soft:         #D4C9AB;   /* soft dividers within cards */
+  --lib-accent:            #8A1F15;   /* brick red — CTAs, active states */
+  --lib-tint:              #E8D9C4;   /* chip / band backgrounds */
+  --lib-cover-placeholder: #D8C5A8;   /* cover-art placeholder fill */
+  --lib-status-open:       #5C7A2E;   /* slot open (green) */
+  --lib-status-filling:    #9A521A;   /* slot filling (darkened orange, WCAG AA at 11px) */
+  --lib-status-full:       #6B5F47;   /* slot full (gray) */
+  --lib-rail-bg:           rgba(232, 217, 196, 0.18); /* left rail background */
+}

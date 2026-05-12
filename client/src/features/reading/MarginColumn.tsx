@@ -1,7 +1,15 @@
-import { useLayoutEffect, useState, type RefObject } from 'react';
+import { useLayoutEffect, useRef, useState, type RefObject } from 'react';
 import { Btn } from '../../shared/ui/atoms';
 import type { Highlight } from './types';
 import styles from './MarginColumn.module.css';
+
+interface PendingDraftProps {
+  pending:      { chapterId: number; paraId: number; text: string };
+  draftNote:    string;
+  onNoteChange: (v: string) => void;
+  onSave:       () => void;
+  onDismiss:    () => void;
+}
 
 interface Props {
   highlights:      Highlight[];
@@ -14,9 +22,14 @@ interface Props {
   editDraft:       string;
   setEditDraft:    (v: string) => void;
   authorFirstName: string;
+  focusedHighlightId?: string | null;
+  onClearFocus?: () => void;
+  pendingDraft?:   PendingDraftProps;
 }
 
-interface PositionedCard { highlight: Highlight; top: number; }
+type PositionedCard =
+  | { type: 'highlight'; highlight: Highlight; top: number }
+  | { type: 'pending';   top: number };
 
 function relativeTime(isoOrLabel: string): string {
   if (isoOrLabel === 'just now') return 'just now';
@@ -44,40 +57,89 @@ export default function MarginColumn({
   highlights, paraRefMap, chapterId,
   onEdit, onSaveEdit, onDelete,
   editingId, editDraft, setEditDraft, authorFirstName,
+  focusedHighlightId, onClearFocus, pendingDraft,
 }: Props) {
   const [positioned, setPositioned] = useState<PositionedCard[]>([]);
+  const marginRef = useRef<HTMLDivElement>(null);
 
   useLayoutEffect(() => {
-    if (!paraRefMap.current || highlights.length === 0) {
+    const hasPending = !!pendingDraft?.pending;
+    if (!paraRefMap.current || (highlights.length === 0 && !hasPending)) {
       setPositioned([]);
       return;
     }
 
-    // Get anchor tops from paraRefMap
-    const withTops = highlights.map(h => {
+    const containerTop = marginRef.current ? marginRef.current.getBoundingClientRect().top : 0;
+
+    type RawItem = { key: string; top: number; isPending: boolean; highlight?: Highlight };
+    const items: RawItem[] = highlights.map(h => {
       const key = `${h.chapterId}-${h.paraId}`;
       const el  = paraRefMap.current?.get(key);
-      const top = el ? el.offsetTop : 0;
-      return { highlight: h, top };
-    }).sort((a, b) => a.top - b.top);
+      const top = el ? el.getBoundingClientRect().top - containerTop : 0;
+      return { key: h.id, top, isPending: false, highlight: h };
+    });
 
-    // No-overlap stacking: each card's top = max(anchorTop, prevBottom + gap)
+    if (hasPending && pendingDraft) {
+      const { chapterId: cId, paraId: pId } = pendingDraft.pending;
+      const el  = paraRefMap.current?.get(`${cId}-${pId}`);
+      const top = el ? el.getBoundingClientRect().top - containerTop : 0;
+      items.push({ key: 'pending', top, isPending: true });
+    }
+
+    items.sort((a, b) => a.top - b.top);
+
     let prevBottom = 0;
-    const result = withTops.map(({ highlight, top }) => {
+    const result: PositionedCard[] = items.map(({ isPending, highlight, top }) => {
       const cardTop = Math.max(top, prevBottom + CARD_GAP);
       prevBottom = cardTop + CARD_H_EST;
-      return { highlight, top: cardTop };
+      if (isPending) return { type: 'pending', top: cardTop };
+      return { type: 'highlight', highlight: highlight!, top: cardTop };
     });
 
     setPositioned(result);
-  }, [highlights, paraRefMap, chapterId]);
+  }, [highlights, paraRefMap, chapterId, pendingDraft]);
 
-  if (highlights.length === 0) return <div className={styles.marginCol} />;
+  const hasPending = !!pendingDraft?.pending;
+  if (highlights.length === 0 && !hasPending) return <div className={styles.marginCol} />;
+
+  const displayCards = focusedHighlightId
+    ? positioned.filter(c => c.type === 'pending' || (c.type === 'highlight' && c.highlight.id === focusedHighlightId))
+    : positioned;
 
   return (
     <div className={styles.marginCol}>
-      <div className={styles.marginInner}>
-        {positioned.map(({ highlight: h, top }) => {
+      <div className={styles.marginInner} ref={marginRef}>
+        {displayCards.map((card) => {
+          if (card.type === 'pending') {
+            if (!pendingDraft) return null;
+            const pd = pendingDraft;
+            return (
+              <div
+                key="pending"
+                className={styles.composeCard}
+                style={{ top: card.top }}
+              >
+                <div className={styles.connectorTick} />
+                <blockquote className={`serif ${styles.anchorQuote}`}>
+                  "{truncateAtWord(pd.pending.text, 120)}"
+                </blockquote>
+                <textarea
+                  autoFocus
+                  className={styles.composeTextarea}
+                  placeholder={`Your note to ${authorFirstName}…`}
+                  value={pd.draftNote}
+                  onChange={e => pd.onNoteChange(e.target.value)}
+                  onKeyDown={e => { if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) pd.onSave(); }}
+                />
+                <div className={styles.composeActions}>
+                  <Btn tone="primary" className={styles.btnXxs} onClick={pd.onSave}>Save note</Btn>
+                  <Btn tone="ghost"   className={styles.btnXxs} onClick={pd.onDismiss}>Dismiss</Btn>
+                </div>
+              </div>
+            );
+          }
+
+          const h = card.highlight;
           const lastReply = h.thread[h.thread.length - 1];
           const hasWriterReply = h.thread.some(t => t.authorRole === 'writer');
           const isEditing = editingId === h.id;
@@ -87,7 +149,8 @@ export default function MarginColumn({
               key={h.id}
               className={styles.noteCard}
               data-status={h.status}
-              style={{ top }}
+              data-focused={focusedHighlightId === h.id ? 'true' : undefined}
+              style={{ top: card.top }}
             >
               {/* Connector tick */}
               <div className={styles.connectorTick} />
@@ -107,8 +170,8 @@ export default function MarginColumn({
                     onChange={e => setEditDraft(e.target.value)}
                   />
                   <div className={styles.editActions}>
-                    <Btn tone="primary" style={{ fontSize: 10, padding: '3px 8px' }} onClick={() => onSaveEdit(h.id)}>Save</Btn>
-                    <Btn tone="ghost"   style={{ fontSize: 10, padding: '3px 8px' }} onClick={() => onEdit('', '')}>Cancel</Btn>
+                    <Btn tone="primary" className={styles.btnXxs} onClick={() => onSaveEdit(h.id)}>Save</Btn>
+                    <Btn tone="ghost"   className={styles.btnXxs} onClick={() => onEdit('', '')}>Cancel</Btn>
                   </div>
                 </div>
               ) : (
@@ -132,6 +195,9 @@ export default function MarginColumn({
 
               {/* Footer */}
               <div className={styles.noteFooter}>
+                {focusedHighlightId === h.id && onClearFocus && (
+                  <button className={styles.clearFocusBtn} onClick={onClearFocus}>← all notes</button>
+                )}
                 {lastReply ? (
                   <span className={styles.footerActivity}>
                     {lastReply.authorRole === 'writer' ? authorFirstName : 'You'} replied · {relativeTime(lastReply.createdAt)}

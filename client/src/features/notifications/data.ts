@@ -15,6 +15,7 @@ export interface AppNotification {
   read: boolean;
   receivedAt: string; // ISO date string
   cta?: { label: string; authorId: string };
+  onUndo?: () => void;
 }
 
 export function timeAgo(iso: string): string {

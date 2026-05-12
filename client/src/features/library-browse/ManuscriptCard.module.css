@@ -1,114 +1,348 @@
+/* ── Standard card ────────────────────────────────────────────────── */
+
 .card {
-  background: var(--ink);
+  background: var(--lib-bg);
+  border-top: 0.5px solid var(--lib-rule);
   display: flex;
   flex-direction: column;
-  transition: background 0.12s;
+  min-height: 280px;
+  padding: 16px;
 }
 
-.card:hover {
-  background: color-mix(in srgb, var(--paper) 2%, var(--ink));
+.card[data-hidden-notes] {
+  border-top: 1.5px solid var(--lib-accent);
 }
 
-.cover {
-  aspect-ratio: 2 / 3;
-  position: relative;
-  overflow: hidden;
-  border-bottom: 1px solid var(--rule);
-}
-
-.body {
-  padding: 14px 16px 16px;
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-  flex: 1;
-}
-
-.ownBadge {
+/* 1. Genre eyebrow */
+.genreEyebrow {
   font-family: var(--mono);
-  font-feature-settings: "ss01";
-  font-size: 8px;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  color: var(--accent);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  color: var(--lib-text-meta);
   margin-bottom: 6px;
 }
 
-.subgenre {
-  font-family: var(--mono);
-  font-feature-settings: "ss01";
-  font-size: 8px;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  color: var(--muted-2);
-}
-
+/* 2. Title */
 .title {
   font-style: italic;
-  font-size: 14px;
-  line-height: 1.25;
-  color: var(--paper);
+  font-size: 21px;
+  font-weight: 400;
+  line-height: 1.2;
+  color: var(--lib-text);
+  margin: 0 0 5px;
 }
 
-.author {
+/* 3. Byline */
+.byline {
   font-family: var(--mono);
-  font-feature-settings: "ss01";
-  font-size: 9px;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  color: var(--lib-text);
+  margin-bottom: 8px;
+}
+
+/* 4. Personalization signal */
+.signal {
+  font-style: italic;
+  font-size: 12px;
+  line-height: 1.4;
+  color: var(--lib-text-meta);
+  margin: 0 0 8px;
+}
+.signal[data-kind="circle"] { color: var(--lib-accent); }
+
+/* 5. Hook */
+.hook {
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--lib-text-body);
+  margin: 0 0 8px;
+}
+
+/* 6. Content notes */
+.cn { margin-bottom: 8px; }
+
+.cnInline {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 4px;
+  font-family: var(--mono);
+  font-size: 10px;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--muted);
+  border-left: 2px solid var(--lib-rule);
+  background: rgba(184, 171, 140, 0.18);
+  padding: 6px 10px;
+  cursor: pointer;
+  color: var(--lib-text-meta);
 }
 
-.excerpt {
-  font-size: 11.5px;
-  line-height: 1.6;
-  color: var(--muted);
+.cnCount { color: var(--lib-accent); }
+
+.cnList {
   margin: 4px 0 0;
-  display: -webkit-box;
-  -webkit-line-clamp: 3;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
+  padding: 6px 10px 6px 20px;
+  background: rgba(184, 171, 140, 0.10);
+  border-left: 2px solid var(--lib-rule);
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--lib-text-meta);
+  list-style: disc;
+}
+.cnList li { margin-bottom: 2px; }
+
+/* Spacer */
+.spacer { flex: 1; }
+
+/* 7. Soft divider */
+.divider {
+  height: 0;
+  border: 0;
+  border-top: 0.5px solid var(--lib-rule-soft);
+  margin: 0 0 8px;
 }
 
-.footer {
-  margin-top: auto;
-  padding-top: 10px;
+/* 8. Meta line */
+.meta {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  color: var(--lib-text-meta);
+  margin-bottom: 5px;
+}
+
+/* 9. Mechanism + slot status */
+.mechanismRow {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 10px;
+  flex-wrap: wrap;
+}
+
+.mechanism {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  color: var(--lib-text-body);
+}
+
+.metaDot { color: var(--lib-rule); }
+
+/* Status — ornament + word + color (triple redundancy) */
+.stat {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.06em;
+}
+.statOpen    { color: var(--lib-status-open); }
+.statFilling { color: var(--lib-status-filling); }
+.statFull    { color: var(--lib-status-full); }
+
+/* 10. CTA */
+.cta {
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--lib-accent);
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  text-align: left;
+}
+.cta:hover { text-decoration: underline; }
+
+/* Pending block */
+.pendingBlock {
+  background: var(--lib-tint);
+  border-left: 2px solid var(--lib-rule);
+  padding: 10px 12px;
+}
+
+.pendingEyebrow {
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  color: var(--lib-accent);
+  margin-bottom: 4px;
+}
+
+.pendingHelper {
+  font-style: italic;
+  font-size: 12px;
+  line-height: 1.4;
+  color: var(--lib-text-body);
+  margin: 0 0 8px;
+}
+
+.withdrawBtn {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  text-decoration: underline;
+  color: var(--lib-text-meta);
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+}
+
+/* Joined state */
+.joinedBlock {
+  background: var(--lib-tint);
+  border-left: 2px solid var(--lib-status-open);
+  padding: 8px 12px;
+}
+
+.joinedLabel {
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  color: var(--lib-status-open);
+}
+
+/* ── Hero card ────────────────────────────────────────────────────── */
+
+.heroCard {
+  display: flex;
+  gap: 24px;
+  background: var(--lib-bg);
+  border-top: 0.5px solid var(--lib-rule);
+  padding: 24px 0;
+}
+
+.heroCover {
+  flex-shrink: 0;
+  width: 180px;
+}
+
+.heroCoverImg {
+  width: 180px;
+  height: 252px;
+  object-fit: cover;
+  display: block;
+}
+
+.heroCoverPlaceholder {
+  width: 180px;
+  height: 252px;
+  background: var(--lib-cover-placeholder);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+
+.heroCoverTitle {
+  font-style: italic;
+  font-size: 14px;
+  color: var(--lib-text-meta);
+  text-align: center;
+  line-height: 1.3;
+}
+
+.heroContent {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.heroTitle {
+  font-style: italic;
+  font-size: 34px;
+  font-weight: 400;
+  line-height: 1.15;
+  color: var(--lib-text);
+  margin: 0 0 6px;
+}
+
+/* Pull quote */
+.heroQuote {
+  border-left: 3px solid var(--lib-accent);
+  margin: 12px 0;
+  padding: 6px 0 6px 14px;
+}
+
+.heroQuoteText {
+  font-style: italic;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--lib-text-body);
+  margin: 0 0 4px;
+}
+
+.heroQuoteCite {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  color: var(--lib-text-meta);
+  font-style: normal;
+}
+
+/* Hero CTA — only filled button on the page */
+.heroCta {
+  display: inline-block;
+  background: var(--lib-accent);
+  color: var(--lib-bg);
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 11px 22px;
+  border: none;
+  cursor: pointer;
+  margin-top: 4px;
+  align-self: flex-start;
+}
+.heroCta:hover { opacity: 0.88; }
+
+/* ── Compact card ─────────────────────────────────────────────────── */
+
+.compactCard {
+  background: var(--lib-bg);
+  border-top: 0.5px solid var(--lib-rule);
+  padding: 10px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.compactGenre {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  color: var(--lib-text-meta);
+}
+
+.compactTitle {
+  font-style: italic;
+  font-size: 15px;
+  font-weight: 400;
+  color: var(--lib-text);
+  margin: 0;
+}
+
+.compactByline {
+  font-family: var(--mono);
+  font-size: 9px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  color: var(--lib-text);
+}
+
+.compactFooter {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border-top: 1px solid var(--rule);
-}
-
-.slots {
-  font-family: var(--mono);
-  font-feature-settings: "ss01";
-  font-size: 8px;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--muted-2);
-}
-
-.slots[data-status="open"]     { color: var(--good); }
-.slots[data-status="waitlist"] { color: var(--accent); }
-
-.cta {
-  font-family: var(--mono);
-  font-feature-settings: "ss01";
-  font-size: 8.5px;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--accent);
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 0;
-}
-
-.cta:hover:not(:disabled) {
-  color: var(--paper);
-}
-
-.cta:disabled {
-  color: var(--muted-2);
-  cursor: default;
+  margin-top: 6px;
 }

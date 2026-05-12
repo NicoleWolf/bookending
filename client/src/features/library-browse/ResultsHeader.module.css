@@ -1,0 +1,197 @@
+.header {
+  background: var(--lib-bg);
+  border: 0.5px solid var(--lib-rule);
+  padding: 20px 20px 0;
+  margin-bottom: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+/* ── Title + sort row ─────────────────────────────────────────────── */
+.titleRow {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  padding-bottom: 10px;
+}
+
+.title {
+  font-size: 26px;
+  font-weight: 400;
+  font-style: normal;
+  color: var(--lib-text);
+  margin: 0;
+  line-height: 1.2;
+}
+.title em { font-style: italic; }
+
+/* ── Sort ─────────────────────────────────────────────────────────── */
+.sortRow {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.sortLabel {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  color: var(--lib-text-meta);
+}
+
+.sortBtn {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  color: var(--lib-text-meta);
+  background: none;
+  border: none;
+  padding: 0 0 1px;
+  cursor: pointer;
+  border-bottom: 1.5px solid transparent;
+}
+.sortBtn:hover { color: var(--lib-text); }
+.sortBtn[data-active] {
+  color: var(--lib-text);
+  border-bottom-color: var(--lib-accent);
+}
+.sortBtn:focus-visible { outline: 1.5px solid var(--lib-accent); outline-offset: 2px; }
+
+/* ── Counts row ───────────────────────────────────────────────────── */
+.countsRow {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0;
+  padding: 8px 0 14px;
+  border-top: 0.5px solid var(--lib-rule-soft);
+}
+
+.countGroup { display: flex; align-items: center; }
+
+.countSep {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--lib-rule);
+  margin: 0 8px;
+}
+
+.countItem {
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  color: var(--lib-text-meta);
+}
+.countItem[data-accent] { color: var(--lib-accent); }
+.countItem[data-muted]  { color: var(--lib-text-meta); }
+
+/* ── Active filter chips ──────────────────────────────────────────── */
+.chipsRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  padding: 0 0 16px;
+  margin-top: 2px;
+}
+
+.filtersLabel {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  color: var(--lib-text-meta);
+  flex-shrink: 0;
+}
+
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  color: var(--lib-text);
+  background: var(--lib-tint);
+  border: 0.5px solid var(--lib-rule);
+  padding: 4px 8px;
+}
+
+.chipRemove {
+  font-family: var(--mono);
+  font-size: 12px;
+  line-height: 1;
+  color: var(--lib-accent);
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+}
+.chipRemove:hover { opacity: 0.7; }
+.chipRemove:focus-visible { outline: 1.5px solid var(--lib-accent); outline-offset: 2px; }
+
+.clearAll {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  color: var(--lib-accent);
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  margin-left: 4px;
+  white-space: nowrap;
+}
+.clearAll:hover { text-decoration: underline; }
+
+/* ── Hidden manuscripts handle ────────────────────────────────────── */
+.hiddenHandle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  background: rgba(232, 217, 196, 0.5);
+  border: 0.5px solid var(--lib-rule);
+  border-left: 2px solid var(--lib-accent);
+  padding: 12px 16px;
+  margin: 0 -20px;   /* bleed to header edges */
+  margin-bottom: 0;
+}
+
+.hiddenText {
+  font-style: italic;
+  font-size: 13px;
+  color: var(--lib-text-body);
+  margin: 0;
+  line-height: 1.4;
+}
+
+.hiddenCount {
+  font-family: var(--mono);
+  font-style: normal;
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  font-weight: 500;
+  color: var(--lib-text);
+}
+
+.showHidden {
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  color: var(--lib-accent);
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.showHidden:hover { text-decoration: underline; }

@@ -643,3 +643,8 @@
   color: var(--muted);
   letter-spacing: 0.1em;
 }
+
+.btnMentorFull { width: 100%; justify-content: center; font-size: 11.5px; }
+.pendingLabel  { margin-bottom: 4px; }
+.btnInk        { color: var(--ink); }
+.karmaLabel    { color: var(--muted); }

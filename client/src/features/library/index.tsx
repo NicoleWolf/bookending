@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { SectionHead, BookCover } from '../../shared/ui/atoms';
-import { BOOKS, STATUS_OPTIONS, CONTENT_RATINGS, LANGUAGES } from './data';
-import type { BookMetadata, BookStatus, SpineColor } from './data';
+import { BOOKS, STATUS_OPTIONS, CONTENT_RATINGS, CONTENT_WARNINGS, LANGUAGES, BETA_MODE_OPTIONS } from './data';
+import type { BookMetadata, BookStatus, BetaMode, SpineColor } from './data';
 import { extractFromFile } from './extractMetadata';
 import { GENRES } from '../../shared/genres';
 import { useAuth } from '../auth';
@@ -55,9 +55,11 @@ function blankBook(existingCount = 0): BookMetadata {
     language: 'English',
     estimatedPages: null,
     status: 'drafting',
-    visibility: 'private',
+    betaMode: 'CLOSED',
+    maxBetaReaders: null,
     coverUploaded: false,
     spineColor: SPINE_PALETTE[existingCount % SPINE_PALETTE.length],
+    contentWarnings: [],
   };
 }
 
@@ -372,82 +374,22 @@ export default function Library({ savedBooks, onSave, onDelete, openNewManuscrip
   const statusLabel = STATUS_OPTIONS.find(s => s.value === book?.status)?.label ?? '—';
 
   // ── Landing view ──────────────────────────────────────────────────
-  if (view === 'landing') {
-    const authorName = currentUser?.name ?? 'Author';
+  const authorName = currentUser?.name ?? 'Author';
 
-    // Filter → search → sort pipeline
-    const filtered = allBooks
-      .filter(b => filter === 'all' || b.status === filter)
-      .filter(b => !searchQuery || b.title.toLowerCase().includes(searchQuery.toLowerCase()));
+  const filtered = allBooks
+    .filter(b => filter === 'all' || b.status === filter)
+    .filter(b => !searchQuery || b.title.toLowerCase().includes(searchQuery.toLowerCase()));
 
-    const sorted = [...filtered].sort((a, b) => {
-      if (sortBy === 'alphabetical') return a.title.localeCompare(b.title);
-      if (sortBy === 'by_status')    return a.status.localeCompare(b.status);
-      return 0; // recently_edited: preserve API/load order
-    });
+  const sorted = [...filtered].sort((a, b) => {
+    if (sortBy === 'alphabetical') return a.title.localeCompare(b.title);
+    if (sortBy === 'by_status')    return a.status.localeCompare(b.status);
+    return 0;
+  });
 
-    const titleCount = allBooks.length;
-    const introText = titleCount === 0
-      ? 'Add your first manuscript to get started.'
-      : `${titleCount === 1 ? 'One work' : `${titleCount} works`} in progress. Each card mirrors what readers and retailers will see.`;
-
-    return (
-      <div>
-        <div className={styles.sectionHeader}>
-          <SectionHead
-            eyebrow="§ 07 · MANUSCRIPTS"
-            title="Your manuscripts"
-            kicker={introText}
-          />
-        </div>
-
-        <ControlsBar
-          manuscripts={allBooks}
-          filter={filter}
-          sortBy={sortBy}
-          searchQuery={searchQuery}
-          onFilterChange={setFilter}
-          onSortChange={setSortBy}
-          onSearchChange={setSearchQuery}
-        />
-
-        {allBooks.length === 0 ? (
-          <div className={styles.emptyShelf}>
-            <NewManuscriptTile onAdd={addManuscript} />
-          </div>
-        ) : (
-          <div className={styles.landingWrap}>
-            <div className={styles.landingGrid}>
-              {sorted.length === 0 ? (
-                <div className={styles.noResults}>
-                  No manuscripts match &ldquo;{searchQuery}&rdquo;.{' '}
-                  <button
-                    type="button"
-                    className={styles.clearSearch}
-                    onClick={() => setSearchQuery('')}
-                  >
-                    Clear search
-                  </button>
-                </div>
-              ) : (
-                sorted.map(b => (
-                  <ManuscriptCard
-                    key={b.id}
-                    book={drafts[b.id] ?? b}
-                    author={authorName}
-                    onOpen={openEditor}
-                    onFieldSave={handleFieldSave}
-                    onDelete={setDeleteTargetId}
-                  />
-                ))
-              )}
-              <NewManuscriptTile onAdd={addManuscript} />
-            </div>
-          </div>
-        )}
-      </div>
-    );
-  }
+  const titleCount = allBooks.length;
+  const introText = titleCount === 0
+    ? 'Add your first manuscript to get started.'
+    : `${titleCount === 1 ? 'One work' : `${titleCount} works`} in progress. Each card mirrors what readers and retailers will see.`;
 
   // ── Edit view ─────────────────────────────────────────────────────
   return (
@@ -468,6 +410,63 @@ export default function Library({ savedBooks, onSave, onDelete, openNewManuscrip
               </button>
             </div>
           </div>
+        </div>
+      )}
+
+      {view === 'landing' && (
+        <div>
+          <div className={styles.sectionHeader}>
+            <SectionHead
+              eyebrow="§ 07 · MANUSCRIPTS"
+              title="Your manuscripts"
+              kicker={introText}
+            />
+          </div>
+
+          <ControlsBar
+            manuscripts={allBooks}
+            filter={filter}
+            sortBy={sortBy}
+            searchQuery={searchQuery}
+            onFilterChange={setFilter}
+            onSortChange={setSortBy}
+            onSearchChange={setSearchQuery}
+          />
+
+          {allBooks.length === 0 ? (
+            <div className={styles.emptyShelf}>
+              <NewManuscriptTile onAdd={addManuscript} />
+            </div>
+          ) : (
+            <div className={styles.landingWrap}>
+              <div className={styles.landingGrid}>
+                {sorted.length === 0 ? (
+                  <div className={styles.noResults}>
+                    No manuscripts match &ldquo;{searchQuery}&rdquo;.{' '}
+                    <button
+                      type="button"
+                      className={styles.clearSearch}
+                      onClick={() => setSearchQuery('')}
+                    >
+                      Clear search
+                    </button>
+                  </div>
+                ) : (
+                  sorted.map(b => (
+                    <ManuscriptCard
+                      key={b.id}
+                      book={drafts[b.id] ?? b}
+                      author={authorName}
+                      onOpen={openEditor}
+                      onFieldSave={handleFieldSave}
+                      onDelete={setDeleteTargetId}
+                    />
+                  ))
+                )}
+                <NewManuscriptTile onAdd={addManuscript} />
+              </div>
+            </div>
+          )}
         </div>
       )}
 
@@ -492,6 +491,7 @@ export default function Library({ savedBooks, onSave, onDelete, openNewManuscrip
         </div>
       )}
 
+      {view === 'edit' && <div>
       <div className={styles.backNav}>
         <button className={styles.backBtn} onClick={handleBackClick}>
           ← Manuscripts
@@ -527,7 +527,7 @@ export default function Library({ savedBooks, onSave, onDelete, openNewManuscrip
               ref={coverInputRef}
               type="file"
               accept="image/*"
-              style={{ display: 'none' }}
+              className={styles.fileInput}
               onChange={handleCoverUpload}
             />
           </div>
@@ -692,6 +692,37 @@ export default function Library({ savedBooks, onSave, onDelete, openNewManuscrip
               </div>
             </div>
             <div className={styles.fieldRow}>
+              <span className={styles.fieldLabel}>Content warnings</span>
+              <details className={styles.cwDropdown}>
+                <summary className={styles.cwSummary}>
+                  {(book?.contentWarnings ?? []).length === 0
+                    ? 'None selected'
+                    : (book?.contentWarnings ?? []).join(', ')}
+                </summary>
+                <div className={styles.cwList}>
+                  {CONTENT_WARNINGS.map(w => {
+                    const checked = (book?.contentWarnings ?? []).includes(w);
+                    return (
+                      <label key={w} className={styles.cwItem}>
+                        <input
+                          type="checkbox"
+                          className={styles.cwCheckbox}
+                          checked={checked}
+                          onChange={() => {
+                            const current = book?.contentWarnings ?? [];
+                            update('contentWarnings', checked
+                              ? current.filter(x => x !== w)
+                              : [...current, w]);
+                          }}
+                        />
+                        <span className={styles.cwLabel}>{w}</span>
+                      </label>
+                    );
+                  })}
+                </div>
+              </details>
+            </div>
+            <div className={styles.fieldRow}>
               <span className={styles.fieldLabel}>Keywords</span>
               <input className={styles.fieldInput} value={book?.keywords ?? ''} onChange={e => update('keywords', e.target.value)} placeholder="Comma-separated — used for retailer search categories" />
             </div>
@@ -746,30 +777,41 @@ export default function Library({ savedBooks, onSave, onDelete, openNewManuscrip
             </div>
           </div>
 
-          {/* Visibility */}
+          {/* Beta-reading */}
           <div className={styles.formSection}>
-            <div className={styles.sectionHead}>Visibility</div>
-            <div className={styles.statusRow}>
-              <button
-                className={styles.statusBtn}
-                data-active={book?.visibility === 'private' ? 'true' : undefined}
-                onClick={() => update('visibility', 'private')}
-              >
-                Private
-              </button>
-              <button
-                className={styles.statusBtn}
-                data-active={book?.visibility === 'public' ? 'true' : undefined}
-                onClick={() => update('visibility', 'public')}
-              >
-                Public
-              </button>
-              <span className={styles.visibilityHint}>
-                {book?.visibility === 'public'
-                  ? 'Visible to readers in Library Browse'
-                  : 'Only visible to you'}
-              </span>
+            <div className={styles.sectionHead}>Beta-reading</div>
+            <div className={styles.betaModeRow}>
+              {BETA_MODE_OPTIONS.map(opt => (
+                <button
+                  key={opt.value}
+                  className={styles.betaModeBtn}
+                  data-active={book?.betaMode === opt.value ? 'true' : undefined}
+                  onClick={() => update('betaMode', opt.value as BetaMode)}
+                >
+                  {opt.label}
+                </button>
+              ))}
             </div>
+            <span className={styles.betaModeHint}>
+              {BETA_MODE_OPTIONS.find(o => o.value === book?.betaMode)?.description ?? ''}
+            </span>
+            {book?.betaMode !== 'CLOSED' && (
+              <div className={styles.betaCapRow}>
+                <label className={styles.betaCapLabel}>Max readers</label>
+                <input
+                  type="number"
+                  min={1}
+                  placeholder="Unlimited"
+                  className={styles.betaCapInput}
+                  value={book?.maxBetaReaders ?? ''}
+                  onChange={e => {
+                    const v = e.target.value === '' ? null : parseInt(e.target.value, 10);
+                    update('maxBetaReaders', v);
+                  }}
+                />
+                <span className={styles.betaCapHint}>Leave blank for no limit</span>
+              </div>
+            )}
           </div>
 
           {/* Manuscript file */}
@@ -793,7 +835,7 @@ export default function Library({ savedBooks, onSave, onDelete, openNewManuscrip
                 ref={importInputRef}
                 type="file"
                 accept=".txt,.docx,.rtf,.pdf"
-                style={{ display: 'none' }}
+                className={styles.fileInput}
                 onChange={handleImport}
               />
             </div>
@@ -828,6 +870,7 @@ export default function Library({ savedBooks, onSave, onDelete, openNewManuscrip
 
         </div>
       </div>
+      </div>}
     </div>
   );
 }

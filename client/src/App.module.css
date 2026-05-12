@@ -1,0 +1,100 @@
+/* ── Shared footer ───────────────────────────────────────────────── */
+
+.footer {
+  padding: 30px 48px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 1px solid var(--rule);
+}
+
+.footerMeta {
+  font-size: 10.5px;
+  color: var(--muted);
+  letter-spacing: 0.18em;
+}
+
+/* ── Load-error alert ────────────────────────────────────────────── */
+
+.errorAlert {
+  background: var(--danger);
+  color: #fff;
+  font-family: var(--sans);
+  font-size: 13px;
+  padding: 10px 48px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.errorDismiss {
+  background: none;
+  border: none;
+  color: #fff;
+  cursor: pointer;
+  font-size: 16px;
+  line-height: 1;
+}
+
+/* ── Unsaved-changes modal ───────────────────────────────────────── */
+
+.modalOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 200;
+}
+
+.modal {
+  background: var(--ink-2);
+  border: 1px solid var(--rule);
+  padding: 36px 40px;
+  max-width: 420px;
+  width: 100%;
+}
+
+.modalTitle {
+  font-family: var(--sans);
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--paper);
+  margin-bottom: 12px;
+}
+
+.modalBody {
+  font-family: var(--sans);
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--muted);
+  margin: 0 0 28px;
+}
+
+.modalActions {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+}
+
+.modalStay {
+  padding: 9px 20px;
+  background: var(--accent);
+  border: none;
+  color: var(--ink);
+  font-family: var(--sans);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.modalDiscard {
+  padding: 9px 20px;
+  background: transparent;
+  border: 1px solid var(--rule);
+  color: var(--muted);
+  font-family: var(--sans);
+  font-size: 12px;
+  cursor: pointer;
+}

@@ -2,13 +2,20 @@ import { z } from 'zod';
 
 // ─── Response schemas (derive the API record types) ───────────────────────────
 
+export const BetaModeSchema = z.enum(['CLOSED', 'PUBLIC', 'REQUEST', 'INVITE_ONLY']);
+export type BetaMode = z.infer<typeof BetaModeSchema>;
+
+export const BetaRequestStatusSchema = z.enum(['PENDING', 'APPROVED', 'DECLINED', 'WITHDRAWN']);
+export type BetaRequestStatus = z.infer<typeof BetaRequestStatusSchema>;
+
 export const ManuscriptRecordSchema = z.object({
   id: z.string(), title: z.string(), subtitle: z.string().nullable(),
-  status: z.string(), visibility: z.string(),
+  status: z.string(), betaMode: BetaModeSchema, maxBetaReaders: z.number().nullable(),
   seriesName: z.string().nullable(), seriesNumber: z.number().nullable(),
   genre: z.string().nullable(), subgenre: z.string().nullable(),
   description: z.string().nullable(), targetAudience: z.string().nullable(),
-  contentRating: z.string().nullable(), keywords: z.string().nullable(),
+  contentRating: z.string().nullable(), contentWarnings: z.array(z.string()),
+  keywords: z.string().nullable(),
   isbnEbook: z.string().nullable(), isbnPrint: z.string().nullable(),
   isbnPending: z.boolean(), priceEbook: z.string().nullable(),
   pricePaperback: z.string().nullable(), language: z.string(),
@@ -41,7 +48,17 @@ export const AuthorRecordSchema = z.object({
   id: z.string(), name: z.string(), bio: z.string().nullable(),
   location: z.string().nullable(), genres: z.string().nullable(),
   writingProcess: z.string().nullable(), createdAt: z.string(),
-  manuscripts: z.array(z.object({ id: z.string(), title: z.string() })),
+  featuredManuscriptId: z.string().nullable().optional(),
+  manuscripts: z.array(z.object({
+    id: z.string(), title: z.string(),
+    genre: z.string().nullable().optional(),
+    subgenre: z.string().nullable().optional(),
+    wordCount: z.number().optional(),
+    status: z.string().optional(),
+    createdAt: z.string().optional(),
+    description: z.string().nullable().optional(),
+    betaMode: z.string().optional(),
+  })),
   authorQa: z.array(z.object({
     id: z.string(), question: z.string(),
     answer: z.string().nullable(), publishedAt: z.string().nullable(),
@@ -73,10 +90,25 @@ export const BrowseRecordSchema = z.object({
   description: z.string().nullable(), keywords: z.string().nullable(),
   status: z.string(), wordCount: z.number(),
   estimatedPages: z.number().nullable(), contentRating: z.string().nullable(),
+  contentWarnings: z.array(z.string()),
+  betaMode: BetaModeSchema, maxBetaReaders: z.number().nullable(),
+  readerCount: z.number(), pendingRequest: z.boolean(),
   author: z.object({ id: z.string(), name: z.string() }),
-  betaReaders: z.array(z.object({ id: z.string() })),
 });
 export type BrowseRecord = z.infer<typeof BrowseRecordSchema>;
+
+export const BetaRequestRecordSchema = z.object({
+  id: z.string(), manuscriptId: z.string(), userId: z.string(),
+  note: z.string().nullable(), status: BetaRequestStatusSchema,
+  createdAt: z.string(), decidedAt: z.string().nullable(),
+  user: z.object({ id: z.string(), name: z.string() }),
+});
+export type BetaRequestRecord = z.infer<typeof BetaRequestRecordSchema>;
+
+export const PatchBetaRequestSchema = z.object({
+  status: z.enum(['APPROVED', 'DECLINED']),
+});
+export type PatchBetaRequestInput = z.infer<typeof PatchBetaRequestSchema>;
 
 export const ChannelRecordSchema = z.object({
   id: z.string(), name: z.string(), kind: z.string(), status: z.string(),
@@ -150,28 +182,59 @@ export const SettingsPayloadSchema = z.object({
 });
 export type SettingsPayload = z.infer<typeof SettingsPayloadSchema>;
 
+// ─── Reader profile ───────────────────────────────────────────────────────────
+
+export const ReaderProfileRecordSchema = z.object({
+  name:              z.string(),
+  bio:               z.string().nullable(),
+  location:          z.string().nullable(),
+  genres:            z.string().nullable(),
+  availableForReads: z.boolean(),
+  avatarUrl:         z.string().nullable(),
+});
+export type ReaderProfileRecord = z.infer<typeof ReaderProfileRecordSchema>;
+
+export const PatchReaderProfileSchema = z.object({
+  name:              z.string().min(1).max(60).optional(),
+  bio:               z.string().max(500).nullable().optional(),
+  location:          z.string().max(80).nullable().optional(),
+  genres:            z.string().nullable().optional(),
+  availableForReads: z.boolean().optional(),
+  avatarUrl:         z.string().nullable().optional(),
+});
+export type PatchReaderProfilePayload = z.infer<typeof PatchReaderProfileSchema>;
+
 // ─── Request body schemas ─────────────────────────────────────────────────────
 
 // Manuscripts
 export const CreateManuscriptSchema = z.object({
-  id: z.string().optional(),
+  id: z.string().nullish(),
   title: z.string().min(1, 'title is required'),
   subtitle: z.string().nullish(),
-  status: z.string().optional(), visibility: z.string().optional(),
+  status: z.string().nullish(),
+  betaMode: BetaModeSchema.nullish(),
+  maxBetaReaders: z.number().int().positive().nullish(),
   seriesName: z.string().nullish(), seriesNumber: z.number().int().nullish(),
   genre: z.string().nullish(), subgenre: z.string().nullish(),
   description: z.string().nullish(), targetAudience: z.string().nullish(),
-  contentRating: z.string().nullish(), keywords: z.string().nullish(),
+  contentRating: z.string().nullish(), contentWarnings: z.array(z.string()).nullish(),
+  keywords: z.string().nullish(),
   isbnEbook: z.string().nullish(), isbnPrint: z.string().nullish(),
-  isbnPending: z.boolean().optional(),
+  isbnPending: z.boolean().nullish(),
   priceEbook: z.string().nullish(), pricePaperback: z.string().nullish(),
-  language: z.string().optional(),
+  language: z.string().nullish(),
   estimatedPages: z.number().int().nullish(),
-  spineColor: z.string().optional(), coverUrl: z.string().nullish(),
+  spineColor: z.string().nullish(), coverUrl: z.string().nullish(),
 });
 export type CreateManuscriptInput = z.infer<typeof CreateManuscriptSchema>;
 export const UpdateManuscriptSchema = CreateManuscriptSchema.partial();
 export type UpdateManuscriptInput = z.infer<typeof UpdateManuscriptSchema>;
+
+// Beta enrollment
+export const JoinBetaRequestSchema = z.object({
+  note: z.string().max(500).optional(),
+});
+export type JoinBetaRequestInput = z.infer<typeof JoinBetaRequestSchema>;
 
 // Dispatches
 export const CreateDispatchSchema = z.object({

@@ -288,7 +288,7 @@ export default function AdminPanel() {
                         <div className={styles.expandLabel}>Password reset link</div>
                         <div className={styles.tempPwBox}>
                           <span className={styles.tempPwLabel}>Share with user:</span>
-                          <span className={styles.tempPwValue} style={{ fontSize: 11, wordBreak: 'break-all' }}>{r.resetLink}</span>
+                          <span className={`${styles.tempPwValue} ${styles.tempPwBreak}`}>{r.resetLink}</span>
                           <button
                             className={styles.tempPwCopy}
                             data-copied={r.linkCopied ? '' : undefined}
@@ -338,7 +338,7 @@ export default function AdminPanel() {
                             type="checkbox"
                             checked={u.isAdmin}
                             onChange={() => { if (!isYou) toggleRole(u); }}
-                            style={{ accentColor: 'var(--accent)' }}
+                            className={styles.accentCheckbox}
                           />
                           Admin access
                         </label>

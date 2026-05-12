@@ -107,11 +107,6 @@ export default function ManuscriptCard({ book, author, onOpen, onFieldSave, onDe
     onFieldSave(book.id, { status: newStatus });
   }
 
-  function handleVisibilityToggle(e: React.MouseEvent) {
-    e.stopPropagation();
-    onFieldSave(book.id, { visibility: book.visibility === 'private' ? 'public' : 'private' });
-  }
-
   function handleCardClick() {
     if (editCommitRef.current) return;
     if (editingFieldRef.current === 'status') { revert(); return; }
@@ -214,16 +209,12 @@ export default function ManuscriptCard({ book, author, onOpen, onFieldSave, onDe
             </span>
           )}
 
-          {/* Visibility — direct toggle */}
-          <span
-            className={`${styles.visibilityPill} ${styles.editable}`}
-            onClick={handleVisibilityToggle}
-            role="button"
-            tabIndex={-1}
-            aria-label={`Toggle visibility — currently ${book.visibility}`}
-          >
-            {book.visibility.toUpperCase()}
-          </span>
+          {/* Beta mode — read-only display pill */}
+          {book.betaMode !== 'CLOSED' && (
+            <span className={styles.betaModePill}>
+              BETA: {book.betaMode.replace('_', ' ')}
+            </span>
+          )}
 
           {/* Genre */}
           {editingField === 'genre' ? (

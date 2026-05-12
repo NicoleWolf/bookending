@@ -508,6 +508,43 @@
   color: var(--muted);
 }
 
+.projectBlurb {
+  font-family: var(--serif);
+  font-size: 13px;
+  line-height: 1.65;
+  color: var(--muted);
+  margin: 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.joinBtn {
+  width: 100%;
+  font-family: var(--sans);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--ink);
+  background: var(--paper);
+  border: none;
+  padding: 9px 0;
+  cursor: pointer;
+  margin-top: 2px;
+}
+.joinBtn:hover:not(:disabled) { opacity: 0.88; }
+.joinBtn:disabled { opacity: 0.55; cursor: default; }
+
+.inviteOnlyLabel {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted-2);
+  margin-top: 2px;
+}
+
 /* ── Recent activity box (sidebar) ──────────────────────────────── */
 
 .recentBox {

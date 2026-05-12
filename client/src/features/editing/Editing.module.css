@@ -930,3 +930,16 @@
   color: var(--accent);
   letter-spacing: 0.08em;
 }
+
+/* ── Btn size modifiers ───────────────────────────────────────────── */
+
+.btnSm   { font-size: 11px;   padding: 5px 12px; }
+.btnXs   { font-size: 10.5px; padding: 4px 10px; }
+.btnFull { flex: 1; justify-content: center; }
+
+.btnResolve { color: var(--good);   border-color: var(--good); }
+.btnRemove  { font-size: 11px; color: var(--danger); padding: 4px 8px; }
+
+/* ── Icon colour helpers ─────────────────────────────────────────── */
+
+.iconMuted { color: var(--muted); }

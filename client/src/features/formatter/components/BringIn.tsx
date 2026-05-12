@@ -312,8 +312,8 @@ export default function BringIn({
                   <div className={styles.pulledGroup}>
                     <Btn
                       tone="accent"
-                      icon={<span style={{ fontSize: 11 }}>✓</span>}
-                      style={{ opacity: 0.45, pointerEvents: 'none' }}
+                      icon={<span className={styles.btnIcon}>✓</span>}
+                      disabled
                     >
                       Pulled
                     </Btn>
@@ -328,11 +328,8 @@ export default function BringIn({
                   <Btn
                     tone="accent"
                     onClick={() => void handlePull()}
-                    icon={<span style={{ fontSize: 11 }}>{pulling ? '…' : '→'}</span>}
-                    style={{
-                      opacity:       (!selectedManuscriptId || pulling || projectLoading) ? 0.45 : 1,
-                      pointerEvents: (!selectedManuscriptId || pulling || projectLoading) ? 'none' : 'auto',
-                    }}
+                    icon={<span className={styles.btnIcon}>{pulling ? '…' : '→'}</span>}
+                    disabled={!selectedManuscriptId || pulling || projectLoading}
                   >
                     {pulling ? 'Pulling…' : 'Pull manuscript'}
                   </Btn>
@@ -483,7 +480,7 @@ export default function BringIn({
             ref={fileRef}
             type="file"
             accept=".docx"
-            style={{ display: 'none' }}
+            className={styles.fileInput}
             onChange={handleFileInput}
           />
         </div>
@@ -522,11 +519,8 @@ export default function BringIn({
         <Btn
           tone="accent"
           onClick={() => void handleAdvance()}
-          icon={<span style={{ fontSize: 11 }}>→</span>}
-          style={{
-            opacity:       canAdvance ? 1 : 0.35,
-            pointerEvents: canAdvance ? 'auto' : 'none',
-          }}
+          icon={<span className={styles.btnIcon}>→</span>}
+          disabled={!canAdvance}
         >
           Step 02 — Mark up
         </Btn>

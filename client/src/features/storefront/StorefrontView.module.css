@@ -453,3 +453,6 @@
   text-align: right;
   flex-shrink: 0;
 }
+
+.editFieldWide   { flex: 2; }
+.editLabelSpaced { margin-bottom: 12px; }

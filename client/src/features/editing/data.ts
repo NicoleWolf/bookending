@@ -1,4 +1,5 @@
 import type { Manuscript, Reader, Comment, CommentType, ReaderTone, BetaReader } from './types';
+import type { ReaderImpression } from './WriterSparkline';
 
 // Editing-specific metadata keyed by book id (title/id come from the catalog savedBooks).
 export type ManuscriptMeta = Omit<Manuscript, 'id' | 'title'>;
@@ -139,6 +140,106 @@ export const BETA_READER_POOL: BetaReader[] = [
     bio: 'Bilingual French/English reader with a focus on how memory and place function in literary fiction. Currently at capacity.',
   },
 ];
+
+// Mock impression curves — used as initial state until the API returns real data.
+// Keys match the numeric manuscript IDs used in COMMENTS (coerced to string by activeId).
+export const INITIAL_IMPRESSIONS: Record<string, ReaderImpression[]> = {
+  '3': [
+    {
+      readerId: 'mock-tr', readerName: 'Tomás Reyes', readerInitials: 'TR',
+      points: [
+        { chapterNum: 1,  stance: 'Engaged'    },
+        { chapterNum: 2,  stance: 'Curious'    },
+        { chapterNum: 3,  stance: 'Engaged'    },
+        { chapterNum: 4,  stance: 'Enthralled' },
+        { chapterNum: 5,  stance: 'Enthralled' },
+        { chapterNum: 6,  stance: 'Engaged'    },
+        { chapterNum: 7,  stance: 'Curious'    },
+        { chapterNum: 8,  stance: 'Drifting'   },
+        { chapterNum: 9,  stance: 'Curious'    },
+        { chapterNum: 10, stance: 'Engaged'    },
+        { chapterNum: 11, stance: 'Enthralled' },
+        { chapterNum: 12, stance: 'Enthralled' },
+        { chapterNum: 13, stance: 'Engaged'    },
+        { chapterNum: 14, stance: 'Curious'    },
+        { chapterNum: 15, stance: 'Engaged'    },
+        { chapterNum: 16, stance: 'Enthralled' },
+        { chapterNum: 17, stance: 'Drifting'   },
+        { chapterNum: 18, stance: 'Curious'    },
+        { chapterNum: 19, stance: 'Engaged'    },
+      ],
+    },
+    {
+      readerId: 'mock-mv', readerName: 'Marisol Vega', readerInitials: 'MV',
+      points: [
+        { chapterNum: 1,  stance: 'Curious'    },
+        { chapterNum: 2,  stance: 'Engaged'    },
+        { chapterNum: 3,  stance: 'Engaged'    },
+        { chapterNum: 4,  stance: 'Curious'    },
+        { chapterNum: 5,  stance: 'Enthralled' },
+        { chapterNum: 6,  stance: 'Engaged'    },
+        { chapterNum: 7,  stance: 'Curious'    },
+        { chapterNum: 8,  stance: 'Curious'    },
+        { chapterNum: 9,  stance: 'Drifting'   },
+        { chapterNum: 10, stance: 'Engaged'    },
+        { chapterNum: 11, stance: 'Curious'    },
+        { chapterNum: 12, stance: 'Engaged'    },
+        { chapterNum: 13, stance: 'Enthralled' },
+        { chapterNum: 14, stance: 'Engaged'    },
+      ],
+    },
+    {
+      readerId: 'mock-hl', readerName: 'Henrik Lund', readerInitials: 'HL',
+      points: [
+        { chapterNum: 1,  stance: 'Engaged'    },
+        { chapterNum: 2,  stance: 'Engaged'    },
+        { chapterNum: 3,  stance: 'Curious'    },
+        { chapterNum: 4,  stance: 'Engaged'    },
+        { chapterNum: 5,  stance: 'Enthralled' },
+        { chapterNum: 6,  stance: 'Engaged'    },
+        { chapterNum: 7,  stance: 'Engaged'    },
+        { chapterNum: 8,  stance: 'Curious'    },
+        { chapterNum: 9,  stance: 'Engaged'    },
+        { chapterNum: 10, stance: 'Enthralled' },
+        { chapterNum: 11, stance: 'Enthralled' },
+        { chapterNum: 12, stance: 'Engaged'    },
+        { chapterNum: 13, stance: 'Engaged'    },
+        { chapterNum: 14, stance: 'Curious'    },
+        { chapterNum: 15, stance: 'Engaged'    },
+        { chapterNum: 16, stance: 'Enthralled' },
+        { chapterNum: 17, stance: 'Engaged'    },
+        { chapterNum: 18, stance: 'Enthralled' },
+        { chapterNum: 19, stance: 'Enthralled' },
+      ],
+    },
+  ],
+  '1': [
+    {
+      readerId: 'mock-cm', readerName: 'Celestine Morrow', readerInitials: 'CM',
+      points: [
+        { chapterNum: 1, stance: 'Curious'    },
+        { chapterNum: 2, stance: 'Engaged'    },
+        { chapterNum: 3, stance: 'Engaged'    },
+        { chapterNum: 4, stance: 'Enthralled' },
+        { chapterNum: 5, stance: 'Engaged'    },
+        { chapterNum: 6, stance: 'Curious'    },
+        { chapterNum: 7, stance: 'Engaged'    },
+      ],
+    },
+    {
+      readerId: 'mock-yt', readerName: 'Yuki Tanaka', readerInitials: 'YT',
+      points: [
+        { chapterNum: 1, stance: 'Engaged'    },
+        { chapterNum: 2, stance: 'Curious'    },
+        { chapterNum: 3, stance: 'Enthralled' },
+        { chapterNum: 4, stance: 'Enthralled' },
+        { chapterNum: 5, stance: 'Enthralled' },
+        { chapterNum: 6, stance: 'Enthralled' },
+        { chapterNum: 7, stance: 'Enthralled' },
+      ],
+    },
+  ],
+};
 
 export const RATING_TAGS = [
   { label: 'Insightful',         positive: true  },

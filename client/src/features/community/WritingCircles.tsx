@@ -297,8 +297,8 @@ function CircleDetail({ circle, passages, onPassagesChange, onBack, onLeave }: {
                         className={styles.replyTextarea}
                       />
                       <div className={styles.replyBtnRow}>
-                        <Btn tone="primary" style={{ fontSize: 10.5, padding: '4px 10px' }} onClick={() => postReply(p.id)}>Post</Btn>
-                        <Btn tone="ghost" style={{ fontSize: 10.5, padding: '4px 10px' }} onClick={() => { setReplyingTo(null); setReplyText(''); }}>Cancel</Btn>
+                        <Btn tone="primary" className={styles.btnXs} onClick={() => postReply(p.id)}>Post</Btn>
+                        <Btn tone="ghost"   className={styles.btnXs} onClick={() => { setReplyingTo(null); setReplyText(''); }}>Cancel</Btn>
                       </div>
                     </div>
                   </div>
@@ -334,7 +334,7 @@ function CircleDetail({ circle, passages, onPassagesChange, onBack, onLeave }: {
               <p className={`serif ${styles.sessionTime}`}>{circle.nextSession}</p>
               <div className={styles.sessionMeta}>VIA VIDEO CALL · 90 MIN</div>
               <div className={styles.sessionDivider} />
-              <Btn tone="ghost" style={{ justifyContent: 'center', fontSize: 11 }}>RSVP</Btn>
+              <Btn tone="ghost" className={styles.btnRsvp}>RSVP</Btn>
             </div>
           )}
 

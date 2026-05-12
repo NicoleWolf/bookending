@@ -1,6 +1,13 @@
 export type BookStatus = 'drafting' | 'in-revision' | 'published';
-export type BookVisibility = 'private' | 'public';
+export type BetaMode = 'CLOSED' | 'PUBLIC' | 'REQUEST' | 'INVITE_ONLY';
 export type SpineColor = 'spine-amber' | 'spine-slate' | 'spine-teal' | 'spine-dark' | 'spine-muted';
+
+export const BETA_MODE_OPTIONS: { value: BetaMode; label: string; description: string }[] = [
+  { value: 'CLOSED',      label: 'Closed',           description: 'Not open for beta reading' },
+  { value: 'PUBLIC',      label: 'Public',            description: 'Anyone can join immediately' },
+  { value: 'REQUEST',     label: 'Request to read',   description: 'Readers apply — you approve each one' },
+  { value: 'INVITE_ONLY', label: 'Invite only',       description: 'Hidden from browse — you add readers directly' },
+];
 
 export interface BookMetadata {
   id: string;
@@ -22,10 +29,24 @@ export interface BookMetadata {
   language: string;
   estimatedPages: number | null;
   status: BookStatus;
-  visibility: BookVisibility;
+  betaMode: BetaMode;
+  maxBetaReaders: number | null;
   coverUploaded: boolean;
   spineColor: SpineColor;
+  contentWarnings: string[];
 }
+
+export const CONTENT_WARNINGS = [
+  'Sexual Content',
+  'Sexual Abuse',
+  'Violence',
+  'Physical Abuse',
+  'Mental Health/Self-Harm',
+  'Bigotry/Stigma',
+  'Medical/Graphic Content',
+] as const;
+
+export type ContentWarning = typeof CONTENT_WARNINGS[number];
 
 export const CONTENT_RATINGS = [
   'All Ages',
@@ -71,9 +92,11 @@ export const BOOKS: BookMetadata[] = [
     language: 'English',
     estimatedPages: 340,
     status: 'in-revision',
-    visibility: 'private',
+    betaMode: 'CLOSED',
+    maxBetaReaders: null,
     coverUploaded: false,
     spineColor: 'spine-amber',
+    contentWarnings: [],
   },
   {
     id: '2',
@@ -95,9 +118,11 @@ export const BOOKS: BookMetadata[] = [
     language: 'English',
     estimatedPages: null,
     status: 'drafting',
-    visibility: 'private',
+    betaMode: 'CLOSED',
+    maxBetaReaders: null,
     coverUploaded: false,
     spineColor: 'spine-slate',
+    contentWarnings: [],
   },
   {
     id: '3',
@@ -120,8 +145,10 @@ export const BOOKS: BookMetadata[] = [
     language: 'English',
     estimatedPages: 290,
     status: 'in-revision',
-    visibility: 'private',
+    betaMode: 'CLOSED',
+    maxBetaReaders: null,
     coverUploaded: false,
     spineColor: 'spine-teal',
+    contentWarnings: [],
   },
 ];

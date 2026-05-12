@@ -9,9 +9,9 @@ const router = Router();
 const AUTHOR_SELECT = {
   id: true, name: true, bio: true, location: true,
   genres: true, writingProcess: true, createdAt: true,
+  featuredManuscriptId: true,
   manuscripts: {
-    where: { visibility: 'PUBLIC' as const },
-    select: { id: true, title: true },
+    select: { id: true, title: true, genre: true, subgenre: true, wordCount: true, status: true, createdAt: true, description: true, betaMode: true },
   },
   authorQa: {
     where: { publishedAt: { not: null } },
@@ -24,7 +24,7 @@ const AUTHOR_SELECT = {
 router.get('/', async (_req, res) => {
   try {
     const authors = await prisma.user.findMany({
-      where: { role: 'AUTHOR' },
+      where: { manuscripts: { some: {} } },
       select: AUTHOR_SELECT,
       orderBy: { createdAt: 'asc' },
     });
@@ -38,7 +38,10 @@ router.get('/', async (_req, res) => {
 router.get('/:id', async (req, res) => {
   const id = req.params['id'] as string;
   try {
-    const author = await prisma.user.findUnique({ where: { id }, select: AUTHOR_SELECT });
+    const author = await prisma.user.findFirst({
+      where: { id, manuscripts: { some: {} } },
+      select: AUTHOR_SELECT,
+    });
     if (!author) { res.status(404).json({ error: 'Author not found' }); return; }
     res.json({ data: author });
   } catch {

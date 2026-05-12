@@ -708,3 +708,7 @@
   line-height: 1.5;
   margin-bottom: 14px;
 }
+
+.labelSm  { margin-bottom: 12px; }
+.labelMd  { margin-bottom: 14px; }
+.labelLg  { margin-bottom: 16px; }

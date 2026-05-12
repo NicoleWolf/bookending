@@ -13,12 +13,13 @@ import { ConnectionsView } from './features/connections';
 import { SeasonsView } from './features/seasons';
 import Library from './features/library';
 import LibraryBrowse from './features/library-browse';
-import type { BookMetadata, BookVisibility, SpineColor } from './features/library/data';
+import type { BookMetadata, BetaMode, SpineColor } from './features/library/data';
 import ToastStack from './features/notifications/Toast';
 import type { AppNotification } from './features/notifications/data';
 import { useAuth } from './features/auth';
 import { LoginView } from './features/auth';
-import ProfileView from './features/profile/ProfileView';
+import ProfileHub from './features/profile/ProfileHub';
+import type { HubTab } from './features/profile/ProfileHub';
 import AdminPanel from './features/admin';
 import ReaderProfiles from './features/reader-profiles';
 import DashboardPreview from './features/dashboard-v2';
@@ -29,6 +30,7 @@ import FormatterHub from './features/formatter';
 import type { AuthorProfile, ProfileTab } from './features/author-profiles/types';
 import { api } from './lib/api';
 import type { ManuscriptRecord, NotificationRecord } from '@bookending/shared';
+import styles from './App.module.css';
 
 type SavedBooks = Record<string, BookMetadata>;
 
@@ -47,19 +49,21 @@ function toIntOrNull(v: unknown): number | null {
 
 function bookToPayload(book: BookMetadata, coverUrl?: string): Record<string, unknown> {
   return {
-    id:             book.id,
+    id:             typeof book.id === 'string' && book.id.length > 0 ? book.id : undefined,
     title:          book.title,
     subtitle:       book.subtitle      || null,
     status:         STATUS_TO_DB[book.status] ?? 'DRAFTING',
-    visibility:     (book.visibility ?? 'private').toUpperCase(),
+    betaMode:       book.betaMode ?? 'CLOSED',
+    maxBetaReaders: book.maxBetaReaders ?? null,
     seriesName:     book.seriesName    || null,
     seriesNumber:   toIntOrNull(book.seriesNumber),
     genre:          book.genre         || null,
     subgenre:       book.subgenre      || null,
     description:    book.description   || null,
     targetAudience: book.targetAudience || null,
-    contentRating:  book.contentRating || null,
-    keywords:       book.keywords      || null,
+    contentRating:   book.contentRating   || null,
+    contentWarnings: book.contentWarnings ?? [],
+    keywords:        book.keywords        || null,
     isbnEbook:      book.isbnEbook      || null,
     isbnPrint:      book.isbnPrint      || null,
     isbnPending:    !!book.isbnPending,
@@ -67,7 +71,7 @@ function bookToPayload(book: BookMetadata, coverUrl?: string): Record<string, un
     pricePaperback: book.pricePaperback || null,
     language:       book.language       || 'English',
     estimatedPages: toIntOrNull(book.estimatedPages),
-    spineColor:     book.spineColor,
+    spineColor:     book.spineColor    || undefined,
     coverUrl:       coverUrl           ?? null,
   };
 }
@@ -83,8 +87,9 @@ function recordToBook(m: ManuscriptRecord): BookMetadata {
     subgenre:       m.subgenre       ?? '',
     description:    m.description    ?? '',
     targetAudience: m.targetAudience ?? '',
-    contentRating:  m.contentRating  ?? '',
-    keywords:       m.keywords       ?? '',
+    contentRating:   m.contentRating   ?? '',
+    contentWarnings: m.contentWarnings ?? [],
+    keywords:        m.keywords        ?? '',
     isbnEbook:      m.isbnEbook      ?? '',
     isbnPrint:      m.isbnPrint      ?? '',
     isbnPending:    m.isbnPending,
@@ -93,7 +98,8 @@ function recordToBook(m: ManuscriptRecord): BookMetadata {
     language:       m.language,
     estimatedPages: m.estimatedPages ?? null,
     status:         (STATUS_FROM_DB[m.status] ?? 'drafting') as BookMetadata['status'],
-    visibility:     m.visibility.toLowerCase() as BookVisibility,
+    betaMode:       (m.betaMode ?? 'CLOSED') as BetaMode,
+    maxBetaReaders: m.maxBetaReaders ?? null,
     coverUploaded:  !!m.coverUrl,
     spineColor:     (m.spineColor as SpineColor) || 'spine-amber',
   };
@@ -133,7 +139,7 @@ async function fetchAndMigrateManuscripts(userId: string): Promise<{ books: Book
   } catch { /* corrupt data — ignore */ }
 
   // Phase 3: Sync localStorage-only books to DB if the API is up
-  const unsynced = localBooks.filter(b => !dbIds.has(b.id) && !!b.title?.trim());
+  const unsynced = localBooks.filter(b => typeof b.id === 'string' && b.id.length > 0 && !dbIds.has(b.id) && !!b.title?.trim());
   for (const book of unsynced) {
     if (!apiError) {
       const coverUrl = localStorage.getItem(`bookending_cover_${book.id}`) ?? undefined;
@@ -141,7 +147,9 @@ async function fetchAndMigrateManuscripts(userId: string): Promise<{ books: Book
         const created = await api.post<ManuscriptRecord>('/api/manuscripts', bookToPayload(book, coverUrl));
         dbBooks.push(recordToBook(created));
         continue;
-      } catch { /* network — fall through */ }
+      } catch (e) {
+        console.warn('[migrate] sync failed for', book.id, e instanceof Error ? e.message : e);
+      }
     }
     // API unavailable or failed — show the book from localStorage anyway
     dbBooks.push(book);
@@ -174,12 +182,17 @@ function LoggedOutShell() {
 
 function ReaderApp() {
   const { logout } = useAuth();
-  const [activeTab,       setActiveTab]       = useState('Dashboard');
-  const [notifications,   setNotifications]   = useState<AppNotification[]>([]);
-  const [toasts,          setToasts]          = useState<AppNotification[]>([]);
-  const [followedAuthors, setFollowedAuthors] = useState<Set<string>>(new Set());
-  const [authorTarget,    setAuthorTarget]    = useState<{ authorId: string; tab: ProfileTab } | null>(null);
+  const [activeTab,         setActiveTab]         = useState('Dashboard');
+  const [profileInitialTab, setProfileInitialTab] = useState<HubTab>('Profile');
+  const [notifications,     setNotifications]     = useState<AppNotification[]>([]);
+  const [toasts,            setToasts]            = useState<AppNotification[]>([]);
+  const [followedAuthors,   setFollowedAuthors]   = useState<Set<string>>(new Set());
+  const [authorTarget,      setAuthorTarget]      = useState<{ authorId: string; tab: ProfileTab } | null>(null);
   const toastTimers = useRef<Map<string, ReturnType<typeof setTimeout>>>(new Map());
+
+  useEffect(() => {
+    if (activeTab !== 'Profile') setProfileInitialTab('Profile');
+  }, [activeTab]);
 
   function addToast(n: AppNotification) {
     setToasts(prev => [...prev, n]);
@@ -244,7 +257,12 @@ function ReaderApp() {
 
       {activeTab === 'Dashboard' && <DashboardPreview />}
       {activeTab === 'Reading' && <Reading />}
-      {activeTab === 'Library' && <LibraryBrowse savedBooks={{}} />}
+      {activeTab === 'Library' && (
+        <LibraryBrowse
+          savedBooks={{}}
+          onEditProfile={() => { setProfileInitialTab('My Reader Profile'); setActiveTab('Profile'); }}
+        />
+      )}
       {activeTab === 'Author Profiles' && (
         <AuthorProfiles
           followedAuthors={followedAuthors}
@@ -257,14 +275,14 @@ function ReaderApp() {
       {activeTab === 'Purchases' && <PurchasesView />}
       {activeTab === 'Community' && <Community section="mentorship" />}
       {activeTab === 'Profile' && (
-        <ProfileView onBack={() => setActiveTab('Reading')} />
+        <ProfileHub onBack={() => setActiveTab('Reading')} onToast={addToast} initialTab={profileInitialTab} />
       )}
 
       <ToastStack toasts={toasts} onDismiss={dismissToast} onCta={handleNotifCta} />
 
-      <footer style={{ padding: '30px 48px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: '1px solid var(--rule)' }}>
-        <span className="mono" style={{ fontSize: 10.5, color: 'var(--muted)', letterSpacing: '0.18em' }}>BOOKENDING · A COMMUNITY FOR READERS & WRITERS · MMXXVI</span>
-        <span className="mono" style={{ fontSize: 10.5, color: 'var(--muted)', letterSpacing: '0.18em' }}>SET IN NEWSREADER & INTER · PRINTED FROM PORTLAND</span>
+      <footer className={styles.footer}>
+        <span className={`mono ${styles.footerMeta}`}>BOOKENDING · A COMMUNITY FOR READERS & WRITERS · MMXXVI</span>
+        <span className={`mono ${styles.footerMeta}`}>SET IN NEWSREADER & INTER · PRINTED FROM PORTLAND</span>
       </footer>
     </div>
   );
@@ -277,6 +295,7 @@ function AuthorApp() {
   const { isQuiet, deferred, clearDeferred, addDeferred } = useQuietMode();
 
   const [activeTab,         setActiveTab]         = useState('Dashboard');
+  const [profileInitialTab, setProfileInitialTab] = useState<HubTab>('Profile');
   const [savedBooks,        setSavedBooks]        = useState<SavedBooks>({});
   const [dbBookIds,         setDbBookIds]         = useState<Set<string>>(new Set());
   const [manuscriptsDirty,  setManuscriptsDirty]  = useState(false);
@@ -288,6 +307,10 @@ function AuthorApp() {
   const [followedAuthors,   setFollowedAuthors]   = useState<Set<string>>(new Set());
   const [authorTarget,      setAuthorTarget]      = useState<{ authorId: string; tab: ProfileTab } | null>(null);
   const toastTimers = useRef<Map<string, ReturnType<typeof setTimeout>>>(new Map());
+
+  useEffect(() => {
+    if (activeTab !== 'Profile') setProfileInitialTab('Profile');
+  }, [activeTab]);
 
   // Load manuscripts + goal from API whenever the logged-in user changes
   useEffect(() => {
@@ -501,9 +524,9 @@ function AuthorApp() {
         navMode="author"
       />
       {loadError && (
-        <div role="alert" style={{ background: 'var(--danger)', color: '#fff', fontFamily: 'var(--sans)', fontSize: 13, padding: '10px 48px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <div role="alert" className={styles.errorAlert}>
           <span>Could not load your manuscripts: {loadError}</span>
-          <button onClick={() => setLoadError(null)} style={{ background: 'none', border: 'none', color: '#fff', cursor: 'pointer', fontSize: 16, lineHeight: 1 }}>×</button>
+          <button onClick={() => setLoadError(null)} className={styles.errorDismiss}>×</button>
         </div>
       )}
 
@@ -521,7 +544,12 @@ function AuthorApp() {
       )}
       {activeTab === 'Editing & Beta-readers' && <EditingHub savedBooks={savedBooks} onTabChange={setActiveTab} />}
       {activeTab === 'Reading' && <Reading />}
-      {activeTab === 'Library' && <LibraryBrowse savedBooks={savedBooks} />}
+      {activeTab === 'Library' && (
+        <LibraryBrowse
+          savedBooks={savedBooks}
+          onEditProfile={() => { setProfileInitialTab('My Reader Profile'); setActiveTab('Profile'); }}
+        />
+      )}
       {activeTab === 'Readers' && <ReaderProfiles savedBooks={savedBooks} />}
       {activeTab === 'The Bindery' && <FormatterHub />}
       {activeTab === 'Storefront' && <StorefrontHub />}
@@ -547,28 +575,23 @@ function AuthorApp() {
       {activeTab === 'Connections' && <ConnectionsView />}
       {activeTab === 'Royalties' && <RoyaltiesTab savedBooks={savedBooks} />}
       {activeTab === 'Profile' && (
-        <ProfileView onBack={() => setActiveTab('Dashboard')} />
+        <ProfileHub onBack={() => setActiveTab('Dashboard')} onToast={addToast} initialTab={profileInitialTab} />
       )}
       {activeTab === 'Admin' && currentUser?.isAdmin && <AdminPanel />}
 
       {pendingTab && (
-        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.7)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 200 }}>
-          <div style={{ background: 'var(--ink-2)', border: '1px solid var(--rule)', padding: '36px 40px', maxWidth: 420, width: '100%' }}>
-            <div style={{ fontFamily: 'var(--sans)', fontSize: 15, fontWeight: 600, color: 'var(--paper)', marginBottom: 12 }}>
-              Unsaved changes
-            </div>
-            <p style={{ fontFamily: 'var(--sans)', fontSize: 13, lineHeight: 1.6, color: 'var(--muted)', margin: '0 0 28px' }}>
+        <div className={styles.modalOverlay}>
+          <div className={styles.modal}>
+            <div className={styles.modalTitle}>Unsaved changes</div>
+            <p className={styles.modalBody}>
               You have unsaved changes to your manuscript. If you leave, all changes will be lost.
             </p>
-            <div style={{ display: 'flex', gap: 12, justifyContent: 'flex-end' }}>
-              <button
-                style={{ padding: '9px 20px', background: 'var(--accent)', border: 'none', color: 'var(--ink)', fontFamily: 'var(--sans)', fontSize: 12, fontWeight: 600, cursor: 'pointer' }}
-                onClick={() => setPendingTab(null)}
-              >
+            <div className={styles.modalActions}>
+              <button className={styles.modalStay} onClick={() => setPendingTab(null)}>
                 Stay and save
               </button>
               <button
-                style={{ padding: '9px 20px', background: 'transparent', border: '1px solid var(--rule)', color: 'var(--muted)', fontFamily: 'var(--sans)', fontSize: 12, cursor: 'pointer' }}
+                className={styles.modalDiscard}
                 onClick={() => { setActiveTab(pendingTab!); setPendingTab(null); setManuscriptsDirty(false); }}
               >
                 Discard changes
@@ -580,9 +603,9 @@ function AuthorApp() {
 
       <ToastStack toasts={toasts} onDismiss={dismissToast} onCta={handleNotifCta} />
 
-      <footer style={{ padding: '30px 48px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: '1px solid var(--rule)' }}>
-        <span className="mono" style={{ fontSize: 10.5, color: 'var(--muted)', letterSpacing: '0.18em' }}>BOOKENDING · A WORKBENCH FOR SELF-PUBLISHERS · MMXXVI</span>
-        <span className="mono" style={{ fontSize: 10.5, color: 'var(--muted)', letterSpacing: '0.18em' }}>SET IN NEWSREADER & INTER · PRINTED FROM PORTLAND</span>
+      <footer className={styles.footer}>
+        <span className={`mono ${styles.footerMeta}`}>BOOKENDING · A WORKBENCH FOR SELF-PUBLISHERS · MMXXVI</span>
+        <span className={`mono ${styles.footerMeta}`}>SET IN NEWSREADER & INTER · PRINTED FROM PORTLAND</span>
       </footer>
     </div>
   );

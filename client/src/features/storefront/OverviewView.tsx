@@ -133,7 +133,7 @@ export function OverviewView({ onViewChange }: { onViewChange?: (v: string) => v
 
           {/* Conversion funnel */}
           <div className={styles.funnelSection}>
-            <div className="label" style={{ marginBottom: 18 }}>Conversion funnel · 30 days</div>
+            <div className={`label ${styles.labelMb18}`}>Conversion funnel · 30 days</div>
             {funnelSteps.map((step, i) => (
               <div key={i} className={styles.funnelStep}>
                 <span className={styles.funnelLabel}>{step.label}</span>
@@ -225,7 +225,7 @@ export function OverviewView({ onViewChange }: { onViewChange?: (v: string) => v
 
           {/* Geography */}
           <div className={styles.geoSection}>
-            <div className="label" style={{ marginBottom: 14 }}>Geography · 30d</div>
+            <div className={`label ${styles.labelMb14}`}>Geography · 30d</div>
             {GEOGRAPHY.map(g => (
               <div key={g.country} className={styles.geoRow}>
                 <span className={styles.geoCountry}>{g.country}</span>
@@ -239,7 +239,7 @@ export function OverviewView({ onViewChange }: { onViewChange?: (v: string) => v
 
           {/* Repeat customers */}
           <div className={styles.repeatSection}>
-            <div className="label" style={{ marginBottom: 14 }}>Repeat customers · 30d</div>
+            <div className={`label ${styles.labelMb14}`}>Repeat customers · 30d</div>
             <div className={styles.repeatDisplay}>
               <span className={`serif ${styles.repeatRate}`}>{REPEAT_RATE.rate}%</span>
               <span className={styles.repeatSub}>

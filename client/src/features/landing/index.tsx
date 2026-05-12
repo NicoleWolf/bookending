@@ -164,8 +164,8 @@ export default function Landing({ onEnter, onLogin }: LandingProps) {
             {signedUp ? (
               <>
                 <h2 className={styles.signupTitle}>Welcome, <em className={styles.signupEm}>friend.</em></h2>
-                <p className={styles.signupPara} style={{ marginTop: 24 }}>
-                  We've got you down as a <strong style={{ color: '#8b3a2f' }}>{role}</strong>. We'll write soon.
+                <p className={`${styles.signupPara} ${styles.signupParaMt}`}>
+                  We've got you down as a <strong className={styles.roleHighlight}>{role}</strong>. We'll write soon.
                 </p>
                 <div className={styles.signupTeam}>— The Bookending team</div>
               </>

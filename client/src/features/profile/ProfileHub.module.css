@@ -1,0 +1,76 @@
+.hub {
+  min-height: 100vh;
+  background: var(--ink-2);
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── Tab bar ─────────────────────────────────────────────────── */
+.tabBar {
+  display: flex;
+  align-items: flex-end;
+  gap: 0;
+  padding: 0 48px;
+  background: var(--ink-3);
+  border-bottom: 0.5px solid var(--rule);
+}
+
+.tab {
+  font-family: var(--sans);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--muted);
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  padding: 14px 20px 13px;
+  cursor: pointer;
+  transition: color 0.1s, border-color 0.1s;
+  white-space: nowrap;
+}
+
+.tab:hover { color: var(--paper); }
+
+.tab[data-active] {
+  color: var(--paper);
+  border-bottom-color: var(--accent);
+}
+
+.tab:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
+
+/* ── Panel ───────────────────────────────────────────────────── */
+.panel {
+  flex: 1;
+}
+
+/* ── Author profile placeholder ──────────────────────────────── */
+.placeholder {
+  max-width: 480px;
+  margin: 80px auto;
+  padding: 0 48px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.placeholderLabel {
+  font-family: var(--sans);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.placeholderHint {
+  font-family: var(--sans);
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--muted-2);
+  margin: 0;
+}
+
+@media (max-width: 768px) {
+  .tabBar { padding: 0 20px; }
+  .placeholder { padding: 0 20px; }
+}

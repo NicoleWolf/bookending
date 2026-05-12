@@ -25,6 +25,14 @@ export default function ToastStack({ toasts, onDismiss, onCta }: Props) {
                 {t.cta.label} →
               </button>
             )}
+            {t.onUndo && (
+              <button
+                className={styles.cta}
+                onClick={() => { t.onUndo!(); onDismiss(t.id); }}
+              >
+                Undo
+              </button>
+            )}
           </div>
           <button className={styles.dismiss} onClick={() => onDismiss(t.id)}>✕</button>
         </div>

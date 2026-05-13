@@ -1,8 +1,10 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Pill, Btn, Avatar, Spark } from '../../shared/ui/atoms';
 import { IconArrow } from '../../shared/ui/icons';
-import { SOCIAL_LINKS, MEDIA_MENTIONS, KIND_TONE, BIO_SHORT, BIO_LONG } from './data';
+import { SOCIAL_LINKS, MEDIA_MENTIONS, KIND_TONE } from './data';
 import type { SocialLink } from './types';
+import { useAuth } from '../auth';
+import { api } from '../../lib/api';
 import styles from './Identity.module.css';
 
 function SocialStat({ s }: { s: SocialLink }) {
@@ -53,9 +55,36 @@ function SocialStat({ s }: { s: SocialLink }) {
 }
 
 export function IdentityView() {
+  const { session, currentUser, updateProfile } = useAuth();
   const [bioMode, setBioMode] = useState<'short' | 'long'>('long');
-  const [bio, setBio] = useState(BIO_LONG);
+  const [bio, setBio] = useState('');
+  const [location, setLocation] = useState('');
   const [tagline, setTagline] = useState('From manuscript to reader — with room for the work in between.');
+  const [saving, setSaving] = useState(false);
+
+  useEffect(() => {
+    if (!session?.token) return;
+    void api.get<{ bio?: string | null; location?: string | null }>('/api/author-profile')
+      .then(p => {
+        if (p.bio)      setBio(p.bio);
+        if (p.location) setLocation(p.location);
+      })
+      .catch(() => {});
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [session?.token]);
+
+  async function saveBio() {
+    setSaving(true);
+    try {
+      await api.patch('/api/author-profile', { bio });
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  function saveName(name: string) {
+    updateProfile({ name });
+  }
 
   const [subWhat,     setSubWhat]     = useState('A fortnightly letter on the experience of writing a book — not the advice, but the actual texture of it. The doubt, the revision, the strange grief of finishing.');
   const [subFreq,     setSubFreq]     = useState('Every two weeks, on a Sunday.');
@@ -75,7 +104,11 @@ export function IdentityView() {
               <div className={styles.nameGrid}>
                 <div>
                   <div className={styles.fieldLabel}>DISPLAY NAME</div>
-                  <input defaultValue="Billie Wolf" className={styles.field} />
+                  <input
+                    value={currentUser?.name ?? ''}
+                    onChange={e => saveName(e.target.value)}
+                    className={styles.field}
+                  />
                 </div>
                 <div>
                   <div className={styles.fieldLabel}>PEN NAME</div>
@@ -103,7 +136,7 @@ export function IdentityView() {
                   key={m}
                   className={styles.bioModeBtn}
                   data-active={bioMode === m ? 'true' : undefined}
-                  onClick={() => { setBioMode(m); setBio(m === 'short' ? BIO_SHORT : BIO_LONG); }}
+                  onClick={() => setBioMode(m)}
                 >
                   {m.charAt(0).toUpperCase() + m.slice(1)}
                 </button>
@@ -120,7 +153,7 @@ export function IdentityView() {
             <span className={styles.bioCount}>
               {bio.trim().split(/\s+/).filter(Boolean).length} WORDS · TARGET {bioMode === 'short' ? 80 : 250}
             </span>
-            <Btn tone="ghost">Save bio</Btn>
+            <Btn tone="ghost" onClick={() => { void saveBio(); }}>{saving ? 'Saving…' : 'Save bio'}</Btn>
           </div>
         </div>
 

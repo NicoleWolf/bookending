@@ -204,6 +204,11 @@ export function IsbnView() {
 
   return (
     <div>
+      <div style={{ padding: '6px 0 10px', borderBottom: '1px solid var(--rule)', marginBottom: '4px' }}>
+        <span className="label" style={{ color: 'var(--muted)', fontSize: '0.65rem' }}>
+          PREVIEW DATA · Your ISBNs will appear here once registered
+        </span>
+      </div>
       <div className={styles.viewHeader}>
         <div>
           <div className={`serif ${styles.viewTitle}`}>ISBN Registry</div>

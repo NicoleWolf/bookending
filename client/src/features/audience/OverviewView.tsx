@@ -52,6 +52,11 @@ export function OverviewView({ dispatches, onCompose, onViewSubscribers, onRevie
 
   return (
     <div>
+      <div style={{ padding: '6px 0 10px', borderBottom: '1px solid var(--rule)', marginBottom: '4px' }}>
+        <span className="label" style={{ color: 'var(--muted)', fontSize: '0.65rem' }}>
+          PREVIEW DATA · Live audience analytics coming soon
+        </span>
+      </div>
       {lastDispatch && (
         <AttentionPanel
           lastDispatch={lastDispatch}

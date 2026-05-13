@@ -402,6 +402,11 @@ export default function ReaderProfiles({ savedBooks }: Props) {
 
   return (
     <>
+      <div style={{ padding: '6px 0 10px', borderBottom: '1px solid var(--rule)', marginBottom: '4px' }}>
+        <span className="label" style={{ color: 'var(--muted)', fontSize: '0.65rem' }}>
+          PREVIEW DATA · Reader statistics will reflect real activity once beta-reads are underway
+        </span>
+      </div>
       {selected ? (
         <ReaderProfilePage
           reader={selected}

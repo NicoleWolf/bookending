@@ -1,8 +1,9 @@
 import { createContext, useContext, useState, useMemo, useCallback } from 'react';
 import type { ReactNode } from 'react';
 import type { AuthSession, AuthUser, LoginCredentials, RegisterPayload, AuthError } from '../../types/auth';
-import { mockLogin, mockRegister, mockChangePassword, mockGetUser } from './mockSession';
+import { mockLogin, mockRegister, mockChangePassword } from './mockSession';
 import { setApiToken, api } from '../../lib/api';
+import { supabase, hasSupabase } from '../../lib/supabase';
 
 interface AuthContextValue {
   session: AuthSession | null;
@@ -36,6 +37,30 @@ function persistSession(s: AuthSession | null) {
 
 const AuthContext = createContext<AuthContextValue | null>(null);
 
+// ── Helpers ────────────────────────────────────────────────────────────────
+
+async function buildUserFromSupabase(
+  supabaseUser: { id: string; email?: string; user_metadata?: Record<string, unknown> },
+  token: string,
+): Promise<AuthUser> {
+  setApiToken(token);
+  const [whoami, profile] = await Promise.all([
+    api.get<{ id: string; role: string; isAdmin: boolean }>('/api/admin/whoami').catch(() => null),
+    api.get<{ name: string; avatarUrl?: string | null }>('/api/author-profile').catch(() => null),
+  ]);
+  return {
+    id:          supabaseUser.id,
+    email:       supabaseUser.email ?? '',
+    name:        profile?.name ?? (supabaseUser.user_metadata?.name as string | undefined) ?? supabaseUser.email ?? '',
+    role:        (whoami?.role ?? supabaseUser.user_metadata?.role ?? 'AUTHOR') as 'AUTHOR' | 'READER',
+    lastLoginAt: new Date().toISOString(),
+    isAdmin:     whoami?.isAdmin ?? false,
+    avatarUrl:   profile?.avatarUrl ?? null,
+  };
+}
+
+// ── Provider ───────────────────────────────────────────────────────────────
+
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [session,   setSession]   = useState<AuthSession | null>(() => {
     const stored = loadStoredSession();
@@ -51,35 +76,83 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setSession(s);
   }
 
+  // ── Login ──────────────────────────────────────────────────────────────
+
   const login = useCallback(async (creds: LoginCredentials) => {
     setError(null);
     setIsLoading(true);
     try {
-      const s = await mockLogin(creds);
-      applySession(s);
-      // Sync isAdmin from DB — non-blocking; swallow errors if server is down
-      try {
-        const whoami = await api.get<{ id: string; email: string; role: string; isAdmin: boolean }>('/api/admin/whoami');
-        setSession(prev => {
-          if (!prev) return prev;
-          const updated = { ...prev, user: { ...prev.user, isAdmin: whoami.isAdmin } };
-          persistSession(updated);
-          return updated;
+      if (hasSupabase) {
+        const { data, error: sbError } = await supabase.auth.signInWithPassword({
+          email:    creds.email,
+          password: creds.password,
         });
-      } catch { /* server unavailable or user not in DB yet */ }
+        if (sbError || !data.session) {
+          const err: AuthError = { code: 'INVALID_CREDENTIALS', message: sbError?.message ?? 'Invalid credentials' };
+          throw err;
+        }
+        const token = data.session.access_token;
+        const user  = await buildUserFromSupabase(data.user, token);
+        const s: AuthSession = {
+          user,
+          token,
+          expiresAt: data.session.expires_at
+            ? new Date(data.session.expires_at * 1000).toISOString()
+            : null,
+        };
+        applySession(s);
+      } else {
+        // Dev bypass — works without a Supabase project
+        const s = await mockLogin(creds);
+        applySession(s);
+        try {
+          const whoami = await api.get<{ id: string; role: string; isAdmin: boolean }>('/api/admin/whoami');
+          setSession(prev => {
+            if (!prev) return prev;
+            const updated = { ...prev, user: { ...prev.user, isAdmin: whoami.isAdmin } };
+            persistSession(updated);
+            return updated;
+          });
+        } catch { /* server unavailable */ }
+      }
     } catch (err) {
       setError(err as AuthError);
     } finally {
       setIsLoading(false);
     }
   }, []);
+
+  // ── Register ───────────────────────────────────────────────────────────
 
   const register = useCallback(async (payload: RegisterPayload) => {
     setError(null);
     setIsLoading(true);
     try {
-      const s = await mockRegister(payload);
-      applySession(s);
+      if (hasSupabase) {
+        await api.post('/api/auth/register', payload);
+        // After server creates the account, sign in to get the session
+        const { data, error: sbError } = await supabase.auth.signInWithPassword({
+          email:    payload.email,
+          password: payload.password,
+        });
+        if (sbError || !data.session) {
+          const err: AuthError = { code: 'UNKNOWN', message: sbError?.message ?? 'Sign-in after registration failed' };
+          throw err;
+        }
+        const token = data.session.access_token;
+        const user  = await buildUserFromSupabase(data.user, token);
+        const s: AuthSession = {
+          user,
+          token,
+          expiresAt: data.session.expires_at
+            ? new Date(data.session.expires_at * 1000).toISOString()
+            : null,
+        };
+        applySession(s);
+      } else {
+        const s = await mockRegister(payload);
+        applySession(s);
+      }
     } catch (err) {
       setError(err as AuthError);
     } finally {
@@ -87,32 +160,50 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }, []);
 
+  // ── Logout ─────────────────────────────────────────────────────────────
+
   const logout = useCallback(async () => {
+    if (hasSupabase) {
+      await supabase.auth.signOut().catch(() => { /* ignore network errors on logout */ });
+    }
     applySession(null);
     setError(null);
   }, []);
 
+  // ── Clear error ────────────────────────────────────────────────────────
+
   const clearError = useCallback(() => setError(null), []);
 
+  // ── Update profile ─────────────────────────────────────────────────────
+
   const updateProfile = useCallback((data: Partial<Pick<AuthUser, 'name' | 'email' | 'avatarUrl' | 'theme' | 'betaReaderPrivate'>>) => {
+    // Optimistic local update
     setSession(prev => {
       if (!prev) return prev;
-      let next: AuthSession;
-      if (data.email) {
-        const fresh = mockGetUser(data.email);
-        next = fresh ? { ...prev, user: { ...fresh, ...data } } : { ...prev, user: { ...prev.user, ...data } };
-      } else {
-        next = { ...prev, user: { ...prev.user, ...data } };
-      }
+      const next: AuthSession = { ...prev, user: { ...prev.user, ...data } };
       persistSession(next);
       return next;
     });
+    // Persist to server in background
+    const patch: Record<string, unknown> = {};
+    if (data.name      !== undefined) patch.name      = data.name;
+    if (data.avatarUrl !== undefined) patch.avatarUrl = data.avatarUrl;
+    api.patch('/api/author-profile', patch).catch(() => { /* non-critical */ });
   }, []);
 
-  const changePassword = useCallback(async (current: string, next: string) => {
-    const email = session?.user.email;
-    if (!email) throw { code: 'UNKNOWN', message: 'Not logged in' } as AuthError;
-    await mockChangePassword(email, current, next);
+  // ── Change password ────────────────────────────────────────────────────
+
+  const changePassword = useCallback(async (_current: string, next: string) => {
+    if (hasSupabase) {
+      const { error: sbError } = await supabase.auth.updateUser({ password: next });
+      if (sbError) {
+        throw { code: 'UNKNOWN', message: sbError.message } as AuthError;
+      }
+    } else {
+      const email = session?.user.email;
+      if (!email) throw { code: 'UNKNOWN', message: 'Not logged in' } as AuthError;
+      await mockChangePassword(email, _current, next);
+    }
   }, [session]);
 
   const value = useMemo<AuthContextValue>(() => ({

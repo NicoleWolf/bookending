@@ -3,7 +3,7 @@ import type { ThreadEntry } from '@bookending/shared';
 export interface Para     { id: number; text: string; }
 export interface Chapter  { id: number; number: number; title: string; paras: Para[]; releasedAt?: string | null; expectedAt?: string | null; }
 export interface Manuscript {
-  id: number; title: string; draft: string; instructions: string; chapters: Chapter[];
+  id: string | number; title: string; draft: string; instructions: string; chapters: Chapter[];
   mode: 'complete' | 'serialized';
 }
 

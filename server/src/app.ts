@@ -18,6 +18,7 @@ import formatterRouter from './routes/formatter';
 import adminRouter from './routes/admin';
 import readerProfileRouter from './routes/reader-profile';
 import authorProfileRouter from './routes/author-profile';
+import authRouter from './routes/auth';
 import { requireAuth, optionalAuth } from './middleware/auth';
 import { zodErrorHandler } from './middleware/zodError';
 
@@ -31,6 +32,8 @@ app.use(express.json({ limit: '5mb' }));
 app.get('/health', (_req, res) => {
   res.json({ status: 'ok', service: 'bookending-api' });
 });
+
+app.use('/api/auth', authRouter);
 
 app.use('/api/manuscripts', requireAuth, manuscriptsRouter);
 app.use('/api/notifications', requireAuth, notificationsRouter);

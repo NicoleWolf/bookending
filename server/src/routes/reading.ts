@@ -550,6 +550,65 @@ router.put('/:msRef/impression/:chapterNum', async (req, res) => {
   res.json({ data: { ...point, createdAt: point.createdAt.toISOString() } });
 });
 
+// ── GET /api/reading/:msRef/manuscript — chapter content for enrolled readers ─
+
+router.get('/:msRef/manuscript', async (req, res) => {
+  const { msRef } = req.params;
+  const userId = req.user!.id;
+
+  const ms = await prisma.manuscript.findUnique({
+    where: { id: msRef },
+    include: {
+      chapters:    { orderBy: { number: 'asc' } },
+      betaReaders: { where: { userId }, select: { id: true } },
+    },
+  }).catch(() => null);
+
+  if (!ms) { res.status(404).json({ error: 'Manuscript not found' }); return; }
+
+  const isAuthor = ms.authorId === userId;
+  const isReader = ms.betaReaders.length > 0;
+  if (!isAuthor && !isReader) {
+    res.status(403).json({ error: 'Forbidden' }); return;
+  }
+
+  function htmlToParas(html: string | null): { id: number; text: string }[] {
+    if (!html) return [];
+    const matches = html.match(/<p[^>]*>([\s\S]*?)<\/p>/g) ?? [];
+    return matches
+      .map((tag, idx) => {
+        const inner = tag
+          .replace(/<[^>]+>/g, ' ')
+          .replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&apos;/g, "'").replace(/&#\d+;/g, ' ')
+          .replace(/\s+/g, ' ').trim();
+        return { id: idx + 1, text: inner };
+      })
+      .filter(p => p.text.length > 0);
+  }
+
+  const hasReleaseDates = ms.chapters.some(ch => ch.releasedAt !== null);
+  const mode = hasReleaseDates ? 'serialized' : 'complete';
+  const accessibleChapters = (isAuthor || !hasReleaseDates)
+    ? ms.chapters
+    : ms.chapters.filter(ch => ch.releasedAt !== null);
+
+  res.json({ data: {
+    id:           ms.id,
+    title:        ms.title,
+    draft:        ms.wordCount > 0 ? `${ms.wordCount.toLocaleString()} words` : 'Draft 1',
+    instructions: ms.description ?? '',
+    mode,
+    chapters: accessibleChapters.map(ch => ({
+      id:         ch.number,
+      number:     ch.number,
+      title:      ch.title,
+      paras:      htmlToParas(ch.content),
+      releasedAt: ch.releasedAt?.toISOString() ?? null,
+      expectedAt: ch.expectedAt?.toISOString() ?? null,
+    })),
+  }});
+});
+
 // ── GET /api/reading/:msRef/chapter-notes ────────────────────────────────────
 
 router.get('/:msRef/chapter-notes', async (req, res) => {

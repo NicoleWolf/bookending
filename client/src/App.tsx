@@ -564,9 +564,13 @@ function AuthorApp() {
         />
       )}
       {(activeTab === 'Community' || activeTab === 'Mentorship' || activeTab === 'Writing Circle') && (
-        <Community section={
-          activeTab === 'Writing Circle' ? 'circle' : 'mentorship'
-        } />
+        <section style={{ padding: '48px 24px', textAlign: 'center' }}>
+          <p className="label" style={{ color: 'var(--muted)', marginBottom: '8px' }}>§ 05 · COMMUNITY</p>
+          <p className="serif" style={{ fontSize: '1.5rem', marginBottom: '12px' }}>Coming soon</p>
+          <p style={{ color: 'var(--muted)', maxWidth: '400px', margin: '0 auto' }}>
+            Writing circles, mentorship, and the reader community are on their way.
+          </p>
+        </section>
       )}
       {activeTab === 'Print & Distribution' && <PrintDistribution />}
       {activeTab === 'My Store' && <StorefrontTab savedBooks={savedBooks} onTabChange={setActiveTab} />}

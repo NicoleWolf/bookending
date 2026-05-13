@@ -1,8 +1,8 @@
 import { useState, useRef, useEffect, useCallback, type ReactElement } from 'react';
 import { Btn } from '../../shared/ui/atoms';
 import { IconCheck } from '../../shared/ui/icons';
-import type { Highlight, Pending, Submission, AnnotationRecord, ProgressRecord, ImpressionPointRecord } from './types';
-import { MANUSCRIPTS, STAR_LABELS, STANCE_ORDER, STANCE_VALUE, AUTHOR_NOTES } from './data';
+import type { Manuscript, Highlight, Pending, Submission, AnnotationRecord, ProgressRecord, ImpressionPointRecord } from './types';
+import { STAR_LABELS, STANCE_ORDER, STANCE_VALUE } from './data';
 import { useAuth } from '../auth';
 import styles from './Reading.module.css';
 import { api } from '../../lib/api';
@@ -18,16 +18,14 @@ interface ReadingRoomProps {
 export default function ReadingRoom({ msRef, onBack }: ReadingRoomProps) {
   const { session } = useAuth();
 
-  const ms = MANUSCRIPTS.find(m => String(m.id) === msRef) ?? null;
-
+  const [ms,                setMs]                = useState<Manuscript | null>(null);
+  const [msLoading,         setMsLoading]         = useState(true);
   const [doneChapters,      setDoneChapters]      = useState<Set<number>>(new Set());
   const [highlights,        setHighlights]        = useState<Highlight[]>([]);
   const [impressionPoints,  setImpressionPoints]  = useState<ImpressionPointRecord[]>([]);
   const [cohortCount,       setCohortCount]       = useState(0);
   const [alreadySub,        setAlreadySub]        = useState<Submission | null>(null);
-  const [authorNoteMap,     setAuthorNoteMap]     = useState<Record<number, string>>(
-    () => AUTHOR_NOTES[ms?.id ?? -1] ?? {}
-  );
+  const [authorNoteMap,     setAuthorNoteMap]     = useState<Record<number, string>>({});
   const [chapterId,         setChapterId]         = useState<number | null>(null);
   const [pending,           setPending]           = useState<Pending | null>(null);
   const [draftNote,         setDraftNote]         = useState('');
@@ -44,16 +42,20 @@ export default function ReadingRoom({ msRef, onBack }: ReadingRoomProps) {
   const paraRefMap = useRef<Map<string, HTMLElement>>(new Map());
 
   useEffect(() => {
-    if (ms) {
-      const first = ms.mode === 'serialized'
-        ? (ms.chapters.find(ch => ch.releasedAt != null) ?? ms.chapters[0])
-        : ms.chapters[0];
-      if (first) setChapterId(first.id);
-    }
-
     if (localStorage.getItem(`bookending-first-note-${msRef}`)) setFirstNoteSaved(true);
 
-    if (!session?.token || !ms) return;
+    if (!session?.token) return;
+
+    void api.get<Manuscript>(`/api/reading/${msRef}/manuscript`)
+      .then(data => {
+        setMs(data);
+        const first = data.mode === 'serialized'
+          ? (data.chapters.find(ch => ch.releasedAt != null) ?? data.chapters[0])
+          : data.chapters[0];
+        if (first) setChapterId(first.id);
+      })
+      .catch(() => {})
+      .finally(() => setMsLoading(false));
 
     void (async () => {
       let data: { progress: ProgressRecord | null; annotations: AnnotationRecord[]; cohortCount: number } | null = null;
@@ -257,13 +259,15 @@ export default function ReadingRoom({ msRef, onBack }: ReadingRoomProps) {
       <section className={styles.section}>
         <div className={styles.notFoundWrap}>
           <button onClick={onBack} className={styles.backBtn}>← Back to reading</button>
-          <p className={styles.notFoundMsg}>Manuscript not found.</p>
+          <p className={styles.notFoundMsg}>
+            {msLoading ? 'Loading…' : 'Manuscript not found or access denied.'}
+          </p>
         </div>
       </section>
     );
   }
 
-  const authorFirstName = ms.title === 'Hollow Meridian' ? 'Izel' : 'the author';
+  const authorFirstName = 'the author';
   const readerName  = (session as { user?: { name?: string } } | null)?.user?.name?.split(' ')[0];
   const readerLabel = readerName ? `${readerName}'s desk` : 'your desk';
 

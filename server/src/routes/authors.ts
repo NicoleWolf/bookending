@@ -34,6 +34,37 @@ router.get('/', async (_req, res) => {
   }
 });
 
+// GET /api/authors/readers/available — list readers open to beta-read invitations
+router.get('/readers/available', requireAuth, async (_req, res) => {
+  const TONES = ['accent', 'gold', 'muted', 'ink', 'paper'] as const;
+  try {
+    const readers = await prisma.user.findMany({
+      where: { role: 'READER', availableForReads: true },
+      select: {
+        id: true, name: true, bio: true, genres: true,
+        _count: { select: { betaReaders: true } },
+      },
+      orderBy: { createdAt: 'asc' },
+    });
+    const data = readers.map((r, idx) => ({
+      id:           r.id,
+      name:         r.name,
+      initials:     r.name.split(/\s+/).map((w: string) => w[0]).join('').toUpperCase().slice(0, 2),
+      tone:         TONES[idx % TONES.length],
+      email:        '',
+      genres:       r.genres ? r.genres.split(',').map((g: string) => g.trim()).filter(Boolean) : [],
+      booksRead:    r._count.betaReaders,
+      avgRating:    0,
+      responseTime: '2 weeks',
+      bio:          r.bio ?? '',
+      availability: 'available' as const,
+    }));
+    res.json({ data });
+  } catch {
+    res.status(500).json({ error: 'Failed to fetch available readers' });
+  }
+});
+
 // GET /api/authors/:id
 router.get('/:id', async (req, res) => {
   const id = req.params['id'] as string;

@@ -1,7 +1,9 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { Avatar, Pill } from '../../shared/ui/atoms';
 import { BETA_READER_POOL } from './data';
 import type { BetaReader } from './types';
+import { useAuth } from '../auth';
+import { api } from '../../lib/api';
 import styles from './ReaderMatcher.module.css';
 
 type MatcherState = 'idle' | 'searching' | 'results';
@@ -19,11 +21,21 @@ interface Props {
 }
 
 export default function ReaderMatcher({ manuscriptId: _manuscriptId, manuscriptTitle, genres, onInvite }: Props) {
+  const { session }             = useAuth();
   const [state, setState]       = useState<MatcherState>('idle');
   const [invitedIds, setInvitedIds] = useState<Set<string>>(new Set());
+  const [pool, setPool]         = useState<BetaReader[]>(BETA_READER_POOL);
+
+  useEffect(() => {
+    if (!session?.token) return;
+    void api.get<BetaReader[]>('/api/authors/readers/available')
+      .then(readers => { if (readers.length > 0) setPool(readers); })
+      .catch(() => {});
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [session?.token]);
 
   const matches = useMemo<MatchedReader[]>(() => (
-    BETA_READER_POOL
+    pool
       .filter(r => r.availability === 'available')
       .map(r => ({
         ...r,
@@ -33,7 +45,7 @@ export default function ReaderMatcher({ manuscriptId: _manuscriptId, manuscriptT
       .filter(r => r.matchScore > 0)
       .sort((a, b) => b.matchScore - a.matchScore || b.booksRead - a.booksRead)
       .slice(0, 5)
-  ), [genres.join(',')]); // eslint-disable-line react-hooks/exhaustive-deps
+  ), [pool, genres.join(',')]); // eslint-disable-line react-hooks/exhaustive-deps
 
   function runSearch() {
     setState('searching');

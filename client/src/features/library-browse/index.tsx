@@ -2,7 +2,7 @@ import { useState, useMemo, useEffect } from 'react';
 import { LibraryMasthead } from './LibraryMasthead';
 import type { LibraryView } from './LibraryMasthead';
 import { ManuscriptCard } from './ManuscriptCard';
-import { MANUSCRIPTS, fuzzySearch } from './data';
+import { fuzzySearch } from './data';
 import type { CatalogManuscript, ManuscriptStatus } from './data';
 import type { BookMetadata, BookStatus } from '../library/data';
 import { useAuth } from '../auth';
@@ -94,8 +94,7 @@ export default function LibraryBrowse({ savedBooks, onEditProfile }: LibraryBrow
     const publicBooks = Object.values(savedBooks)
       .filter(b => b.betaMode === 'PUBLIC' || b.betaMode === 'REQUEST')
       .map(bookToCatalog);
-    const baseCatalog = apiManuscripts.length > 0 ? apiManuscripts : MANUSCRIPTS;
-    return [...publicBooks, ...baseCatalog];
+    return [...publicBooks, ...apiManuscripts];
   }, [savedBooks, apiManuscripts]);
 
   const openCount  = allManuscripts.filter(m => m.status === 'open').length;

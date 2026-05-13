@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { SectionHead, Btn } from '../../shared/ui/atoms';
 import { IconArrow, IconArrowUp } from '../../shared/ui/icons';
 import { OverviewView } from './OverviewView';
@@ -6,8 +6,10 @@ import { StorefrontView } from './StorefrontView';
 import { ProductsView } from './ProductsView';
 import { OrdersView } from './OrdersView';
 import { SettingsView } from './SettingsView';
-import { PRODUCTS, ORDERS } from './data';
 import type { BookMetadata } from '../library/data';
+import { useAuth } from '../auth';
+import { api } from '../../lib/api';
+import type { OrderRecord, ProductRecord } from '@bookending/shared';
 import styles from './Storefront.module.css';
 
 type SubView = 'overview' | 'products' | 'orders' | 'settings' | 'storefront';
@@ -18,9 +20,21 @@ interface StorefrontTabProps {
 }
 
 export default function StorefrontTab({ savedBooks, onTabChange }: StorefrontTabProps) {
-  const [view, setView] = useState<SubView>('overview');
+  const { session } = useAuth();
+  const [view,       setView]       = useState<SubView>('overview');
+  const [newOrders,  setNewOrders]  = useState(0);
+  const [productCount, setProductCount] = useState(0);
 
-  const newOrders = ORDERS.filter(o => o.status === 'new').length;
+  useEffect(() => {
+    if (!session?.token) return;
+    void api.get<OrderRecord[]>('/api/orders')
+      .then(orders => setNewOrders(orders.filter(o => o.status === 'new').length))
+      .catch(() => {});
+    void api.get<ProductRecord[]>('/api/products')
+      .then(products => setProductCount(products.length))
+      .catch(() => {});
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [session?.token]);
 
   return (
     <section className={styles.section}>
@@ -48,7 +62,7 @@ export default function StorefrontTab({ savedBooks, onTabChange }: StorefrontTab
             onClick={() => setView('products')}
           >
             Products
-            <span className={styles.tabCount}>({PRODUCTS.length})</span>
+            {productCount > 0 && <span className={styles.tabCount}>({productCount})</span>}
           </button>
           <button
             className={styles.tab}

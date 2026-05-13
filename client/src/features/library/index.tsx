@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { SectionHead, BookCover } from '../../shared/ui/atoms';
-import { BOOKS, STATUS_OPTIONS, CONTENT_RATINGS, CONTENT_WARNINGS, LANGUAGES, BETA_MODE_OPTIONS } from './data';
+import { STATUS_OPTIONS, CONTENT_RATINGS, CONTENT_WARNINGS, LANGUAGES, BETA_MODE_OPTIONS } from './data';
 import type { BookMetadata, BetaMode, SpineColor } from './data';
 import { extractFromFile } from './extractMetadata';
 import { GENRES } from '../../shared/genres';
@@ -86,7 +86,7 @@ export default function Library({ savedBooks, onSave, onDelete, openNewManuscrip
 
   const [view,      setView]      = useState<LibraryView>('landing');
   const [allBooks,  setAllBooks]  = useState<BookMetadata[]>(savedBookList);
-  const [activeId,  setActiveId]  = useState<string>(savedBookList[0]?.id ?? BOOKS[0].id);
+  const [activeId,  setActiveId]  = useState<string>(savedBookList[0]?.id ?? '');
   const [drafts,    setDrafts]    = useState<BookDrafts>(
     () => Object.fromEntries(savedBookList.map(b => [b.id, { ...b }]))
   );

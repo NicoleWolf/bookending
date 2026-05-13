@@ -65,6 +65,11 @@ export function OverviewView({ onViewChange }: { onViewChange?: (v: string) => v
 
   return (
     <div>
+      <div style={{ padding: '6px 0 10px', borderBottom: '1px solid var(--rule)', marginBottom: '4px' }}>
+        <span className="label" style={{ color: 'var(--muted)', fontSize: '0.65rem' }}>
+          PREVIEW DATA · Live sales analytics coming soon
+        </span>
+      </div>
       {/* ── Action queue + secondary revenue ── */}
       <div className={styles.actionRow}>
         <div className={styles.actionQueue}>

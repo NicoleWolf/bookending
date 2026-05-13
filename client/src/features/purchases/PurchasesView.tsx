@@ -31,6 +31,11 @@ export default function PurchasesView() {
 
   return (
     <div>
+      <div style={{ padding: '6px 0 10px', borderBottom: '1px solid var(--rule)', marginBottom: '4px' }}>
+        <span className="label" style={{ color: 'var(--muted)', fontSize: '0.65rem' }}>
+          PREVIEW DATA · Your purchase history will appear here once you buy from an author storefront
+        </span>
+      </div>
       <div className={styles.sectionHeader}>
         <SectionHead
           eyebrow="§ · Purchases"

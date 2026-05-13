@@ -163,7 +163,7 @@ export function IdentityView() {
             {[
               { l: 'Primary genre',   v: 'Literary Fiction' },
               { l: 'Secondary genre', v: 'Speculative Fiction' },
-              { l: 'Based in',        v: 'Portland, OR · USA' },
+              { l: 'Based in',        v: location || 'Portland, OR · USA' },
               { l: 'Published since', v: '2024' },
               { l: 'Titles',          v: '2 (1 forthcoming)' },
               { l: 'Imprint',         v: 'Self-published' },

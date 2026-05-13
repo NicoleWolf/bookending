@@ -654,6 +654,33 @@ export default function EditingHub({ savedBooks, onTabChange }: EditingHubProps)
         <NotesArchive key={activeId} manuscriptId={activeId} />
       )}
 
+      {/* ── Mobile bottom nav ── */}
+      <nav className={styles.bottomNav}>
+        <button
+          className={styles.bottomNavTab}
+          data-active={view === 'editor' ? '' : undefined}
+          onClick={() => setView('editor')}
+        >Editor</button>
+        <button
+          className={styles.bottomNavTab}
+          data-active={view === 'feedback' ? '' : undefined}
+          onClick={() => setView('feedback')}
+        >Feedback</button>
+        <button
+          className={styles.bottomNavTab}
+          data-active={view === 'correspondence' ? '' : undefined}
+          onClick={() => setView('correspondence')}
+        >
+          Corr
+          {unreadCount > 0 && <span className={styles.bottomNavBadge}>{unreadCount}</span>}
+        </button>
+        <button
+          className={styles.bottomNavTab}
+          data-active={view === 'notes' ? '' : undefined}
+          onClick={() => setView('notes')}
+        >Notes</button>
+      </nav>
+
       {showInviteModal && (
         <InviteReaderModal
           defaultManuscriptId={activeId}

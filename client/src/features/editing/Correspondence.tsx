@@ -15,12 +15,13 @@ export default function Correspondence({ threads, manuscripts, initialThreadId, 
     initialThreadId ?? threads[0]?.id ?? null
   );
   const [replyBody, setReplyBody] = useState('');
+  const [mobileShowDetail, setMobileShowDetail] = useState(initialThreadId != null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const selected = threads.find(t => t.id === selectedId) ?? null;
 
   useEffect(() => {
-    if (initialThreadId != null) setSelectedId(initialThreadId);
+    if (initialThreadId != null) { setSelectedId(initialThreadId); setMobileShowDetail(true); }
   }, [initialThreadId]);
 
   useEffect(() => {
@@ -49,7 +50,7 @@ export default function Correspondence({ threads, manuscripts, initialThreadId, 
   const sorted = [...threads].sort((a, b) => b.id - a.id);
 
   return (
-    <div className={styles.wrap}>
+    <div className={styles.wrap} data-mobile-detail={mobileShowDetail ? '' : undefined}>
 
       {/* ── Thread list ── */}
       <div className={styles.sidebar}>
@@ -70,7 +71,7 @@ export default function Correspondence({ threads, manuscripts, initialThreadId, 
               className={styles.threadItem}
               data-selected={selectedId === t.id ? '' : undefined}
               data-unread={unread ? '' : undefined}
-              onClick={() => setSelectedId(t.id)}
+              onClick={() => { setSelectedId(t.id); setMobileShowDetail(true); }}
             >
               <div className={styles.threadItemHead}>
                 <Avatar initials={t.reader.initials} tone={t.reader.tone} size={28} />
@@ -100,6 +101,7 @@ export default function Correspondence({ threads, manuscripts, initialThreadId, 
         <div className={styles.main}>
 
           <div className={styles.mainHead}>
+            <button className={styles.backBtn} onClick={() => setMobileShowDetail(false)}>← Back</button>
             <div className={styles.mainHeadLeft}>
               <Avatar initials={selected.reader.initials} tone={selected.reader.tone} size={32} />
               <div>

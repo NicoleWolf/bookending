@@ -725,3 +725,118 @@
 .deleteModalConfirm:hover {
   opacity: 0.85;
 }
+
+/* ── Mobile group trigger buttons (Format / View) ────────────────── */
+
+.mobileGroupBtn {
+  display: none;
+  align-items: center;
+  gap: 4px;
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+  background: none;
+  border: 1px solid var(--rule);
+  cursor: pointer;
+  padding: 4px 10px;
+  margin-right: 6px;
+  border-radius: 0;
+}
+
+.mobileGroupBtn[data-active] {
+  color: var(--paper);
+  border-color: var(--muted);
+  background: color-mix(in srgb, var(--paper) 9%, transparent);
+}
+
+/* ── Mobile group panel (shown below toolbar) ────────────────────── */
+
+.mobileGroupPanel {
+  display: none;
+}
+
+.mobileGroupDivider {
+  width: 1px;
+  height: 16px;
+  background: var(--rule);
+  margin: 0 4px;
+  flex-shrink: 0;
+}
+
+/* ── Drawer toggle (hamburger) ───────────────────────────────────── */
+
+.drawerToggle {
+  display: none;
+  font-size: 18px;
+  color: var(--muted);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 6px 10px;
+  line-height: 1;
+  margin-right: 4px;
+}
+
+/* ── Mobile responsive (≤ 639px) ────────────────────────────────── */
+
+@media (max-width: 639px) {
+  /* Editor grid: sidebar is position:fixed on mobile (out of flow),
+     so the editor just needs to fill the single column */
+  .wrap {
+    grid-template-columns: 1fr;
+  }
+
+  .toolbar {
+    padding: 0 12px;
+    flex-wrap: wrap;
+    min-height: 44px;
+  }
+
+  .drawerToggle {
+    display: block;
+  }
+
+  /* Hide desktop tool groups — mobile uses Format/View trigger buttons instead */
+  .toolGroup,
+  .toolDiv {
+    display: none;
+  }
+
+  /* Mobile group trigger buttons */
+  .mobileGroupBtn {
+    display: flex;
+  }
+
+  /* Mobile group panel */
+  .mobileGroupPanel {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 2px;
+    padding: 6px 12px;
+    background: var(--ink-2);
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .toolbarRight {
+    gap: 10px;
+  }
+
+  .scrollArea {
+    padding: 32px 16px 80px;
+  }
+
+  .summaryScreen {
+    padding: 40px 16px;
+  }
+
+  .summaryWords {
+    font-size: 56px;
+  }
+
+  .quietBar {
+    padding: 0 16px;
+  }
+}

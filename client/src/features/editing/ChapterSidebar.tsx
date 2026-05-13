@@ -10,9 +10,11 @@ interface Props {
   onAdd: () => void;
   onDelete: (idx: number) => void;
   onRename: (idx: number, title: string) => void;
+  open?: boolean;
+  onClose?: () => void;
 }
 
-export default function ChapterSidebar({ chapters, activeIndex, onSwitch, onAdd, onDelete, onRename }: Props) {
+export default function ChapterSidebar({ chapters, activeIndex, onSwitch, onAdd, onDelete, onRename, open, onClose }: Props) {
   const [renameIdx, setRenameIdx] = useState<number | null>(null);
   const [renameVal, setRenameVal] = useState('');
   const inputRef = useRef<HTMLInputElement>(null);
@@ -38,7 +40,9 @@ export default function ChapterSidebar({ chapters, activeIndex, onSwitch, onAdd,
   }
 
   return (
-    <aside className={styles.sidebar}>
+    <>
+      {open && <div className={styles.backdrop} onClick={onClose} />}
+      <aside className={styles.sidebar} data-open={open ? '' : undefined}>
       <div className={styles.header}>
         <span className={styles.sectionMark}>Editor</span>
         <p className={styles.tagline}>Chapters</p>
@@ -75,7 +79,7 @@ export default function ChapterSidebar({ chapters, activeIndex, onSwitch, onAdd,
                   className={styles.itemBtn}
                   onClick={() => {
                     if (idx === activeIndex) startRename(idx);
-                    else onSwitch(idx);
+                    else { onSwitch(idx); onClose?.(); }
                   }}
                   title={idx === activeIndex ? 'Click to rename' : ch.title}
                 >
@@ -94,6 +98,7 @@ export default function ChapterSidebar({ chapters, activeIndex, onSwitch, onAdd,
         ))}
       </nav>
 
-    </aside>
+      </aside>
+    </>
   );
 }

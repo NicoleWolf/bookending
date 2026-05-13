@@ -220,6 +220,8 @@ export default function DocumentEditor({ manuscriptId }: Props) {
     return parseChapters(base);
   });
 
+  const [drawerOpen, setDrawerOpen]             = useState(false);
+  const [mobileGroup, setMobileGroup]           = useState<'format' | 'view' | null>(null);
   const [mode, setMode]                         = useState<EditorMode>('write');
   const [saveState, setSaveState]               = useState<SaveState>('idle');
   const [activeChapter, setActiveChapter]       = useState(0);
@@ -622,6 +624,25 @@ export default function DocumentEditor({ manuscriptId }: Props) {
     <div className={styles.toolbar}>
       <div className={styles.toolbarLeft}>
 
+        {/* Hamburger — mobile only, opens chapter drawer */}
+        <button
+          className={styles.drawerToggle}
+          onClick={() => setDrawerOpen(true)}
+          aria-label="Open chapters"
+        >≡</button>
+
+        {/* Mobile-only group trigger buttons (Phase 5) */}
+        <button
+          className={styles.mobileGroupBtn}
+          data-active={mobileGroup === 'format' ? '' : undefined}
+          onClick={() => setMobileGroup(g => g === 'format' ? null : 'format')}
+        >Format {mobileGroup === 'format' ? '▴' : '▾'}</button>
+        <button
+          className={styles.mobileGroupBtn}
+          data-active={mobileGroup === 'view' ? '' : undefined}
+          onClick={() => setMobileGroup(g => g === 'view' ? null : 'view')}
+        >View {mobileGroup === 'view' ? '▴' : '▾'}</button>
+
         <div className={styles.toolGroup}>
           <button className={styles.toolBtn}
             data-active={editor?.isActive('bold') ? '' : undefined}
@@ -713,6 +734,40 @@ export default function DocumentEditor({ manuscriptId }: Props) {
     </div>
   );
 
+  // ── Mobile group panel (shown below toolbar on small screens) ────────
+  const mobilePanel = mobileGroup !== null ? (
+    <div className={styles.mobileGroupPanel}>
+      {mobileGroup === 'format' && (
+        <>
+          <button className={styles.toolBtn} data-active={editor?.isActive('bold') ? '' : undefined} disabled={mode === 'feedback'} onClick={() => editor?.chain().focus().toggleBold().run()}><strong>B</strong></button>
+          <button className={styles.toolBtn} data-active={editor?.isActive('italic') ? '' : undefined} disabled={mode === 'feedback'} onClick={() => editor?.chain().focus().toggleItalic().run()}><em>I</em></button>
+          <div className={styles.mobileGroupDivider} />
+          <button className={styles.toolBtn} data-active={editor?.isActive('paragraph') ? '' : undefined} disabled={mode === 'feedback'} onClick={() => editor?.chain().focus().setParagraph().run()}>¶</button>
+          {([1, 2, 3] as const).map(level => (
+            <button key={level} className={styles.toolBtn} data-active={editor?.isActive('heading', { level }) ? '' : undefined} disabled={mode === 'feedback'} onClick={() => editor?.chain().focus().toggleHeading({ level }).run()}>H{level}</button>
+          ))}
+          <div className={styles.mobileGroupDivider} />
+          <button className={styles.toolBtn} disabled={mode === 'feedback' || !editor?.can().undo()} onClick={() => editor?.chain().focus().undo().run()}>↩</button>
+          <button className={styles.toolBtn} disabled={mode === 'feedback' || !editor?.can().redo()} onClick={() => editor?.chain().focus().redo().run()}>↪</button>
+        </>
+      )}
+      {mobileGroup === 'view' && (
+        <>
+          {(['feedback', 'compare', 'community', 'annotate', 'notes'] as const).map(m => (
+            <button
+              key={m}
+              className={styles.toolBtn}
+              data-active={mode === m ? '' : undefined}
+              onClick={() => { setMode(prev => prev === m ? 'write' : m); setMobileGroup(null); }}
+            >
+              {m === 'community' ? 'Circle' : m.charAt(0).toUpperCase() + m.slice(1)}
+            </button>
+          ))}
+        </>
+      )}
+    </div>
+  ) : null;
+
   // ── Session summary ────────────────────────────────────────────────
   if (showSummary) {
     return (
@@ -803,9 +858,12 @@ export default function DocumentEditor({ manuscriptId }: Props) {
           onAdd={addChapter}
           onDelete={idx => setDeleteConfirmIdx(idx)}
           onRename={renameChapter}
+          open={drawerOpen}
+          onClose={() => setDrawerOpen(false)}
         />
         <div className={styles.editorPane}>
           {toolbar}
+          {mobilePanel}
           <div className={styles.compareLayout}>
             <VersionList
               versions={versions}
@@ -892,9 +950,12 @@ export default function DocumentEditor({ manuscriptId }: Props) {
         onAdd={addChapter}
         onDelete={idx => setDeleteConfirmIdx(idx)}
         onRename={renameChapter}
+        open={drawerOpen}
+        onClose={() => setDrawerOpen(false)}
       />
       <div className={styles.editorPane}>
         {toolbar}
+        {mobilePanel}
         <div className={
           (mode === 'feedback' || mode === 'community' || mode === 'annotate' || mode === 'notes')
             ? styles.feedbackLayout

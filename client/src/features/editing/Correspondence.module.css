@@ -335,3 +335,67 @@
   opacity: 0.35;
   pointer-events: none;
 }
+
+/* ── Mobile back button ──────────────────────────────────────────── */
+
+.backBtn {
+  display: none;
+}
+
+/* ── Mobile responsive (≤ 639px) ────────────────────────────────── */
+
+@media (max-width: 639px) {
+  .wrap {
+    flex-direction: column;
+    height: auto;
+    min-height: auto;
+  }
+
+  /* Thread list takes full width */
+  .sidebar {
+    width: 100%;
+    border-right: none;
+    border-bottom: 1px solid var(--rule);
+  }
+
+  /* When a thread is selected, hide list and show detail */
+  .wrap[data-mobile-detail] .sidebar {
+    display: none;
+  }
+
+  .wrap[data-mobile-detail] .main,
+  .wrap[data-mobile-detail] .emptyState {
+    display: flex;
+  }
+
+  /* Hide detail by default on mobile */
+  .main,
+  .emptyState {
+    display: none;
+  }
+
+  .mainHead {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .backBtn {
+    display: block;
+    width: 100%;
+    font-family: var(--mono);
+    font-feature-settings: "ss01";
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    text-align: left;
+    margin-bottom: 4px;
+  }
+
+  .backBtn:hover {
+    color: var(--paper);
+  }
+}

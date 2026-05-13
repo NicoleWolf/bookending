@@ -943,3 +943,145 @@
 /* ── Icon colour helpers ─────────────────────────────────────────── */
 
 .iconMuted { color: var(--muted); }
+
+/* ── Mobile bottom nav bar ───────────────────────────────────────── */
+
+.bottomNav {
+  display: none;
+}
+
+.bottomNavTab {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--muted);
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 9px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 0;
+  position: relative;
+  min-height: 44px;
+}
+
+.bottomNavTab[data-active] {
+  color: var(--paper);
+}
+
+.bottomNavTab[data-active]::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 20%;
+  right: 20%;
+  height: 2px;
+  background: var(--accent);
+}
+
+.bottomNavBadge {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 8px;
+  letter-spacing: 0.04em;
+  color: var(--ink);
+  background: var(--accent);
+  padding: 1px 4px;
+}
+
+/* ── Mobile responsive (≤ 639px) ────────────────────────────────── */
+
+@media (max-width: 639px) {
+  .section {
+    padding: 16px 16px 72px;
+  }
+
+  /* Top view tabs hidden on mobile — bottom nav takes over */
+  .viewTabs {
+    display: none;
+  }
+
+  /* Bottom nav visible on mobile */
+  .bottomNav {
+    display: flex;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 52px;
+    background: var(--ink-2);
+    border-top: 1px solid var(--rule);
+    z-index: 50;
+  }
+
+  /* Manuscript switcher scrolls horizontally */
+  .msTabs {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    flex-wrap: nowrap;
+  }
+  .msTabs::-webkit-scrollbar { display: none; }
+
+  .msTab {
+    flex-shrink: 0;
+    min-height: 44px;
+  }
+
+  /* Panels: 2-col → single col */
+  .panelGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .panel,
+  .panelSm {
+    padding: 16px;
+  }
+
+  /* Readers box: 3fr/2fr grid → stack */
+  .readersGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .readerList {
+    border-right: none;
+    border-bottom: 1px solid var(--rule);
+  }
+
+  /* Comments nav scrolls horizontally */
+  .commentsNav {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    flex-wrap: nowrap;
+  }
+  .commentsNav::-webkit-scrollbar { display: none; }
+
+  .filterBtn {
+    flex-shrink: 0;
+    min-height: 44px;
+  }
+
+  .resolvedToggle {
+    flex-shrink: 0;
+    min-height: 44px;
+  }
+
+  /* Comment rows: side-by-side → stacked */
+  .commentRow {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .commentActions {
+    flex-direction: row;
+    padding-top: 12px;
+    border-top: 1px solid var(--rule);
+  }
+}

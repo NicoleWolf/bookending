@@ -176,3 +176,36 @@
   color: var(--paper);
   border-color: var(--muted);
 }
+
+/* ── Mobile drawer ───────────────────────────────────────────────── */
+
+.backdrop {
+  display: none;
+}
+
+@media (max-width: 639px) {
+  .sidebar {
+    position: fixed;
+    left: 0;
+    top: 0;
+    height: 100%;
+    width: 260px;
+    z-index: 100;
+    transform: translateX(-100%);
+    transition: transform 0.22s ease;
+    /* Override the desktop sticky/height rules */
+    height: 100dvh;
+  }
+
+  .sidebar[data-open] {
+    transform: translateX(0);
+  }
+
+  .backdrop {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background: color-mix(in srgb, var(--ink) 70%, transparent);
+    z-index: 99;
+  }
+}

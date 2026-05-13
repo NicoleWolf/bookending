@@ -72,6 +72,7 @@ export default function EditingHub({ savedBooks, onTabChange }: EditingHubProps)
   const [ratingStars, setRatingStars]   = useState(0);
   const [ratingTags, setRatingTags]     = useState<string[]>([]);
   const [ratingNote, setRatingNote]     = useState('');
+  const [msDropdownOpen, setMsDropdownOpen] = useState(false);
 
   const [readerImpressions, setReaderImpressions] = useState<ReaderImpression[]>(
     () => INITIAL_IMPRESSIONS[activeId] ?? []
@@ -327,6 +328,42 @@ export default function EditingHub({ savedBooks, onTabChange }: EditingHubProps)
             </button>
           );
         })}
+      </div>
+
+      {/* ── Mobile manuscript dropdown (replaces tabs on small screens) ── */}
+      <div className={styles.msDropdownWrap}>
+        {msDropdownOpen && (
+          <div className={styles.msDropdownBackdrop} onClick={() => setMsDropdownOpen(false)} />
+        )}
+        <button
+          className={styles.msDropdownTrigger}
+          onClick={() => setMsDropdownOpen(o => !o)}
+        >
+          <span className={styles.msDropdownSelected}>
+            <span className={styles.msTabDot} />
+            <span>{ms.title}</span>
+            <span className={styles.msTabDraft}>{ms.draft.toUpperCase()}</span>
+          </span>
+          <span className={styles.msDropdownChevron}>{msDropdownOpen ? '▴' : '▾'}</span>
+        </button>
+        {msDropdownOpen && (
+          <div className={styles.msDropdownList}>
+            {Object.values(savedBooks).map((b) => {
+              const meta = MANUSCRIPT_META[b.id] ?? DEFAULT_EDITING_META;
+              return (
+                <button
+                  key={b.id}
+                  className={styles.msDropdownItem}
+                  data-active={b.id === activeId ? '' : undefined}
+                  onClick={() => { switchMs(b.id); setMsDropdownOpen(false); }}
+                >
+                  <span>{b.title}</span>
+                  <span className={styles.msTabDraft}>{meta.draft.toUpperCase()}</span>
+                </button>
+              );
+            })}
+          </div>
+        )}
       </div>
 
       {/* ── Editor view ── */}

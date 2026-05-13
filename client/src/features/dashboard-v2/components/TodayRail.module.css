@@ -50,3 +50,15 @@
   cursor: pointer;
   text-align: center;
 }
+
+@media (max-width: 639px) {
+  /* Rail sits below desk grid (full-width) after Phase 1 stacks it */
+  .rail {
+    align-self: auto;
+  }
+
+  .feedBtn {
+    padding: 12px;
+    min-height: 44px;
+  }
+}

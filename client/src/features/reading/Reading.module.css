@@ -1557,3 +1557,235 @@
 .notFoundMsg   { color: var(--muted); margin-top: 24px; }
 .articleBody   { position: relative; }
 .caughtUpBody  { flex: 1; }
+
+/* ── Mobile notes float button + bottom sheet (desktop: hidden) ─── */
+
+.notesFloatBtn {
+  display: none;
+}
+
+.notesFloatBadge {
+  display: none;
+}
+
+.notesSheetBackdrop {
+  display: none;
+}
+
+.notesSheet {
+  display: none;
+}
+
+.notesSheetHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--rule);
+  flex-shrink: 0;
+}
+
+.notesSheetTitle {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--paper);
+}
+
+.notesSheetClose {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--muted);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px 8px;
+}
+
+.notesSheetClose:hover { color: var(--paper); }
+
+.notesSheetBody {
+  overflow-y: auto;
+  flex: 1;
+  padding: 16px;
+}
+
+/* ── Mobile responsive (≤ 639px) ────────────────────────────────── */
+
+@media (max-width: 639px) {
+
+  /* ── Phase 4: Notes float button + bottom sheet ── */
+
+  .notesFloatBtn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    position: fixed;
+    bottom: 20px;
+    right: 16px;
+    z-index: 40;
+    background: var(--ink-2);
+    border: 1px solid var(--rule);
+    padding: 8px 14px;
+    cursor: pointer;
+    font-family: var(--mono);
+    font-feature-settings: "ss01";
+    font-size: 11px;
+    letter-spacing: 0.06em;
+    color: var(--paper);
+    min-height: 40px;
+  }
+
+  .notesFloatBadge {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--accent);
+    color: var(--ink);
+    font-size: 10px;
+    font-weight: 700;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .notesSheetBackdrop {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background: color-mix(in srgb, var(--ink) 60%, transparent);
+    z-index: 45;
+  }
+
+  .notesSheet {
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    max-height: 80dvh;
+    background: var(--ink);
+    border-top: 1px solid var(--rule);
+    z-index: 50;
+  }
+
+  /* ── Phase 2: Shell — header + chapter tabs ── */
+
+  .roomHeader {
+    padding: 20px 16px 16px;
+  }
+
+  .roomTitle {
+    font-size: 19px;
+  }
+
+  .chTabs {
+    padding: 0 8px;
+    scrollbar-width: none;
+  }
+
+  .chTabs::-webkit-scrollbar { display: none; }
+
+  /* ── Phase 3: Body grid — single column, hide right margin col ── */
+
+  .bodyGrid {
+    grid-template-columns: 1fr;
+    padding: 0 16px;
+  }
+
+  .bodyMain {
+    padding: 20px 0 32px;
+    border-right: none;
+  }
+
+  .rightCol {
+    display: none;
+  }
+
+  /* ── Phase 5: Reader interactions ── */
+
+  .chFooterRow {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .stanceRow {
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .stanceBtn {
+    min-height: 36px;
+    padding: 6px 12px;
+  }
+
+  .chPaginationBtn {
+    flex: 1;
+    min-height: 44px;
+    border: 1px solid var(--rule);
+    padding: 0 16px;
+    display: flex;
+    align-items: center;
+  }
+
+  .chPaginationBtn[data-next] {
+    justify-content: flex-end;
+  }
+
+  /* ── Phase 6: Completion screen ── */
+
+  .completion {
+    padding: 20px 16px;
+    margin-top: 24px;
+  }
+
+  .finishGrid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .compStarBtn {
+    width: 44px;
+    height: 44px;
+  }
+
+  /* ── Phase 7: Typography, footer, misc ── */
+
+  .roomFooter {
+    padding: 16px;
+  }
+
+  .notFoundWrap {
+    padding: 24px 16px;
+  }
+
+  .caughtUpFlex {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .caughtUpRight {
+    text-align: left;
+  }
+
+  /* Stats panel: 4-col → 2×2 */
+  .pickerStatsGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .pickerStatCell {
+    padding: 14px 16px;
+  }
+
+  /* Ensure labels don't go below 11px on mobile */
+  .chFooterLabel,
+  .stanceRow,
+  .chPaginationBtn {
+    font-size: 11px;
+  }
+}

@@ -229,3 +229,23 @@
   display: flex;
   gap: 6px;
 }
+
+/* ── Sheet layout (mobile bottom sheet) ──────────────────────────── */
+
+.marginCol[data-layout="sheet"] {
+  width: 100%;
+}
+
+.marginCol[data-layout="sheet"] .marginInner {
+  position: static;
+}
+
+.marginCol[data-layout="sheet"] .noteCard,
+.marginCol[data-layout="sheet"] .composeCard {
+  position: static;
+  margin-bottom: 12px;
+}
+
+.marginCol[data-layout="sheet"] .connectorTick {
+  display: none;
+}

@@ -98,3 +98,32 @@
   font-size: 12px;
   cursor: pointer;
 }
+
+@media (max-width: 639px) {
+  .footer {
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    padding: 20px 16px;
+  }
+
+  .errorAlert {
+    padding: 10px 16px;
+  }
+
+  .modal {
+    width: calc(100% - 32px);
+    padding: 28px 24px;
+  }
+
+  .modalActions {
+    flex-direction: column-reverse;
+  }
+
+  .modalStay,
+  .modalDiscard {
+    width: 100%;
+    min-height: 44px;
+    text-align: center;
+  }
+}

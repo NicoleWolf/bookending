@@ -35,6 +35,27 @@
   margin-bottom: 24px;
 }
 
+/* ── Mobile responsive (≤ 639px) ────────────────────────────────── */
+
+@media (max-width: 639px) {
+  .page {
+    padding: 20px 16px 24px;
+  }
+
+  /* Stack rail below desk main content */
+  .deskGrid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+    margin-bottom: 20px;
+  }
+
+  /* Stack Prepare + Sustain lanes vertically */
+  .compactLanes {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+}
+
 /* Dev toolbar — visually de-emphasized, not part of the design */
 .devBar {
   display: flex;

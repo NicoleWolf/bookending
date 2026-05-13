@@ -624,13 +624,6 @@ export default function DocumentEditor({ manuscriptId }: Props) {
     <div className={styles.toolbar}>
       <div className={styles.toolbarLeft}>
 
-        {/* Hamburger — mobile only, opens chapter drawer */}
-        <button
-          className={styles.drawerToggle}
-          onClick={() => setDrawerOpen(true)}
-          aria-label="Open chapters"
-        >≡</button>
-
         {/* Mobile-only group trigger buttons (Phase 5) */}
         <button
           className={styles.mobileGroupBtn}
@@ -768,6 +761,18 @@ export default function DocumentEditor({ manuscriptId }: Props) {
     </div>
   ) : null;
 
+  // Pull-tab: fixed to left edge on mobile, toggles chapter drawer
+  const drawerTab = (
+    <button
+      className={styles.drawerTab}
+      data-open={drawerOpen ? '' : undefined}
+      onClick={() => setDrawerOpen(o => !o)}
+      aria-label={drawerOpen ? 'Close chapters' : 'Open chapters'}
+    >
+      {drawerOpen ? '‹' : '›'}
+    </button>
+  );
+
   // ── Session summary ────────────────────────────────────────────────
   if (showSummary) {
     return (
@@ -861,6 +866,7 @@ export default function DocumentEditor({ manuscriptId }: Props) {
           open={drawerOpen}
           onClose={() => setDrawerOpen(false)}
         />
+        {drawerTab}
         <div className={styles.editorPane}>
           {toolbar}
           {mobilePanel}
@@ -953,6 +959,7 @@ export default function DocumentEditor({ manuscriptId }: Props) {
         open={drawerOpen}
         onClose={() => setDrawerOpen(false)}
       />
+      {drawerTab}
       <div className={styles.editorPane}>
         {toolbar}
         {mobilePanel}

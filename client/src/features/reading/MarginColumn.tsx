@@ -25,6 +25,7 @@ interface Props {
   focusedHighlightId?: string | null;
   onClearFocus?: () => void;
   pendingDraft?:   PendingDraftProps;
+  layout?: 'sheet';
 }
 
 type PositionedCard =
@@ -57,7 +58,7 @@ export default function MarginColumn({
   highlights, paraRefMap, chapterId,
   onEdit, onSaveEdit, onDelete,
   editingId, editDraft, setEditDraft, authorFirstName,
-  focusedHighlightId, onClearFocus, pendingDraft,
+  focusedHighlightId, onClearFocus, pendingDraft, layout,
 }: Props) {
   const [positioned, setPositioned] = useState<PositionedCard[]>([]);
   const marginRef = useRef<HTMLDivElement>(null);
@@ -107,7 +108,7 @@ export default function MarginColumn({
     : positioned;
 
   return (
-    <div className={styles.marginCol}>
+    <div className={styles.marginCol} data-layout={layout}>
       <div className={styles.marginInner} ref={marginRef}>
         {displayCards.map((card) => {
           if (card.type === 'pending') {

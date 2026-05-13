@@ -114,6 +114,7 @@ export default function Masthead({
   const [showNotifDropdown, setShowNotifDropdown] = useState(false);
   const [showUserMenu,      setShowUserMenu]      = useState(false);
   const [openMenu,          setOpenMenu]          = useState<string | null>(null);
+  const [mobileNavOpen,     setMobileNavOpen]     = useState(false);
   const bellRef = useRef<HTMLDivElement>(null);
   const userRef = useRef<HTMLDivElement>(null);
   const navRef  = useRef<HTMLElement>(null);
@@ -270,7 +271,72 @@ export default function Masthead({
             </div>
           </div>
         )}
+
+        {isLoggedIn && (
+          <button
+            className={styles.mobileMenuBtn}
+            onClick={() => setMobileNavOpen(o => !o)}
+            aria-label="Open navigation menu"
+          >
+            ≡
+          </button>
+        )}
       </div>
+
+      {isLoggedIn && mobileNavOpen && (
+        <div className={styles.mobileNav}>
+          <div className={styles.mobileNavBar}>
+            <span className={`serif ${styles.mobileNavWordmark}`}>Bookending</span>
+            <button
+              className={styles.mobileNavClose}
+              onClick={() => setMobileNavOpen(false)}
+              aria-label="Close navigation menu"
+            >
+              ×
+            </button>
+          </div>
+          <nav className={styles.mobileNavList}>
+            {navItems.map(item =>
+              item.children ? (
+                <div key={item.label} className={styles.mobileNavGroup}>
+                  <span className={styles.mobileNavGroupLabel}>{item.label}</span>
+                  {item.children.map(child => (
+                    <button
+                      key={child.label}
+                      className={styles.mobileNavItem}
+                      data-active={child.label === activeTab ? 'true' : undefined}
+                      onClick={() => { setMobileNavOpen(false); onTabChange(child.label); }}
+                    >
+                      {child.label}
+                    </button>
+                  ))}
+                </div>
+              ) : (
+                <button
+                  key={item.label}
+                  className={styles.mobileNavItem}
+                  data-active={item.label === activeTab ? 'true' : undefined}
+                  onClick={() => { setMobileNavOpen(false); onTabChange(item.label); }}
+                >
+                  {item.label}
+                </button>
+              )
+            )}
+          </nav>
+          <div className={styles.mobileNavFooter}>
+            <div className={styles.mobileNavUser}>
+              <span className={styles.mobileNavUserName}>{currentUser?.name}</span>
+              <span className={styles.mobileNavUserEmail}>{currentUser?.email}</span>
+            </div>
+            <button
+              className={styles.mobileNavSignOut}
+              onClick={() => { setMobileNavOpen(false); onLogout?.(); }}
+            >
+              Sign out
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Phase 1: editorial block moved to logged-out Landing page only (removed from logged-in dashboard) */}
       {activeTab === 'Landing' && (

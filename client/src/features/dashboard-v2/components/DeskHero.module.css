@@ -35,3 +35,13 @@
   flex-wrap: wrap;
   align-items: center;
 }
+
+@media (max-width: 639px) {
+  .headline {
+    font-size: 18px;
+  }
+
+  .actions {
+    gap: 8px;
+  }
+}

@@ -198,3 +198,55 @@
   padding: 0;
   font-family: var(--serif);
 }
+
+@media (max-width: 639px) {
+  /* Hero */
+  .heroHeadline {
+    font-size: 26px;
+    margin: 14px 0 14px;
+  }
+
+  .heroBody {
+    font-size: 14px;
+    margin-bottom: 20px;
+  }
+
+  /* Lifecycle preview: 3-col → 1-col */
+  .previewGrid {
+    grid-template-columns: 1fr;
+  }
+
+  /* Three ways band: 2-col → 1-col, reduce padding */
+  .threeWaysBand {
+    grid-template-columns: 1fr;
+    gap: 16px;
+    padding: 20px 18px;
+  }
+
+  .threeWaysTitle {
+    font-size: 20px;
+  }
+
+  .threeWaysAction {
+    text-align: left;
+  }
+
+  /* Tail grid: 2-col → 1-col */
+  .tailGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .tailCard {
+    padding: 18px 18px;
+  }
+
+  .tailTitle {
+    font-size: 18px;
+  }
+
+  /* Buttons */
+  .secondaryBtn {
+    min-height: 36px;
+    padding: 9px 14px;
+  }
+}

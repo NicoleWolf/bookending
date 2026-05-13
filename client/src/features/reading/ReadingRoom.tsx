@@ -38,6 +38,7 @@ export default function ReadingRoom({ msRef, onBack }: ReadingRoomProps) {
   const [releasedOverrides] = useState<Record<number, boolean>>({});
   const [focusedHighlightId, setFocusedHighlightId] = useState<string | null>(null);
   const [submittedChapters,  setSubmittedChapters]  = useState<Set<number>>(new Set());
+  const [notesSheetOpen,     setNotesSheetOpen]     = useState(false);
   const readingRef = useRef<HTMLDivElement>(null);
   const paraRefMap = useRef<Map<string, HTMLElement>>(new Map());
 
@@ -126,6 +127,10 @@ export default function ReadingRoom({ msRef, onBack }: ReadingRoomProps) {
         ? releasedChapters.length > 0 && releasedChapters.every(ch => doneChapters.has(ch.id)) && !nextUnreleased
         : doneChapters.size === chapters.length)
     : false;
+
+  useEffect(() => {
+    if (pending) setNotesSheetOpen(true);
+  }, [pending]);
 
   useEffect(() => {
     if (!pending) return;
@@ -553,6 +558,63 @@ export default function ReadingRoom({ msRef, onBack }: ReadingRoomProps) {
       )}
 
       <footer className={styles.roomFooter}>Bookending · a reading room for works in progress</footer>
+
+      {/* ── Mobile: floating notes badge + bottom sheet ──────────── */}
+      {(() => {
+        const chapterHighlights = chapter
+          ? highlights.filter(h => h.chapterId === chapter.id)
+          : [];
+        const noteCount = chapterHighlights.length + (pending ? 1 : 0);
+        if (noteCount === 0) return null;
+        return (
+          <>
+            <button
+              className={styles.notesFloatBtn}
+              onClick={() => setNotesSheetOpen(true)}
+            >
+              <span className={styles.notesFloatBadge}>{noteCount}</span>
+              Notes
+            </button>
+            {notesSheetOpen && (
+              <>
+                <div className={styles.notesSheetBackdrop} onClick={() => setNotesSheetOpen(false)} />
+                <div className={styles.notesSheet}>
+                  <div className={styles.notesSheetHead}>
+                    <span className={styles.notesSheetTitle}>
+                      {noteCount} note{noteCount !== 1 ? 's' : ''} · {chapter?.title}
+                    </span>
+                    <button className={styles.notesSheetClose} onClick={() => setNotesSheetOpen(false)}>✕</button>
+                  </div>
+                  <div className={styles.notesSheetBody}>
+                    <MarginColumn
+                      layout="sheet"
+                      highlights={chapterHighlights}
+                      paraRefMap={paraRefMap}
+                      chapterId={chapterId}
+                      onEdit={(id, draft) => { setEditingId(id); setEditDraft(draft); }}
+                      onSaveEdit={saveEdit}
+                      onDelete={deleteHighlight}
+                      editingId={editingId}
+                      editDraft={editDraft}
+                      setEditDraft={setEditDraft}
+                      authorFirstName={authorFirstName}
+                      focusedHighlightId={focusedHighlightId}
+                      onClearFocus={() => setFocusedHighlightId(null)}
+                      pendingDraft={pending ? {
+                        pending,
+                        draftNote,
+                        onNoteChange: setDraftNote,
+                        onSave: saveNote,
+                        onDismiss: () => { setPending(null); setDraftNote(''); setNotesSheetOpen(false); window.getSelection()?.removeAllRanges(); },
+                      } : undefined}
+                    />
+                  </div>
+                </div>
+              </>
+            )}
+          </>
+        );
+      })()}
     </section>
   );
 }

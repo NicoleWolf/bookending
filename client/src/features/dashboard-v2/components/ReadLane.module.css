@@ -214,3 +214,105 @@
 .rhythmValue[data-accent] { color: var(--good); }
 
 .sectionGrid { display: grid; grid-template-columns: 1.2fr 1fr; gap: 24px; }
+
+/* ── Mobile responsive (≤ 639px) ────────────────────────────────── */
+
+@media (max-width: 639px) {
+  /* Lane header: wrap so meta doesn't fight the title */
+  .title {
+    font-size: 22px;
+  }
+
+  .header {
+    flex-wrap: wrap;
+    gap: 4px;
+  }
+
+  .meta {
+    text-align: left;
+  }
+
+  /* ── Table → grid card layout ── */
+
+  .table,
+  .table tbody {
+    display: block;
+  }
+
+  /* Each row: [avatar] [title] [open btn] / [avatar span] [progress ──] */
+  .tr {
+    display: grid;
+    grid-template-columns: 30px 1fr auto;
+    grid-template-rows: auto auto;
+    column-gap: 10px;
+    row-gap: 4px;
+    padding: 12px 0;
+    border-top: 1px solid var(--bk-rule-soft);
+  }
+
+  .tr:first-child {
+    border-top: none;
+  }
+
+  /* Reset desktop per-cell border — row handles the separator */
+  .tr:not(:first-child) td {
+    border-top: none;
+  }
+
+  .tr td {
+    padding: 0;
+    vertical-align: unset;
+  }
+
+  /* Avatar: spans both rows, vertically centred */
+  .tdAvatar {
+    grid-column: 1;
+    grid-row: 1 / 3;
+    width: 30px;
+    padding-right: 0 !important;
+    display: flex;
+    align-items: center;
+  }
+
+  /* Title: row 1, middle column */
+  .tdTitle {
+    grid-column: 2;
+    grid-row: 1;
+    padding-right: 0 !important;
+  }
+
+  /* Open button: row 1, right column — kept as primary action */
+  .tdOpen {
+    grid-column: 3;
+    grid-row: 1;
+    width: auto;
+    display: flex;
+    align-items: center;
+  }
+
+  /* Progress: row 2, spans middle + right columns */
+  .tdProgress {
+    grid-column: 2 / 4;
+    grid-row: 2;
+    padding-right: 0 !important;
+  }
+
+  /* Pill: hidden on mobile — status is secondary info */
+  .tdPill {
+    display: none;
+  }
+
+  /* ── Histogram + rhythm: stack vertically ── */
+  .sectionGrid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  /* Rhythm: swap left border for top border when stacked */
+  .rhythm {
+    border-left: none;
+    padding-left: 0;
+    border-top: 1px solid var(--bk-rule-soft);
+    padding-top: 16px;
+  }
+}

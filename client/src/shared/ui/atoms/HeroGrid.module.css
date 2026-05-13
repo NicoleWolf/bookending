@@ -13,3 +13,14 @@
   align-items: center;
   justify-content: center;
 }
+
+@media (max-width: 639px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+
+  /* Hide the illustration on mobile — headline + body carry the hero */
+  .right {
+    display: none;
+  }
+}

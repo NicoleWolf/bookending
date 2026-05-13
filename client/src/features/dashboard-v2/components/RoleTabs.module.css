@@ -42,3 +42,14 @@
   border-radius: 50%;
   background: var(--accent);
 }
+
+@media (max-width: 639px) {
+  .tabs {
+    gap: 20px;
+    padding: 16px 0 8px;
+  }
+
+  .label {
+    font-size: 22px;
+  }
+}

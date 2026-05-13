@@ -610,3 +610,49 @@ button.badge:hover { opacity: 0.8; }
   text-transform: uppercase;
   color: var(--muted);
 }
+
+/* ── Mobile responsive (≤ 639px) ────────────────────────────────── */
+
+@media (max-width: 639px) {
+  .hubMasthead {
+    padding: 24px 16px 0;
+  }
+
+  .hubTitle {
+    font-size: 20px;
+  }
+
+  .houseSuggests {
+    margin: 20px 16px 0;
+  }
+
+  /* Stack main + rail into single column */
+  .contentGrid {
+    grid-template-columns: 1fr;
+    padding: 0 16px 48px;
+    margin-top: 20px;
+  }
+
+  /* Rail moves below main content naturally */
+  .rail {
+    border-top: 1px solid var(--rule);
+    padding-top: 1.25rem;
+  }
+
+  /* Shelf: 3-col → 2-col */
+  .shelfGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  /* Following: horizontal flex → 2-col grid (third wraps to row 2) */
+  .followingRow {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  /* Ensure action buttons are tap-friendly */
+  .warmActionPrimary,
+  .houseActionPrimary {
+    min-height: 36px;
+  }
+}

@@ -1,4 +1,5 @@
 import { Router } from 'express';
+import type { NextFunction } from 'express';
 import { z } from 'zod';
 import { prisma } from '../lib/prisma';
 import { parseBody } from '../lib/validate';
@@ -36,21 +37,23 @@ const PatchAuthorProfileSchema = z.object({
   showActivityPublicly: z.boolean().optional(),
 });
 
-// ── GET /api/author-profile ───────────────────────────────────────────────────
+// — GET /api/author-profile ————————————————————————————————————————————
 
-router.get('/', async (req, res) => {
+router.get('/', async (req, res, next: NextFunction) => {
   const userId = req.user!.id;
-  const user = await prisma.user.findUnique({
-    where:  { id: userId },
-    select: PROFILE_SELECT,
-  });
-  if (!user) { res.status(404).json({ error: 'User not found' }); return; }
-  res.json({ data: user });
+  try {
+    const user = await prisma.user.findUnique({
+      where:  { id: userId },
+      select: PROFILE_SELECT,
+    });
+    if (!user) { res.status(404).json({ error: 'User not found' }); return; }
+    res.json({ data: user });
+  } catch (err) { next(err); }
 });
 
-// ── PATCH /api/author-profile ─────────────────────────────────────────────────
+// — PATCH /api/author-profile ——————————————————————————————————————————
 
-router.patch('/', async (req, res) => {
+router.patch('/', async (req, res, next: NextFunction) => {
   const userId = req.user!.id;
   const body = parseBody(PatchAuthorProfileSchema, req.body, res);
   if (!body) return;
@@ -66,13 +69,14 @@ router.patch('/', async (req, res) => {
   if (body.featuredManuscriptId !== undefined) data.featuredManuscriptId = body.featuredManuscriptId;
   if (body.showActivityPublicly !== undefined) data.showActivityPublicly = body.showActivityPublicly;
 
-  const user = await prisma.user.update({
-    where:  { id: userId },
-    data,
-    select: PROFILE_SELECT,
-  });
-
-  res.json({ data: user });
+  try {
+    const user = await prisma.user.update({
+      where:  { id: userId },
+      data,
+      select: PROFILE_SELECT,
+    });
+    res.json({ data: user });
+  } catch (err) { next(err); }
 });
 
 export default router;

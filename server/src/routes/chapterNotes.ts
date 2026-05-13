@@ -1,4 +1,5 @@
-import { Router } from 'express';
+﻿import { Router } from 'express';
+import type { NextFunction } from 'express';
 import { prisma } from '../lib/prisma';
 import { parseBody } from '../lib/validate';
 import { CreateChapterNoteSchema, UpdateChapterNoteSchema } from '@bookending/shared';
@@ -18,7 +19,7 @@ async function getOrCreateChapter(manuscriptId: string, num: number, title: stri
 }
 
 // GET /api/manuscripts/:id/chapters/:chapterNum/notes
-router.get('/:chapterNum/notes', async (req, res) => {
+router.get('/:chapterNum/notes', async (req, res, next: NextFunction) => {
   const params = req.params as Record<string, string>;
   if (!await ownerCheck(params.id, req.user!.id)) {
     res.status(403).json({ error: 'Forbidden' }); return;
@@ -35,13 +36,11 @@ router.get('/:chapterNum/notes', async (req, res) => {
       orderBy: { createdAt: 'asc' },
     });
     res.json({ data: notes });
-  } catch {
-    res.status(500).json({ error: 'Failed to fetch notes' });
-  }
+  } catch (err) { next(err); }
 });
 
 // POST /api/manuscripts/:id/chapters/:chapterNum/notes
-router.post('/:chapterNum/notes', async (req, res) => {
+router.post('/:chapterNum/notes', async (req, res, next: NextFunction) => {
   const params = req.params as Record<string, string>;
   if (!await ownerCheck(params.id, req.user!.id)) {
     res.status(403).json({ error: 'Forbidden' }); return;
@@ -69,14 +68,12 @@ router.post('/:chapterNum/notes', async (req, res) => {
       data: { chapterId: chapter.id, body: body.body, anchor: body.anchor ?? null },
     });
     res.status(201).json({ data: note });
-  } catch {
-    res.status(500).json({ error: 'Failed to create note' });
-  }
+  } catch (err) { next(err); }
 });
 
 // PATCH /api/manuscripts/:id/chapters/:chapterNum/notes/:noteId
 // Handles both content updates and restore (status: ACTIVE)
-router.patch('/:chapterNum/notes/:noteId', async (req, res) => {
+router.patch('/:chapterNum/notes/:noteId', async (req, res, next: NextFunction) => {
   const params = req.params as Record<string, string>;
   if (!await ownerCheck(params.id, req.user!.id)) {
     res.status(403).json({ error: 'Forbidden' }); return;
@@ -104,13 +101,11 @@ router.patch('/:chapterNum/notes/:noteId', async (req, res) => {
   try {
     const note = await prisma.chapterNote.update({ where: { id: params.noteId }, data: body });
     res.json({ data: note });
-  } catch {
-    res.status(500).json({ error: 'Failed to update note' });
-  }
+  } catch (err) { next(err); }
 });
 
-// DELETE /api/manuscripts/:id/chapters/:chapterNum/notes/:noteId — soft delete
-router.delete('/:chapterNum/notes/:noteId', async (req, res) => {
+// DELETE /api/manuscripts/:id/chapters/:chapterNum/notes/:noteId â€” soft delete
+router.delete('/:chapterNum/notes/:noteId', async (req, res, next: NextFunction) => {
   const params = req.params as Record<string, string>;
   if (!await ownerCheck(params.id, req.user!.id)) {
     res.status(403).json({ error: 'Forbidden' }); return;
@@ -121,13 +116,11 @@ router.delete('/:chapterNum/notes/:noteId', async (req, res) => {
       data: { status: 'ARCHIVED' },
     });
     res.json({ data: note });
-  } catch {
-    res.status(500).json({ error: 'Failed to archive note' });
-  }
+  } catch (err) { next(err); }
 });
 
-// DELETE /api/manuscripts/:id/chapters/:chapterNum/notes/:noteId/permanent — hard delete
-router.delete('/:chapterNum/notes/:noteId/permanent', async (req, res) => {
+// DELETE /api/manuscripts/:id/chapters/:chapterNum/notes/:noteId/permanent â€” hard delete
+router.delete('/:chapterNum/notes/:noteId/permanent', async (req, res, next: NextFunction) => {
   const params = req.params as Record<string, string>;
   if (!await ownerCheck(params.id, req.user!.id)) {
     res.status(403).json({ error: 'Forbidden' }); return;
@@ -135,9 +128,7 @@ router.delete('/:chapterNum/notes/:noteId/permanent', async (req, res) => {
   try {
     await prisma.chapterNote.delete({ where: { id: params.noteId } });
     res.json({ data: { deleted: true } });
-  } catch {
-    res.status(500).json({ error: 'Failed to delete note' });
-  }
+  } catch (err) { next(err); }
 });
 
 export default router;

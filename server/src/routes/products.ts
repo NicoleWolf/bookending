@@ -1,4 +1,5 @@
-import { Router } from 'express';
+﻿import { Router } from 'express';
+import type { NextFunction } from 'express';
 import { prisma } from '../lib/prisma';
 import type { ProductStatus } from '@prisma/client';
 import { parseBody } from '../lib/validate';
@@ -7,20 +8,18 @@ import { CreateProductSchema, UpdateProductSchema } from '@bookending/shared';
 const router = Router();
 
 // GET /api/products
-router.get('/', async (req, res) => {
+router.get('/', async (req, res, next: NextFunction) => {
   const authorId = req.user!.id;
   try {
     const products = await prisma.product.findMany({
       where: { authorId }, orderBy: { createdAt: 'asc' },
     });
     res.json({ data: products });
-  } catch {
-    res.status(500).json({ error: 'Failed to fetch products' });
-  }
+  } catch (err) { next(err); }
 });
 
 // POST /api/products
-router.post('/', async (req, res) => {
+router.post('/', async (req, res, next: NextFunction) => {
   const authorId = req.user!.id;
   const body = parseBody(CreateProductSchema, req.body, res);
   if (!body) return;
@@ -40,13 +39,11 @@ router.post('/', async (req, res) => {
       },
     });
     res.status(201).json({ data: product });
-  } catch {
-    res.status(500).json({ error: 'Failed to create product' });
-  }
+  } catch (err) { next(err); }
 });
 
 // PATCH /api/products/:id
-router.patch('/:id', async (req, res) => {
+router.patch('/:id', async (req, res, next: NextFunction) => {
   const { id } = req.params;
   const authorId = req.user!.id;
 
@@ -72,9 +69,22 @@ router.patch('/:id', async (req, res) => {
       },
     });
     res.json({ data: product });
-  } catch {
-    res.status(500).json({ error: 'Failed to update product' });
-  }
+  } catch (err) { next(err); }
+});
+
+// DELETE /api/products/:id — remove product (owner only)
+router.delete('/:id', async (req, res, next: NextFunction) => {
+  const { id } = req.params;
+  const authorId = req.user!.id;
+
+  const existing = await prisma.product.findUnique({ where: { id } });
+  if (!existing)                    { res.status(404).json({ error: 'Product not found' }); return; }
+  if (existing.authorId !== authorId) { res.status(403).json({ error: 'Forbidden' }); return; }
+
+  try {
+    await prisma.product.delete({ where: { id } });
+    res.json({ data: { deleted: true } });
+  } catch (err) { next(err); }
 });
 
 export default router;

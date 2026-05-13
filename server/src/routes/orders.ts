@@ -1,25 +1,30 @@
-import { Router } from 'express';
+﻿import { Router } from 'express';
+import type { NextFunction } from 'express';
 import { prisma } from '../lib/prisma';
 import { parseBody } from '../lib/validate';
 import { CreateOrderSchema, PatchOrderSchema } from '@bookending/shared';
 
 const router = Router();
 
-// GET /api/orders — list the authed user's incoming orders
-router.get('/', async (req, res) => {
+// GET /api/orders â€” list the authed user's incoming orders
+router.get('/', async (req, res, next: NextFunction) => {
   const userId = req.user!.id;
+  const limit  = Math.min(Math.max(parseInt(req.query.limit  as string) || 50, 1), 200);
+  const page   = Math.max(parseInt(req.query.page as string) || 1, 1);
   try {
-    const orders = await prisma.order.findMany({
-      where: { userId }, orderBy: { createdAt: 'desc' },
-    });
-    res.json({ data: orders });
-  } catch {
-    res.status(500).json({ error: 'Failed to fetch orders' });
-  }
+    const [orders, total] = await Promise.all([
+      prisma.order.findMany({
+        where: { userId }, orderBy: { createdAt: 'desc' },
+        take: limit, skip: (page - 1) * limit,
+      }),
+      prisma.order.count({ where: { userId } }),
+    ]);
+    res.json({ data: orders, meta: { total, page, limit } });
+  } catch (err) { next(err); }
 });
 
-// POST /api/orders — create an order (used for seeding and future checkout)
-router.post('/', async (req, res) => {
+// POST /api/orders â€” create an order (used for seeding and future checkout)
+router.post('/', async (req, res, next: NextFunction) => {
   const userId = req.user!.id;
   const body = parseBody(CreateOrderSchema, req.body, res);
   if (!body) return;
@@ -45,13 +50,11 @@ router.post('/', async (req, res) => {
       },
     });
     res.status(201).json({ data: order });
-  } catch {
-    res.status(500).json({ error: 'Failed to create order' });
-  }
+  } catch (err) { next(err); }
 });
 
-// PATCH /api/orders/:id — advance status (owner only)
-router.patch('/:id', async (req, res) => {
+// PATCH /api/orders/:id â€” advance status (owner only)
+router.patch('/:id', async (req, res, next: NextFunction) => {
   const { id } = req.params;
   const userId = req.user!.id;
 
@@ -65,9 +68,7 @@ router.patch('/:id', async (req, res) => {
   try {
     const order = await prisma.order.update({ where: { id }, data: { status: body.status } });
     res.json({ data: order });
-  } catch {
-    res.status(500).json({ error: 'Failed to update order' });
-  }
+  } catch (err) { next(err); }
 });
 
 export default router;

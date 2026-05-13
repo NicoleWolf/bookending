@@ -1,25 +1,24 @@
-import { Router } from 'express';
+﻿import { Router } from 'express';
+import type { NextFunction } from 'express';
 import { prisma } from '../lib/prisma';
 import { parseBody } from '../lib/validate';
 import { CreateChannelSchema, PatchChannelSchema } from '@bookending/shared';
 
 const router = Router();
 
-// GET /api/distribution — list the authed user's channels
-router.get('/', async (req, res) => {
+// GET /api/distribution â€” list the authed user's channels
+router.get('/', async (req, res, next: NextFunction) => {
   const userId = req.user!.id;
   try {
     const channels = await prisma.distributionChannel.findMany({
       where: { userId }, orderBy: { createdAt: 'asc' },
     });
     res.json({ data: channels });
-  } catch {
-    res.status(500).json({ error: 'Failed to fetch channels' });
-  }
+  } catch (err) { next(err); }
 });
 
-// POST /api/distribution — create a channel
-router.post('/', async (req, res) => {
+// POST /api/distribution â€” create a channel
+router.post('/', async (req, res, next: NextFunction) => {
   const userId = req.user!.id;
   const body = parseBody(CreateChannelSchema, req.body, res);
   if (!body) return;
@@ -38,13 +37,11 @@ router.post('/', async (req, res) => {
       },
     });
     res.status(201).json({ data: channel });
-  } catch {
-    res.status(500).json({ error: 'Failed to create channel' });
-  }
+  } catch (err) { next(err); }
 });
 
-// PATCH /api/distribution/:id — update channel (owner only)
-router.patch('/:id', async (req, res) => {
+// PATCH /api/distribution/:id â€” update channel (owner only)
+router.patch('/:id', async (req, res, next: NextFunction) => {
   const { id } = req.params;
   const userId = req.user!.id;
 
@@ -67,9 +64,22 @@ router.patch('/:id', async (req, res) => {
       },
     });
     res.json({ data: channel });
-  } catch {
-    res.status(500).json({ error: 'Failed to update channel' });
-  }
+  } catch (err) { next(err); }
+});
+
+// DELETE /api/distribution/:id — remove channel (owner only)
+router.delete('/:id', async (req, res, next: NextFunction) => {
+  const { id } = req.params;
+  const userId = req.user!.id;
+
+  const existing = await prisma.distributionChannel.findUnique({ where: { id } });
+  if (!existing)               { res.status(404).json({ error: 'Channel not found' }); return; }
+  if (existing.userId !== userId) { res.status(403).json({ error: 'Forbidden' }); return; }
+
+  try {
+    await prisma.distributionChannel.delete({ where: { id } });
+    res.json({ data: { deleted: true } });
+  } catch (err) { next(err); }
 });
 
 export default router;

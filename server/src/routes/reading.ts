@@ -1,4 +1,6 @@
-import { Router } from 'express';
+﻿import { Router } from 'express';
+import type { NextFunction } from 'express';
+import type { Prisma } from '@prisma/client';
 import { prisma } from '../lib/prisma';
 import { parseBody } from '../lib/validate';
 import {
@@ -22,7 +24,7 @@ import type {
 
 const router = Router();
 
-// ── Helpers ──────────────────────────────────────────────────────────────────
+// â”€â”€ Helpers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 const FOURTEEN_DAYS_MS = 14 * 24 * 60 * 60 * 1000;
 const SEVEN_DAYS_MS    =  7 * 24 * 60 * 60 * 1000;
@@ -37,22 +39,12 @@ function isDormant(lastOpenedAt: Date | null, lastActivityAt: Date | null): bool
   return lastActivityAt.getTime() <= lastOpenedAt.getTime();
 }
 
-async function getManuscriptInfo(msRef: string) {
-  const ms = await prisma.manuscript.findUnique({
-    where: { id: msRef },
-    include: {
-      author:   { select: { name: true } },
-      chapters: { select: { id: true, number: true } },
-    },
-  }).catch(() => null);
-  return ms;
-}
+// â”€â”€ GET /api/reading/hub â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
-// ── GET /api/reading/hub ──────────────────────────────────────────────────────
-
-router.get('/hub', async (req, res) => {
+router.get('/hub', async (req, res, next: NextFunction) => {
   const userId = req.user!.id;
   const now = new Date();
+  try {
 
   const [progressRows, shelfRows] = await Promise.all([
     prisma.readingProgress.findMany({
@@ -65,102 +57,130 @@ router.get('/hub', async (req, res) => {
     }),
   ]);
 
-  const warmProgress  = progressRows.filter(p => !p.finishedAt);
+  const warmProgress     = progressRows.filter(p => !p.finishedAt);
   const finishedProgress = progressRows.filter(p => !!p.finishedAt);
 
+  // Batch-load all referenced manuscripts in one query
+  const allMsRefs = [
+    ...new Set([
+      ...warmProgress.slice(0, 10).map(p => p.manuscriptRef),
+      ...shelfRows.slice(0, 10).map(s => s.manuscriptRef),
+      ...finishedProgress.slice(0, 5).map(p => p.manuscriptRef),
+    ]),
+  ];
+  type MsRow = Prisma.ManuscriptGetPayload<{
+    include: { author: { select: { name: true } }; chapters: { select: { id: true; number: true } } };
+  }>;
+  let manuscriptRows: MsRow[] = [];
+  if (allMsRefs.length > 0) {
+    try {
+      manuscriptRows = await prisma.manuscript.findMany({
+        where:   { id: { in: allMsRefs } },
+        include: {
+          author:   { select: { name: true } },
+          chapters: { select: { id: true, number: true } },
+        },
+      });
+    } catch { /* tolerate — returns empty, hub degrades gracefully */ }
+  }
+  const msMap = new Map(manuscriptRows.map(m => [m.id, m]));
+
+  // Batch-load chapters with active notes for warm manuscripts that have doneChapters
+  const warmMsRefsWithDone = warmProgress.slice(0, 10)
+    .filter(p => (JSON.parse(p.doneChapters ?? '[]') as number[]).length > 0)
+    .map(p => p.manuscriptRef);
+
+  type ChRow = Prisma.ChapterGetPayload<{ include: { notes: true } }>;
+  let chaptersWithNotes: ChRow[] = [];
+  if (warmMsRefsWithDone.length > 0) {
+    try {
+      chaptersWithNotes = await prisma.chapter.findMany({
+        where:   { manuscriptId: { in: warmMsRefsWithDone } },
+        include: { notes: { where: { status: 'ACTIVE' }, take: 1 } },
+      });
+    } catch { /* tolerate */ }
+  }
+  const chaptersByMs = new Map<string, ChRow[]>();
+  for (const ch of chaptersWithNotes) {
+    const list = chaptersByMs.get(ch.manuscriptId) ?? [];
+    list.push(ch);
+    chaptersByMs.set(ch.manuscriptId, list);
+  }
+
   // Build warm items
-  const warm: HubWarmItem[] = await Promise.all(
-    warmProgress.slice(0, 10).map(async p => {
-      const msInfo = await getManuscriptInfo(p.manuscriptRef);
-      const doneChapters = (JSON.parse(p.doneChapters ?? '[]') as number[]);
+  const warm: HubWarmItem[] = warmProgress.slice(0, 10).map(p => {
+    const msInfo      = msMap.get(p.manuscriptRef) ?? null;
+    const doneChapters = JSON.parse(p.doneChapters ?? '[]') as number[];
+    const newChapterCount = 0;
 
-      // releasedAt column added via migration — for now default to 0
-      const newChapterCount = 0;
-
-      // Check for unread author notes on read chapters (simplified: count active notes on any chapter)
-      let newNoteCount = 0;
-      let newAuthorNote: HubWarmItem['newAuthorNote'] = null;
-      if (msInfo && doneChapters.length > 0) {
-        const msChapters = await prisma.chapter.findMany({
-          where: { manuscriptId: p.manuscriptRef },
-          include: { notes: { where: { status: 'ACTIVE' }, take: 1 } },
-        }).catch(() => []);
-
-        for (const ch of msChapters) {
-          if (doneChapters.includes(ch.number) && ch.notes.length > 0) {
-            newNoteCount++;
-            if (!newAuthorNote) {
-              const ms = await prisma.manuscript.findUnique({
-                where: { id: p.manuscriptRef },
-                select: { author: { select: { name: true } } },
-              }).catch(() => null);
-              const firstName = ms?.author.name.split(' ')[0] ?? 'the author';
-              newAuthorNote = {
-                chapterNum:       ch.number,
-                authorFirstName:  firstName,
-                body:             ch.notes[0].body,
-              };
-            }
+    let newNoteCount = 0;
+    let newAuthorNote: HubWarmItem['newAuthorNote'] = null;
+    if (msInfo && doneChapters.length > 0) {
+      const msChapters = chaptersByMs.get(p.manuscriptRef) ?? [];
+      for (const ch of msChapters) {
+        if (doneChapters.includes(ch.number) && ch.notes.length > 0) {
+          newNoteCount++;
+          if (!newAuthorNote) {
+            const firstName = msInfo.author.name.split(' ')[0] ?? 'the author';
+            newAuthorNote = {
+              chapterNum:      ch.number,
+              authorFirstName: firstName,
+              body:            ch.notes[0].body,
+            };
           }
         }
       }
+    }
 
-      const dormant = isDormant(p.lastOpenedAt, p.lastActivityAt);
-
-      return {
-        manuscriptRef:   p.manuscriptRef,
-        title:           msInfo?.title ?? null,
-        authorName:      msInfo?.author?.name ?? null,
-        draftLabel:      null,
-        genre:           msInfo?.genre ?? null,
-        totalChapters:   msInfo?.chapters?.length ?? 0,
-        doneChapters,
-        mood:            p.mood,
-        lastOpenedAt:    p.lastOpenedAt?.toISOString() ?? null,
-        lastActivityAt:  p.lastActivityAt?.toISOString() ?? null,
-        isDormant:       dormant,
-        newChapterCount,
-        newNoteCount,
-        newAuthorNote,
-      };
-    })
-  );
+    return {
+      manuscriptRef:  p.manuscriptRef,
+      title:          msInfo?.title ?? null,
+      authorName:     msInfo?.author?.name ?? null,
+      draftLabel:     null,
+      genre:          msInfo?.genre ?? null,
+      totalChapters:  msInfo?.chapters?.length ?? 0,
+      doneChapters,
+      mood:           p.mood,
+      lastOpenedAt:   p.lastOpenedAt?.toISOString() ?? null,
+      lastActivityAt: p.lastActivityAt?.toISOString() ?? null,
+      isDormant:      isDormant(p.lastOpenedAt, p.lastActivityAt),
+      newChapterCount,
+      newNoteCount,
+      newAuthorNote,
+    };
+  });
 
   // Build shelf items
-  const shelf: HubShelfItem[] = await Promise.all(
-    shelfRows.slice(0, 10).map(async s => {
-      const msInfo = await getManuscriptInfo(s.manuscriptRef);
-      return {
-        manuscriptRef:           s.manuscriptRef,
-        title:                   msInfo?.title ?? null,
-        authorName:              msInfo?.author?.name ?? null,
-        genre:                   msInfo?.genre ?? null,
-        totalChapters:           msInfo?.chapters?.length ?? 0,
-        draftLabel:              null,
-        source:                  s.source,
-        recommendationDimension: s.recommendationDimension,
-        circleCount:             null,
-      };
-    })
-  );
+  const shelf: HubShelfItem[] = shelfRows.slice(0, 10).map(s => {
+    const msInfo = msMap.get(s.manuscriptRef) ?? null;
+    return {
+      manuscriptRef:           s.manuscriptRef,
+      title:                   msInfo?.title ?? null,
+      authorName:              msInfo?.author?.name ?? null,
+      genre:                   msInfo?.genre ?? null,
+      totalChapters:           msInfo?.chapters?.length ?? 0,
+      draftLabel:              null,
+      source:                  s.source,
+      recommendationDimension: s.recommendationDimension,
+      circleCount:             null,
+    };
+  });
 
-  // Build finished items (show most recent first)
-  const finished: HubFinishedItem[] = await Promise.all(
-    finishedProgress.slice(0, 5).map(async p => {
-      const msInfo = await getManuscriptInfo(p.manuscriptRef);
-      return {
-        manuscriptRef: p.manuscriptRef,
-        title:         msInfo?.title ?? null,
-        authorName:    msInfo?.author?.name ?? null,
-        finishedAt:    p.finishedAt!.toISOString(),
-        verdict:       p.verdict,
-        impression:    p.message,
-        totalChapters: msInfo?.chapters?.length ?? 0,
-      };
-    })
-  );
+  // Build finished items
+  const finished: HubFinishedItem[] = finishedProgress.slice(0, 5).map(p => {
+    const msInfo = msMap.get(p.manuscriptRef) ?? null;
+    return {
+      manuscriptRef: p.manuscriptRef,
+      title:         msInfo?.title ?? null,
+      authorName:    msInfo?.author?.name ?? null,
+      finishedAt:    p.finishedAt!.toISOString(),
+      verdict:       p.verdict,
+      impression:    p.message,
+      totalChapters: msInfo?.chapters?.length ?? 0,
+    };
+  });
 
-  // Season = current year's Q-based quarters (Jan–Mar, Apr–Jun, Jul–Sep, Oct–Dec)
+  // Season = current year's Q-based quarters (Janâ€“Mar, Aprâ€“Jun, Julâ€“Sep, Octâ€“Dec)
   const seasonStart = new Date(now.getFullYear(), Math.floor(now.getMonth() / 3) * 3, 1);
   const finishedThisSeason = finishedProgress.filter(p => p.finishedAt! >= seasonStart).length;
 
@@ -173,7 +193,7 @@ router.get('/hub', async (req, res) => {
     readerProfile = allCaughtUp ? 'all_caught_up' : 'returning';
   }
 
-  // House Suggests — priority ranked
+  // House Suggests â€” priority ranked
   let houseSuggests: HubRecommendation | null = null;
 
   // Tier 1: warm ms with unread author note on a read chapter
@@ -185,7 +205,7 @@ router.get('/hub', async (req, res) => {
     houseSuggests = {
       tier: 1,
       manuscriptRef: t1.manuscriptRef,
-      label: `${firstName} left a note on chapter ${chNum} of <em>${title}</em> — and you've already read it.`,
+      label: `${firstName} left a note on chapter ${chNum} of <em>${title}</em> â€” and you've already read it.`,
       action: 'Continue reading',
       actionVerb: 'continue',
     };
@@ -207,7 +227,7 @@ router.get('/hub', async (req, res) => {
     }
   }
 
-  // Tier 3: warm ms not opened in 7–28 days
+  // Tier 3: warm ms not opened in 7â€“28 days
   if (!houseSuggests) {
     const t3 = warm.find(w => {
       if (!w.lastOpenedAt) return false;
@@ -271,13 +291,15 @@ router.get('/hub', async (req, res) => {
   };
 
   res.json({ data: response });
+  } catch (err) { next(err); }
 });
 
-// ── GET /api/reading/:msRef — progress + annotations + cohort ────────────────
+// â”€â”€ GET /api/reading/:msRef â€” progress + annotations + cohort â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
-router.get('/:msRef', async (req, res) => {
+router.get('/:msRef', async (req, res, next: NextFunction) => {
   const userId = req.user!.id;
   const { msRef } = req.params;
+  try {
 
   const [progress, annotations, cohortCount] = await Promise.all([
     prisma.readingProgress.findUnique({ where: { userId_manuscriptRef: { userId, manuscriptRef: msRef } } }),
@@ -301,317 +323,303 @@ router.get('/:msRef', async (req, res) => {
   }));
 
   res.json({ data: { progress, annotations: annotationsWithReplies, cohortCount } });
+  } catch (err) { next(err); }
 });
 
-// ── PUT /api/reading/:msRef/progress ─────────────────────────────────────────
+// â”€â”€ PUT /api/reading/:msRef/progress â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
-router.put('/:msRef/progress', async (req, res) => {
+router.put('/:msRef/progress', async (req, res, next: NextFunction) => {
   const userId = req.user!.id;
   const { msRef } = req.params;
   const body = parseBody(PatchProgressSchema, req.body, res);
   if (!body) return;
+  try {
+    const data: Record<string, unknown> = { lastOpenedAt: new Date() };
+    if (body.doneChapters !== undefined) data.doneChapters = JSON.stringify(body.doneChapters);
+    if (body.mood         !== undefined) data.mood         = body.mood;
+    if (body.stars        !== undefined) data.stars        = body.stars;
+    if (body.message      !== undefined) data.message      = body.message;
+    if (body.submittedAt  !== undefined) data.submittedAt  = body.submittedAt ? new Date(body.submittedAt) : null;
 
-  const data: Record<string, unknown> = { lastOpenedAt: new Date() };
-  if (body.doneChapters !== undefined) data.doneChapters = JSON.stringify(body.doneChapters);
-  if (body.mood         !== undefined) data.mood         = body.mood;
-  if (body.stars        !== undefined) data.stars        = body.stars;
-  if (body.message      !== undefined) data.message      = body.message;
-  if (body.submittedAt  !== undefined) data.submittedAt  = body.submittedAt ? new Date(body.submittedAt) : null;
+    const progress = await prisma.readingProgress.upsert({
+      where:  { userId_manuscriptRef: { userId, manuscriptRef: msRef } },
+      update: data,
+      create: { userId, manuscriptRef: msRef, ...data },
+    });
 
-  const progress = await prisma.readingProgress.upsert({
-    where:  { userId_manuscriptRef: { userId, manuscriptRef: msRef } },
-    update: data,
-    create: { userId, manuscriptRef: msRef, ...data },
-  });
-
-  res.json({ data: progress });
+    res.json({ data: progress });
+  } catch (err) { next(err); }
 });
 
-// ── PATCH /api/reading/:msRef/finish ─────────────────────────────────────────
+// â”€â”€ PATCH /api/reading/:msRef/finish â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
-router.patch('/:msRef/finish', async (req, res) => {
+router.patch('/:msRef/finish', async (req, res, next: NextFunction) => {
   const userId = req.user!.id;
   const { msRef } = req.params;
   const body = parseBody(FinishReadingSchema, req.body, res);
   if (!body) return;
-
-  const progress = await prisma.readingProgress.upsert({
-    where:  { userId_manuscriptRef: { userId, manuscriptRef: msRef } },
-    update: { finishedAt: new Date(), verdict: body.verdict },
-    create: { userId, manuscriptRef: msRef, finishedAt: new Date(), verdict: body.verdict },
-  });
-
-  res.json({ data: progress });
+  try {
+    const progress = await prisma.readingProgress.upsert({
+      where:  { userId_manuscriptRef: { userId, manuscriptRef: msRef } },
+      update: { finishedAt: new Date(), verdict: body.verdict },
+      create: { userId, manuscriptRef: msRef, finishedAt: new Date(), verdict: body.verdict },
+    });
+    res.json({ data: progress });
+  } catch (err) { next(err); }
 });
 
-// ── POST /api/reading/shelf ───────────────────────────────────────────────────
+// â”€â”€ POST /api/reading/shelf â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
-router.post('/shelf', async (req, res) => {
+router.post('/shelf', async (req, res, next: NextFunction) => {
   const userId = req.user!.id;
   const body = parseBody(AddToShelfSchema, req.body, res);
   if (!body) return;
-
-  const entry = await prisma.shelfEntry.upsert({
-    where:  { userId_manuscriptRef: { userId, manuscriptRef: body.manuscriptRef } },
-    update: { source: body.source, recommendationDimension: body.recommendationDimension ?? null },
-    create: {
-      userId,
-      manuscriptRef:           body.manuscriptRef,
-      source:                  body.source,
-      recommendationDimension: body.recommendationDimension ?? null,
-    },
-  });
-
-  res.status(201).json({ data: entry });
+  try {
+    const entry = await prisma.shelfEntry.upsert({
+      where:  { userId_manuscriptRef: { userId, manuscriptRef: body.manuscriptRef } },
+      update: { source: body.source, recommendationDimension: body.recommendationDimension ?? null },
+      create: {
+        userId,
+        manuscriptRef:           body.manuscriptRef,
+        source:                  body.source,
+        recommendationDimension: body.recommendationDimension ?? null,
+      },
+    });
+    res.status(201).json({ data: entry });
+  } catch (err) { next(err); }
 });
 
-// ── DELETE /api/reading/shelf/:msRef ─────────────────────────────────────────
+// â”€â”€ DELETE /api/reading/shelf/:msRef â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
-router.delete('/shelf/:msRef', async (req, res) => {
+router.delete('/shelf/:msRef', async (req, res, next: NextFunction) => {
   const userId = req.user!.id;
   const { msRef } = req.params;
+  try {
+    const existing = await prisma.shelfEntry.findUnique({
+      where: { userId_manuscriptRef: { userId, manuscriptRef: msRef } },
+    });
+    if (!existing) { res.status(404).json({ error: 'Shelf entry not found' }); return; }
 
-  const existing = await prisma.shelfEntry.findUnique({
-    where: { userId_manuscriptRef: { userId, manuscriptRef: msRef } },
-  });
-  if (!existing) {
-    res.status(404).json({ error: 'Shelf entry not found' });
-    return;
-  }
-
-  await prisma.shelfEntry.delete({
-    where: { userId_manuscriptRef: { userId, manuscriptRef: msRef } },
-  });
-
-  res.json({ data: { manuscriptRef: msRef } });
+    await prisma.shelfEntry.delete({
+      where: { userId_manuscriptRef: { userId, manuscriptRef: msRef } },
+    });
+    res.json({ data: { manuscriptRef: msRef } });
+  } catch (err) { next(err); }
 });
 
-// ── POST /api/reading/recommendation/dismiss ──────────────────────────────────
+// â”€â”€ POST /api/reading/recommendation/dismiss â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 router.post('/recommendation/dismiss', async (req, res) => {
   const body = parseBody(DismissRecommendationSchema, req.body, res);
   if (!body) return;
   // Dismissed tier is tracked client-side (sessionStorage) for now.
-  // Server acknowledges and the client calls GET /hub again, passing dismissed tiers as query params.
   res.json({ data: { dismissed: body.tier } });
 });
 
-// ── POST /api/reading/:msRef/annotations ─────────────────────────────────────
+// â”€â”€ POST /api/reading/:msRef/annotations â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
-router.post('/:msRef/annotations', async (req, res) => {
+router.post('/:msRef/annotations', async (req, res, next: NextFunction) => {
   const userId = req.user!.id;
   const { msRef } = req.params;
   const body = parseBody(CreateAnnotationSchema, req.body, res);
   if (!body) return;
-
-  const annotation = await prisma.annotation.create({
-    data: {
-      userId, manuscriptRef: msRef,
-      chapterId: body.chapterId, paraId: body.paraId,
-      selectedText: body.selectedText,
-      note: body.note ?? '',
-      status: 'draft',
-    },
-    include: { replies: true },
-  });
-
-  // Bump lastActivityAt on progress
-  await prisma.readingProgress.upsert({
-    where:  { userId_manuscriptRef: { userId, manuscriptRef: msRef } },
-    update: { lastActivityAt: new Date() },
-    create: { userId, manuscriptRef: msRef, lastActivityAt: new Date() },
-  }).catch(() => {});
-
-  res.status(201).json({ data: annotation });
+  try {
+    const annotation = await prisma.annotation.create({
+      data: {
+        userId, manuscriptRef: msRef,
+        chapterId: body.chapterId, paraId: body.paraId,
+        selectedText: body.selectedText,
+        note: body.note ?? '',
+        status: 'draft',
+      },
+      include: { replies: true },
+    });
+    await prisma.readingProgress.upsert({
+      where:  { userId_manuscriptRef: { userId, manuscriptRef: msRef } },
+      update: { lastActivityAt: new Date() },
+      create: { userId, manuscriptRef: msRef, lastActivityAt: new Date() },
+    }).catch(() => {});
+    res.status(201).json({ data: annotation });
+  } catch (err) { next(err); }
 });
 
-// ── PATCH /api/reading/:msRef/annotations/:id ────────────────────────────────
+// â”€â”€ PATCH /api/reading/:msRef/annotations/:id â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
-router.patch('/:msRef/annotations/:id', async (req, res) => {
+router.patch('/:msRef/annotations/:id', async (req, res, next: NextFunction) => {
   const userId = req.user!.id;
   const { id } = req.params;
   const body = parseBody(PatchAnnotationSchema, req.body, res);
   if (!body) return;
-
-  const existing = await prisma.annotation.findUnique({ where: { id } });
-  if (!existing || existing.userId !== userId) {
-    res.status(404).json({ error: 'Annotation not found' });
-    return;
-  }
-
-  const data: Record<string, unknown> = {};
-  if (body.note !== undefined) data.note = body.note;
-
-  const updated = await prisma.annotation.update({
-    where: { id },
-    data,
-    include: { replies: { orderBy: { createdAt: 'asc' } } },
-  });
-  res.json({ data: updated });
+  try {
+    const existing = await prisma.annotation.findUnique({ where: { id } });
+    if (!existing || existing.userId !== userId) {
+      res.status(404).json({ error: 'Annotation not found' }); return;
+    }
+    const data: Record<string, unknown> = {};
+    if (body.note !== undefined) data.note = body.note;
+    const updated = await prisma.annotation.update({
+      where: { id }, data,
+      include: { replies: { orderBy: { createdAt: 'asc' } } },
+    });
+    res.json({ data: updated });
+  } catch (err) { next(err); }
 });
 
-// ── DELETE /api/reading/:msRef/annotations/:id ───────────────────────────────
+// â”€â”€ DELETE /api/reading/:msRef/annotations/:id â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
-router.delete('/:msRef/annotations/:id', async (req, res) => {
+router.delete('/:msRef/annotations/:id', async (req, res, next: NextFunction) => {
   const userId = req.user!.id;
   const { id } = req.params;
-
-  const existing = await prisma.annotation.findUnique({ where: { id } });
-  if (!existing || existing.userId !== userId) {
-    res.status(404).json({ error: 'Annotation not found' });
-    return;
-  }
-
-  await prisma.annotation.delete({ where: { id } });
-  res.json({ data: { id } });
+  try {
+    const existing = await prisma.annotation.findUnique({ where: { id } });
+    if (!existing || existing.userId !== userId) {
+      res.status(404).json({ error: 'Annotation not found' }); return;
+    }
+    await prisma.annotation.delete({ where: { id } });
+    res.json({ data: { id } });
+  } catch (err) { next(err); }
 });
 
-// ── POST /api/reading/:msRef/annotations/:id/replies ─────────────────────────
+// â”€â”€ POST /api/reading/:msRef/annotations/:id/replies â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
-router.post('/:msRef/annotations/:id/replies', async (req, res) => {
+router.post('/:msRef/annotations/:id/replies', async (req, res, next: NextFunction) => {
   const userId = req.user!.id;
   const { msRef, id } = req.params;
   const body = parseBody(CreateReplySchema, req.body, res);
   if (!body) return;
-
-  const existing = await prisma.annotation.findUnique({ where: { id } });
-  if (!existing || existing.userId !== userId) {
-    res.status(404).json({ error: 'Annotation not found' });
-    return;
-  }
-
-  const reply = await prisma.annotationReply.create({
-    data: { annotationId: id, authorRole: body.authorRole, body: body.body },
-  });
-
-  await prisma.readingProgress.upsert({
-    where:  { userId_manuscriptRef: { userId, manuscriptRef: msRef } },
-    update: { lastActivityAt: new Date() },
-    create: { userId, manuscriptRef: msRef, lastActivityAt: new Date() },
-  }).catch(() => {});
-
-  res.status(201).json({ data: reply });
+  try {
+    const existing = await prisma.annotation.findUnique({ where: { id } });
+    if (!existing || existing.userId !== userId) {
+      res.status(404).json({ error: 'Annotation not found' }); return;
+    }
+    const reply = await prisma.annotationReply.create({
+      data: { annotationId: id, authorRole: body.authorRole, body: body.body },
+    });
+    await prisma.readingProgress.upsert({
+      where:  { userId_manuscriptRef: { userId, manuscriptRef: msRef } },
+      update: { lastActivityAt: new Date() },
+      create: { userId, manuscriptRef: msRef, lastActivityAt: new Date() },
+    }).catch(() => {});
+    res.status(201).json({ data: reply });
+  } catch (err) { next(err); }
 });
 
-// ── POST /api/reading/:msRef/chapters/:chapterNum/submit ──────────────────────
+// â”€â”€ POST /api/reading/:msRef/chapters/:chapterNum/submit â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
-router.post('/:msRef/chapters/:chapterNum/submit', async (req, res) => {
+router.post('/:msRef/chapters/:chapterNum/submit', async (req, res, next: NextFunction) => {
   const userId = req.user!.id;
   const { msRef, chapterNum } = req.params;
   const chNum = parseInt(chapterNum, 10);
   if (isNaN(chNum)) { res.status(400).json({ error: 'invalid chapterNum' }); return; }
-
-  const result = await prisma.annotation.updateMany({
-    where: { userId, manuscriptRef: msRef, chapterId: chNum, status: 'draft' },
-    data:  { status: 'submitted' },
-  });
-
-  await prisma.readingProgress.upsert({
-    where:  { userId_manuscriptRef: { userId, manuscriptRef: msRef } },
-    update: { lastActivityAt: new Date() },
-    create: { userId, manuscriptRef: msRef, lastActivityAt: new Date() },
-  }).catch(() => {});
-
-  res.json({ data: { submitted: result.count } });
+  try {
+    const result = await prisma.annotation.updateMany({
+      where: { userId, manuscriptRef: msRef, chapterId: chNum, status: 'draft' },
+      data:  { status: 'submitted' },
+    });
+    await prisma.readingProgress.upsert({
+      where:  { userId_manuscriptRef: { userId, manuscriptRef: msRef } },
+      update: { lastActivityAt: new Date() },
+      create: { userId, manuscriptRef: msRef, lastActivityAt: new Date() },
+    }).catch(() => {});
+    res.json({ data: { submitted: result.count } });
+  } catch (err) { next(err); }
 });
 
-// ── GET /api/reading/:msRef/impression ───────────────────────────────────────
+// â”€â”€ GET /api/reading/:msRef/impression â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
-router.get('/:msRef/impression', async (req, res) => {
+router.get('/:msRef/impression', async (req, res, next: NextFunction) => {
   const userId = req.user!.id;
   const { msRef } = req.params;
-
-  const points = await prisma.impressionPoint.findMany({
-    where:   { userId, manuscriptRef: msRef },
-    orderBy: { chapterNum: 'asc' },
-    select:  { id: true, chapterNum: true, stance: true, createdAt: true },
-  });
-
-  res.json({ data: points.map(p => ({ ...p, createdAt: p.createdAt.toISOString() })) });
+  try {
+    const points = await prisma.impressionPoint.findMany({
+      where:   { userId, manuscriptRef: msRef },
+      orderBy: { chapterNum: 'asc' },
+      select:  { id: true, chapterNum: true, stance: true, createdAt: true },
+    });
+    res.json({ data: points.map(p => ({ ...p, createdAt: p.createdAt.toISOString() })) });
+  } catch (err) { next(err); }
 });
 
-// ── PUT /api/reading/:msRef/impression/:chapterNum ────────────────────────────
+// â”€â”€ PUT /api/reading/:msRef/impression/:chapterNum â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
-router.put('/:msRef/impression/:chapterNum', async (req, res) => {
+router.put('/:msRef/impression/:chapterNum', async (req, res, next: NextFunction) => {
   const userId = req.user!.id;
   const { msRef, chapterNum } = req.params;
   const chNum = parseInt(chapterNum, 10);
   if (isNaN(chNum)) { res.status(400).json({ error: 'invalid chapterNum' }); return; }
-
   const body = parseBody(UpsertImpressionSchema, req.body, res);
   if (!body) return;
-
-  const point = await prisma.impressionPoint.upsert({
-    where:  { userId_manuscriptRef_chapterNum: { userId, manuscriptRef: msRef, chapterNum: chNum } },
-    update: { stance: body.stance },
-    create: { userId, manuscriptRef: msRef, chapterNum: chNum, stance: body.stance },
-  });
-
-  res.json({ data: { ...point, createdAt: point.createdAt.toISOString() } });
+  try {
+    const point = await prisma.impressionPoint.upsert({
+      where:  { userId_manuscriptRef_chapterNum: { userId, manuscriptRef: msRef, chapterNum: chNum } },
+      update: { stance: body.stance },
+      create: { userId, manuscriptRef: msRef, chapterNum: chNum, stance: body.stance },
+    });
+    res.json({ data: { ...point, createdAt: point.createdAt.toISOString() } });
+  } catch (err) { next(err); }
 });
 
-// ── GET /api/reading/:msRef/manuscript — chapter content for enrolled readers ─
+// â”€â”€ GET /api/reading/:msRef/manuscript â€” chapter content for enrolled readers â”€
 
-router.get('/:msRef/manuscript', async (req, res) => {
+router.get('/:msRef/manuscript', async (req, res, next: NextFunction) => {
   const { msRef } = req.params;
   const userId = req.user!.id;
+  try {
+    const ms = await prisma.manuscript.findUnique({
+      where: { id: msRef },
+      include: {
+        chapters:    { orderBy: { number: 'asc' } },
+        betaReaders: { where: { userId }, select: { id: true } },
+      },
+    });
 
-  const ms = await prisma.manuscript.findUnique({
-    where: { id: msRef },
-    include: {
-      chapters:    { orderBy: { number: 'asc' } },
-      betaReaders: { where: { userId }, select: { id: true } },
-    },
-  }).catch(() => null);
+    if (!ms) { res.status(404).json({ error: 'Manuscript not found' }); return; }
 
-  if (!ms) { res.status(404).json({ error: 'Manuscript not found' }); return; }
+    const isAuthor = ms.authorId === userId;
+    const isReader = ms.betaReaders.length > 0;
+    if (!isAuthor && !isReader) { res.status(403).json({ error: 'Forbidden' }); return; }
 
-  const isAuthor = ms.authorId === userId;
-  const isReader = ms.betaReaders.length > 0;
-  if (!isAuthor && !isReader) {
-    res.status(403).json({ error: 'Forbidden' }); return;
-  }
+    function htmlToParas(html: string | null): { id: number; text: string }[] {
+      if (!html) return [];
+      const matches = html.match(/<p[^>]*>([\s\S]*?)<\/p>/g) ?? [];
+      return matches
+        .map((tag, idx) => {
+          const inner = tag
+            .replace(/<[^>]+>/g, ' ')
+            .replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&apos;/g, "'").replace(/&#\d+;/g, ' ')
+            .replace(/\s+/g, ' ').trim();
+          return { id: idx + 1, text: inner };
+        })
+        .filter(p => p.text.length > 0);
+    }
 
-  function htmlToParas(html: string | null): { id: number; text: string }[] {
-    if (!html) return [];
-    const matches = html.match(/<p[^>]*>([\s\S]*?)<\/p>/g) ?? [];
-    return matches
-      .map((tag, idx) => {
-        const inner = tag
-          .replace(/<[^>]+>/g, ' ')
-          .replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&apos;/g, "'").replace(/&#\d+;/g, ' ')
-          .replace(/\s+/g, ' ').trim();
-        return { id: idx + 1, text: inner };
-      })
-      .filter(p => p.text.length > 0);
-  }
+    const hasReleaseDates = ms.chapters.some(ch => ch.releasedAt !== null);
+    const mode = hasReleaseDates ? 'serialized' : 'complete';
+    const accessibleChapters = (isAuthor || !hasReleaseDates)
+      ? ms.chapters
+      : ms.chapters.filter(ch => ch.releasedAt !== null);
 
-  const hasReleaseDates = ms.chapters.some(ch => ch.releasedAt !== null);
-  const mode = hasReleaseDates ? 'serialized' : 'complete';
-  const accessibleChapters = (isAuthor || !hasReleaseDates)
-    ? ms.chapters
-    : ms.chapters.filter(ch => ch.releasedAt !== null);
-
-  res.json({ data: {
-    id:           ms.id,
-    title:        ms.title,
-    draft:        ms.wordCount > 0 ? `${ms.wordCount.toLocaleString()} words` : 'Draft 1',
-    instructions: ms.description ?? '',
-    mode,
-    chapters: accessibleChapters.map(ch => ({
-      id:         ch.number,
-      number:     ch.number,
-      title:      ch.title,
-      paras:      htmlToParas(ch.content),
-      releasedAt: ch.releasedAt?.toISOString() ?? null,
-      expectedAt: ch.expectedAt?.toISOString() ?? null,
-    })),
-  }});
+    res.json({ data: {
+      id:           ms.id,
+      title:        ms.title,
+      draft:        ms.wordCount > 0 ? `${ms.wordCount.toLocaleString()} words` : 'Draft 1',
+      instructions: ms.description ?? '',
+      mode,
+      chapters: accessibleChapters.map(ch => ({
+        id:         ch.number,
+        number:     ch.number,
+        title:      ch.title,
+        paras:      htmlToParas(ch.content),
+        releasedAt: ch.releasedAt?.toISOString() ?? null,
+        expectedAt: ch.expectedAt?.toISOString() ?? null,
+      })),
+    }});
+  } catch (err) { next(err); }
 });
 
-// ── GET /api/reading/:msRef/chapter-notes ────────────────────────────────────
+// â”€â”€ GET /api/reading/:msRef/chapter-notes â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
-router.get('/:msRef/chapter-notes', async (req, res) => {
+router.get('/:msRef/chapter-notes', async (req, res, next: NextFunction) => {
   const { msRef } = req.params;
   const userId = req.user!.id;
   try {
@@ -642,9 +650,7 @@ router.get('/:msRef/chapter-notes', async (req, res) => {
       .filter(ch => ch.notes.length > 0)
       .map(ch => ({ chapterNum: ch.number, body: ch.notes[0].body }));
     res.json({ data: result });
-  } catch {
-    res.status(500).json({ error: 'Failed to fetch chapter notes' });
-  }
+  } catch (err) { next(err); }
 });
 
 export default router;

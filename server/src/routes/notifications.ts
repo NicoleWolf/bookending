@@ -1,12 +1,13 @@
-import { Router } from 'express';
+﻿import { Router } from 'express';
+import type { NextFunction } from 'express';
 import { prisma } from '../lib/prisma';
 import { parseBody } from '../lib/validate';
 import { PatchNotificationSchema } from '@bookending/shared';
 
 const router = Router();
 
-// GET /api/notifications — all due notifications (PENDING + SENT) for the authed user
-router.get('/', async (req, res) => {
+// GET /api/notifications â€” all due notifications (PENDING + SENT) for the authed user
+router.get('/', async (req, res, next: NextFunction) => {
   const userId = req.user!.id;
   try {
     const notifications = await prisma.notification.findMany({
@@ -18,13 +19,11 @@ router.get('/', async (req, res) => {
       orderBy: { scheduledAt: 'desc' },
     });
     res.json({ data: notifications });
-  } catch {
-    res.status(500).json({ error: 'Failed to fetch notifications' });
-  }
+  } catch (err) { next(err); }
 });
 
-// PATCH /api/notifications/:id — mark SENT or DISMISSED (owner only)
-router.patch('/:id', async (req, res) => {
+// PATCH /api/notifications/:id â€” mark SENT or DISMISSED (owner only)
+router.patch('/:id', async (req, res, next: NextFunction) => {
   const { id } = req.params;
   const userId = req.user!.id;
 
@@ -44,9 +43,7 @@ router.patch('/:id', async (req, res) => {
       },
     });
     res.json({ data: notification });
-  } catch {
-    res.status(500).json({ error: 'Failed to update notification' });
-  }
+  } catch (err) { next(err); }
 });
 
 export default router;

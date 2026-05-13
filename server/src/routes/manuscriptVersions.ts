@@ -1,4 +1,5 @@
 import { Router } from 'express';
+import type { NextFunction } from 'express';
 import { prisma } from '../lib/prisma';
 
 // mergeParams exposes :id (manuscriptId) from the parent manuscripts router
@@ -10,17 +11,15 @@ async function ownerCheck(manuscriptId: string, userId: string): Promise<boolean
 }
 
 // GET /api/manuscripts/:id/versions
-// Returns version list (metadata only, no chapter content) for this user, newest first.
-router.get('/', async (req, res) => {
+router.get('/', async (req, res, next: NextFunction) => {
   const params = req.params as Record<string, string>;
   const manuscriptId = params.id;
   const userId = req.user!.id;
 
-  if (!await ownerCheck(manuscriptId, userId)) {
-    res.status(403).json({ error: 'Forbidden' }); return;
-  }
-
   try {
+    if (!await ownerCheck(manuscriptId, userId)) {
+      res.status(403).json({ error: 'Forbidden' }); return;
+    }
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const versions = await (prisma as any).manuscriptVersion.findMany({
       where:   { manuscriptId, userId },
@@ -28,23 +27,20 @@ router.get('/', async (req, res) => {
       select:  { id: true, number: true, label: true, createdAt: true },
     });
     res.json({ data: versions });
-  } catch {
-    res.status(500).json({ error: 'Failed to fetch versions' });
-  }
+  } catch (err) { next(err); }
 });
 
 // POST /api/manuscripts/:id/versions
 // Snapshots all current DB chapters into a new version.
-router.post('/', async (req, res) => {
+router.post('/', async (req, res, next: NextFunction) => {
   const params = req.params as Record<string, string>;
   const manuscriptId = params.id;
   const userId = req.user!.id;
 
-  if (!await ownerCheck(manuscriptId, userId)) {
-    res.status(403).json({ error: 'Forbidden' }); return;
-  }
-
   try {
+    if (!await ownerCheck(manuscriptId, userId)) {
+      res.status(403).json({ error: 'Forbidden' }); return;
+    }
     const chapters = await prisma.chapter.findMany({
       where:   { manuscriptId },
       orderBy: { number: 'asc' },
@@ -79,49 +75,41 @@ router.post('/', async (req, res) => {
     });
 
     res.status(201).json({ data: version });
-  } catch (err) {
-    console.error('[versions POST]', err);
-    res.status(500).json({ error: 'Failed to create version' });
-  }
+  } catch (err) { next(err); }
 });
 
 // GET /api/manuscripts/:id/versions/:versionId
 // Returns a version with its full chapter content.
-router.get('/:versionId', async (req, res) => {
+router.get('/:versionId', async (req, res, next: NextFunction) => {
   const params = req.params as Record<string, string>;
   const manuscriptId = params.id;
   const userId = req.user!.id;
 
-  if (!await ownerCheck(manuscriptId, userId)) {
-    res.status(403).json({ error: 'Forbidden' }); return;
-  }
-
   try {
+    if (!await ownerCheck(manuscriptId, userId)) {
+      res.status(403).json({ error: 'Forbidden' }); return;
+    }
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const version = await (prisma as any).manuscriptVersion.findFirst({
       where:   { id: params.versionId, manuscriptId, userId },
       include: { chapters: { orderBy: { chapterNum: 'asc' } } },
     });
-
     if (!version) { res.status(404).json({ error: 'Version not found' }); return; }
     res.json({ data: version });
-  } catch {
-    res.status(500).json({ error: 'Failed to fetch version' });
-  }
+  } catch (err) { next(err); }
 });
 
 // POST /api/manuscripts/:id/versions/:versionId/restore
 // Writes version chapters back to the live Chapter table and rolls up word count.
-router.post('/:versionId/restore', async (req, res) => {
+router.post('/:versionId/restore', async (req, res, next: NextFunction) => {
   const params = req.params as Record<string, string>;
   const manuscriptId = params.id;
   const userId = req.user!.id;
 
-  if (!await ownerCheck(manuscriptId, userId)) {
-    res.status(403).json({ error: 'Forbidden' }); return;
-  }
-
   try {
+    if (!await ownerCheck(manuscriptId, userId)) {
+      res.status(403).json({ error: 'Forbidden' }); return;
+    }
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const version = await (prisma as any).manuscriptVersion.findFirst({
       where:   { id: params.versionId, manuscriptId, userId },
@@ -156,10 +144,7 @@ router.post('/:versionId/restore', async (req, res) => {
     });
 
     res.json({ data: { restored: true, versionId: params.versionId } });
-  } catch (err) {
-    console.error('[versions restore]', err);
-    res.status(500).json({ error: 'Failed to restore version' });
-  }
+  } catch (err) { next(err); }
 });
 
 export default router;

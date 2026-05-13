@@ -1,11 +1,12 @@
 import { Router } from 'express';
+import type { NextFunction } from 'express';
 import { prisma } from '../lib/prisma';
 
 const router = Router();
 
 // GET /api/browse — publicly discoverable manuscripts (PUBLIC or REQUEST betaMode)
 // Optional auth: if a valid token is present, we return per-reader pendingRequest state
-router.get('/', async (req, res) => {
+router.get('/', async (req, res, next: NextFunction) => {
   const { genre, q } = req.query as { genre?: string; q?: string };
   const callerId = req.user?.id ?? null;
 
@@ -52,10 +53,7 @@ router.get('/', async (req, res) => {
     });
 
     res.json({ data });
-  } catch (err) {
-    console.error('[browse GET]', err);
-    res.status(500).json({ error: 'Failed to fetch manuscripts' });
-  }
+  } catch (err) { next(err); }
 });
 
 export default router;

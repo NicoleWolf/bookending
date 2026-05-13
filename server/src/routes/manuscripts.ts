@@ -1,4 +1,5 @@
-import { Router } from 'express';
+﻿import { Router } from 'express';
+import type { NextFunction } from 'express';
 import { prisma } from '../lib/prisma';
 import type { ManuscriptStatus, BetaMode } from '@prisma/client';
 import betaReadersRouter from './beta-readers';
@@ -9,8 +10,8 @@ import { CreateManuscriptSchema, UpdateManuscriptSchema } from '@bookending/shar
 
 const router = Router();
 
-// GET /api/manuscripts — list the authed user's manuscripts
-router.get('/', async (req, res) => {
+// GET /api/manuscripts â€” list the authed user's manuscripts
+router.get('/', async (req, res, next: NextFunction) => {
   const authorId = req.user!.id;
   try {
     const manuscripts = await prisma.manuscript.findMany({
@@ -26,13 +27,11 @@ router.get('/', async (req, res) => {
       contentWarnings: JSON.parse((m as any).contentWarnings ?? '[]') as string[],
     }));
     res.json({ data });
-  } catch {
-    res.status(500).json({ error: 'Failed to fetch manuscripts' });
-  }
+  } catch (err) { next(err); }
 });
 
-// POST /api/manuscripts — create a manuscript
-router.post('/', async (req, res) => {
+// POST /api/manuscripts â€” create a manuscript
+router.post('/', async (req, res, next: NextFunction) => {
   const authorId = req.user!.id;
   const body = parseBody(CreateManuscriptSchema, req.body, res);
   if (!body) return;
@@ -67,13 +66,11 @@ router.post('/', async (req, res) => {
       },
     });
     res.status(201).json({ data: manuscript });
-  } catch {
-    res.status(500).json({ error: 'Failed to create manuscript' });
-  }
+  } catch (err) { next(err); }
 });
 
-// PATCH /api/manuscripts/:id — update (owner only)
-router.patch('/:id', async (req, res) => {
+// PATCH /api/manuscripts/:id â€” update (owner only)
+router.patch('/:id', async (req, res, next: NextFunction) => {
   const { id }   = req.params;
   const authorId = req.user!.id;
 
@@ -99,13 +96,11 @@ router.patch('/:id', async (req, res) => {
         contentWarnings: JSON.parse((manuscript as any).contentWarnings ?? '[]') as string[],
       },
     });
-  } catch {
-    res.status(500).json({ error: 'Failed to update manuscript' });
-  }
+  } catch (err) { next(err); }
 });
 
-// DELETE /api/manuscripts/:id — delete (owner only)
-router.delete('/:id', async (req, res) => {
+// DELETE /api/manuscripts/:id â€” delete (owner only)
+router.delete('/:id', async (req, res, next: NextFunction) => {
   const { id }   = req.params;
   const authorId = req.user!.id;
 
@@ -116,13 +111,11 @@ router.delete('/:id', async (req, res) => {
   try {
     await prisma.manuscript.delete({ where: { id } });
     res.json({ data: { deleted: true } });
-  } catch {
-    res.status(500).json({ error: 'Failed to delete manuscript' });
-  }
+  } catch (err) { next(err); }
 });
 
 // GET /api/manuscripts/:id/notes?status=ACTIVE|ARCHIVED|all
-router.get('/:id/notes', async (req, res) => {
+router.get('/:id/notes', async (req, res, next: NextFunction) => {
   const { id }   = req.params;
   const authorId = req.user!.id;
   const statusFilter = (req.query.status as string | undefined) ?? 'all';
@@ -152,12 +145,10 @@ router.get('/:id/notes', async (req, res) => {
     );
 
     res.json({ data });
-  } catch {
-    res.status(500).json({ error: 'Failed to fetch notes' });
-  }
+  } catch (err) { next(err); }
 });
 
-// ── Chapter content endpoints ─────────────────────────────────────────────
+// â”€â”€ Chapter content endpoints â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 function countWords(html: string): number {
   const text = html.replace(/<[^>]+>/g, ' ').replace(/&\w+;/g, ' ').replace(/\s+/g, ' ').trim();
@@ -165,7 +156,7 @@ function countWords(html: string): number {
 }
 
 // GET /api/manuscripts/:id/chapters
-router.get('/:id/chapters', async (req, res) => {
+router.get('/:id/chapters', async (req, res, next: NextFunction) => {
   const { id }   = req.params;
   const authorId = req.user!.id;
 
@@ -180,13 +171,11 @@ router.get('/:id/chapters', async (req, res) => {
       select:  { id: true, number: true, title: true, content: true, wordCount: true },
     });
     res.json({ data: chapters });
-  } catch {
-    res.status(500).json({ error: 'Failed to fetch chapters' });
-  }
+  } catch (err) { next(err); }
 });
 
-// PUT /api/manuscripts/:id/chapters/:chapterNum — upsert content + roll up word count
-router.put('/:id/chapters/:chapterNum', async (req, res) => {
+// PUT /api/manuscripts/:id/chapters/:chapterNum â€” upsert content + roll up word count
+router.put('/:id/chapters/:chapterNum', async (req, res, next: NextFunction) => {
   const { id, chapterNum: raw } = req.params;
   const authorId    = req.user!.id;
   const chapterNum  = parseInt(raw, 10);
@@ -220,14 +209,11 @@ router.put('/:id/chapters/:chapterNum', async (req, res) => {
       data:  { wordCount: allChapters.reduce((s, c) => s + c.wordCount, 0) },
     });
     res.json({ data: chapter });
-  } catch (err) {
-    console.error('[chapters PUT]', err);
-    res.status(500).json({ error: 'Failed to save chapter' });
-  }
+  } catch (err) { next(err); }
 });
 
-// DELETE /api/manuscripts/:id/chapters/:chapterNum — remove a chapter
-router.delete('/:id/chapters/:chapterNum', async (req, res) => {
+// DELETE /api/manuscripts/:id/chapters/:chapterNum â€” remove a chapter
+router.delete('/:id/chapters/:chapterNum', async (req, res, next: NextFunction) => {
   const { id, chapterNum: raw } = req.params;
   const authorId   = req.user!.id;
   const chapterNum = parseInt(raw, 10);
@@ -250,14 +236,11 @@ router.delete('/:id/chapters/:chapterNum', async (req, res) => {
       data:  { wordCount: allChapters.reduce((s, c) => s + c.wordCount, 0) },
     });
     res.json({ data: { deleted: true } });
-  } catch (err) {
-    console.error('[chapters DELETE]', err);
-    res.status(500).json({ error: 'Failed to delete chapter' });
-  }
+  } catch (err) { next(err); }
 });
 
-// GET /api/manuscripts/:id/reader-annotations — submitted beta reader annotations (author only)
-router.get('/:id/reader-annotations', async (req, res) => {
+// GET /api/manuscripts/:id/reader-annotations â€” submitted beta reader annotations (author only)
+router.get('/:id/reader-annotations', async (req, res, next: NextFunction) => {
   const authorId = req.user!.id;
   const { id }   = req.params;
 
@@ -300,14 +283,11 @@ router.get('/:id/reader-annotations', async (req, res) => {
     });
 
     res.json({ data });
-  } catch (err) {
-    console.error('[reader-annotations GET]', err);
-    res.status(500).json({ error: 'Failed to fetch reader annotations' });
-  }
+  } catch (err) { next(err); }
 });
 
-// GET /api/manuscripts/:id/reader-impressions — per-reader impression curves (author only)
-router.get('/:id/reader-impressions', async (req, res) => {
+// GET /api/manuscripts/:id/reader-impressions â€” per-reader impression curves (author only)
+router.get('/:id/reader-impressions', async (req, res, next: NextFunction) => {
   const authorId = req.user!.id;
   const { id }   = req.params;
 
@@ -344,10 +324,7 @@ router.get('/:id/reader-impressions', async (req, res) => {
     }
 
     res.json({ data: Array.from(readerMap.values()) });
-  } catch (err) {
-    console.error('[reader-impressions GET]', err);
-    res.status(500).json({ error: 'Failed to fetch reader impressions' });
-  }
+  } catch (err) { next(err); }
 });
 
 router.use('/:id/readers', betaReadersRouter);

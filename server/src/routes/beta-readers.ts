@@ -1,4 +1,5 @@
-import { Router } from 'express';
+﻿import { Router } from 'express';
+import type { NextFunction } from 'express';
 import { prisma } from '../lib/prisma';
 import { parseBody } from '../lib/validate';
 import { JoinBetaRequestSchema, PatchBetaRequestSchema } from '@bookending/shared';
@@ -13,7 +14,7 @@ async function ownerCheck(manuscriptId: string, userId: string): Promise<boolean
 }
 
 // GET /api/manuscripts/:id/readers
-router.get('/', async (req, res) => {
+router.get('/', async (req, res, next: NextFunction) => {
   const manuscriptId = (req.params as Record<string, string>).id;
   if (!await ownerCheck(manuscriptId, req.user!.id)) {
     res.status(403).json({ error: 'Forbidden' }); return;
@@ -24,13 +25,11 @@ router.get('/', async (req, res) => {
       orderBy: { joinedAt: 'asc' },
     });
     res.json({ data: readers });
-  } catch {
-    res.status(500).json({ error: 'Failed to fetch readers' });
-  }
+  } catch (err) { next(err); }
 });
 
-// POST /api/manuscripts/:id/readers — writer manually adds a reader by name+email
-router.post('/', async (req, res) => {
+// POST /api/manuscripts/:id/readers â€” writer manually adds a reader by name+email
+router.post('/', async (req, res, next: NextFunction) => {
   const manuscriptId = (req.params as Record<string, string>).id;
   if (!await ownerCheck(manuscriptId, req.user!.id)) {
     res.status(403).json({ error: 'Forbidden' }); return;
@@ -44,13 +43,11 @@ router.post('/', async (req, res) => {
       data: { name: name.trim(), email: email.trim(), manuscriptId },
     });
     res.status(201).json({ data: reader });
-  } catch {
-    res.status(500).json({ error: 'Failed to add reader' });
-  }
+  } catch (err) { next(err); }
 });
 
 // PATCH /api/manuscripts/:id/readers/:readerId
-router.patch('/:readerId', async (req, res) => {
+router.patch('/:readerId', async (req, res, next: NextFunction) => {
   const params = req.params as Record<string, string>;
   const manuscriptId = params.id;
   const readerId     = params.readerId;
@@ -70,13 +67,11 @@ router.patch('/:readerId', async (req, res) => {
       },
     });
     res.json({ data: reader });
-  } catch {
-    res.status(500).json({ error: 'Failed to update reader' });
-  }
+  } catch (err) { next(err); }
 });
 
 // DELETE /api/manuscripts/:id/readers/:readerId
-router.delete('/:readerId', async (req, res) => {
+router.delete('/:readerId', async (req, res, next: NextFunction) => {
   const params = req.params as Record<string, string>;
   const manuscriptId = params.id;
   const readerId     = params.readerId;
@@ -86,15 +81,13 @@ router.delete('/:readerId', async (req, res) => {
   try {
     await prisma.betaReader.delete({ where: { id: readerId } });
     res.json({ data: { deleted: true } });
-  } catch {
-    res.status(500).json({ error: 'Failed to remove reader' });
-  }
+  } catch (err) { next(err); }
 });
 
-// ── Self-enrollment endpoints ─────────────────────────────────────────────────
+// â”€â”€ Self-enrollment endpoints â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
-// POST /api/manuscripts/:id/readers/join — reader self-joins a PUBLIC manuscript
-router.post('/join', async (req, res) => {
+// POST /api/manuscripts/:id/readers/join â€” reader self-joins a PUBLIC manuscript
+router.post('/join', async (req, res, next: NextFunction) => {
   const manuscriptId = (req.params as Record<string, string>).id;
   const userId = req.user!.id;
 
@@ -124,15 +117,13 @@ router.post('/join', async (req, res) => {
       },
     });
     res.status(201).json({ data: reader });
-  } catch {
-    res.status(500).json({ error: 'Failed to enroll' });
-  }
+  } catch (err) { next(err); }
 });
 
-// ── Join-request endpoints (REQUEST betaMode) ─────────────────────────────────
+// â”€â”€ Join-request endpoints (REQUEST betaMode) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
-// POST /api/manuscripts/:id/readers/requests — reader files a request
-router.post('/requests', async (req, res) => {
+// POST /api/manuscripts/:id/readers/requests â€” reader files a request
+router.post('/requests', async (req, res, next: NextFunction) => {
   const manuscriptId = (req.params as Record<string, string>).id;
   const userId = req.user!.id;
 
@@ -165,12 +156,12 @@ router.post('/requests', async (req, res) => {
     if (prismaErr.code === 'P2002') {
       res.status(409).json({ error: 'A request is already pending for this manuscript' }); return;
     }
-    res.status(500).json({ error: 'Failed to submit request' });
+    next(err);
   }
 });
 
-// GET /api/manuscripts/:id/readers/requests — author lists pending requests
-router.get('/requests', async (req, res) => {
+// GET /api/manuscripts/:id/readers/requests â€” author lists pending requests
+router.get('/requests', async (req, res, next: NextFunction) => {
   const manuscriptId = (req.params as Record<string, string>).id;
   if (!await ownerCheck(manuscriptId, req.user!.id)) {
     res.status(403).json({ error: 'Forbidden' }); return;
@@ -182,13 +173,11 @@ router.get('/requests', async (req, res) => {
       include: { user: { select: { id: true, name: true } } },
     });
     res.json({ data: requests });
-  } catch {
-    res.status(500).json({ error: 'Failed to fetch requests' });
-  }
+  } catch (err) { next(err); }
 });
 
-// PATCH /api/manuscripts/:id/readers/requests/:requestId — author approves or declines
-router.patch('/requests/:requestId', async (req, res) => {
+// PATCH /api/manuscripts/:id/readers/requests/:requestId â€” author approves or declines
+router.patch('/requests/:requestId', async (req, res, next: NextFunction) => {
   const params = req.params as Record<string, string>;
   const manuscriptId = params.id;
   const requestId    = params.requestId;
@@ -243,14 +232,14 @@ router.patch('/requests/:requestId', async (req, res) => {
     res.json({ data: { status: body.status } });
   } catch (err) {
     const msg = (err as Error).message;
-    if (msg === 'full') { res.status(409).json({ error: 'Beta read is now full' }); return; }
+    if (msg === 'full')      { res.status(409).json({ error: 'Beta read is now full' }); return; }
     if (msg === 'not_found') { res.status(404).json({ error: 'Manuscript not found' }); return; }
-    res.status(500).json({ error: 'Failed to update request' });
+    next(err);
   }
 });
 
-// DELETE /api/manuscripts/:id/readers/requests/mine — reader withdraws their own pending request
-router.delete('/requests/mine', async (req, res) => {
+// DELETE /api/manuscripts/:id/readers/requests/mine â€” reader withdraws their own pending request
+router.delete('/requests/mine', async (req, res, next: NextFunction) => {
   const manuscriptId = (req.params as Record<string, string>).id;
   const userId = req.user!.id;
   try {
@@ -259,13 +248,11 @@ router.delete('/requests/mine', async (req, res) => {
       data: { status: 'WITHDRAWN' },
     });
     res.status(204).send();
-  } catch {
-    res.status(500).json({ error: 'Failed to withdraw request' });
-  }
+  } catch (err) { next(err); }
 });
 
-// DELETE /api/manuscripts/:id/readers/requests/:requestId — reader withdraws their request
-router.delete('/requests/:requestId', async (req, res) => {
+// DELETE /api/manuscripts/:id/readers/requests/:requestId â€” reader withdraws their request
+router.delete('/requests/:requestId', async (req, res, next: NextFunction) => {
   const params = req.params as Record<string, string>;
   const manuscriptId = params.id;
   const requestId    = params.requestId;
@@ -284,9 +271,7 @@ router.delete('/requests/:requestId', async (req, res) => {
       data: { status: 'WITHDRAWN' },
     });
     res.json({ data: { withdrawn: true } });
-  } catch {
-    res.status(500).json({ error: 'Failed to withdraw request' });
-  }
+  } catch (err) { next(err); }
 });
 
 export default router;

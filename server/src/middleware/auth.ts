@@ -1,6 +1,7 @@
 import type { Request, Response, NextFunction } from 'express';
 import { supabaseAdmin } from '../lib/supabase';
 import { prisma } from '../lib/prisma';
+import { logger } from '../lib/logger';
 
 export async function optionalAuth(req: Request, _res: Response, next: NextFunction) {
   const header = req.headers.authorization;
@@ -8,7 +9,7 @@ export async function optionalAuth(req: Request, _res: Response, next: NextFunct
 
   const token = header.slice(7);
 
-  if (process.env.NODE_ENV !== 'production' && token.startsWith('dev:')) {
+  if (process.env.NODE_ENV === 'development' && token.startsWith('dev:')) {
     const [, mockId, email, encodedName] = token.split(':');
     const name = decodeURIComponent(encodedName ?? 'Unknown');
     if (!email) return next();
@@ -44,7 +45,7 @@ export async function requireAuth(req: Request, res: Response, next: NextFunctio
 
   // ── Dev mock bypass ───────────────────────────────────────────────
   // Format: dev:<mockId>:<email>:<encodedName>
-  if (process.env.NODE_ENV !== 'production' && token.startsWith('dev:')) {
+  if (process.env.NODE_ENV === 'development' && token.startsWith('dev:')) {
     const [, mockId, email, encodedName] = token.split(':');
     const name = decodeURIComponent(encodedName ?? 'Unknown');
     if (!email) { res.status(401).json({ error: 'Invalid dev token' }); return; }
@@ -57,7 +58,7 @@ export async function requireAuth(req: Request, res: Response, next: NextFunctio
       req.user = { id: user.id, email: user.email, role: user.role, isAdmin: user.isAdmin };
       return next();
     } catch (err) {
-      console.error('[dev auth] Prisma upsert failed:', err);
+      logger.error('Dev auth Prisma upsert failed', { err });
       res.status(500).json({ error: 'Dev auth failed' });
       return;
     }

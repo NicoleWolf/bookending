@@ -1,4 +1,5 @@
-import { Router } from 'express';
+﻿import { Router } from 'express';
+import type { NextFunction } from 'express';
 import { prisma } from '../lib/prisma';
 import type { DispatchStatus } from '@prisma/client';
 import { parseBody } from '../lib/validate';
@@ -7,20 +8,18 @@ import { CreateDispatchSchema, PatchDispatchSchema } from '@bookending/shared';
 const router = Router();
 
 // GET /api/dispatches
-router.get('/', async (req, res) => {
+router.get('/', async (req, res, next: NextFunction) => {
   const authorId = req.user!.id;
   try {
     const dispatches = await prisma.dispatch.findMany({
       where: { authorId }, orderBy: { createdAt: 'desc' },
     });
     res.json({ data: dispatches });
-  } catch {
-    res.status(500).json({ error: 'Failed to fetch dispatches' });
-  }
+  } catch (err) { next(err); }
 });
 
 // POST /api/dispatches
-router.post('/', async (req, res) => {
+router.post('/', async (req, res, next: NextFunction) => {
   const authorId = req.user!.id;
   const body = parseBody(CreateDispatchSchema, req.body, res);
   if (!body) return;
@@ -38,13 +37,11 @@ router.post('/', async (req, res) => {
       },
     });
     res.status(201).json({ data: dispatch });
-  } catch {
-    res.status(500).json({ error: 'Failed to create dispatch' });
-  }
+  } catch (err) { next(err); }
 });
 
 // PATCH /api/dispatches/:id
-router.patch('/:id', async (req, res) => {
+router.patch('/:id', async (req, res, next: NextFunction) => {
   const { id } = req.params;
   const authorId = req.user!.id;
 
@@ -67,13 +64,11 @@ router.patch('/:id', async (req, res) => {
       },
     });
     res.json({ data: dispatch });
-  } catch {
-    res.status(500).json({ error: 'Failed to update dispatch' });
-  }
+  } catch (err) { next(err); }
 });
 
 // DELETE /api/dispatches/:id
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', async (req, res, next: NextFunction) => {
   const { id } = req.params;
   const authorId = req.user!.id;
 
@@ -84,9 +79,7 @@ router.delete('/:id', async (req, res) => {
   try {
     await prisma.dispatch.delete({ where: { id } });
     res.json({ data: { deleted: true } });
-  } catch {
-    res.status(500).json({ error: 'Failed to delete dispatch' });
-  }
+  } catch (err) { next(err); }
 });
 
 export default router;

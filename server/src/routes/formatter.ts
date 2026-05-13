@@ -1,4 +1,5 @@
 import { Router } from 'express';
+import type { NextFunction } from 'express';
 import multer from 'multer';
 import { requireAuth } from '../middleware/auth';
 import { prisma } from '../lib/prisma';
@@ -13,9 +14,7 @@ const upload = multer({
   storage: multer.memoryStorage(),
   limits: { fileSize: MAX_DOCX_BYTES },
   fileFilter(_req, file, cb) {
-    const ok =
-      file.mimetype === DOCX_MIME ||
-      file.originalname.endsWith('.docx');
+    const ok = file.mimetype === DOCX_MIME || file.originalname.endsWith('.docx');
     if (ok) {
       cb(null, true);
     } else {
@@ -25,32 +24,20 @@ const upload = multer({
 });
 
 // GET /api/formatter/:manuscriptId
-// Returns the existing FormattingProject for this user+manuscript, or 404.
-router.get('/:manuscriptId', async (req, res) => {
+router.get('/:manuscriptId', async (req, res, next: NextFunction) => {
   const userId       = req.user!.id;
   const manuscriptId = req.params.manuscriptId as string;
-
   try {
     const project = await prisma.formattingProject.findUnique({
       where: { userId_manuscriptId: { userId, manuscriptId } },
     });
-
-    if (!project) {
-      res.status(404).json({ error: 'No formatting project found for this manuscript.' });
-      return;
-    }
-
+    if (!project) { res.status(404).json({ error: 'No formatting project found for this manuscript.' }); return; }
     res.json({ data: project });
-  } catch (err) {
-    console.error('[formatter GET]', err);
-    res.status(500).json({ error: err instanceof Error ? err.message : 'Internal server error' });
-  }
+  } catch (err) { next(err); }
 });
 
-// POST /api/formatter
-// Create (or upsert) a FormattingProject.
-// Body: { manuscriptId, source?, encoding?, smartQuotes? }
-router.post('/', async (req, res) => {
+// POST /api/formatter — create or upsert a FormattingProject
+router.post('/', async (req, res, next: NextFunction) => {
   const userId = req.user!.id;
   const { manuscriptId, source, encoding, smartQuotes } = req.body as {
     manuscriptId: string;
@@ -59,20 +46,13 @@ router.post('/', async (req, res) => {
     smartQuotes?: string;
   };
 
-  if (!manuscriptId) {
-    res.status(400).json({ error: 'manuscriptId is required.' });
-    return;
-  }
+  if (!manuscriptId) { res.status(400).json({ error: 'manuscriptId is required.' }); return; }
 
   try {
-    // Verify manuscript belongs to this user.
     const manuscript = await prisma.manuscript.findFirst({
       where: { id: manuscriptId, authorId: userId },
     });
-    if (!manuscript) {
-      res.status(404).json({ error: 'Manuscript not found.' });
-      return;
-    }
+    if (!manuscript) { res.status(404).json({ error: 'Manuscript not found.' }); return; }
 
     const project = await prisma.formattingProject.upsert({
       where:  { userId_manuscriptId: { userId, manuscriptId } },
@@ -92,27 +72,16 @@ router.post('/', async (req, res) => {
     });
 
     res.status(201).json({ data: project });
-  } catch (err) {
-    console.error('[formatter POST]', err);
-    res.status(500).json({ error: err instanceof Error ? err.message : 'Internal server error' });
-  }
+  } catch (err) { next(err); }
 });
 
-// PATCH /api/formatter/:id
-// Update settings on an existing project.
-// Body: { currentStep?, source?, encoding?, smartQuotes?, pastedContent? }
-router.patch('/:id', async (req, res) => {
+// PATCH /api/formatter/:id — update settings
+router.patch('/:id', async (req, res, next: NextFunction) => {
   const userId = req.user!.id;
   const id     = req.params.id as string;
-
   try {
-    const existing = await prisma.formattingProject.findFirst({
-      where: { id, userId },
-    });
-    if (!existing) {
-      res.status(404).json({ error: 'Formatting project not found.' });
-      return;
-    }
+    const existing = await prisma.formattingProject.findFirst({ where: { id, userId } });
+    if (!existing) { res.status(404).json({ error: 'Formatting project not found.' }); return; }
 
     const { currentStep, source, encoding, smartQuotes, pastedContent, frontMatter } = req.body as {
       currentStep?:   number;
@@ -136,46 +105,28 @@ router.patch('/:id', async (req, res) => {
     });
 
     res.json({ data: updated });
-  } catch (err) {
-    console.error('[formatter PATCH]', err);
-    res.status(500).json({ error: err instanceof Error ? err.message : 'Internal server error' });
-  }
+  } catch (err) { next(err); }
 });
 
-// POST /api/formatter/:id/upload
-// Accept a .docx file, store it in Supabase, update the project.
-router.post('/:id/upload', upload.single('docx'), async (req, res) => {
+// POST /api/formatter/:id/upload — accept a .docx file
+router.post('/:id/upload', upload.single('docx'), async (req, res, next: NextFunction) => {
   const userId = req.user!.id;
   const id     = req.params.id as string;
   const file   = req.file;
 
-  if (!file) {
-    res.status(400).json({ error: 'No file uploaded.' });
-    return;
-  }
+  if (!file) { res.status(400).json({ error: 'No file uploaded.' }); return; }
 
   try {
-    const project = await prisma.formattingProject.findFirst({
-      where: { id, userId },
-    });
-    if (!project) {
-      res.status(404).json({ error: 'Formatting project not found.' });
-      return;
-    }
+    const project = await prisma.formattingProject.findFirst({ where: { id, userId } });
+    if (!project) { res.status(404).json({ error: 'Formatting project not found.' }); return; }
 
     const storagePath = `${userId}/${id}.docx`;
 
     const { error: uploadError } = await supabaseAdmin.storage
       .from('formatter-uploads')
-      .upload(storagePath, file.buffer, {
-        contentType: DOCX_MIME,
-        upsert: true,
-      });
+      .upload(storagePath, file.buffer, { contentType: DOCX_MIME, upsert: true });
 
-    if (uploadError) {
-      res.status(500).json({ error: uploadError.message });
-      return;
-    }
+    if (uploadError) { res.status(500).json({ error: uploadError.message }); return; }
 
     const { data: { publicUrl } } = supabaseAdmin.storage
       .from('formatter-uploads')
@@ -187,10 +138,7 @@ router.post('/:id/upload', upload.single('docx'), async (req, res) => {
     });
 
     res.json({ data: updated });
-  } catch (err) {
-    console.error('[formatter upload]', err);
-    res.status(500).json({ error: err instanceof Error ? err.message : 'Internal server error' });
-  }
+  } catch (err) { next(err); }
 });
 
 export default router;

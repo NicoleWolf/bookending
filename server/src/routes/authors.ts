@@ -1,4 +1,5 @@
-import { Router } from 'express';
+﻿import { Router } from 'express';
+import type { NextFunction } from 'express';
 import { prisma } from '../lib/prisma';
 import { requireAuth } from '../middleware/auth';
 import { parseBody } from '../lib/validate';
@@ -21,7 +22,7 @@ const AUTHOR_SELECT = {
 } as const;
 
 // GET /api/authors
-router.get('/', async (_req, res) => {
+router.get('/', async (_req, res, next: NextFunction) => {
   try {
     const authors = await prisma.user.findMany({
       where: { manuscripts: { some: {} } },
@@ -29,13 +30,11 @@ router.get('/', async (_req, res) => {
       orderBy: { createdAt: 'asc' },
     });
     res.json({ data: authors });
-  } catch {
-    res.status(500).json({ error: 'Failed to fetch authors' });
-  }
+  } catch (err) { next(err); }
 });
 
-// GET /api/authors/readers/available — list readers open to beta-read invitations
-router.get('/readers/available', requireAuth, async (_req, res) => {
+// GET /api/authors/readers/available â€” list readers open to beta-read invitations
+router.get('/readers/available', requireAuth, async (_req, res, next: NextFunction) => {
   const TONES = ['accent', 'gold', 'muted', 'ink', 'paper'] as const;
   try {
     const readers = await prisma.user.findMany({
@@ -60,13 +59,11 @@ router.get('/readers/available', requireAuth, async (_req, res) => {
       availability: 'available' as const,
     }));
     res.json({ data });
-  } catch {
-    res.status(500).json({ error: 'Failed to fetch available readers' });
-  }
+  } catch (err) { next(err); }
 });
 
 // GET /api/authors/:id
-router.get('/:id', async (req, res) => {
+router.get('/:id', async (req, res, next: NextFunction) => {
   const id = req.params['id'] as string;
   try {
     const author = await prisma.user.findFirst({
@@ -75,13 +72,11 @@ router.get('/:id', async (req, res) => {
     });
     if (!author) { res.status(404).json({ error: 'Author not found' }); return; }
     res.json({ data: author });
-  } catch {
-    res.status(500).json({ error: 'Failed to fetch author' });
-  }
+  } catch (err) { next(err); }
 });
 
-// GET /api/authors/:id/pending-questions — auth required, own profile only
-router.get('/:id/pending-questions', requireAuth, async (req, res) => {
+// GET /api/authors/:id/pending-questions â€” auth required, own profile only
+router.get('/:id/pending-questions', requireAuth, async (req, res, next: NextFunction) => {
   const id = req.params['id'] as string;
   if (req.user!.id !== id) { res.status(403).json({ error: 'Forbidden' }); return; }
   try {
@@ -91,13 +86,11 @@ router.get('/:id/pending-questions', requireAuth, async (req, res) => {
       select: { id: true, question: true, askedByName: true, createdAt: true },
     });
     res.json({ data: pending });
-  } catch {
-    res.status(500).json({ error: 'Failed to fetch pending questions' });
-  }
+  } catch (err) { next(err); }
 });
 
-// POST /api/authors/:id/questions — submit a question
-router.post('/:id/questions', requireAuth, async (req, res) => {
+// POST /api/authors/:id/questions â€” submit a question
+router.post('/:id/questions', requireAuth, async (req, res, next: NextFunction) => {
   const id = req.params['id'] as string;
   const body = parseBody(SubmitQuestionSchema, req.body, res);
   if (!body) return;
@@ -110,13 +103,11 @@ router.post('/:id/questions', requireAuth, async (req, res) => {
       data: { question: body.question.trim(), askedByName: submitter?.name ?? 'Anonymous', authorId: id },
     });
     res.status(201).json({ data: qa });
-  } catch {
-    res.status(500).json({ error: 'Failed to submit question' });
-  }
+  } catch (err) { next(err); }
 });
 
-// PATCH /api/authors/:id/questions/:qid — publish answer or dismiss
-router.patch('/:id/questions/:qid', requireAuth, async (req, res) => {
+// PATCH /api/authors/:id/questions/:qid â€” publish answer or dismiss
+router.patch('/:id/questions/:qid', requireAuth, async (req, res, next: NextFunction) => {
   const id  = req.params['id']  as string;
   const qid = req.params['qid'] as string;
   if (req.user!.id !== id) { res.status(403).json({ error: 'Forbidden' }); return; }
@@ -140,9 +131,7 @@ router.patch('/:id/questions/:qid', requireAuth, async (req, res) => {
       data: { answer: body.answer.trim(), publishedAt: new Date() },
     });
     res.json({ data: updated });
-  } catch {
-    res.status(500).json({ error: 'Failed to update question' });
-  }
+  } catch (err) { next(err); }
 });
 
 export default router;

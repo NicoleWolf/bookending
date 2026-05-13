@@ -270,14 +270,9 @@ export function OrdersView() {
   function advanceStatus(ids: string[], status: OrderStatus) {
     setOrders(prev => prev.map(o => ids.includes(o.id) ? { ...o, status } : o));
     setSelected(new Set());
-    if (!session?.token) return;
-    const token = session.token;
     for (const id of ids) {
-      fetch(`${API_URL}/api/orders/${id}`, {
-        method:  'PATCH',
-        headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
-        body:    JSON.stringify({ status }),
-      }).catch(err => console.error('Failed to update order:', err));
+      api.patch(`/api/orders/${id}`, { status })
+        .catch(err => console.error('Failed to update order:', err));
     }
   }
 

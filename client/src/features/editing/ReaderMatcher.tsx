@@ -18,7 +18,7 @@ interface Props {
   onInvite: (reader: BetaReader) => void;
 }
 
-export default function ReaderMatcher({ manuscriptId, manuscriptTitle, genres, onInvite }: Props) {
+export default function ReaderMatcher({ manuscriptId: _manuscriptId, manuscriptTitle, genres, onInvite }: Props) {
   const [state, setState]       = useState<MatcherState>('idle');
   const [invitedIds, setInvitedIds] = useState<Set<string>>(new Set());
 

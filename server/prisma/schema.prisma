@@ -412,6 +412,7 @@ model FormattingProject {
   smartQuotes    String   @default("CONVERT")
   uploadedDocxUrl String?
   pastedContent  String?
+  frontMatter    String?
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
 

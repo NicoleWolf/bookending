@@ -68,17 +68,12 @@ export function ChannelsView() {
 
   function saveChannel(updated: Channel) {
     setChannels(prev => prev.map(c => c.id === updated.id ? updated : c));
-    if (!session?.token) return;
-    fetch(`${API_URL}/api/distribution/${updated.id}`, {
-      method:  'PATCH',
-      headers: { Authorization: `Bearer ${session.token}`, 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        status:    updated.status,
-        sku:       updated.sku       || null,
-        royalty:   updated.royalty   || null,
-        listPrice: updated.listPrice ?? null,
-        formats:   updated.formats,
-      }),
+    api.patch(`/api/distribution/${updated.id}`, {
+      status:    updated.status,
+      sku:       updated.sku       || null,
+      royalty:   updated.royalty   || null,
+      listPrice: updated.listPrice ?? null,
+      formats:   updated.formats,
     }).catch(err => console.error('Failed to save channel:', err));
   }
 

@@ -9,7 +9,7 @@ export function StorefrontView() {
   const [editingSection, setEditingSection] = useState<'hero' | 'products' | null>(null);
   const [hero,           setHero]           = useState<HeroData>(STOREFRONT_CONFIG.hero);
   const [heroDraft,      setHeroDraft]      = useState<HeroData>(STOREFRONT_CONFIG.hero);
-  const [featuredIds,    setFeaturedIds]    = useState<number[]>(STOREFRONT_CONFIG.featuredIds);
+  const [featuredIds,    setFeaturedIds]    = useState<string[]>(STOREFRONT_CONFIG.featuredIds);
   const [hasChanges,     setHasChanges]     = useState(false);
 
   const featured = PRODUCTS.filter(p => featuredIds.includes(p.id));
@@ -21,7 +21,7 @@ export function StorefrontView() {
     setEditingSection(null);
   }
 
-  function toggleFeatured(id: number, checked: boolean) {
+  function toggleFeatured(id: string, checked: boolean) {
     setFeaturedIds(prev => checked ? [...prev, id] : prev.filter(x => x !== id));
     setHasChanges(true);
   }

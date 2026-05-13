@@ -11,7 +11,6 @@ interface Props {
 const CHECKLIST_KEYS: ChecklistKey[] = ['signed', 'letter', 'labeled', 'packed'];
 
 export function PurchaseDetail({ purchase: p, onBack }: Props) {
-  const subtotal    = p.items.reduce((s, i) => s + i.price, 0);
   const allDigital  = p.items.every(i => i.digital);
 
   // Only show checklist items that are relevant to this order

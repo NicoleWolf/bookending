@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { SectionHead, BookCover } from '../../shared/ui/atoms';
 import { BOOKS, STATUS_OPTIONS, CONTENT_RATINGS, CONTENT_WARNINGS, LANGUAGES, BETA_MODE_OPTIONS } from './data';
-import type { BookMetadata, BookStatus, BetaMode, SpineColor } from './data';
+import type { BookMetadata, BetaMode, SpineColor } from './data';
 import { extractFromFile } from './extractMetadata';
 import { GENRES } from '../../shared/genres';
 import { useAuth } from '../auth';
@@ -17,11 +17,6 @@ type LibraryView = 'landing' | 'edit';
 type BookDrafts  = Record<string, BookMetadata>;
 type SavedState  = Record<string, boolean>;
 
-const STATUS_TONE: Record<BookStatus, 'neutral' | 'plum' | 'good'> = {
-  'drafting':    'neutral',
-  'in-revision': 'plum',
-  'published':   'good',
-};
 
 interface LibraryProps {
   savedBooks: Record<string, BookMetadata>;
@@ -63,29 +58,7 @@ function blankBook(existingCount = 0): BookMetadata {
   };
 }
 
-// ── Derived status helpers ────────────────────────────────────────── //
-function isbnStatusFor(b: BookMetadata): 'set' | 'pending' | 'none' {
-  if (b.isbnEbook || b.isbnPrint) return 'set';
-  if (b.isbnPending) return 'pending';
-  return 'none';
-}
 
-function pricingStatusFor(b: BookMetadata): 'set' | 'unset' {
-  return (b.priceEbook || b.pricePaperback) ? 'set' : 'unset';
-}
-
-function descriptionStatusFor(b: BookMetadata): 'complete' | 'partial' | 'empty' {
-  if (!b.description) return 'empty';
-  if (b.description.length < 100) return 'partial';
-  return 'complete';
-}
-
-function primaryCtaFor(b: BookMetadata): { label: string; section?: string } {
-  if (isbnStatusFor(b) === 'none') return { label: 'Add ISBN →', section: 'identifiers' };
-  if (pricingStatusFor(b) === 'unset') return { label: 'Set price →', section: 'pricing' };
-  if (descriptionStatusFor(b) !== 'complete') return { label: 'Write description →', section: 'description' };
-  return { label: 'Edit metadata →' };
-}
 
 function loadCoverUrls(ids: string[]): Record<string, string> {
   const urls: Record<string, string> = {};
@@ -106,7 +79,7 @@ function loadImportMeta(ids: string[]): Record<string, string> {
 }
 
 export default function Library({ savedBooks, onSave, onDelete, openNewManuscript, onOpenNewHandled, onDirtyChange }: LibraryProps) {
-  const { session, currentUser } = useAuth();
+  const { currentUser } = useAuth();
   const savedBookList = Object.values(savedBooks)
     .filter(b => typeof b.id === 'string' && b.id.length > 0)
     .sort((a, b) => a.id.localeCompare(b.id));

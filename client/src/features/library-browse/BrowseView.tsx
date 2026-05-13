@@ -72,7 +72,7 @@ export function BrowseView({ initialGenre, manuscripts = [] }: Props) {
   async function handleWithdraw(ms: CatalogManuscript) {
     if (session) {
       try {
-        await api.delete(`/api/manuscripts/${ms.id}/readers/requests/mine`);
+        await api.del(`/api/manuscripts/${ms.id}/readers/requests/mine`);
       } catch { /* proceed optimistically */ }
     }
     setPendingIds(prev => { const n = new Set(prev); n.delete(ms.id); return n; });

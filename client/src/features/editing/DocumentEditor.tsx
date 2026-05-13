@@ -64,12 +64,6 @@ interface ReaderImpression {
   points:         { chapterNum: number; stance: string }[];
 }
 
-// ── Reader highlight helpers ──────────────────────────────────────
-function stripPassageQuotes(s: string): string {
-  // U+0022 straight ", U+201C left ", U+201D right "
-  return s.replace(/^["“”]/, '').replace(/["“”]$/, '');
-}
-
 function applyHighlight(root: HTMLElement, text: string, theme: string, commentId: string) {
   if (!text) return;
   const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
@@ -211,6 +205,7 @@ interface Props {
 }
 
 export default function DocumentEditor({ manuscriptId }: Props) {
+  const msId    = Number(manuscriptId);
   const ctx     = useQuietMode();
   const isQuiet = ctx.isQuiet;
 
@@ -218,9 +213,9 @@ export default function DocumentEditor({ manuscriptId }: Props) {
   const [chapters, setChapters] = useState<ChapterSlice[]>(() => {
     let base: string;
     try {
-      base = localStorage.getItem(`bookending_import_${manuscriptId}`) ?? INITIAL_CONTENT[manuscriptId] ?? '';
+      base = localStorage.getItem(`bookending_import_${manuscriptId}`) ?? INITIAL_CONTENT[msId] ?? '';
     } catch {
-      base = INITIAL_CONTENT[manuscriptId] ?? '';
+      base = INITIAL_CONTENT[msId] ?? '';
     }
     return parseChapters(base);
   });
@@ -233,7 +228,7 @@ export default function DocumentEditor({ manuscriptId }: Props) {
   const [summaryWords,     setSummaryWords]     = useState(0);
   const [summaryElapsedMs, setSummaryElapsedMs] = useState(0);
   const [hasSnap, setHasSnap]                   = useState(() => {
-    try { return !!localStorage.getItem(chSnapKey(manuscriptId, 0)); } catch { return false; }
+    try { return !!localStorage.getItem(chSnapKey(msId, 0)); } catch { return false; }
   });
   const [selectedText,      setSelectedText]      = useState('');
   const [focusedCommentId,  setFocusedCommentId]  = useState<string | null>(null);
@@ -246,12 +241,12 @@ export default function DocumentEditor({ manuscriptId }: Props) {
   const [restoring,             setRestoring]             = useState(false);
   const [deleteConfirmIdx,      setDeleteConfirmIdx]      = useState<number | null>(null);
 
-  const saveTimer           = useRef<ReturnType<typeof setTimeout>>();
-  const savedTimer          = useRef<ReturnType<typeof setTimeout>>();
-  const highlightTimer      = useRef<ReturnType<typeof setTimeout>>();
+  const saveTimer           = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
+  const savedTimer          = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
+  const highlightTimer      = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
   const sessionStartWords   = useRef(0);
   const sessionStartTime    = useRef(0);
-  const elapsedTimerRef     = useRef<ReturnType<typeof setInterval>>();
+  const elapsedTimerRef     = useRef<ReturnType<typeof setInterval> | undefined>(undefined);
   const exitQuietRef        = useRef<() => void>(() => {});
   // Ref keeps the active chapter index accessible inside editor callbacks
   const activeChapterRef = useRef(0);
@@ -270,14 +265,14 @@ export default function DocumentEditor({ manuscriptId }: Props) {
       StarterKit,
       Placeholder.configure({ placeholder: 'Begin writing your manuscript here…' }),
     ],
-    content: loadChapterContent(manuscriptId, 0, chapters[0]?.html ?? ''),
+    content: loadChapterContent(msId, 0, chapters[0]?.html ?? ''),
     onUpdate({ editor: ed }) {
       setSaveState('saving');
       clearTimeout(saveTimer.current);
       saveTimer.current = setTimeout(() => {
         const html = ed.getHTML();
         const idx  = activeChapterRef.current;
-        try { localStorage.setItem(chDocKey(manuscriptId, idx), html); } catch {}
+        try { localStorage.setItem(chDocKey(msId, idx), html); } catch {}
         const dbNum = chapterNumbersRef.current[idx] ?? idx;
         const title = chaptersRef.current[idx]?.title ?? `Chapter ${idx + 1}`;
         api.put(`/api/manuscripts/${manuscriptId}/chapters/${dbNum}`, { title, content: html })
@@ -311,8 +306,8 @@ export default function DocumentEditor({ manuscriptId }: Props) {
           // Load the active chapter's content into the editor
           const activeApiCh = apiChapters[activeChapterRef.current];
           if (activeApiCh?.content) {
-            editor.commands.setContent(activeApiCh.content, false);
-            try { localStorage.setItem(chDocKey(manuscriptId, activeChapterRef.current), activeApiCh.content); } catch {}
+            editor.commands.setContent(activeApiCh.content);
+            try { localStorage.setItem(chDocKey(msId, activeChapterRef.current), activeApiCh.content); } catch {}
           }
 
           // Migrate any chapters that have no API content yet (content saved
@@ -320,7 +315,7 @@ export default function DocumentEditor({ manuscriptId }: Props) {
           apiChapters.forEach((ac, idx) => {
             if (ac.content) return;
             const chs   = chaptersRef.current;
-            const local = (() => { try { return localStorage.getItem(chDocKey(manuscriptId, idx)); } catch { return null; } })();
+            const local = (() => { try { return localStorage.getItem(chDocKey(msId, idx)); } catch { return null; } })();
             const activeHtml    = idx === activeChapterRef.current ? editor.getHTML() : null;
             const contentToSave = local ?? activeHtml ?? chs[idx]?.html ?? null;
             if (contentToSave && contentToSave.trim() && contentToSave !== '<p></p>') {
@@ -335,7 +330,7 @@ export default function DocumentEditor({ manuscriptId }: Props) {
           // up to the server so subsequent loads use the API path above.
           const chs = chaptersRef.current;
           chs.forEach((ch, idx) => {
-            const local = (() => { try { return localStorage.getItem(chDocKey(manuscriptId, idx)); } catch { return null; } })();
+            const local = (() => { try { return localStorage.getItem(chDocKey(msId, idx)); } catch { return null; } })();
             const activeHtml    = idx === activeChapterRef.current ? editor.getHTML() : null;
             const contentToSave = local ?? activeHtml ?? ch.html ?? null;
             if (contentToSave && contentToSave.trim() && contentToSave !== '<p></p>') {
@@ -475,7 +470,7 @@ export default function DocumentEditor({ manuscriptId }: Props) {
       clearTimeout(saveTimer.current);
       const html  = ed.getHTML();
       const idx   = activeChapterRef.current;
-      try { localStorage.setItem(chDocKey(manuscriptId, idx), html); } catch {}
+      try { localStorage.setItem(chDocKey(msId, idx), html); } catch {}
       const dbNum = chapterNumbersRef.current[idx] ?? idx;
       void api.put(`/api/manuscripts/${manuscriptId}/chapters/${dbNum}`, {
         title:   chaptersRef.current[idx]?.title ?? `Chapter ${idx + 1}`,
@@ -497,19 +492,19 @@ export default function DocumentEditor({ manuscriptId }: Props) {
     // Persist current chapter before leaving
     const html    = editor.getHTML();
     const curIdx  = activeChapter;
-    try { localStorage.setItem(chDocKey(manuscriptId, curIdx), html); } catch {}
+    try { localStorage.setItem(chDocKey(msId, curIdx), html); } catch {}
     const dbNum = chapterNumbersRef.current[curIdx] ?? curIdx;
     void api.put(`/api/manuscripts/${manuscriptId}/chapters/${dbNum}`, {
       title:   chapters[curIdx]?.title ?? `Chapter ${curIdx + 1}`,
       content: html,
     }).catch(() => {});
     // Load saved (or initial) content for new chapter
-    const newHtml = loadChapterContent(manuscriptId, idx, chapters[idx]?.html ?? '');
-    editor.commands.setContent(newHtml, false);
+    const newHtml = loadChapterContent(msId, idx, chapters[idx]?.html ?? '');
+    editor.commands.setContent(newHtml);
     setActiveChapter(idx);
     setFocusedCommentId(null);
     try {
-      setHasSnap(!!localStorage.getItem(chSnapKey(manuscriptId, idx)));
+      setHasSnap(!!localStorage.getItem(chSnapKey(msId, idx)));
     } catch {
       setHasSnap(false);
     }
@@ -534,9 +529,9 @@ export default function DocumentEditor({ manuscriptId }: Props) {
       const apiChapters = await api.get<ApiChapter[]>(`/api/manuscripts/${manuscriptId}/chapters`);
       apiChapters.forEach((ac, pos) => {
         if (ac.content) {
-          try { localStorage.setItem(chDocKey(manuscriptId, pos), ac.content); } catch {}
+          try { localStorage.setItem(chDocKey(msId, pos), ac.content); } catch {}
           if (pos === activeChapterRef.current) {
-            editor?.commands.setContent(ac.content, false);
+            editor?.commands.setContent(ac.content);
           }
         }
       });
@@ -558,7 +553,7 @@ export default function DocumentEditor({ manuscriptId }: Props) {
     if (editor) {
       const html   = editor.getHTML();
       const curIdx = activeChapterRef.current;
-      try { localStorage.setItem(chDocKey(manuscriptId, curIdx), html); } catch {}
+      try { localStorage.setItem(chDocKey(msId, curIdx), html); } catch {}
       const dbNum = chapterNumbersRef.current[curIdx] ?? curIdx;
       void api.put(`/api/manuscripts/${manuscriptId}/chapters/${dbNum}`, {
         title:   chaptersRef.current[curIdx]?.title ?? `Chapter ${curIdx + 1}`,
@@ -569,7 +564,7 @@ export default function DocumentEditor({ manuscriptId }: Props) {
     setChapters(prev => [...prev, { title: newTitle, html: '' }]);
     setActiveChapter(newIdx);
     setHasSnap(false);
-    editor?.commands.setContent('<p></p>', false);
+    editor?.commands.setContent('<p></p>');
     void api.put(`/api/manuscripts/${manuscriptId}/chapters/${newNum}`, {
       title:   newTitle,
       content: '<p></p>',
@@ -581,13 +576,13 @@ export default function DocumentEditor({ manuscriptId }: Props) {
     const chNum  = chapterNumbersRef.current[idx] ?? idx;
     // Re-index localStorage: shift keys above idx down by 1
     for (let i = idx + 1; i < chs.length; i++) {
-      const oldDoc  = (() => { try { return localStorage.getItem(chDocKey(manuscriptId, i)); } catch { return null; } })();
-      const oldSnap = (() => { try { return localStorage.getItem(chSnapKey(manuscriptId, i)); } catch { return null; } })();
-      if (oldDoc  !== null) { try { localStorage.setItem(chDocKey(manuscriptId, i - 1), oldDoc); } catch {} }
-      if (oldSnap !== null) { try { localStorage.setItem(chSnapKey(manuscriptId, i - 1), oldSnap); } catch {} }
+      const oldDoc  = (() => { try { return localStorage.getItem(chDocKey(msId, i)); } catch { return null; } })();
+      const oldSnap = (() => { try { return localStorage.getItem(chSnapKey(msId, i)); } catch { return null; } })();
+      if (oldDoc  !== null) { try { localStorage.setItem(chDocKey(msId, i - 1), oldDoc); } catch {} }
+      if (oldSnap !== null) { try { localStorage.setItem(chSnapKey(msId, i - 1), oldSnap); } catch {} }
     }
-    try { localStorage.removeItem(chDocKey(manuscriptId, chs.length - 1)); } catch {}
-    try { localStorage.removeItem(chSnapKey(manuscriptId, chs.length - 1)); } catch {}
+    try { localStorage.removeItem(chDocKey(msId, chs.length - 1)); } catch {}
+    try { localStorage.removeItem(chSnapKey(msId, chs.length - 1)); } catch {}
     // Rebuild chapterNumbersRef
     const newRef: Record<number, number> = {};
     for (let i = 0; i < chs.length; i++) {
@@ -599,8 +594,8 @@ export default function DocumentEditor({ manuscriptId }: Props) {
     const newActive   = idx >= newChapters.length ? Math.max(0, newChapters.length - 1) : idx;
     setChapters(newChapters);
     setActiveChapter(newActive);
-    const newHtml = loadChapterContent(manuscriptId, newActive, newChapters[newActive]?.html ?? '');
-    editor?.commands.setContent(newHtml, false);
+    const newHtml = loadChapterContent(msId, newActive, newChapters[newActive]?.html ?? '');
+    editor?.commands.setContent(newHtml);
     void api.del(`/api/manuscripts/${manuscriptId}/chapters/${chNum}`)
       .catch(err => console.error('[deleteChapter]', err));
     setDeleteConfirmIdx(null);
@@ -611,15 +606,15 @@ export default function DocumentEditor({ manuscriptId }: Props) {
     const dbNum  = chapterNumbersRef.current[idx] ?? idx;
     const content = idx === activeChapterRef.current
       ? (editor?.getHTML() ?? chaptersRef.current[idx]?.html ?? '')
-      : loadChapterContent(manuscriptId, idx, chaptersRef.current[idx]?.html ?? '');
+      : loadChapterContent(msId, idx, chaptersRef.current[idx]?.html ?? '');
     void api.put(`/api/manuscripts/${manuscriptId}/chapters/${dbNum}`, { title, content })
       .catch(() => {});
   }
 
   const wordCount   = editor ? editor.getText().split(/\s+/).filter(Boolean).length : 0;
-  const msMeta      = MANUSCRIPT_META[manuscriptId];
+  const msMeta      = MANUSCRIPT_META[msId];
   const currentHtml = editor?.getHTML() ?? '';
-  const snapHtml    = loadChapterSnapshot(manuscriptId, activeChapter, chapters[activeChapter]?.html ?? '');
+  const snapHtml    = loadChapterSnapshot(msId, activeChapter, chapters[activeChapter]?.html ?? '');
   const snapLabel   = hasSnap ? 'Saved version' : `${msMeta?.draft ?? 'Draft'} · original`;
 
   // ── Shared toolbar ────────────────────────────────────────────────

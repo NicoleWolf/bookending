@@ -63,7 +63,7 @@ function renderInQuietMode() {
   return render(
     <QuietModeProvider>
       <QuietTrigger />
-      <DocumentEditor manuscriptId={1} />
+      <DocumentEditor manuscriptId="1" />
     </QuietModeProvider>,
   );
 }
@@ -71,7 +71,7 @@ function renderInQuietMode() {
 function renderNormal() {
   return render(
     <QuietModeProvider>
-      <DocumentEditor manuscriptId={1} />
+      <DocumentEditor manuscriptId="1" />
     </QuietModeProvider>,
   );
 }

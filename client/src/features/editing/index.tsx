@@ -112,7 +112,7 @@ export default function EditingHub({ savedBooks, onTabChange }: EditingHubProps)
   }));
 
   const readerNames = ['All', ...activeReaders.map(r => r.name)];
-  const msComments  = COMMENTS.filter(c => c.manuscriptId === activeId);
+  const msComments  = COMMENTS.filter(c => String(c.manuscriptId) === activeId);
   const visible     = msComments.filter(c => {
     if (!showResolved && resolved.has(c.id)) return false;
     if (filterReader !== 'All' && c.reader.name !== filterReader) return false;
@@ -136,24 +136,15 @@ export default function EditingHub({ savedBooks, onTabChange }: EditingHubProps)
   const removeReader = (id: string) => {
     if (!session?.token) return;
     setReaders(p => ({ ...p, [activeId]: (p[activeId] ?? []).filter(r => r.id !== id) }));
-    fetch(`${API_URL}/api/manuscripts/${activeId}/readers/${id}`, {
-      method: 'DELETE',
-      headers: { Authorization: `Bearer ${session.token}` },
-    }).catch(err => console.error('Failed to remove reader:', err));
+    api.del(`/api/manuscripts/${activeId}/readers/${id}`)
+      .catch(err => console.error('Failed to remove reader:', err));
   };
 
   const addReader = (name: string, email: string, manuscriptId: string) => {
     if (!session?.token) return;
-    const token = session.token;
-    fetch(`${API_URL}/api/manuscripts/${manuscriptId}/readers`, {
-      method:  'POST',
-      headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
-      body:    JSON.stringify({ name, email }),
-    })
-      .then(r => r.json())
-      .then((json: { data?: BetaReaderRecord }) => {
-        if (!json.data) return;
-        const newReader = recordToReader(json.data, (readers[manuscriptId] ?? []).length);
+    api.post<BetaReaderRecord>(`/api/manuscripts/${manuscriptId}/readers`, { name, email })
+      .then(record => {
+        const newReader = recordToReader(record, (readers[manuscriptId] ?? []).length);
         setReaders(p => ({ ...p, [manuscriptId]: [...(p[manuscriptId] ?? []), newReader] }));
       })
       .catch(err => console.error('Failed to add reader:', err));
@@ -677,7 +668,7 @@ export default function EditingHub({ savedBooks, onTabChange }: EditingHubProps)
           reader={composingFor}
           manuscript={ms}
           readerComments={COMMENTS.filter(
-            c => c.manuscriptId === activeId && c.reader.name === composingFor.name
+            c => String(c.manuscriptId) === activeId && c.reader.name === composingFor.name
           )}
           onSend={body => handleLetterSent(composingFor, body)}
           onClose={() => setComposingFor(null)}

@@ -24,7 +24,6 @@ export function ByTitleView({ savedBooks }: ByTitleViewProps) {
               <div className={styles.titleCover}>
                 <BookCover
                   title={savedBooks?.[title.id]?.title ?? title.title}
-                  scheme={(title.id - 1) % 5}
                 />
               </div>
               <div className={styles.titleInfo}>

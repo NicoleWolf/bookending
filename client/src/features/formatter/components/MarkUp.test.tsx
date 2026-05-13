@@ -3,7 +3,7 @@ import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { useState } from 'react';
 import MarkUp from './MarkUp';
-import type { DetectedItem, FormattingProjectRecord } from '../types';
+import type { DetectedItem } from '../types';
 
 // ── Fixtures ──────────────────────────────────────────────────────
 

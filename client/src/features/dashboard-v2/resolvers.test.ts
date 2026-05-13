@@ -65,8 +65,9 @@ function makeActiveRead(overrides?: Partial<DashboardV2['reading']['activeBetaRe
     notesCount:      8,
     joinedAt:        new Date(Date.now() - 10 * 24 * 60 * 60 * 1000).toISOString(),
     lastSeenAt:      new Date(Date.now() - 3 * 60 * 60 * 1000).toISOString(),
-    chapterCount:    20,
-    myAnnotations:   [],
+    chapterCount:      20,
+    myAnnotations:     [],
+    recentAuthorNotes: [],
     ...overrides,
   };
 }

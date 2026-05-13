@@ -158,7 +158,7 @@ export function ProductsView({ savedBooks, onTabChange }: ProductsViewProps) {
             {listedBooks.map((book) => (
               <div key={book.id} className={styles.coverItem}>
                 <div className={styles.coverThumb}>
-                  <BookCover title={book.title} scheme={0} />
+                  <BookCover title={book.title} />
                 </div>
                 <div className={styles.coverInfo}>
                   <div className={styles.coverInfoHeader}>

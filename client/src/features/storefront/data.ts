@@ -11,65 +11,65 @@ export const PRODUCTS: Product[] = [
 
 export const ORDERS: Order[] = [
   {
-    id: 1,  num: '#4421', customer: 'L. Marchetti',   location: 'Milan, IT',
+    id: '1',  num: '#4421', customer: 'L. Marchetti',   location: 'Milan, IT',
     items: 'Signed hardcover',         total: 28, status: 'new',       date: '14m ago',
     address: { line1: 'Via Brera 12', city: 'Milan', country: 'Italy', postal: '20121' },
     notes: 'Please sign to my daughter Sofia — she has been waiting for this one',
     signedRequested: true,  letterRequested: true,  digital: false,
   },
   {
-    id: 2,  num: '#4420', customer: 'D. Okonkwo',     location: 'Lagos, NG',
+    id: '2',  num: '#4420', customer: 'D. Okonkwo',     location: 'Lagos, NG',
     items: 'Paperback bundle',         total: 38, status: 'new',       date: '42m ago',
     address: { line1: '14 Admiralty Way', city: 'Lagos', country: 'Nigeria' },
     signedRequested: true,  letterRequested: false, digital: false,
   },
   {
-    id: 3,  num: '#4419', customer: 'A. Pham',        location: 'Brooklyn, US',
+    id: '3',  num: '#4419', customer: 'A. Pham',        location: 'Brooklyn, US',
     items: 'Paperback',                total: 18, status: 'processing', date: '1h ago',
     address: { line1: '227 Bedford Ave', city: 'Brooklyn, NY', country: 'United States', postal: '11211' },
     signedRequested: false, letterRequested: false, digital: false,
   },
   {
-    id: 4,  num: '#4418', customer: 'R. Søndergaard', location: 'Aarhus, DK',
+    id: '4',  num: '#4418', customer: 'R. Søndergaard', location: 'Aarhus, DK',
     items: 'Lighthouses zine',         total: 9,  status: 'processing', date: '2h ago',
     address: { line1: 'Bispetorvet 3', city: 'Aarhus', country: 'Denmark', postal: '8000' },
     signedRequested: false, letterRequested: false, digital: false,
   },
   {
-    id: 5,  num: '#4417', customer: 'C. Nwosu',       location: 'London, UK',
+    id: '5',  num: '#4417', customer: 'C. Nwosu',       location: 'London, UK',
     items: 'Signed hardcover + eBook', total: 34, status: 'shipped',   date: '4h ago',
     address: { line1: '47 Bermondsey St', city: 'London', country: 'United Kingdom', postal: 'SE1 3XT' },
     notes: 'Long-time reader — thank you for writing',
     signedRequested: true,  letterRequested: false, digital: false,
   },
   {
-    id: 6,  num: '#4416', customer: 'T. Bergström',   location: 'Stockholm, SE',
+    id: '6',  num: '#4416', customer: 'T. Bergström',   location: 'Stockholm, SE',
     items: 'eBook — PDF',              total: 8,  status: 'delivered', date: '1d ago',
     address: { line1: 'Birger Jarlsgatan 18', city: 'Stockholm', country: 'Sweden', postal: '114 34' },
     signedRequested: false, letterRequested: false, digital: true,
   },
   {
-    id: 7,  num: '#4415', customer: 'M. Velasquez',   location: 'Mexico City, MX',
+    id: '7',  num: '#4415', customer: 'M. Velasquez',   location: 'Mexico City, MX',
     items: 'Paperback',                total: 18, status: 'delivered', date: '1d ago',
     address: { line1: 'Calle Durango 240, Col. Roma', city: 'Mexico City', country: 'Mexico', postal: '06700' },
     signedRequested: false, letterRequested: false, digital: false,
   },
   {
-    id: 8,  num: '#4414', customer: 'F. Dubois',      location: 'Lyon, FR',
+    id: '8',  num: '#4414', customer: 'F. Dubois',      location: 'Lyon, FR',
     items: 'Paperback bundle',         total: 38, status: 'shipped',   date: '2d ago',
     address: { line1: '9 Rue de la République', city: 'Lyon', country: 'France', postal: '69001' },
     notes: 'Please include a note — this is a birthday gift',
     signedRequested: true,  letterRequested: true,  digital: false,
   },
   {
-    id: 9,  num: '#4413', customer: 'H. Yamamoto',    location: 'Osaka, JP',
+    id: '9',  num: '#4413', customer: 'H. Yamamoto',    location: 'Osaka, JP',
     items: 'Signed hardcover',         total: 28, status: 'delivered', date: '2d ago',
     address: { line1: '3-2-1 Namba, Chuo-ku', city: 'Osaka', country: 'Japan', postal: '542-0076' },
     notes: 'Please do not include receipt — this is a gift',
     signedRequested: true,  letterRequested: false, digital: false,
   },
   {
-    id: 10, num: '#4412', customer: 'B. Osei',        location: 'Accra, GH',
+    id: '10', num: '#4412', customer: 'B. Osei',        location: 'Accra, GH',
     items: 'eBook — PDF',              total: 8,  status: 'refunded',  date: '3d ago',
     address: { line1: '12 Oxford St, Osu', city: 'Accra', country: 'Ghana' },
     signedRequested: false, letterRequested: false, digital: true,
@@ -117,5 +117,5 @@ export const REPEAT_RATE = { rate: 23, repeatOrders: 28 };
 
 export const STOREFRONT_CONFIG = {
   hero: { name: 'Billie Wolf', tagline: 'Literary fiction from Portland, Oregon.' },
-  featuredIds: [1, 2, 3, 6] as number[],
+  featuredIds: ['1', '2', '3', '6'],
 };

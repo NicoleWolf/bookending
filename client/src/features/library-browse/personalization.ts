@@ -133,8 +133,8 @@ export function getVisibleShelves(
     .filter(ms => {
       const state = deriveSlotState(ms);
       if (state !== 'filling') return false;
-      const counts = ms.slotCounts ?? { filled: ms.readerCount, total: ms.maxReaders };
-      return counts.total - counts.filled <= 2;
+      const counts = ms.slotCounts ?? { filled: ms.readerCount, total: ms.maxBetaReaders };
+      return (counts.total ?? Infinity) - counts.filled <= 2;
     })
     .slice(0, 6);
 

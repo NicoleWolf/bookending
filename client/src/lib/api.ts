@@ -3,8 +3,10 @@ const API_URL = (import.meta.env.VITE_API_URL as string | undefined) ?? 'http://
 type FetchOptions = Omit<RequestInit, 'headers'> & { headers?: Record<string, string> };
 
 export class ApiError extends Error {
-  constructor(public readonly status: number, message: string) {
+  readonly status: number;
+  constructor(status: number, message: string) {
     super(message);
+    this.status = status;
     this.name = 'ApiError';
   }
 }

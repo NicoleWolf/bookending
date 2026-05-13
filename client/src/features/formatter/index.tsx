@@ -2,11 +2,13 @@ import { useState, useEffect } from 'react';
 import { STEPS } from './steps';
 import { api } from '../../lib/api';
 import { deriveMockStructure } from './data';
-import type { ManuscriptSummary, FormattingProjectRecord, IngestSettings, DetectedItem } from './types';
+import type { ManuscriptSummary, FormattingProjectRecord, IngestSettings, DetectedItem, FrontMatterState } from './types';
+import { buildDefaultFrontMatter } from './types';
 import BinderySidebar from './components/BinderySidebar';
 import LiveProofPanel from './components/LiveProofPanel';
 import BringIn from './components/BringIn';
 import MarkUp from './components/MarkUp';
+import FrontMatter from './components/FrontMatter';
 import styles from './Formatter.module.css';
 
 export type Device = 'paperwhite' | 'phone' | 'tablet';
@@ -19,6 +21,7 @@ export default function FormatterHub() {
   const [project,              setProject]              = useState<FormattingProjectRecord | null>(null);
   const [projectLoading,       setProjectLoading]       = useState(false);
   const [structureItems,       setStructureItems]       = useState<DetectedItem[]>([]);
+  const [frontMatterState,     setFrontMatterState]     = useState<FrontMatterState | null>(null);
 
   // Fetch manuscripts on mount; auto-select most recently updated
   useEffect(() => {
@@ -52,6 +55,16 @@ export default function FormatterHub() {
     const ms = manuscripts.find(m => m.id === selectedManuscriptId);
     if (ms) setStructureItems(deriveMockStructure(ms));
   }, [selectedManuscriptId, manuscripts]);
+
+  // Build (or re-sync) front matter state when manuscript or saved project changes
+  useEffect(() => {
+    const ms = manuscripts.find(m => m.id === selectedManuscriptId);
+    if (!ms) return;
+    const authorName = 'Author'; // placeholder until author profile is threaded through
+    setFrontMatterState(
+      buildDefaultFrontMatter(ms.title, authorName, project?.frontMatter ?? null)
+    );
+  }, [selectedManuscriptId, manuscripts, project?.frontMatter]);
 
   async function handlePull(manuscriptId: string, settings: IngestSettings) {
     const created = await api.post<FormattingProjectRecord>('/api/formatter', {
@@ -165,6 +178,15 @@ export default function FormatterHub() {
               onAdvance={() => setActiveStep(3)}
             />
           )}
+          {activeStep === 3 && frontMatterState && (
+            <FrontMatter
+              project={project}
+              state={frontMatterState}
+              onStateChange={setFrontMatterState}
+              onBack={() => setActiveStep(2)}
+              onAdvance={() => setActiveStep(4)}
+            />
+          )}
         </main>
 
         <LiveProofPanel
@@ -172,6 +194,7 @@ export default function FormatterHub() {
           onDeviceChange={setDevice}
           activeStep={activeStep}
           structureItems={structureItems}
+          frontMatterState={frontMatterState ?? undefined}
         />
       </div>
     </div>

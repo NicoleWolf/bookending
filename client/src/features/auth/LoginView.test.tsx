@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from 'vitest';
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { LoginView } from './LoginView';
 import * as AuthContextModule from './AuthContext';
@@ -15,6 +15,8 @@ function mockAuthContext(overrides: Partial<ReturnType<typeof AuthContextModule.
     register: vi.fn(),
     logout: vi.fn(),
     clearError: vi.fn(),
+    updateProfile: vi.fn(),
+    changePassword: vi.fn(),
     ...overrides,
   });
 }

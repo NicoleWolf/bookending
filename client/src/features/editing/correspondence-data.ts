@@ -3,7 +3,7 @@ import type { CorrespondenceThread } from './types';
 export const INITIAL_THREADS: CorrespondenceThread[] = [
   {
     id: 1,
-    manuscriptId: 1,
+    manuscriptId: '1',
     draftVersion: 'Draft 2',
     reader: { id: 'mock-4', name: 'Henrik Lund', initials: 'HL', tone: 'ink' },
     openedAt: '2 days ago',
@@ -61,9 +61,9 @@ H`,
   },
   {
     id: 2,
-    manuscriptId: 1,
+    manuscriptId: '1',
     draftVersion: 'Draft 2',
-    reader: { id: 2, name: 'Tomás Reyes', initials: 'TR', tone: 'gold' },
+    reader: { id: '2', name: 'Tomás Reyes', initials: 'TR', tone: 'gold' },
     openedAt: '5 hours ago',
     messages: [
       {
@@ -89,9 +89,9 @@ Tomás`,
   },
   {
     id: 3,
-    manuscriptId: 2,
+    manuscriptId: '2',
     draftVersion: 'Draft 1',
-    reader: { id: 7, name: 'Celestine Morrow', initials: 'CM', tone: 'gold' },
+    reader: { id: '7', name: 'Celestine Morrow', initials: 'CM', tone: 'gold' },
     openedAt: '1 day ago',
     messages: [
       {

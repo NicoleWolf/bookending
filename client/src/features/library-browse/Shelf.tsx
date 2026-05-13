@@ -11,7 +11,7 @@ export interface ShelfProps {
   seeAllUrl?:    string;
   seeAllCount?:  number;
   cards:         CatalogManuscript[];
-  pendingIds?:   Set<number>;
+  pendingIds?:   Set<string | number>;
   onRequestRead: (ms: CatalogManuscript) => void;
   onWithdraw?:   (ms: CatalogManuscript) => void;
 }

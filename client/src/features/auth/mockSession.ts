@@ -123,6 +123,7 @@ export function mockRegister(payload: RegisterPayload): Promise<AuthSession> {
         id: `usr_${Date.now()}`,
         name: payload.name,
         email: payload.email.toLowerCase(),
+        role: payload.role,
         lastLoginAt: null,
       };
       MOCK_USERS.set(newUser.email, {

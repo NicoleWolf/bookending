@@ -18,7 +18,7 @@ interface Props {
 export function DiscoverView({
   manuscripts, readerProfile = EMPTY_PROFILE, totalCount, onBrowseAll, onEditProfile,
 }: Props) {
-  const [pendingIds,   setPendingIds]   = useState<Set<number>>(new Set());
+  const [pendingIds,   setPendingIds]   = useState<Set<string | number>>(new Set());
   const [requestingMs, setRequestingMs] = useState<CatalogManuscript | null>(null);
 
   const featured = useMemo(

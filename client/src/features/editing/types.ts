@@ -45,7 +45,7 @@ export interface CorrespondenceMessage {
 
 export interface CorrespondenceThread {
   id: number;
-  manuscriptId: number;
+  manuscriptId: string;
   draftVersion: string;
   reader: { id: string; name: string; initials: string; tone: ReaderTone };
   messages: CorrespondenceMessage[];

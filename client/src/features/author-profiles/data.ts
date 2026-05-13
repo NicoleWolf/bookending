@@ -33,21 +33,21 @@ export const AUTHOR_PROFILES: AuthorProfile[] = [
     ],
     pendingQuestions: [
       {
-        id: 101,
+        id: '101',
         submitterId: 'usr_alice',
         submitterName: 'Alice Morrow',
         question: 'How do you approach writing grief without sliding into sentimentality? Your work is devastating but never maudlin.',
         submittedAt: '2026-05-01T10:00:00.000Z',
       },
       {
-        id: 102,
+        id: '102',
         submitterId: 'usr_james',
         submitterName: 'James Okonkwo',
         question: 'Does your early-morning writing routine ever conflict with insomnia or difficult nights? How do you protect that time?',
         submittedAt: '2026-05-03T14:00:00.000Z',
       },
       {
-        id: 103,
+        id: '103',
         submitterId: 'usr_sarah',
         submitterName: 'Sarah Chen',
         question: 'What drew you toward speculative fiction for Hollow Meridian after two realist novels? Was it a deliberate pivot?',
@@ -56,19 +56,19 @@ export const AUTHOR_PROFILES: AuthorProfile[] = [
     ],
     qa: [
       {
-        id: 1,
+        id: '1',
         question: 'How did you come up with the title The Salt Roads?',
         answer: 'The title came before the book did, which is unusual for me. I was reading about salt trade routes in the American Southwest and kept returning to the phrase — it had a weight to it. Salt preserves things. It also stings. The book needed both.',
         askedAt: '2026-02-10T00:00:00.000Z',
       },
       {
-        id: 2,
+        id: '2',
         question: 'Do you outline or write into the dark?',
         answer: 'Both, depending on the book. The Salt Roads was outlined in detail because the dual timeline required it — I needed to know where the two threads would converge before I could write either one honestly. Hollow Meridian I\'m writing into the dark, which is terrifying and occasionally wonderful.',
         askedAt: '2026-03-01T00:00:00.000Z',
       },
       {
-        id: 3,
+        id: '3',
         question: 'What do you read when you\'re drafting?',
         answer: 'I try to read nothing too close to what I\'m writing in terms of voice or subject. While drafting Hollow Meridian I\'ve been reading Toni Morrison essays and a lot of non-fiction about deep geological time. It keeps my prose from getting contaminated by someone else\'s rhythm.',
         askedAt: '2026-04-12T00:00:00.000Z',
@@ -105,13 +105,13 @@ export const AUTHOR_PROFILES: AuthorProfile[] = [
     ],
     qa: [
       {
-        id: 1,
+        id: '1',
         question: 'How do you handle historical accuracy vs narrative licence?',
         answer: 'I have a rule: I won\'t invent a historical fact, but I will invent everything that history didn\'t record. So if a date or a law or a real person\'s documented action is known, I stick to it. Everything in between — the feelings, the conversations, the smell of a room — that\'s where the fiction lives.',
         askedAt: '2026-02-22T00:00:00.000Z',
       },
       {
-        id: 2,
+        id: '2',
         question: 'What\'s the hardest part of writing historical fiction?',
         answer: 'Letting go of research. You accumulate so much — it becomes genuinely interesting in its own right — and then you have to make yourself forget most of it for the sake of the story. The reader doesn\'t need everything you know. They need to feel the world.',
         askedAt: '2026-03-15T00:00:00.000Z',
@@ -148,13 +148,13 @@ export const AUTHOR_PROFILES: AuthorProfile[] = [
     ],
     qa: [
       {
-        id: 1,
+        id: '1',
         question: 'How much climate science research goes into your work?',
         answer: 'A significant amount, but I try to wear it lightly. The science is load-bearing — it has to be accurate enough that a scientist wouldn\'t wince — but the reader shouldn\'t feel like they\'re being educated. The speculative elements come from asking: what if the science is right, and what if the people are still recognisably human?',
         askedAt: '2026-03-08T00:00:00.000Z',
       },
       {
-        id: 2,
+        id: '2',
         question: 'What draws you to the intersection of ancestral memory and climate?',
         answer: 'Because that\'s where the grief is. The communities most affected by climate change are often the ones with the deepest relationships to the land — relationships that span generations and include the dead. I\'m interested in what it means to mourn a place that is still, technically, there.',
         askedAt: '2026-04-01T00:00:00.000Z',
@@ -190,7 +190,7 @@ export const AUTHOR_PROFILES: AuthorProfile[] = [
     ],
     qa: [
       {
-        id: 1,
+        id: '1',
         question: 'How autobiographical is your fiction?',
         answer: 'The feelings are always autobiographical. The facts almost never are. I write characters who feel the things I\'ve felt, in situations I\'ve invented to make those feelings as clear and as pressured as possible. The immigrant experience I write about is real. The specific families are not.',
         askedAt: '2026-03-20T00:00:00.000Z',

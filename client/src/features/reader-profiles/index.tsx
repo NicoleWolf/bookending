@@ -271,7 +271,7 @@ function ReaderCard({ reader, onSelect, onInvite }: {
 
 // ── Profile page ──────────────────────────────────────────────────
 
-function ReaderProfilePage({ reader, manuscripts, onBack, onInvite }: {
+function ReaderProfilePage({ reader, manuscripts: _manuscripts, onBack, onInvite }: {
   reader: ReaderProfile;
   manuscripts: Manuscript[];
   onBack: () => void;

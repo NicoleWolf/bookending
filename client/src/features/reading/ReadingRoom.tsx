@@ -1,6 +1,6 @@
-import { useState, useRef, useEffect, useCallback } from 'react';
+import { useState, useRef, useEffect, useCallback, type ReactElement } from 'react';
 import { Btn } from '../../shared/ui/atoms';
-import { IconArrow, IconCheck } from '../../shared/ui/icons';
+import { IconCheck } from '../../shared/ui/icons';
 import type { Highlight, Pending, Submission, AnnotationRecord, ProgressRecord, ImpressionPointRecord } from './types';
 import { MANUSCRIPTS, STAR_LABELS, STANCE_ORDER, STANCE_VALUE, AUTHOR_NOTES } from './data';
 import { useAuth } from '../auth';
@@ -14,11 +14,6 @@ interface ReadingRoomProps {
   onBack: () => void;
 }
 
-function truncateAtWord(str: string, max: number): string {
-  if (str.length <= max) return str;
-  const cut = str.lastIndexOf(' ', max);
-  return str.slice(0, cut > 0 ? cut : max) + '…';
-}
 
 export default function ReadingRoom({ msRef, onBack }: ReadingRoomProps) {
   const { session } = useAuth();
@@ -42,7 +37,7 @@ export default function ReadingRoom({ msRef, onBack }: ReadingRoomProps) {
   const [firstNoteSaved,    setFirstNoteSaved]    = useState(false);
   const [stars,             setStars]             = useState(0);
   const [message,           setMessage]           = useState('');
-  const [releasedOverrides, setReleasedOverrides] = useState<Record<number, boolean>>({});
+  const [releasedOverrides] = useState<Record<number, boolean>>({});
   const [focusedHighlightId, setFocusedHighlightId] = useState<string | null>(null);
   const [submittedChapters,  setSubmittedChapters]  = useState<Set<number>>(new Set());
   const readingRef = useRef<HTMLDivElement>(null);
@@ -225,7 +220,7 @@ export default function ReadingRoom({ msRef, onBack }: ReadingRoomProps) {
     const hasPending = pending?.chapterId === cId && pending?.paraId === pId;
     if (hl.length === 0 && !hasPending) return text;
 
-    const nodes: (string | JSX.Element)[] = [];
+    const nodes: (string | ReactElement)[] = [];
     let rem = text;
 
     if (hasPending && pending) {
@@ -282,24 +277,9 @@ export default function ReadingRoom({ msRef, onBack }: ReadingRoomProps) {
   const chapterSent  = chapter !== null && submittedChapters.has(chapter.number);
   const hasNewDrafts = draftNotesOnChapter.length > 0;
 
-  const writerAsks = ms.instructions
-    .split('\n').filter(l => /^\d+\./.test(l))
-    .map(l => l.replace(/^\d+\.\s*/, '').trim());
-
-  const uncoveredAsks = writerAsks.filter(ask => {
-    const askWords = ask.toLowerCase().split(/\s+/).filter(w => w.length > 4);
-    return !draftNotesOnChapter.some(h =>
-      askWords.some(w => h.selectedText.toLowerCase().includes(w) || h.note.toLowerCase().includes(w))
-    );
-  });
-
   const currentImpression = chapter
     ? impressionPoints.find(p => p.chapterNum === chapter.number)?.stance ?? null
     : null;
-  const prevChapterImpression = chapter && chapter.number > 1
-    ? impressionPoints.find(p => p.chapterNum === chapter.number - 1)?.stance ?? null
-    : null;
-
   return (
     <section className={styles.section}>
 

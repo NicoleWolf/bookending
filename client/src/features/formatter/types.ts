@@ -17,6 +17,7 @@ export interface FormattingProjectRecord {
   smartQuotes: string;
   uploadedDocxUrl: string | null;
   pastedContent: string | null;
+  frontMatter: string | null;
   createdAt: string;
   updatedAt: string;
 }
@@ -44,6 +45,107 @@ export type ItemSubtype =
 
 export type ConfidenceThreshold = 'strict' | 'standard' | 'loose';
 export type StructureView       = 'outline' | 'list' | 'tree';
+
+// ── Front matter ───────────────────────────────────────────────────
+
+export type BlockKey = 'title-page' | 'copyright' | 'dedication' | 'epigraph' | 'also-by';
+
+export interface TitlePageFields {
+  title:    string;
+  author:   string;
+  year:     string;
+  subtitle: string;
+}
+
+export interface CopyrightFields {
+  text: string;
+}
+
+export interface DedicationFields {
+  text: string;
+}
+
+export interface EpigraphFields {
+  quote:       string;
+  attribution: string;
+}
+
+export interface AlsoByEntry {
+  id:    string; // local uuid for list key
+  title: string;
+  year:  string;
+}
+
+export interface AlsoByFields {
+  entries: AlsoByEntry[];
+}
+
+export type BlockFields =
+  | { key: 'title-page'; fields: TitlePageFields; included: true }
+  | { key: 'copyright';  fields: CopyrightFields; included: true }
+  | { key: 'dedication'; fields: DedicationFields; included: boolean }
+  | { key: 'epigraph';   fields: EpigraphFields;   included: boolean }
+  | { key: 'also-by';    fields: AlsoByFields;     included: boolean };
+
+export interface FrontMatterState {
+  selectedBlock: BlockKey;
+  blocks: {
+    'title-page': { fields: TitlePageFields; included: true };
+    'copyright':  { fields: CopyrightFields; included: true };
+    'dedication': { fields: DedicationFields; included: boolean };
+    'epigraph':   { fields: EpigraphFields;   included: boolean };
+    'also-by':    { fields: AlsoByFields;     included: boolean };
+  };
+}
+
+const COPYRIGHT_TEMPLATE = (author: string, year: string) =>
+  `Copyright © ${year} ${author}\n\nAll rights reserved. No part of this publication may be reproduced, distributed, or transmitted in any form or by any means, including photocopying, recording, or other electronic or mechanical methods, without the prior written permission of the author, except in the case of brief quotations embodied in critical reviews and certain other non-commercial uses permitted by copyright law.`;
+
+export function buildDefaultFrontMatter(
+  title: string,
+  author: string,
+  existingJson: string | null,
+): FrontMatterState {
+  const year = String(new Date().getFullYear());
+
+  const defaults: FrontMatterState = {
+    selectedBlock: 'title-page',
+    blocks: {
+      'title-page': { included: true, fields: { title, author, year, subtitle: '' } },
+      'copyright':  { included: true, fields: { text: COPYRIGHT_TEMPLATE(author, year) } },
+      'dedication': { included: false, fields: { text: '' } },
+      'epigraph':   { included: false, fields: { quote: '', attribution: '' } },
+      'also-by':    { included: false, fields: { entries: [] } },
+    },
+  };
+
+  if (!existingJson) return defaults;
+
+  try {
+    const saved = JSON.parse(existingJson) as Partial<FrontMatterState>;
+    // Re-sync title/author from live manuscript data; preserve everything else
+    const merged: FrontMatterState = {
+      selectedBlock: saved.selectedBlock ?? defaults.selectedBlock,
+      blocks: {
+        'title-page': {
+          included: true,
+          fields: {
+            ...(saved.blocks?.['title-page']?.fields ?? defaults.blocks['title-page'].fields),
+            title,
+            author,
+          },
+        },
+        'copyright':  saved.blocks?.['copyright']  ?? defaults.blocks['copyright'],
+        'dedication': saved.blocks?.['dedication'] ?? defaults.blocks['dedication'],
+        'epigraph':   saved.blocks?.['epigraph']   ?? defaults.blocks['epigraph'],
+        'also-by':    saved.blocks?.['also-by']    ?? defaults.blocks['also-by'],
+      },
+    };
+    return merged;
+  } catch {
+    return defaults;
+  }
+}
 
 export interface DetectedItem {
   id:             string;

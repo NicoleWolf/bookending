@@ -114,12 +114,13 @@ router.patch('/:id', async (req, res) => {
       return;
     }
 
-    const { currentStep, source, encoding, smartQuotes, pastedContent } = req.body as {
+    const { currentStep, source, encoding, smartQuotes, pastedContent, frontMatter } = req.body as {
       currentStep?:   number;
       source?:        string;
       encoding?:      string;
       smartQuotes?:   string;
       pastedContent?: string;
+      frontMatter?:   string;
     };
 
     const updated = await prisma.formattingProject.update({
@@ -130,6 +131,7 @@ router.patch('/:id', async (req, res) => {
         encoding:      encoding      ?? undefined,
         smartQuotes:   smartQuotes   ?? undefined,
         pastedContent: pastedContent ?? undefined,
+        frontMatter:   frontMatter   ?? undefined,
       },
     });
 

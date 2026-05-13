@@ -50,27 +50,6 @@ export interface ActiveChip {
 
 /* ── Constants ────────────────────────────────────────────────────── */
 
-const CONTENT_NOTE_VOCABULARY: string[] = [
-  'Violence (graphic)',
-  'Sexual content (explicit)',
-  'Sexual violence',
-  'Child harm',
-  'Domestic abuse',
-  'Suicide / self-harm',
-  'Eating disorders',
-  'Substance use',
-  'Animal harm',
-  'Medical trauma',
-  'Pregnancy loss',
-  'Mental illness depicted in detail',
-  'Racism / racial trauma',
-  'Homophobia / transphobia depicted',
-  'Ableism depicted',
-  'Grief / death of family',
-  'War / combat',
-  'Body horror',
-];
-
 export const DEFAULT_FILTER_STATE: BrowseFilterState = {
   genre:           null,
   status:          new Set(['open']),
@@ -95,7 +74,7 @@ function sortManuscripts(ms: CatalogManuscript[], sort: SortKey): CatalogManuscr
         const fullA = deriveSlotState(a) === 'full' ? 1 : 0;
         const fullB = deriveSlotState(b) === 'full' ? 1 : 0;
         if (fullA !== fullB) return fullA - fullB;
-        return (a.maxReaders - a.readerCount) - (b.maxReaders - b.readerCount);
+        return ((a.maxBetaReaders ?? Infinity) - a.readerCount) - ((b.maxBetaReaders ?? Infinity) - b.readerCount);
       });
     case 'most-read':
       return copy.sort((a, b) => b.readerCount - a.readerCount);
@@ -128,7 +107,7 @@ export function applyFilters(
   /* 3 — Mechanism */
   const afterMechanism = state.mechanism.size === 0
     ? afterStatus
-    : afterStatus.filter(m => state.mechanism.has((m.joiningMechanism ?? 'open') as 'open' | 'invitation'));
+    : afterStatus.filter(m => state.mechanism.has(m.betaMode === 'PUBLIC' ? 'open' : 'invitation'));
 
   /* 4 — Length */
   const afterLength = (() => {
@@ -146,7 +125,7 @@ export function applyFilters(
   let hiddenByAvailability = 0;
   const afterAvailability = state.availableToMe
     ? afterLength.filter(m => {
-        if ((m.joiningMechanism ?? 'open') === 'invitation') {
+        if (m.betaMode !== 'PUBLIC') {
           hiddenByAvailability++;
           return false;
         }

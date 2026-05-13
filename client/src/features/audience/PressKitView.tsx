@@ -6,11 +6,6 @@ import type { PKAsset } from './types';
 import type { BookMetadata } from '../library/data';
 import styles from './PressKit.module.css';
 
-const BOOK_SCHEMES: Record<number, number> = {
-  1: 0,
-  2: 1,
-};
-
 interface ImageEditorProps {
   asset: PKAsset;
   savedBooks: Record<number, BookMetadata>;
@@ -47,7 +42,7 @@ function ImageEditor({ asset, savedBooks }: ImageEditorProps) {
               </div>
             </div>
             <div className={styles.coverThumb}>
-              <BookCover title={catalogBook.title} scheme={BOOK_SCHEMES[catalogBook.id] ?? 3} />
+              <BookCover title={catalogBook.title} />
             </div>
           </div>
           <div className={styles.sourceActions}>

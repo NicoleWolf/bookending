@@ -2,6 +2,9 @@
   "name": "@bookending/shared",
   "version": "0.0.1",
   "private": true,
+  "scripts": {
+    "build": "tsc"
+  },
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "exports": {

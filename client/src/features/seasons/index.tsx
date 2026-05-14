@@ -50,6 +50,14 @@ export function SeasonsView({ onCompose }: { onCompose?: () => void }) {
   const season = ACTIVE_SEASON;
   const [tab, setTab] = useState<'checklist' | 'channels' | 'timeline'>('checklist');
 
+  if (!season) {
+    return (
+      <div style={{ padding: '32px 0', color: 'var(--muted)', fontSize: 13, fontFamily: 'var(--sans)' }}>
+        No active season. Create a launch plan to track your release.
+      </div>
+    );
+  }
+
   const done       = season.tasks.filter(t => t.status === 'done').length;
   const inProgress = season.tasks.filter(t => t.status === 'in-progress').length;
 

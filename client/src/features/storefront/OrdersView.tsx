@@ -1,7 +1,7 @@
 import { useState, useEffect, Fragment } from 'react';
 import { Pill, Btn } from '../../shared/ui/atoms';
 import { IconArrowUp } from '../../shared/ui/icons';
-import { ORDERS as STATIC_ORDERS, ORDER_STATUS_TONE, ORDER_STATUS_LABEL } from './data';
+import { ORDER_STATUS_TONE, ORDER_STATUS_LABEL } from './data';
 import type { Order, OrderStatus } from './types';
 import { useAuth } from '../auth';
 import styles from './OrdersView.module.css';
@@ -189,53 +189,21 @@ function OrderDetail({ order, checklist, onCheck, onAdvanceStatus, onBack }: Det
 
 export function OrdersView() {
   const { session } = useAuth();
-  const [orders,     setOrders]     = useState<Order[]>(() => [...STATIC_ORDERS]);
+  const [orders,     setOrders]     = useState<Order[]>([]);
   const [filter,     setFilter]     = useState<OrderStatus | 'all'>('all');
   const [selected,   setSelected]   = useState<Set<string>>(new Set());
   const [openId,     setOpenId]     = useState<string | null>(null);
-  const [checklists, setChecklists] = useState<Checklists>(() =>
-    Object.fromEntries(STATIC_ORDERS.map(o => [o.id, initChecklist(o)]))
-  );
+  const [checklists, setChecklists] = useState<Checklists>({});
 
   useEffect(() => {
     if (!session?.token) return;
     void (async () => {
       try {
         const records = await api.get<OrderRecord[]>('/api/orders');
-        if (records.length > 0) {
-          const loaded = records.map(recordToOrder);
-          setOrders(loaded);
-          setChecklists(Object.fromEntries(loaded.map(o => [o.id, initChecklist(o)])));
-          return;
-        }
-        // DB empty — seed from static data
-        const seeded: Order[] = [];
-        for (const o of STATIC_ORDERS) {
-          try {
-            const created = await api.post<OrderRecord>('/api/orders', {
-              num:             o.num,
-              customer:        o.customer,
-              location:        o.location,
-              product:         o.items,
-              amount:          o.total,
-              status:          o.status,
-              notes:           o.notes           ?? null,
-              signedRequested: o.signedRequested,
-              letterRequested: o.letterRequested,
-              digital:         o.digital,
-              addressLine1:    o.address?.line1   ?? null,
-              addressCity:     o.address?.city    ?? null,
-              addressCountry:  o.address?.country ?? null,
-              addressPostal:   o.address?.postal  ?? null,
-            });
-            seeded.push(recordToOrder(created));
-          } catch { /* skip */ }
-        }
-        if (seeded.length > 0) {
-          setOrders(seeded);
-          setChecklists(Object.fromEntries(seeded.map(o => [o.id, initChecklist(o)])));
-        }
-      } catch { /* API down — static data remains */ }
+        const loaded = records.map(recordToOrder);
+        setOrders(loaded);
+        setChecklists(Object.fromEntries(loaded.map(o => [o.id, initChecklist(o)])));
+      } catch { /* leave empty */ }
     })();
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [session?.token]);

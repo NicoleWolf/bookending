@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Pill, Btn, Spark } from '../../shared/ui/atoms';
 import { IconArrow, IconArrowUp, IconMore } from '../../shared/ui/icons';
-import { CHANNELS as CHANNELS_DATA, CHANNEL_DISPLAY, STATS, PROOF, STATUS_TONE } from './data';
+import { CHANNEL_DISPLAY, STATS, PROOF, STATUS_TONE } from './data';
 import type { Channel } from './types';
 import type { ChannelStatus } from './types';
 import ChannelSettingsModal from './ChannelSettingsModal';
@@ -31,7 +31,7 @@ function recordToChannel(r: ChannelRecord): Channel {
 
 export function ChannelsView() {
   const { session } = useAuth();
-  const [channels,       setChannels]       = useState<Channel[]>(CHANNELS_DATA);
+  const [channels,       setChannels]       = useState<Channel[]>([]);
   const [expanded,       setExpanded]       = useState<string | null>(null);
   const [editingChannel, setEditingChannel] = useState<Channel | null>(null);
 
@@ -40,28 +40,8 @@ export function ChannelsView() {
     void (async () => {
       try {
         const records = await api.get<ChannelRecord[]>('/api/distribution');
-        if (records.length > 0) {
-          setChannels(records.map(recordToChannel));
-          return;
-        }
-        // DB is empty — seed from static data
-        const seeded: Channel[] = [];
-        for (const ch of CHANNELS_DATA) {
-          try {
-            const created = await api.post<ChannelRecord>('/api/distribution', {
-              name:      ch.name,
-              kind:      ch.kind,
-              status:    ch.status,
-              sku:       ch.sku       || null,
-              royalty:   ch.royalty   || null,
-              listPrice: ch.listPrice ?? null,
-              formats:   ch.formats,
-            });
-            seeded.push(recordToChannel(created));
-          } catch { /* skip */ }
-        }
-        if (seeded.length > 0) setChannels(seeded);
-      } catch { /* API down — static data remains */ }
+        setChannels(records.map(recordToChannel));
+      } catch { /* leave empty */ }
     })();
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [session?.token]);
@@ -178,47 +158,49 @@ export function ChannelsView() {
           </div>
         </div>
 
-        <div className={styles.proofPanel}>
-          <div className={styles.proofHeader}>
-            <div className="label">Latest proof</div>
-            <Pill tone="accent">{PROOF.status}</Pill>
-          </div>
+        {PROOF && (
+          <div className={styles.proofPanel}>
+            <div className={styles.proofHeader}>
+              <div className="label">Latest proof</div>
+              <Pill tone="accent">{PROOF.status}</Pill>
+            </div>
 
-          <div className={styles.proofMini}>
-            <div className={styles.proofBook}>
-              <div className={styles.proofBookAuthor}>E. WINWOOD</div>
+            <div className={styles.proofMini}>
+              <div className={styles.proofBook}>
+                <div className={styles.proofBookAuthor}>E. WINWOOD</div>
+                <div>
+                  <div className={styles.proofBookTitle}>The<br/>Lantern<br/>Keeper's<br/>Daughter</div>
+                  <div className={styles.proofBookLine} />
+                  <div className={styles.proofBookTag}>A NOVEL</div>
+                </div>
+              </div>
               <div>
-                <div className={styles.proofBookTitle}>The<br/>Lantern<br/>Keeper's<br/>Daughter</div>
-                <div className={styles.proofBookLine} />
-                <div className={styles.proofBookTag}>A NOVEL</div>
+                <div className={styles.proofTitle}>{PROOF.title}</div>
+                <div className={styles.proofVersion}>{PROOF.version.toUpperCase()}</div>
+                {PROOF.specs.slice(0, 3).map(([k, v]) => (
+                  <div key={k} className={styles.specRow}>
+                    <span className={styles.specKey}>{k.toUpperCase()}</span>
+                    <span className={`serif ${styles.specVal}`}>{v}</span>
+                  </div>
+                ))}
               </div>
             </div>
-            <div>
-              <div className={styles.proofTitle}>{PROOF.title}</div>
-              <div className={styles.proofVersion}>{PROOF.version.toUpperCase()}</div>
-              {PROOF.specs.slice(0, 3).map(([k, v]) => (
-                <div key={k} className={styles.specRow}>
-                  <span className={styles.specKey}>{k.toUpperCase()}</span>
-                  <span className={`serif ${styles.specVal}`}>{v}</span>
+
+            <div className={styles.specsTable}>
+              {PROOF.specs.map(([k, v]) => (
+                <div key={k} className={styles.specsRow}>
+                  <span className={styles.specsKey}>{k.toUpperCase()}</span>
+                  <span className={`serif ${styles.specsVal}`}>{v}</span>
                 </div>
               ))}
             </div>
-          </div>
 
-          <div className={styles.specsTable}>
-            {PROOF.specs.map(([k, v]) => (
-              <div key={k} className={styles.specsRow}>
-                <span className={styles.specsKey}>{k.toUpperCase()}</span>
-                <span className={`serif ${styles.specsVal}`}>{v}</span>
-              </div>
-            ))}
+            <div className={styles.proofBtns}>
+              <Btn tone="primary">Approve & push to print</Btn>
+              <Btn tone="ghost">Open proof PDF</Btn>
+            </div>
           </div>
-
-          <div className={styles.proofBtns}>
-            <Btn tone="primary">Approve & push to print</Btn>
-            <Btn tone="ghost">Open proof PDF</Btn>
-          </div>
-        </div>
+        )}
       </div>
       {editingChannel && (
         <ChannelSettingsModal

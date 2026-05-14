@@ -1,8 +1,9 @@
 import type { CSSProperties } from 'react';
 import { Pill, Btn } from '../../shared/ui/atoms';
 import { IconArrowUp } from '../../shared/ui/icons';
+import type { Product, Order } from './types';
 import {
-  PRODUCTS, ORDERS, ORDER_STATUS_TONE, ORDER_STATUS_LABEL,
+  ORDER_STATUS_TONE, ORDER_STATUS_LABEL,
   REVENUE_SERIES, GEOGRAPHY, FUNNEL, REPEAT_RATE,
 } from './data';
 import styles from './OverviewView.module.css';
@@ -22,13 +23,13 @@ function makePath(vals: number[]): string {
     .join(' ');
 }
 
-// ── Action queue data ─────────────────────────────────────────────
+// ── Action queue data — populated from API (Phase 3) ─────────────
 
-const liveSku       = PRODUCTS.filter(p => p.status === 'live' || p.status === 'low-stock');
-const awaitingOrders = ORDERS.filter(o => o.status === 'new' || o.status === 'processing');
-const lowStockSkus  = PRODUCTS.filter(p => p.status === 'low-stock');
-const missingCovers = PRODUCTS.filter(p => (p.status === 'live' || p.status === 'low-stock') && !p.coverUrl);
-const pendingRefunds = ORDERS.filter(o => o.status === 'refunded');
+const liveSku: Product[]       = [];
+const awaitingOrders: Order[]  = [];
+const lowStockSkus: Product[]  = [];
+const missingCovers: Product[] = [];
+const pendingRefunds: Order[]  = [];
 
 // ── Action cell ───────────────────────────────────────────────────
 
@@ -56,11 +57,12 @@ export function OverviewView({ onViewChange }: { onViewChange?: (v: string) => v
   const currentPath = makePath(REVENUE_SERIES.current);
   const prevPath    = makePath(REVENUE_SERIES.prev);
 
+  const toRate = (n: number) => FUNNEL.visitors > 0 ? +(n / FUNNEL.visitors * 100).toFixed(1) : 0;
   const funnelSteps = [
     { label: 'Visitors',      n: FUNNEL.visitors,     rate: null },
-    { label: 'Product page',  n: FUNNEL.productViews, rate: +(FUNNEL.productViews / FUNNEL.visitors * 100).toFixed(1) },
-    { label: 'Added to cart', n: FUNNEL.cartAdds,     rate: +(FUNNEL.cartAdds    / FUNNEL.visitors * 100).toFixed(1) },
-    { label: 'Checkout',      n: FUNNEL.checkouts,    rate: +(FUNNEL.checkouts   / FUNNEL.visitors * 100).toFixed(1) },
+    { label: 'Product page',  n: FUNNEL.productViews, rate: toRate(FUNNEL.productViews) },
+    { label: 'Added to cart', n: FUNNEL.cartAdds,     rate: toRate(FUNNEL.cartAdds) },
+    { label: 'Checkout',      n: FUNNEL.checkouts,    rate: toRate(FUNNEL.checkouts) },
   ] as { label: string; n: number; rate: number | null }[];
 
   return (
@@ -76,7 +78,7 @@ export function OverviewView({ onViewChange }: { onViewChange?: (v: string) => v
           <ActionCell
             count={awaitingOrders.length}
             label="Awaiting fulfillment"
-            sub={`${ORDERS.filter(o => o.status === 'new').length} new · ${ORDERS.filter(o => o.status === 'processing').length} processing`}
+            sub={awaitingOrders.length === 0 ? 'All clear' : `${awaitingOrders.filter(o => o.status === 'new').length} new · ${awaitingOrders.filter(o => o.status === 'processing').length} processing`}
             tone="accent"
             onClick={() => onViewChange?.('orders')}
           />
@@ -144,7 +146,7 @@ export function OverviewView({ onViewChange }: { onViewChange?: (v: string) => v
                 <span className={styles.funnelLabel}>{step.label}</span>
                 <div
                   className={styles.funnelBar}
-                  style={{ '--w': `${(step.n / FUNNEL.visitors) * 100}%` } as CSSProperties}
+                  style={{ '--w': `${FUNNEL.visitors > 0 ? (step.n / FUNNEL.visitors) * 100 : 0}%` } as CSSProperties}
                 />
                 <span className={`serif ${styles.funnelNum}`}>{step.n.toLocaleString()}</span>
                 <span className={styles.funnelRate}>{step.rate !== null ? `${step.rate}%` : ''}</span>
@@ -158,7 +160,7 @@ export function OverviewView({ onViewChange }: { onViewChange?: (v: string) => v
               <div className="label">Recent orders</div>
               <span className={styles.ordersHeaderSub}>LAST 24H · 11 ORDERS</span>
             </div>
-            {ORDERS.slice(0, 5).map(o => (
+            {awaitingOrders.slice(0, 5).map(o => (
               <div key={o.id} className={styles.orderRow}>
                 <div className={styles.orderNum}>{o.num}</div>
                 <div className={styles.orderCustomer}>{o.customer}</div>
@@ -248,7 +250,7 @@ export function OverviewView({ onViewChange }: { onViewChange?: (v: string) => v
             <div className={styles.repeatDisplay}>
               <span className={`serif ${styles.repeatRate}`}>{REPEAT_RATE.rate}%</span>
               <span className={styles.repeatSub}>
-                {REPEAT_RATE.repeatOrders} repeat orders of {ORDERS.length} total
+                {REPEAT_RATE.repeatOrders} repeat orders
               </span>
             </div>
           </div>

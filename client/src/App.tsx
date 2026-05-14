@@ -139,7 +139,23 @@ async function fetchAndMigrateManuscripts(userId: string): Promise<{ books: Book
   } catch { /* corrupt data — ignore */ }
 
   // Phase 3: Sync localStorage-only books to DB if the API is up
-  const unsynced = localBooks.filter(b => typeof b.id === 'string' && b.id.length > 0 && !dbIds.has(b.id) && !!b.title?.trim());
+  // Skip books the user explicitly deleted — stored in a blocklist so they don't re-appear on next login
+  let deletedIds: Set<string> = new Set();
+  try {
+    const raw = localStorage.getItem(`bookending_deleted_ids:${userId}`);
+    if (raw) deletedIds = new Set(JSON.parse(raw) as string[]);
+  } catch { /* corrupt — ignore */ }
+
+  // Titles already in DB — used to skip stale local entries that share a title with a synced book
+  const dbTitles = new Set(dbBooks.map(b => b.title.trim().toLowerCase()));
+
+  const unsynced = localBooks.filter(b =>
+    typeof b.id === 'string' && b.id.length > 0 &&
+    !dbIds.has(b.id) &&
+    !deletedIds.has(b.id) &&
+    !dbTitles.has(b.title?.trim().toLowerCase() ?? '') &&
+    !!b.title?.trim(),
+  );
   for (const book of unsynced) {
     if (!apiError) {
       const coverUrl = localStorage.getItem(`bookending_cover_${book.id}`) ?? undefined;
@@ -454,6 +470,13 @@ function AuthorApp() {
       const stored = JSON.parse(localStorage.getItem(`bookending_library_v1:${userId}`) ?? '{}') as Record<string, BookMetadata>;
       delete stored[id];
       localStorage.setItem(`bookending_library_v1:${userId}`, JSON.stringify(stored));
+    } catch { /* non-fatal */ }
+
+    try {
+      const raw      = localStorage.getItem(`bookending_deleted_ids:${userId}`);
+      const deleted  = new Set<string>(raw ? JSON.parse(raw) as string[] : []);
+      deleted.add(id);
+      localStorage.setItem(`bookending_deleted_ids:${userId}`, JSON.stringify([...deleted]));
     } catch { /* non-fatal */ }
 
     localStorage.removeItem(`bookending_cover_${id}`);

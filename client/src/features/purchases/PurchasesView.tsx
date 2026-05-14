@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { SectionHead, Pill } from '../../shared/ui/atoms';
-import { PURCHASES, PURCHASE_STATUS_TONE, PURCHASE_STATUS_LABEL } from './data';
+import { PURCHASE_STATUS_TONE, PURCHASE_STATUS_LABEL } from './data';
 import type { Purchase } from './data';
 import { PurchaseDetail } from './PurchaseDetail';
 import styles from './PurchasesView.module.css';
@@ -11,23 +11,24 @@ function hasDigital(p: Purchase)  { return p.items.some(i => i.digital); }
 function hasPhysical(p: Purchase) { return p.items.some(i => !i.digital); }
 
 export default function PurchasesView() {
+  const [purchases]        = useState<Purchase[]>([]);
   const [filter, setFilter] = useState<Filter>('all');
   const [openId, setOpenId] = useState<number | null>(null);
 
   // ── Detail view ──
   if (openId !== null) {
-    const purchase = PURCHASES.find(p => p.id === openId)!;
+    const purchase = purchases.find(p => p.id === openId)!;
     return <PurchaseDetail purchase={purchase} onBack={() => setOpenId(null)} />;
   }
 
-  const filtered = PURCHASES.filter(p => {
+  const filtered = purchases.filter(p => {
     if (filter === 'digital')  return hasDigital(p);
     if (filter === 'physical') return hasPhysical(p);
     return true;
   });
 
-  const digitalCount  = PURCHASES.filter(hasDigital).length;
-  const physicalCount = PURCHASES.filter(hasPhysical).length;
+  const digitalCount  = purchases.filter(hasDigital).length;
+  const physicalCount = purchases.filter(hasPhysical).length;
 
   return (
     <div>
@@ -52,7 +53,7 @@ export default function PurchasesView() {
             data-active={filter === 'all' ? '' : undefined}
             onClick={() => setFilter('all')}
           >
-            All <span className={styles.filterCount}>({PURCHASES.length})</span>
+            All <span className={styles.filterCount}>({purchases.length})</span>
           </button>
           <button
             className={styles.filterBtn}

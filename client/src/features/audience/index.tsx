@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { SectionHead, Btn } from '../../shared/ui/atoms';
 import { IconArrow } from '../../shared/ui/icons';
-import { DISPATCHES as STATIC_DISPATCHES } from './data';
+
 import { OverviewView } from './OverviewView';
 import { DispatchesView } from './DispatchesView';
 import { SubscribersView } from './SubscribersView';
@@ -44,34 +44,15 @@ interface AudienceTabProps {
 export default function AudienceTab({ savedBooks, onOpenSeasons }: AudienceTabProps) {
   const { session } = useAuth();
   const [view,      setView]      = useState<SubView>('overview');
-  const [dispatches, setDispatches] = useState<Dispatch[]>(STATIC_DISPATCHES);
+  const [dispatches, setDispatches] = useState<Dispatch[]>([]);
 
   useEffect(() => {
     if (!session?.token) return;
     void (async () => {
       try {
         const records = await api.get<DispatchRecord[]>('/api/dispatches');
-        if (records.length > 0) {
-          setDispatches(records.map(recordToDispatch));
-          return;
-        }
-        // DB empty — seed from static data
-        const seeded: Dispatch[] = [];
-        for (const d of STATIC_DISPATCHES) {
-          try {
-            const created = await api.post<DispatchRecord>('/api/dispatches', {
-              issue:      d.issue,
-              subject:    d.subject,
-              body:       '',
-              recipients: 'all',
-              status:     d.status.toUpperCase(),
-              sentAt:     d.status === 'sent' ? new Date().toISOString() : null,
-            });
-            seeded.push(recordToDispatch(created));
-          } catch { /* skip */ }
-        }
-        if (seeded.length > 0) setDispatches(seeded);
-      } catch { /* API down — static data remains */ }
+        setDispatches(records.map(recordToDispatch));
+      } catch { /* leave empty */ }
     })();
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [session?.token]);

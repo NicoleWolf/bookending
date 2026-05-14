@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { Btn, Avatar } from '../../shared/ui/atoms';
 import { IconArrow, IconQuote } from '../../shared/ui/icons';
 import type { WritingCircle, SharedPassage } from './types';
-import { MOCK_CIRCLES } from './data';
 import styles from './WritingCircles.module.css';
 
 // ── Circle card ──────────────────────────────────────────────────── //
@@ -357,13 +356,11 @@ function CircleDetail({ circle, passages, onPassagesChange, onBack, onLeave }: {
 
 // ── Main export ──────────────────────────────────────────────────── //
 export default function WritingCircles() {
-  const [circles,   setCircles]   = useState<WritingCircle[]>(MOCK_CIRCLES);
+  const [circles,   setCircles]   = useState<WritingCircle[]>([]);
   const [selectedId, setSelectedId] = useState<number | null>(null);
   const [showCreate, setShowCreate] = useState(false);
   const [requested,  setRequested]  = useState<Set<number>>(new Set());
-  const [circlePassages, setCirclePassages] = useState<Map<number, SharedPassage[]>>(
-    () => new Map(MOCK_CIRCLES.map(c => [c.id, c.passages]))
-  );
+  const [circlePassages, setCirclePassages] = useState<Map<number, SharedPassage[]>>(new Map());
 
   const selectedCircle = selectedId !== null ? circles.find(c => c.id === selectedId) ?? null : null;
   const myCircles      = circles.filter(c => c.joined);

@@ -13,7 +13,6 @@ import { ConnectLane } from './components/ConnectLane';
 import { WriterEmptyState } from './components/WriterEmptyState';
 import { ReaderEmptyState } from './components/ReaderEmptyState';
 import { DashboardFooter } from './components/DashboardFooter';
-import { STUB_WRITING, STUB_READING } from './stub';
 import { adaptWritingData, adaptReadingData } from './adapters';
 import { useDashboardV2 } from './useDashboardV2';
 import styles from './index.module.css';
@@ -30,17 +29,15 @@ export default function DashboardPreview({ writerEmpty = false, readerEmpty = fa
   const [nudgeDismissed, setNudgeDismissed] = useState(false);
   const { data, loading } = useDashboardV2();
 
-  // Use real data when available; fall back to stub while loading or on error
-  const writingData = data ? adaptWritingData(data.writing) : STUB_WRITING;
-  const readingData = data ? adaptReadingData(data.reading) : STUB_READING;
+  const writingData = data ? adaptWritingData(data.writing) : null;
+  const readingData = data ? adaptReadingData(data.reading) : null;
 
-  // Empty-state: real data when loaded, preview props while loading or in bypass mode
   const effectiveWriterEmpty = loading ? writerEmpty : (data ? data.writing.manuscripts.length === 0 : writerEmpty);
   const effectiveReaderEmpty = loading ? readerEmpty : (data ? data.reading.activeBetaReads.length === 0 : readerEmpty);
 
   const isWriterEmpty = role === 'writing' && effectiveWriterEmpty;
   const isReaderEmpty = role === 'reading' && effectiveReaderEmpty;
-  const hasNudge = !loading && data !== null && !nudgeDismissed && (
+  const hasNudge = !loading && writingData !== null && readingData !== null && !nudgeDismissed && (
     (role === 'writing' && readingData.unreadCount > 0) ||
     (role === 'reading' && writingData.unreadCount > 0)
   );
@@ -49,8 +46,8 @@ export default function DashboardPreview({ writerEmpty = false, readerEmpty = fa
     <main className={styles.page}>
       <RoleTabs
         active={role}
-        writingUnread={(!loading && data !== null && role === 'reading') ? writingData.unreadCount : 0}
-        readingUnread={(!loading && data !== null && role === 'writing') ? readingData.unreadCount : 0}
+        writingUnread={role === 'reading' ? (writingData?.unreadCount ?? 0) : 0}
+        readingUnread={role === 'writing' ? (readingData?.unreadCount ?? 0) : 0}
         onSwitch={setRole}
       />
 
@@ -74,7 +71,7 @@ export default function DashboardPreview({ writerEmpty = false, readerEmpty = fa
         <ReaderEmptyState onSwitch={() => setRole('writing')} />
       )}
 
-      {!isWriterEmpty && !isReaderEmpty && (
+      {!isWriterEmpty && !isReaderEmpty && writingData !== null && readingData !== null && (
         <>
           {/* Desk + Today rail grid */}
           <div className={styles.deskGrid}>

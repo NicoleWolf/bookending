@@ -124,7 +124,7 @@ export function AttentionPanel({ lastDispatch, onWriteNote, onInviteReply, onRev
   const platformItems = buildPlatformAdvisories(PLATFORM_SIGNALS);
 
   const seasonItems: ItemData[] = [];
-  if (ACTIVE_SEASON.weeksOut <= 8) {
+  if (ACTIVE_SEASON && ACTIVE_SEASON.weeksOut <= 8) {
     const dueThisWeek = ACTIVE_SEASON.tasks.filter(t => t.status === 'in-progress' || t.dueDate === 'This week');
     seasonItems.push({
       severity:    'act',

@@ -28,31 +28,3 @@ export function timeAgo(iso: string): string {
   return `${Math.floor(hours / 24)}d ago`;
 }
 
-const ago = (ms: number) => new Date(Date.now() - ms).toISOString();
-
-export const INITIAL_NOTIFICATIONS: AppNotification[] = [
-  {
-    id: 'n1',
-    type: 'STAGE_NUDGE',
-    stage: 'Edit',
-    message: 'Your draft should be with beta readers now. Collect all feedback before Oct 2027.',
-    read: false,
-    receivedAt: ago(1000 * 60 * 47),    // 47m ago
-  },
-  {
-    id: 'n2',
-    type: 'MILESTONE_REMINDER',
-    stage: 'Draft',
-    message: 'Time to wrap up your Literary Fiction draft — your 80,000-word target should be hit this month.',
-    read: false,
-    receivedAt: ago(1000 * 60 * 60 * 6), // 6h ago
-  },
-  {
-    id: 'n3',
-    type: 'ENCOURAGEMENT',
-    stage: 'Sell',
-    message: 'The Salt Roads reached 147 sales this week. Keep the momentum going.',
-    read: true,
-    receivedAt: ago(1000 * 60 * 60 * 24 * 3), // 3d ago
-  },
-];

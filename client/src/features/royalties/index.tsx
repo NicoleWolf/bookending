@@ -17,7 +17,9 @@ interface RoyaltiesProps {
 
 export default function RoyaltiesTab({ savedBooks }: RoyaltiesProps) {
   const [view, setView] = useState<SubView>('overview');
-  const primaryTitle = savedBooks?.[TITLE_EARNINGS[0].id]?.title ?? TITLE_EARNINGS[0].title;
+  const primaryTitle = TITLE_EARNINGS[0]
+    ? savedBooks?.[TITLE_EARNINGS[0].id]?.title ?? TITLE_EARNINGS[0].title
+    : '—';
 
   return (
     <section className={styles.section}>

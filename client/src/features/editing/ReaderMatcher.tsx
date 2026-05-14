@@ -1,6 +1,5 @@
 import { useState, useMemo, useEffect } from 'react';
 import { Avatar, Pill } from '../../shared/ui/atoms';
-import { BETA_READER_POOL } from './data';
 import type { BetaReader } from './types';
 import { useAuth } from '../auth';
 import { api } from '../../lib/api';
@@ -24,7 +23,7 @@ export default function ReaderMatcher({ manuscriptId: _manuscriptId, manuscriptT
   const { session }             = useAuth();
   const [state, setState]       = useState<MatcherState>('idle');
   const [invitedIds, setInvitedIds] = useState<Set<string>>(new Set());
-  const [pool, setPool]         = useState<BetaReader[]>(BETA_READER_POOL);
+  const [pool, setPool]         = useState<BetaReader[]>([]);
 
   useEffect(() => {
     if (!session?.token) return;

@@ -8,7 +8,6 @@ import type {
   WriteLaneData, PrepareLaneData, SustainLaneData,
   ReadLaneData, DiscoverLaneData, ConnectLaneData, QueueRow, AvatarTone,
 } from './stub';
-import { STUB_WRITING, STUB_READING } from './stub';
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
@@ -61,7 +60,7 @@ function buildWritingRail(writing: DashboardV2['writing']): RailItem[] {
     });
   }
 
-  return items.length > 0 ? items.slice(0, 4) : STUB_WRITING.rail;
+  return items.slice(0, 4);
 }
 
 function buildReadingRail(reading: DashboardV2['reading']): RailItem[] {
@@ -92,7 +91,7 @@ function buildReadingRail(reading: DashboardV2['reading']): RailItem[] {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     .map(({ _t, ...item }) => item);
 
-  return merged.length > 0 ? merged : STUB_READING.rail;
+  return merged;
 }
 
 // ── Queue builders ────────────────────────────────────────────────────────────
@@ -122,12 +121,12 @@ function buildWritingQueue(writing: DashboardV2['writing']): QueueRow[] {
     });
   }
 
-  return queue.length > 0 ? queue.slice(0, 2) : STUB_WRITING.desk.queue;
+  return queue.slice(0, 2);
 }
 
 function buildReadingQueue(reading: DashboardV2['reading']): QueueRow[] {
   const reads = reading.activeBetaReads;
-  if (reads.length === 0) return STUB_READING.desk.queue;
+  if (reads.length === 0) return [];
 
   return reads.slice(0, 2).map((r, i) => ({
     label: i === 0 ? 'Next' : 'Then',
@@ -141,7 +140,7 @@ function buildReadingQueue(reading: DashboardV2['reading']): QueueRow[] {
 
 function adaptWriteLane(writing: DashboardV2['writing']): WriteLaneData {
   const ms = writing.manuscripts.find(m => m.status !== 'PUBLISHED') ?? writing.manuscripts[0];
-  if (!ms) return STUB_WRITING.writeLane;
+  if (!ms) return { manuscriptTitle: '', manuscriptMeta: '', readers: [], moreCount: 0, hotspotBars: [], hotspotHotIdx: 0, themes: [] };
 
   const totalNotes = ms.betaReaders.reduce((s, r) => s + r.notesCount, 0);
 
@@ -201,7 +200,11 @@ function adaptPrepareLane(writing: DashboardV2['writing']): PrepareLaneData {
       description:   "You're in revision. When you're ready, the next steps are cover, pricing, formatting, and proof.",
     };
   }
-  return STUB_WRITING.prepareLane;
+  return {
+    stepsLabel:    'Draft in progress',
+    stepsProgress: 0,
+    description:   "When you're ready, the next steps are cover, pricing, formatting, and proof.",
+  };
 }
 
 function adaptSustainLane(writing: DashboardV2['writing']): SustainLaneData {
@@ -216,7 +219,7 @@ function adaptSustainLane(writing: DashboardV2['writing']): SustainLaneData {
 
 function adaptReadLane(reading: DashboardV2['reading']): ReadLaneData {
   const reads = reading.activeBetaReads;
-  if (reads.length === 0) return STUB_READING.readLane;
+  if (reads.length === 0) return { manuscriptsMeta: 'No manuscripts open', streakLabel: '', rows: [], moreLabel: '', hotspotBars: [], hotspotHotIdx: 0, hotspotTitle: '', rhythm: [] };
 
   const rows: ManuscriptRow[] = reads.slice(0, 5).map((r, i) => {
     const pct           = Math.round(r.progress);
@@ -299,7 +302,7 @@ export function adaptWritingData(writing: DashboardV2['writing']): WritingSideSt
       count:   readerCount > 0
         ? `${readerCount} reader${readerCount !== 1 ? 's' : ''} · sorted by activity`
         : 'No active readers',
-      primary: resolveDeskPriority(writing) ?? STUB_WRITING.desk.primary,
+      primary: resolveDeskPriority(writing) ?? { pill: '', context: '', headline: 'No active readers yet.', reasoning: '', primaryCta: '', secondaryCta: '' },
       queue:   buildWritingQueue(writing),
     },
     rail:        buildWritingRail(writing),
@@ -321,7 +324,7 @@ export function adaptReadingData(reading: DashboardV2['reading']): ReadingSideSt
     crossRoleMsg,
     desk: {
       count:   total > 0 ? `${total} manuscript${total !== 1 ? 's' : ''} open` : 'Nothing open',
-      primary: resolveReaderDeskPriority(reading) ?? STUB_READING.desk.primary,
+      primary: resolveReaderDeskPriority(reading) ?? { pill: '', context: '', headline: 'No manuscripts open yet.', reasoning: '', primaryCta: '', secondaryCta: '' },
       queue:   buildReadingQueue(reading),
     },
     rail:         buildReadingRail(reading),

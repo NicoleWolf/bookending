@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { Avatar, Pill, SectionHead } from '../../shared/ui/atoms';
 import { useAuth } from '../auth';
-import { READER_PROFILES, ALL_READER_GENRES } from './data';
+import { ALL_READER_GENRES } from './data';
 import type { ReaderProfile } from './types';
 import type { Manuscript } from '../editing/types';
 import { MANUSCRIPT_META, DEFAULT_EDITING_META } from '../editing/data';
@@ -370,6 +370,7 @@ function ReaderProfilePage({ reader, manuscripts: _manuscripts, onBack, onInvite
 export default function ReaderProfiles({ savedBooks }: Props) {
   const [selectedId,   setSelectedId]   = useState<string | null>(null);
   const [inviteTarget, setInviteTarget] = useState<ReaderProfile | null>(null);
+  const [profiles]                      = useState<ReaderProfile[]>([]);
   const [filters, setFilters] = useState<{
     genre: string | null;
     availability: 'all' | 'open';
@@ -384,14 +385,14 @@ export default function ReaderProfiles({ savedBooks }: Props) {
     [savedBooks],
   );
 
-  const filtered = READER_PROFILES.filter(r => {
+  const filtered = profiles.filter(r => {
     if (filters.availability === 'open' && r.availability !== 'open') return false;
     if (filters.genre && !r.genrePreferences.includes(filters.genre)) return false;
     return true;
   });
 
   const selected = selectedId
-    ? READER_PROFILES.find(r => r.id === selectedId) ?? null
+    ? profiles.find(r => r.id === selectedId) ?? null
     : null;
 
   function handleInviteFromCard(e: React.MouseEvent, reader: ReaderProfile) {
@@ -420,7 +421,7 @@ export default function ReaderProfiles({ savedBooks }: Props) {
             <SectionHead
               eyebrow="Writing · Readers"
               title="Beta reader directory"
-              kicker={`${filtered.length} of ${READER_PROFILES.length} readers · ${READER_PROFILES.filter(r => r.availability === 'open').length} open`}
+              kicker={`${filtered.length} of ${profiles.length} readers · ${profiles.filter(r => r.availability === 'open').length} open`}
             />
           </div>
 

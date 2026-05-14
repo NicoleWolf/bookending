@@ -14,15 +14,14 @@ import { api } from '../../lib/api';
 import type { BrowseRecord } from '@bookending/shared';
 
 const STATUS_MAP: Record<BookStatus, ManuscriptStatus> = {
-  'drafting':    'waitlist',
+  'drafting':    'open',
   'in-revision': 'open',
   'published':   'closed',
 };
 
 function recordToCatalog(r: BrowseRecord, idx: number): CatalogManuscript {
   const status: ManuscriptStatus =
-    r.status === 'IN_REVISION' ? 'open' :
-    r.status === 'PUBLISHED'   ? 'closed' : 'waitlist';
+    r.status === 'PUBLISHED' ? 'closed' : 'open';
   return {
     id:             r.id,
     title:          r.title,
@@ -47,7 +46,7 @@ function recordToCatalog(r: BrowseRecord, idx: number): CatalogManuscript {
 
 function bookToCatalog(book: BookMetadata, index: number): CatalogManuscript {
   return {
-    id:             10000 + index,
+    id:             book.id,
     title:          book.title,
     author:         'Billie Wolf',
     genre:          book.genre || 'Fiction',
@@ -94,7 +93,12 @@ export default function LibraryBrowse({ savedBooks, onEditProfile }: LibraryBrow
     const publicBooks = Object.values(savedBooks)
       .filter(b => b.betaMode === 'PUBLIC' || b.betaMode === 'REQUEST')
       .map(bookToCatalog);
-    return [...publicBooks, ...apiManuscripts];
+    const apiIds    = new Set(apiManuscripts.map(m => m.id));
+    const apiTitles = new Set(apiManuscripts.map(m => m.title.trim().toLowerCase()));
+    const localOnly = publicBooks.filter(
+      m => !apiIds.has(m.id) && !apiTitles.has(m.title.trim().toLowerCase()),
+    );
+    return [...apiManuscripts, ...localOnly];
   }, [savedBooks, apiManuscripts]);
 
   const openCount  = allManuscripts.filter(m => m.status === 'open').length;

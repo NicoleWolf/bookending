@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Pill, Btn, BookCover } from '../../shared/ui/atoms';
 import { IconArrow, IconArrowUp, IconMore, IconSearch } from '../../shared/ui/icons';
-import { PRODUCTS as STATIC_PRODUCTS, PRODUCT_STATUS_TONE } from './data';
+import { PRODUCT_STATUS_TONE } from './data';
 import type { Product, ProductStatus } from './types';
 import type { BookMetadata } from '../library/data';
 import { useAuth } from '../auth';
@@ -38,7 +38,7 @@ interface ProductsViewProps {
 
 export function ProductsView({ savedBooks, onTabChange }: ProductsViewProps) {
   const { session } = useAuth();
-  const [products, setProducts] = useState<Product[]>(STATIC_PRODUCTS);
+  const [products, setProducts] = useState<Product[]>([]);
   const [search,   setSearch]   = useState('');
 
   useEffect(() => {
@@ -46,33 +46,8 @@ export function ProductsView({ savedBooks, onTabChange }: ProductsViewProps) {
     void (async () => {
       try {
         const records = await api.get<ProductRecord[]>('/api/products');
-        if (records.length > 0) {
-          setProducts(records.map(recordToProduct));
-          return;
-        }
-        // DB empty — seed from static data
-        const seeded: Product[] = [];
-        for (const p of STATIC_PRODUCTS) {
-          const digital    = p.stock === 'Digital';
-          const stockCount = p.stock.includes('in stock')
-            ? parseInt(p.stock)
-            : p.stock === 'Sold out' ? 0 : null;
-          try {
-            const created = await api.post<ProductRecord>('/api/products', {
-              title:        p.title,
-              type:         p.type,
-              price:        p.price,
-              status:       p.status.toUpperCase().replace('-', '_'),
-              featured:     p.featured ?? false,
-              digital,
-              stockCount,
-              manuscriptId: null,
-            });
-            seeded.push(recordToProduct(created));
-          } catch { /* skip */ }
-        }
-        if (seeded.length > 0) setProducts(seeded);
-      } catch { /* API down — static data remains */ }
+        setProducts(records.map(recordToProduct));
+      } catch { /* leave empty */ }
     })();
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [session?.token]);

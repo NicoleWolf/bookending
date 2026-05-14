@@ -1,8 +1,19 @@
 import { useRef, useState, useEffect, useMemo } from 'react';
 import { useEditor, EditorContent } from '@tiptap/react';
+import { Extension } from '@tiptap/core';
 import StarterKit from '@tiptap/starter-kit';
 import Placeholder from '@tiptap/extension-placeholder';
-import { INITIAL_CONTENT, MANUSCRIPT_META } from './data';
+
+const TabIndent = Extension.create({
+  name: 'tabIndent',
+  addKeyboardShortcuts() {
+    return {
+      Tab:       () => this.editor.commands.insertContent(' '),
+      'Shift-Tab': () => true,
+    };
+  },
+});
+import { MANUSCRIPT_META } from './data';
 import FeedbackPanel from './FeedbackPanel';
 import CommunityPanel from './CommunityPanel';
 import AnnotationPanel from './AnnotationPanel';
@@ -138,15 +149,15 @@ function parseChapters(html: string): ChapterSlice[] {
 }
 
 // ── Chapter-aware storage ─────────────────────────────────────────
-function chDocKey(msId: number, chIdx: number)  { return `bookending_doc_${msId}_ch_${chIdx}`; }
-function chSnapKey(msId: number, chIdx: number) { return `bookending_snap_${msId}_ch_${chIdx}`; }
+function chDocKey(msId: string, chIdx: number)  { return `bookending_doc_${msId}_ch_${chIdx}`; }
+function chSnapKey(msId: string, chIdx: number) { return `bookending_snap_${msId}_ch_${chIdx}`; }
 
-function loadChapterContent(msId: number, chIdx: number, initial: string): string {
+function loadChapterContent(msId: string, chIdx: number, initial: string): string {
   try { return localStorage.getItem(chDocKey(msId, chIdx)) || initial; }
   catch { return initial; }
 }
 
-function loadChapterSnapshot(msId: number, chIdx: number, initial: string): string {
+function loadChapterSnapshot(msId: string, chIdx: number, initial: string): string {
   try { return localStorage.getItem(chSnapKey(msId, chIdx)) || initial; }
   catch { return initial; }
 }
@@ -205,7 +216,7 @@ interface Props {
 }
 
 export default function DocumentEditor({ manuscriptId }: Props) {
-  const msId    = Number(manuscriptId);
+  const msId    = manuscriptId;
   const ctx     = useQuietMode();
   const isQuiet = ctx.isQuiet;
 
@@ -213,9 +224,9 @@ export default function DocumentEditor({ manuscriptId }: Props) {
   const [chapters, setChapters] = useState<ChapterSlice[]>(() => {
     let base: string;
     try {
-      base = localStorage.getItem(`bookending_import_${manuscriptId}`) ?? INITIAL_CONTENT[msId] ?? '';
+      base = localStorage.getItem(`bookending_import_${manuscriptId}`) ?? '';
     } catch {
-      base = INITIAL_CONTENT[msId] ?? '';
+      base = '';
     }
     return parseChapters(base);
   });
@@ -266,6 +277,7 @@ export default function DocumentEditor({ manuscriptId }: Props) {
     extensions: [
       StarterKit,
       Placeholder.configure({ placeholder: 'Begin writing your manuscript here…' }),
+      TabIndent,
     ],
     content: loadChapterContent(msId, 0, chapters[0]?.html ?? ''),
     onUpdate({ editor: ed }) {

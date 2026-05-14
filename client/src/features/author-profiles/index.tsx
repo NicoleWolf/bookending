@@ -3,7 +3,6 @@ import { useState, useEffect } from 'react';
 import { SectionHead, Avatar, Pill, Btn } from '../../shared/ui/atoms';
 import { IconArrow } from '../../shared/ui/icons';
 import { useAuth } from '../auth';
-import { AUTHOR_PROFILES } from './data';
 import type { AuthorProfile, AuthorTone, ActivityType, QAEntry, PendingQuestion, ProfileTab, FeaturedProject } from './types';
 import type { AppNotification } from '../notifications/data';
 import { timeAgo } from '../notifications/data';
@@ -726,14 +725,14 @@ function AuthorProfilePage({ author, followed, onToggleFollow, onBack, onNotify,
 export default function AuthorProfiles({ followedAuthors, onToggleFollow, onNotify, target, onTargetConsumed }: Props) {
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [targetTab,  setTargetTab]  = useState<ProfileTab | undefined>(undefined);
-  const [profiles,   setProfiles]   = useState<AuthorProfile[]>(AUTHOR_PROFILES);
+  const [profiles,   setProfiles]   = useState<AuthorProfile[]>([]);
 
   useEffect(() => {
     void (async () => {
       try {
         const records = await api.get<AuthorRecord[]>('/api/authors');
-        if (records.length > 0) setProfiles(records.map(recordToProfile));
-      } catch { /* static data remains */ }
+        setProfiles(records.map(recordToProfile));
+      } catch { /* leave empty */ }
     })();
   }, []);
 

@@ -28,9 +28,7 @@ vi.mock('@tiptap/react', () => {
 vi.mock('@tiptap/starter-kit',                  () => ({ default: {} }));
 vi.mock('@tiptap/extension-placeholder',        () => ({ default: { configure: () => ({}) } }));
 vi.mock('./data', () => ({
-  INITIAL_CONTENT: { 1: '<p>test content</p>' },
   MANUSCRIPT_META: { 1: { draft: 'Draft 1', date: '1 Jan 2026' } },
-  COMMENTS:        [],
 }));
 vi.mock('./FeedbackPanel',   () => ({ default: () => null }));
 vi.mock('./CommunityPanel',  () => ({ default: () => null }));

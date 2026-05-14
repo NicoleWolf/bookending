@@ -1,9 +1,10 @@
 import { useState } from 'react';
 import { Pill, Avatar } from '../../shared/ui/atoms';
-import {
-  WRITING_PROMPTS, INITIAL_PASSAGES, CIRCLE_MEMBERS,
-} from '../community/data';
-import type { WritingPrompt, SharedPassage } from '../community/types';
+import type { WritingPrompt, SharedPassage, CircleMember } from '../community/types';
+
+const WRITING_PROMPTS: WritingPrompt[] = [];
+const INITIAL_PASSAGES: SharedPassage[] = [];
+const CIRCLE_MEMBERS: CircleMember[] = [];
 import styles from './CommunityPanel.module.css';
 
 type PanelTab = 'prompts' | 'challenges' | 'passages';

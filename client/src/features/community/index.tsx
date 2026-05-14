@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { SectionHead, Btn, Avatar } from '../../shared/ui/atoms';
 import { IconArrow, IconArrowUp, IconReaders, IconCheck } from '../../shared/ui/icons';
-import { MENTORS, CARDS } from './data';
 import type { Mentor } from './types';
 import WritingCircles from './WritingCircles';
 import OfferMentorship from './OfferMentorship';
@@ -14,7 +13,7 @@ interface CommunityProps {
 export default function Community({ section = 'mentorship' }: CommunityProps) {
   const view = section;
 
-  const [mentors,       setMentors]       = useState<Mentor[]>(MENTORS);
+  const [mentors,       setMentors]       = useState<Mentor[]>([]);
   const [requested,     setRequested]     = useState<Set<number>>(new Set());
   const [showOfferForm, setShowOfferForm] = useState(false);
 
@@ -131,19 +130,7 @@ export function CommunityDashboardCard() {
         </div>
         <Btn tone="bare" icon={<IconArrow size={14} />} className={styles.btnInk}>Open the common room</Btn>
       </div>
-      <div className={styles.dashCardsGrid}>
-        {CARDS.map((c, i) => (
-          <article key={i} className={styles.dashArticle}>
-            <div className={styles.dashArticleKind}>{c.kind}</div>
-            <h3 className={`serif ${styles.dashArticleHead}`}>{c.head}</h3>
-            <p className={`serif ${styles.dashArticleBody}`}>{c.body}</p>
-            <div className={styles.dashArticleFoot}>
-              <span className={styles.dashArticleWho}>{c.who}</span>
-              <button className={styles.dashArticleBtn}>Accept ↗</button>
-            </div>
-          </article>
-        ))}
-      </div>
+      <div className={styles.dashCardsGrid} />
       <div className={styles.karmaBar}>
         <div className={styles.karmaLedger}>
           <span className={`label ${styles.karmaLabel}`}>Your karma ledger</span>

@@ -15,10 +15,8 @@ import PendingRequests from './PendingRequests';
 import WriterSparkline, { type ReaderImpression } from './WriterSparkline';
 import {
   MANUSCRIPT_META, DEFAULT_EDITING_META, MANUSCRIPT_GENRES,
-  INTEGRATIONS, INITIAL_READERS, INITIAL_INSTRUCTIONS, INITIAL_IMPRESSIONS,
-  COMMENTS, TONES, RATING_TAGS, verdictTone,
+  INTEGRATIONS, TONES, RATING_TAGS, verdictTone,
 } from './data';
-import { INITIAL_THREADS } from './correspondence-data';
 import styles from './Editing.module.css';
 
 type HubView = 'editor' | 'feedback' | 'correspondence' | 'notes';
@@ -56,15 +54,13 @@ export default function EditingHub({ savedBooks, onTabChange }: EditingHubProps)
   );
   const [filterReader, setFilterReader] = useState('All');
   const [showResolved, setShowResolved] = useState(false);
-  const [resolved, setResolved]         = useState<Set<number>>(
-    () => new Set(COMMENTS.filter(c => c.resolvedDefault).map(c => c.id))
-  );
-  const [readers, setReaders]           = useState<Record<string, Reader[]>>(INITIAL_READERS);
-  const [instructions, setInstructions] = useState<Record<string, string>>(INITIAL_INSTRUCTIONS);
+  const [resolved, setResolved]         = useState<Set<number>>(new Set());
+  const [readers, setReaders]           = useState<Record<string, Reader[]>>({});
+  const [instructions, setInstructions] = useState<Record<string, string>>({});
   const [editingInstr, setEditingInstr] = useState(false);
   const [draftInstr, setDraftInstr]     = useState('');
   const [showInviteModal, setShowInviteModal] = useState(false);
-  const [threads, setThreads]           = useState<CorrespondenceThread[]>(INITIAL_THREADS);
+  const [threads, setThreads]           = useState<CorrespondenceThread[]>([]);
   const [composingFor, setComposingFor] = useState<Reader | null>(null);
   const [corrThreadId, setCorrThreadId] = useState<number | null>(null);
   const [ratings, setRatings]           = useState<Record<string, ReaderRating>>({});
@@ -74,9 +70,7 @@ export default function EditingHub({ savedBooks, onTabChange }: EditingHubProps)
   const [ratingNote, setRatingNote]     = useState('');
   const [msDropdownOpen, setMsDropdownOpen] = useState(false);
 
-  const [readerImpressions, setReaderImpressions] = useState<ReaderImpression[]>(
-    () => INITIAL_IMPRESSIONS[activeId] ?? []
-  );
+  const [readerImpressions, setReaderImpressions] = useState<ReaderImpression[]>([]);
 
   // Fetch readers from API whenever the active manuscript changes
   useEffect(() => {
@@ -84,7 +78,6 @@ export default function EditingHub({ savedBooks, onTabChange }: EditingHubProps)
     void api.get<BetaReaderRecord[]>(`/api/manuscripts/${activeId}/readers`)
       .then(records => setReaders(prev => ({ ...prev, [activeId]: records.map(recordToReader) })))
       .catch(() => { /* silently fail */ });
-    setReaderImpressions(INITIAL_IMPRESSIONS[activeId] ?? []);
     void api.get<ReaderImpression[]>(`/api/manuscripts/${activeId}/reader-impressions`)
       .then(data => { if (data.length > 0) setReaderImpressions(data); })
       .catch(() => {});
@@ -113,7 +106,7 @@ export default function EditingHub({ savedBooks, onTabChange }: EditingHubProps)
   }));
 
   const readerNames = ['All', ...activeReaders.map(r => r.name)];
-  const msComments  = COMMENTS.filter(c => String(c.manuscriptId) === activeId);
+  const msComments: Comment[] = [];
   const visible     = msComments.filter(c => {
     if (!showResolved && resolved.has(c.id)) return false;
     if (filterReader !== 'All' && c.reader.name !== filterReader) return false;
@@ -731,9 +724,7 @@ export default function EditingHub({ savedBooks, onTabChange }: EditingHubProps)
         <LetterComposer
           reader={composingFor}
           manuscript={ms}
-          readerComments={COMMENTS.filter(
-            c => String(c.manuscriptId) === activeId && c.reader.name === composingFor.name
-          )}
+          readerComments={[]}
           onSend={body => handleLetterSent(composingFor, body)}
           onClose={() => setComposingFor(null)}
         />

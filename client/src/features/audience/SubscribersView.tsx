@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react';
 import { Pill, Btn, Avatar } from '../../shared/ui/atoms';
 import { IconSearch } from '../../shared/ui/icons';
 import {
-  SUBSCRIBERS as STATIC_SUBSCRIBERS,
   SEGMENT_TONE,
   SUBSCRIBER_DISPLAY,
   subscriberInitials,
@@ -40,7 +39,7 @@ function recordToSubscriber(r: SubscriberRecord, idx: number): Subscriber {
 
 export function SubscribersView() {
   const { session } = useAuth();
-  const [subscribers, setSubscribers] = useState<Subscriber[]>(STATIC_SUBSCRIBERS);
+  const [subscribers, setSubscribers] = useState<Subscriber[]>([]);
   const [search,           setSearch]           = useState('');
   const [seg,              setSeg]              = useState<SubscriberSegment | 'all' | 'patrons' | 'champions'>('all');
   const [selectedId,       setSelectedId]       = useState<string | null>(null);
@@ -51,25 +50,8 @@ export function SubscribersView() {
     void (async () => {
       try {
         const records = await api.get<SubscriberRecord[]>('/api/subscribers');
-        if (records.length > 0) {
-          setSubscribers(records.map(recordToSubscriber));
-          return;
-        }
-        // DB empty — seed from static data
-        const seeded: Subscriber[] = [];
-        for (const s of STATIC_SUBSCRIBERS) {
-          try {
-            const created = await api.post<SubscriberRecord>('/api/subscribers', {
-              email:    `${s.name.toLowerCase().replace(/[^a-z]/g, '.')}@example.com`,
-              name:     s.name,
-              location: s.location,
-              segment:  s.segment,
-            });
-            seeded.push(recordToSubscriber(created, seeded.length));
-          } catch { /* skip */ }
-        }
-        if (seeded.length > 0) setSubscribers(seeded);
-      } catch { /* API down — static data remains */ }
+        setSubscribers(records.map(recordToSubscriber));
+      } catch { /* leave empty */ }
     })();
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [session?.token]);

@@ -1,8 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '../auth';
 import { api } from '../../lib/api';
-import type { HubResponse, HubWarmItem } from '@bookending/shared';
-import { MANUSCRIPTS } from './data';
+import type { HubResponse } from '@bookending/shared';
 import ReadingRoom from './ReadingRoom';
 import HouseSuggests from './HouseSuggests';
 import WarmCard from './WarmCard';
@@ -11,42 +10,6 @@ import FinishedCard from './FinishedCard';
 import FollowingRow from './FollowingRow';
 import HouseRail from './HouseRail';
 import styles from './Hub.module.css';
-
-// Maps mock numeric manuscript IDs to client-side data for enrichment
-const MOCK_MAP = new Map(MANUSCRIPTS.map(m => [String(m.id), m]));
-
-function enrichWarm(item: HubWarmItem): HubWarmItem {
-  if (item.title) return item;
-  const mock = MOCK_MAP.get(item.manuscriptRef);
-  if (!mock) return item;
-  return {
-    ...item,
-    title:         mock.title,
-    draftLabel:    mock.draft,
-    totalChapters: mock.chapters.length,
-    authorName:    item.authorName ?? null,
-  };
-}
-
-// Build warm items from mock MANUSCRIPTS for readers who haven't used the API yet
-function buildMockWarm(): HubWarmItem[] {
-  return MANUSCRIPTS.map(m => ({
-    manuscriptRef:   String(m.id),
-    title:           m.title,
-    authorName:      null,
-    draftLabel:      m.draft,
-    genre:           null,
-    totalChapters:   m.chapters.length,
-    doneChapters:    [],
-    mood:            null,
-    lastOpenedAt:    null,
-    lastActivityAt:  null,
-    isDormant:       false,
-    newChapterCount: m.mode === 'serialized' ? 1 : 0,
-    newNoteCount:    0,
-    newAuthorNote:   null,
-  }));
-}
 
 export default function Reading() {
   const { session } = useAuth();
@@ -88,7 +51,7 @@ export default function Reading() {
     if (msRef && (verb === 'continue' || verb === 'begin')) {
       openMs(msRef);
     }
-    // 'browse' → navigate to Discover (future)
+    // 'browse' -> navigate to Discover (future)
   };
 
   const handleShelfRemove = (msRef: string) => {
@@ -109,17 +72,12 @@ export default function Reading() {
     ? hub.houseSuggests
     : null;
 
-  // Warm items: enrich from mock data if title is missing
-  const warmItems = (hub?.warm ?? []).map(enrichWarm);
-
-  // If no API warm items, fall back to mock manuscripts so the page isn't blank
-  const displayWarm = warmItems.length > 0 ? warmItems : (hub !== null ? [] : buildMockWarm());
-
-  const shelfItems    = hub?.shelf    ?? [];
-  const finishedItems = hub?.finished ?? [];
+  const displayWarm      = hub?.warm ?? [];
+  const shelfItems       = hub?.shelf ?? [];
+  const finishedItems    = hub?.finished ?? [];
   const followingAuthors = hub?.followingAuthors ?? [];
-  const railItems     = hub?.houseRail ?? [];
-  const readerProfile = hub?.readerProfile ?? 'new';
+  const railItems        = hub?.houseRail ?? [];
+  const readerProfile    = hub?.readerProfile ?? 'new';
 
   const hasRail = railItems.length > 0;
 
@@ -153,7 +111,7 @@ export default function Reading() {
               <div className={styles.sectionHead}>
                 <span className={styles.sectionTitle}>What's warm</span>
                 {displayWarm.length > 5 && (
-                  <span className={styles.sectionMeta}>See all warm reading →</span>
+                  <span className={styles.sectionMeta}>See all warm reading &rarr;</span>
                 )}
               </div>
               {displayWarm.slice(0, 5).map(item => (
@@ -167,7 +125,7 @@ export default function Reading() {
             <div className={styles.sectionHead}>
               <span className={styles.sectionTitle}>On your shelf</span>
               {shelfItems.length > 6 && (
-                <span className={styles.sectionMeta}>See all →</span>
+                <span className={styles.sectionMeta}>See all &rarr;</span>
               )}
             </div>
             {shelfItems.length === 0 ? (
@@ -194,7 +152,7 @@ export default function Reading() {
               <div className={styles.sectionHead}>
                 <span className={styles.sectionTitle}>Finished</span>
                 <span className={styles.sectionMeta}>
-                  {hub?.finishedThisSeason ?? 0} this season · {hub?.finishedAllTime ?? 0} all-time →
+                  {hub?.finishedThisSeason ?? 0} this season &middot; {hub?.finishedAllTime ?? 0} all-time &rarr;
                 </span>
               </div>
               <FinishedCard item={finishedItems[0]} />
@@ -206,7 +164,7 @@ export default function Reading() {
             <section>
               <div className={styles.sectionHead}>
                 <span className={styles.sectionTitle}>From authors you follow</span>
-                <span className={styles.sectionMeta}>See all →</span>
+                <span className={styles.sectionMeta}>See all &rarr;</span>
               </div>
               <FollowingRow authors={followingAuthors} />
             </section>

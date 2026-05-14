@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { PRODUCTS, STOREFRONT_CONFIG } from './data';
+import type { Product } from './types';
+import { STOREFRONT_CONFIG } from './data';
 import styles from './StorefrontView.module.css';
 
 interface HeroData { name: string; tagline: string; }
@@ -12,8 +13,8 @@ export function StorefrontView() {
   const [featuredIds,    setFeaturedIds]    = useState<string[]>(STOREFRONT_CONFIG.featuredIds);
   const [hasChanges,     setHasChanges]     = useState(false);
 
-  const featured = PRODUCTS.filter(p => featuredIds.includes(p.id));
-  const eligible  = PRODUCTS.filter(p => p.status === 'live' || p.status === 'pre-order' || p.status === 'low-stock');
+  const featured: Product[] = [];
+  const eligible: Product[] = [];
 
   function applyHero() {
     setHero(heroDraft);

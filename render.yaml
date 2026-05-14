@@ -2,7 +2,7 @@ services:
   - type: web
     name: bookending-api
     runtime: node
-    buildCommand: npm install && npm run build --workspace=packages/shared && npx prisma generate --schema=server/prisma/schema.prisma && npm run build --workspace=server
+    buildCommand: npm install --include=dev && npm run build --workspace=packages/shared && npx prisma generate --schema=server/prisma/schema.prisma && npm run build --workspace=server
     startCommand: cd server && npx prisma migrate deploy && node dist/index.js
     healthCheckPath: /health
     envVars:

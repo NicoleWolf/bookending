@@ -74,26 +74,33 @@ export async function requireAuth(req: Request, res: Response, next: NextFunctio
   const metaRole = data.user.user_metadata?.role as string | undefined;
   const role: 'AUTHOR' | 'READER' = metaRole === 'READER' ? 'READER' : 'AUTHOR';
 
-  // Provision User record on first login; sync role from Supabase metadata
-  const dbUser = await prisma.user.upsert({
-    where:  { id: data.user.id },
-    update: { lastLoginAt: new Date(), role },
-    create: {
-      id:    data.user.id,
-      email: data.user.email!,
-      name:  data.user.user_metadata?.name ?? data.user.email!,
-      role,
-    },
-  });
-
-  // Link any BetaReader records that match this user's email
-  if (role === 'READER') {
-    await prisma.betaReader.updateMany({
-      where: { email: data.user.email!, userId: null },
-      data:  { userId: data.user.id },
+  try {
+    // Provision User record on first login; sync role from Supabase metadata
+    const dbUser = await prisma.user.upsert({
+      where:  { id: data.user.id },
+      update: { lastLoginAt: new Date(), role },
+      create: {
+        id:    data.user.id,
+        email: data.user.email!,
+        name:  data.user.user_metadata?.name ?? data.user.email!,
+        role,
+      },
     });
+
+    // Link any BetaReader records that match this user's email
+    if (role === 'READER') {
+      await prisma.betaReader.updateMany({
+        where: { email: data.user.email!, userId: null },
+        data:  { userId: data.user.id },
+      });
+    }
+
+    req.user = { id: data.user.id, email: data.user.email!, role, isAdmin: dbUser.isAdmin };
+  } catch (err) {
+    logger.error('DB user provisioning failed', { err });
+    // Still allow the request through — identity confirmed by Supabase, DB record is best-effort
+    req.user = { id: data.user.id, email: data.user.email!, role, isAdmin: false };
   }
 
-  req.user = { id: data.user.id, email: data.user.email!, role, isAdmin: dbUser.isAdmin };
   next();
 }

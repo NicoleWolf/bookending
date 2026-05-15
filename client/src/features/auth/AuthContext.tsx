@@ -76,8 +76,29 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     if (!hasSupabase) return;
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
-      if (event === 'PASSWORD_RECOVERY') setPasswordRecovery(true);
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, supabaseSession) => {
+      if (event === 'PASSWORD_RECOVERY') {
+        setPasswordRecovery(true);
+      } else if ((event === 'TOKEN_REFRESHED' || event === 'SIGNED_IN') && supabaseSession) {
+        const newToken = supabaseSession.access_token;
+        setApiToken(newToken);
+        setSession(prev => {
+          if (!prev) return prev;
+          const updated: AuthSession = {
+            ...prev,
+            token: newToken,
+            expiresAt: supabaseSession.expires_at
+              ? new Date(supabaseSession.expires_at * 1000).toISOString()
+              : prev.expiresAt,
+          };
+          persistSession(updated);
+          return updated;
+        });
+      } else if (event === 'SIGNED_OUT') {
+        setApiToken(null);
+        persistSession(null);
+        setSession(null);
+      }
     });
     return () => subscription.unsubscribe();
   }, []);

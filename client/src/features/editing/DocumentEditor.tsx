@@ -69,12 +69,6 @@ interface ReaderAnnotation {
   createdAt:      string;
 }
 
-interface ReaderImpression {
-  readerId:       string;
-  readerName:     string;
-  readerInitials: string;
-  points:         { chapterNum: number; stance: string }[];
-}
 
 function applyHighlight(root: HTMLElement, text: string, theme: string, commentId: string) {
   if (!text) return;
@@ -247,8 +241,7 @@ export default function DocumentEditor({ manuscriptId }: Props) {
   const [selectedText,      setSelectedText]      = useState('');
   const [focusedCommentId,  setFocusedCommentId]  = useState<string | null>(null);
   const [readerAnnotations,   setReaderAnnotations]   = useState<ReaderAnnotation[]>([]);
-  const [readerImpressions,   setReaderImpressions]   = useState<ReaderImpression[]>([]);
-  const [readerChapterNotes,  setReaderChapterNotes]  = useState<AuthorReaderChapterNoteRecord[]>([]);
+const [readerChapterNotes,  setReaderChapterNotes]  = useState<AuthorReaderChapterNoteRecord[]>([]);
   const [versions,              setVersions]              = useState<VersionMeta[]>([]);
   const [selectedVersionId,     setSelectedVersionId]     = useState<string | null>(null);
   const [selectedVersionDetail, setSelectedVersionDetail] = useState<VersionDetail | null>(null);
@@ -378,10 +371,7 @@ export default function DocumentEditor({ manuscriptId }: Props) {
     api.get<ReaderAnnotation[]>(`/api/manuscripts/${manuscriptId}/reader-annotations`)
       .then(data => setReaderAnnotations(data))
       .catch(() => {});
-    api.get<ReaderImpression[]>(`/api/manuscripts/${manuscriptId}/reader-impressions`)
-      .then(data => setReaderImpressions(data))
-      .catch(() => {});
-    api.get<AuthorReaderChapterNoteRecord[]>(`/api/manuscripts/${manuscriptId}/reader-chapter-notes`)
+api.get<AuthorReaderChapterNoteRecord[]>(`/api/manuscripts/${manuscriptId}/reader-chapter-notes`)
       .then(data => setReaderChapterNotes(data))
       .catch(() => {});
   // eslint-disable-next-line react-hooks/exhaustive-deps

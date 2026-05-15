@@ -209,7 +209,7 @@ export default function MarginColumn({
                   </span>
                 )}
                 <div className={styles.footerActions}>
-                  {!isEditing && h.status === 'draft' && (
+                  {!isEditing && (
                     <button className={styles.editBtn} onClick={() => onEdit(h.id, h.note)}>Edit</button>
                   )}
                   {!isEditing && (

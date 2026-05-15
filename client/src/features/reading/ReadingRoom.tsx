@@ -310,18 +310,6 @@ export default function ReadingRoom({ msRef, onBack }: ReadingRoomProps) {
         )}
       </div>
 
-      {/* ── Impression sparkline ──────────────────────────────────── */}
-      <ImpressionSparkline
-        chapters={chapters}
-        impressionPoints={impressionPoints}
-        currentChapterId={chapterId}
-        doneChapters={doneChapters}
-        authorFirstName={authorFirstName}
-        onUpdate={upsertImpression}
-        stanceOrder={STANCE_ORDER}
-        stanceValue={STANCE_VALUE}
-      />
-
       {/* ── Chapter tabs ──────────────────────────────────────────── */}
       <div className={styles.chTabs}>
         {chapters.map((ch) => {
@@ -350,7 +338,7 @@ export default function ReadingRoom({ msRef, onBack }: ReadingRoomProps) {
                 </>
               ) : (
                 <span className={styles.chTabLocked}>
-                  Ch. {ch.number} —{' '}
+                  Ch. {ch.number + 1} —{' '}
                   {ch.expectedAt
                     ? `expected ${new Date(ch.expectedAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })}`
                     : 'not yet scheduled'}
@@ -391,8 +379,10 @@ export default function ReadingRoom({ msRef, onBack }: ReadingRoomProps) {
           {chapter && (
             <article ref={readingRef} onMouseUp={handleMouseUp} className={styles.articleBody}>
               <h2 className={`serif ${styles.chTitle}`}>
-                <span className={styles.chTitleNum}>Chapter {chapter.number}</span>
-                <span className={styles.chTitleName}>{chapter.title}</span>
+                <span className={styles.chTitleNum}>Chapter {chapter.number + 1}</span>
+                {chapter.title !== `Chapter ${chapter.number + 1}` && (
+                  <span className={styles.chTitleName}>{chapter.title}</span>
+                )}
               </h2>
 
               {chapter.paras.map((p, idx) => (
@@ -455,10 +445,10 @@ export default function ReadingRoom({ msRef, onBack }: ReadingRoomProps) {
                   return (
                     <>
                       {prev
-                        ? <button className={styles.chPaginationBtn} onClick={() => goToChapter(prev.id)}>← Ch. {prev.number} · {prev.title}</button>
+                        ? <button className={styles.chPaginationBtn} onClick={() => goToChapter(prev.id)}>← Ch. {prev.number + 1} · {prev.title}</button>
                         : <span />}
                       {next
-                        ? <button className={styles.chPaginationBtn} data-next="true" onClick={() => goToChapter(next.id)}>Ch. {next.number} · {next.title} ›</button>
+                        ? <button className={styles.chPaginationBtn} data-next="true" onClick={() => goToChapter(next.id)}>Ch. {next.number + 1} · {next.title} ›</button>
                         : <span />}
                     </>
                   );
@@ -471,7 +461,7 @@ export default function ReadingRoom({ msRef, onBack }: ReadingRoomProps) {
                   <div className={styles.caughtUpFlex}>
                     <div className={styles.caughtUpBody}>
                       <div className={`label ${styles.caughtUpLabel}`}>You're caught up</div>
-                      <p className={`serif ${styles.caughtUpText}`}>Chapter {nextUnreleased.number} hasn't been released yet. Check back soon — or leave your notes on what you've read so far.</p>
+                      <p className={`serif ${styles.caughtUpText}`}>Chapter {nextUnreleased.number + 1} hasn't been released yet. Check back soon — or leave your notes on what you've read so far.</p>
                     </div>
                     <div className={styles.caughtUpRight}>
                       <div className={`serif ${styles.caughtUpCount}`}>{releasedChapters.length}<span className={styles.caughtUpCountOf}> / {chapters.length}</span></div>
@@ -520,6 +510,18 @@ export default function ReadingRoom({ msRef, onBack }: ReadingRoomProps) {
           />
         </div>
       </div>
+
+      {/* ── Impression sparkline ──────────────────────────────────── */}
+      <ImpressionSparkline
+        chapters={chapters}
+        impressionPoints={impressionPoints}
+        currentChapterId={chapterId}
+        doneChapters={doneChapters}
+        authorFirstName={authorFirstName}
+        onUpdate={upsertImpression}
+        stanceOrder={STANCE_ORDER}
+        stanceValue={STANCE_VALUE}
+      />
 
       {/* ── Manuscript completion panel ──────────────────────────── */}
       {allDone && (

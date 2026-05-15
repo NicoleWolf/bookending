@@ -11,12 +11,15 @@ function mockAuthContext(overrides: Partial<ReturnType<typeof AuthContextModule.
     currentUser: null,
     isLoading: false,
     error: null,
+    passwordRecovery: false,
     login: vi.fn(),
     register: vi.fn(),
     logout: vi.fn(),
     clearError: vi.fn(),
     updateProfile: vi.fn(),
     changePassword: vi.fn(),
+    forgotPassword: vi.fn(),
+    resetPassword: vi.fn(),
     ...overrides,
   });
 }

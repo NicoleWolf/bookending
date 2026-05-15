@@ -645,9 +645,6 @@ export default function EditingHub({ savedBooks, onTabChange }: EditingHubProps)
         </div>
       </div>
 
-      {/* ── Reader impressions sparkline ── */}
-      <WriterSparkline readers={filteredImpressions} totalChapters={totalChapters} />
-
       {/* ── Inline comments inbox ── */}
       <div className={styles.commentsBox}>
         <div className={styles.commentsNav}>
@@ -685,6 +682,9 @@ export default function EditingHub({ savedBooks, onTabChange }: EditingHubProps)
           <span className={styles.commentsStatAccent}>{openCount} OPEN</span>
         </div>
       </div>
+
+      {/* ── Reader impressions sparkline ── */}
+      <WriterSparkline readers={filteredImpressions} totalChapters={totalChapters} />
       </>}
       {/* ── Notes view ── */}
       {view === 'notes' && (

@@ -106,12 +106,22 @@ router.post('/join', async (req, res, next: NextFunction) => {
   const existing = await prisma.betaReader.findFirst({ where: { manuscriptId, userId } });
   if (existing) { res.status(409).json({ error: 'Already enrolled' }); return; }
 
-  const user = await prisma.user.findUnique({ where: { id: userId } });
   try {
+    // Ensure User row exists — may be missing if DB provisioning failed at login time
+    const user = await prisma.user.upsert({
+      where:  { id: userId },
+      update: {},
+      create: {
+        id:    userId,
+        email: req.user!.email,
+        name:  req.user!.email,
+        role:  req.user!.role,
+      },
+    });
     const reader = await prisma.betaReader.create({
       data: {
-        name: user?.name ?? 'Reader',
-        email: user?.email ?? '',
+        name:         user.name,
+        email:        user.email,
         manuscriptId,
         userId,
       },

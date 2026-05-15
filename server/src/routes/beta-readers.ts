@@ -127,6 +127,14 @@ router.post('/join', async (req, res, next: NextFunction) => {
         userId,
       },
     });
+
+    // Seed a ReadingProgress row so the manuscript appears in the reader's hub
+    await prisma.readingProgress.upsert({
+      where:  { userId_manuscriptRef: { userId, manuscriptRef: manuscriptId } },
+      update: {},
+      create: { userId, manuscriptRef: manuscriptId, lastOpenedAt: new Date() },
+    });
+
     res.status(201).json({ data: reader });
   } catch (err) {
     logger.error('JOIN /readers/join failed', { userId, manuscriptId, err });

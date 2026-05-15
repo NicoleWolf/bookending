@@ -603,7 +603,7 @@ router.get('/:msRef/manuscript', async (req, res, next: NextFunction) => {
       id:           ms.id,
       title:        ms.title,
       draft:        ms.wordCount > 0 ? `${ms.wordCount.toLocaleString()} words` : 'Draft 1',
-      instructions: ms.description ?? '',
+      instructions: ms.readerInstructions ?? '',
       mode,
       chapters: accessibleChapters.map(ch => ({
         id:         ch.number,

@@ -114,6 +114,18 @@ router.delete('/:id', async (req, res, next: NextFunction) => {
   } catch (err) { next(err); }
 });
 
+// GET /api/manuscripts/:id/instructions
+router.get('/:id/instructions', async (req, res, next: NextFunction) => {
+  const { id }   = req.params;
+  const authorId = req.user!.id;
+  try {
+    const ms = await prisma.manuscript.findUnique({ where: { id }, select: { authorId: true, readerInstructions: true } });
+    if (!ms)                      { res.status(404).json({ error: 'Manuscript not found' }); return; }
+    if (ms.authorId !== authorId) { res.status(403).json({ error: 'Forbidden' }); return; }
+    res.json({ data: { readerInstructions: ms.readerInstructions } });
+  } catch (err) { next(err); }
+});
+
 // GET /api/manuscripts/:id/notes?status=ACTIVE|ARCHIVED|all
 router.get('/:id/notes', async (req, res, next: NextFunction) => {
   const { id }   = req.params;

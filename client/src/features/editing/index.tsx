@@ -72,7 +72,7 @@ export default function EditingHub({ savedBooks, onTabChange }: EditingHubProps)
 
   const [readerImpressions, setReaderImpressions] = useState<ReaderImpression[]>([]);
 
-  // Fetch readers from API whenever the active manuscript changes
+  // Fetch readers + instructions from API whenever the active manuscript changes
   useEffect(() => {
     if (!activeId || !session?.token) return;
     void api.get<BetaReaderRecord[]>(`/api/manuscripts/${activeId}/readers`)
@@ -80,6 +80,9 @@ export default function EditingHub({ savedBooks, onTabChange }: EditingHubProps)
       .catch(() => { /* silently fail */ });
     void api.get<ReaderImpression[]>(`/api/manuscripts/${activeId}/reader-impressions`)
       .then(data => { if (data.length > 0) setReaderImpressions(data); })
+      .catch(() => {});
+    void api.get<{ readerInstructions: string | null }>(`/api/manuscripts/${activeId}/instructions`)
+      .then(data => setInstructions(prev => ({ ...prev, [activeId]: data.readerInstructions ?? '' })))
       .catch(() => {});
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeId, session?.token]);
@@ -159,7 +162,11 @@ export default function EditingHub({ savedBooks, onTabChange }: EditingHubProps)
     setRatingTags(p => p.includes(tag) ? p.filter(t => t !== tag) : [...p, tag]);
 
   const startEdit = () => { setDraftInstr(activeInstr); setEditingInstr(true); };
-  const saveInstr = () => { setInstructions(p => ({ ...p, [activeId]: draftInstr })); setEditingInstr(false); };
+  const saveInstr = () => {
+    setInstructions(p => ({ ...p, [activeId]: draftInstr }));
+    setEditingInstr(false);
+    void api.patch(`/api/manuscripts/${activeId}`, { readerInstructions: draftInstr }).catch(() => {});
+  };
 
   function readerThread(readerId: string): CorrespondenceThread | undefined {
     return threads.find(t => t.reader.id === readerId);

@@ -20,8 +20,8 @@ export const ManuscriptRecordSchema = z.object({
   isbnPending: z.boolean(), priceEbook: z.string().nullable(),
   pricePaperback: z.string().nullable(), language: z.string(),
   estimatedPages: z.number().nullable(), spineColor: z.string(),
-  coverUrl: z.string().nullable(), authorId: z.string(),
-  createdAt: z.string(), updatedAt: z.string(),
+  coverUrl: z.string().nullable(), readerInstructions: z.string().nullable(),
+  authorId: z.string(), createdAt: z.string(), updatedAt: z.string(),
 });
 export type ManuscriptRecord = z.infer<typeof ManuscriptRecordSchema>;
 
@@ -225,6 +225,7 @@ export const CreateManuscriptSchema = z.object({
   language: z.string().nullish(),
   estimatedPages: z.number().int().nullish(),
   spineColor: z.string().nullish(), coverUrl: z.string().nullish(),
+  readerInstructions: z.string().nullish(),
 });
 export type CreateManuscriptInput = z.infer<typeof CreateManuscriptSchema>;
 export const UpdateManuscriptSchema = CreateManuscriptSchema.partial();

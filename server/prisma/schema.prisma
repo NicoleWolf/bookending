@@ -104,8 +104,9 @@ model Manuscript {
   pricePaperback String?
   language       String           @default("English")
   estimatedPages Int?
-  spineColor     String           @default("spine-amber")
-  coverUrl       String?
+  spineColor            String           @default("spine-amber")
+  coverUrl              String?
+  readerInstructions    String?
   wordCount      Int              @default(0)
   createdAt      DateTime         @default(now())
   updatedAt      DateTime         @updatedAt

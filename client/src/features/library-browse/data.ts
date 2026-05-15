@@ -44,6 +44,7 @@ export interface CatalogManuscript {
   contentNotes?:   ContentNotes;
   contentWarnings?: string[];
   pendingRequest?: boolean;
+  isEnrolled?:    boolean;
 }
 
 export function deriveSlotState(ms: CatalogManuscript): SlotState {

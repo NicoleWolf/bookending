@@ -36,19 +36,25 @@ router.get('/', async (req, res, next: NextFunction) => {
             where: { userId: callerId, status: 'PENDING' },
             select: { id: true },
           },
+          betaReaders: {
+            where: { userId: callerId },
+            select: { id: true },
+          },
         } : {}),
       },
       orderBy: { createdAt: 'desc' },
     });
 
     const data = manuscripts.map(m => {
-      const { _count, betaJoinRequests, ...rest } = m as typeof m & {
+      const { _count, betaJoinRequests, betaReaders: enrolled, ...rest } = m as typeof m & {
         betaJoinRequests?: { id: string }[];
+        betaReaders?: { id: string }[];
       };
       return {
         ...rest,
-        readerCount: _count.betaReaders,
+        readerCount:    _count.betaReaders,
         pendingRequest: callerId ? (betaJoinRequests?.length ?? 0) > 0 : false,
+        isEnrolled:     callerId ? (enrolled?.length ?? 0) > 0 : false,
       };
     });
 

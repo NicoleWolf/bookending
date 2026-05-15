@@ -41,6 +41,7 @@ function recordToCatalog(r: BrowseRecord, idx: number): CatalogManuscript {
     themes:         [],
     betaMode:       r.betaMode as CatalogManuscript['betaMode'],
     pendingRequest: r.pendingRequest,
+    isEnrolled:     r.isEnrolled,
   };
 }
 

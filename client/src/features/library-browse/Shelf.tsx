@@ -12,6 +12,8 @@ export interface ShelfProps {
   seeAllCount?:  number;
   cards:         CatalogManuscript[];
   pendingIds?:   Set<string | number>;
+  joinedIds?:    Set<string | number>;
+  onJoin?:       (ms: CatalogManuscript) => void;
   onRequestRead: (ms: CatalogManuscript) => void;
   onWithdraw?:   (ms: CatalogManuscript) => void;
 }
@@ -20,7 +22,7 @@ const CARD_WIDTH_APPROX = 280; // px — used for scroll-advance distance
 
 export function Shelf({
   sectionNum, name, editorialLine, helperLine, seeAllUrl, seeAllCount,
-  cards, pendingIds, onRequestRead, onWithdraw,
+  cards, pendingIds, joinedIds, onJoin, onRequestRead, onWithdraw,
 }: ShelfProps) {
   const scrollRef = useRef<HTMLDivElement>(null);
 
@@ -77,6 +79,8 @@ export function Shelf({
               ms={ms}
               variant="standard"
               isPending={pendingIds?.has(ms.id)}
+              isJoined={joinedIds?.has(ms.id)}
+              onJoin={onJoin}
               onRequestRead={onRequestRead}
               onWithdraw={onWithdraw}
             />

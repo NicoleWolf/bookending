@@ -36,9 +36,10 @@ export function BrowseView({ initialGenre, manuscripts = [] }: Props) {
   /* Reset pagination when filters change */
   useEffect(() => { setShowAll(false); }, [filters]);
 
-  /* Seed pending state from server data (fires when API data loads) */
+  /* Seed pending + joined state from server data (fires when API data loads) */
   useEffect(() => {
     setPendingIds(new Set(manuscripts.filter(m => m.pendingRequest).map(m => m.id)));
+    setJoinedIds(new Set(manuscripts.filter(m => m.isEnrolled).map(m => m.id)));
   }, [manuscripts]);
 
   const result = useMemo(() => applyFilters(manuscripts, filters), [manuscripts, filters]);

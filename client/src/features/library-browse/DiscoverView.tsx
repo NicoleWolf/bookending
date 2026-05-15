@@ -1,10 +1,12 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import type { CatalogManuscript } from './data';
 import { ManuscriptCard } from './ManuscriptCard';
 import { Shelf } from './Shelf';
 import { RequestModal } from './RequestModal';
 import { getVisibleShelves, shouldShowNewReaderPrompt, EMPTY_PROFILE } from './personalization';
 import type { ReaderProfile } from './personalization';
+import { api } from '../../lib/api';
+import { useAuth } from '../auth';
 import styles from './DiscoverView.module.css';
 
 interface Props {
@@ -18,8 +20,14 @@ interface Props {
 export function DiscoverView({
   manuscripts, readerProfile = EMPTY_PROFILE, totalCount, onBrowseAll, onEditProfile,
 }: Props) {
+  const { session } = useAuth();
   const [pendingIds,   setPendingIds]   = useState<Set<string | number>>(new Set());
+  const [joinedIds,    setJoinedIds]    = useState<Set<string | number>>(new Set());
   const [requestingMs, setRequestingMs] = useState<CatalogManuscript | null>(null);
+
+  useEffect(() => {
+    setJoinedIds(new Set(manuscripts.filter(m => m.isEnrolled).map(m => m.id)));
+  }, [manuscripts]);
 
   const featured = useMemo(
     () => manuscripts.find(m => m.featured),
@@ -36,12 +44,24 @@ export function DiscoverView({
     [manuscripts, readerProfile],
   );
 
+  async function handleJoinPublic(ms: CatalogManuscript) {
+    if (!session) return;
+    try {
+      await api.post(`/api/manuscripts/${ms.id}/readers/join`, {});
+      setJoinedIds(prev => new Set([...prev, ms.id]));
+    } catch { /* swallow — card stays joinable */ }
+  }
+
   function handleRequestRead(ms: CatalogManuscript) {
     setRequestingMs(ms);
   }
 
-  async function handleSubmitRequest(ms: CatalogManuscript, _note: string) {
-    // POST to API (wired in Phase 8) — optimistic update
+  async function handleSubmitRequest(ms: CatalogManuscript, note: string) {
+    if (session) {
+      try {
+        await api.post(`/api/manuscripts/${ms.id}/readers/requests`, { note });
+      } catch { /* optimistic update proceeds regardless */ }
+    }
     setPendingIds(prev => new Set([...prev, ms.id]));
     setRequestingMs(null);
   }
@@ -72,6 +92,8 @@ export function DiscoverView({
             ms={featured}
             variant="hero"
             isPending={pendingIds.has(featured.id)}
+            isJoined={joinedIds.has(featured.id)}
+            onJoin={handleJoinPublic}
             onRequestRead={handleRequestRead}
             onWithdraw={handleWithdraw}
           />
@@ -84,6 +106,8 @@ export function DiscoverView({
           key={shelf.sectionNum}
           {...shelf}
           pendingIds={pendingIds}
+          joinedIds={joinedIds}
+          onJoin={handleJoinPublic}
           onRequestRead={handleRequestRead}
           onWithdraw={handleWithdraw}
         />
@@ -108,6 +132,8 @@ export function DiscoverView({
           key={shelf.sectionNum}
           {...shelf}
           pendingIds={pendingIds}
+          joinedIds={joinedIds}
+          onJoin={handleJoinPublic}
           onRequestRead={handleRequestRead}
           onWithdraw={handleWithdraw}
         />

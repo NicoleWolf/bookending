@@ -92,7 +92,7 @@ export const BrowseRecordSchema = z.object({
   estimatedPages: z.number().nullable(), contentRating: z.string().nullable(),
   contentWarnings: z.array(z.string()),
   betaMode: BetaModeSchema, maxBetaReaders: z.number().nullable(),
-  readerCount: z.number(), pendingRequest: z.boolean(),
+  readerCount: z.number(), pendingRequest: z.boolean(), isEnrolled: z.boolean(),
   author: z.object({ id: z.string(), name: z.string() }),
 });
 export type BrowseRecord = z.infer<typeof BrowseRecordSchema>;

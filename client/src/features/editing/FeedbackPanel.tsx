@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { Avatar } from '../../shared/ui/atoms';
-import WriterSparkline, { type ReaderImpression } from './WriterSparkline';
 import styles from './FeedbackPanel.module.css';
 
 interface ReaderAnnotation {
@@ -18,8 +17,6 @@ interface Props {
   manuscriptId:     string;
   chapterHtml:      string;
   readerAnnotations: ReaderAnnotation[];
-  readerImpressions: ReaderImpression[];
-  totalChapters:    number;
   focusedCommentId: string | null;
   onClearFocus:     () => void;
 }
@@ -31,7 +28,7 @@ function passageInChapter(passage: string, chapterHtml: string): boolean {
 }
 
 export default function FeedbackPanel({
-  chapterHtml, readerAnnotations, readerImpressions, totalChapters,
+  chapterHtml, readerAnnotations,
   focusedCommentId, onClearFocus,
 }: Props) {
   const [filter, setFilter] = useState('All');
@@ -39,10 +36,6 @@ export default function FeedbackPanel({
   const comments    = readerAnnotations.filter(a => passageInChapter(a.selectedText, chapterHtml));
   const readerNames = [...new Set(comments.map(c => c.readerName))];
   const names       = ['All', ...readerNames];
-
-  const filteredImpressions = filter === 'All'
-    ? readerImpressions
-    : readerImpressions.filter(r => r.readerName === filter);
 
   const isFocused = focusedCommentId !== null;
   const visible   = isFocused
@@ -53,9 +46,6 @@ export default function FeedbackPanel({
 
   return (
     <div className={styles.panel}>
-      {/* Impression sparkline — writer sees all readers' curves */}
-      <WriterSparkline readers={filteredImpressions} totalChapters={totalChapters} />
-
       <div className={styles.head}>
         <span className={styles.headTitle}>Feedback</span>
         <span className={styles.headCount}>

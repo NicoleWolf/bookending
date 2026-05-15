@@ -990,8 +990,6 @@ export default function DocumentEditor({ manuscriptId }: Props) {
               manuscriptId={manuscriptId}
               chapterHtml={chapters[activeChapter]?.html ?? ''}
               readerAnnotations={readerAnnotations}
-              readerImpressions={readerImpressions}
-              totalChapters={chapters.length}
               focusedCommentId={focusedCommentId}
               onClearFocus={() => setFocusedCommentId(null)}
             />

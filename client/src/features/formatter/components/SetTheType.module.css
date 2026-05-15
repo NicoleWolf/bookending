@@ -112,7 +112,7 @@
 /* ── Theme card grid ──────────────────────────────────────────────── */
 .grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(2, 1fr);
   gap: 0;
   flex: 1;
   overflow-y: auto;

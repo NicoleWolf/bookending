@@ -10,3 +10,17 @@ export const supabase = createClient(
   supabaseUrl     ?? 'https://placeholder.supabase.co',
   supabaseAnonKey ?? 'placeholder-anon-key',
 );
+
+// Capture PASSWORD_RECOVERY at module load time — before React renders.
+// Supabase processes the URL hash immediately on createClient(), firing the
+// event before any React effect can register a listener.
+let _pendingRecovery = false;
+supabase.auth.onAuthStateChange((event) => {
+  if (event === 'PASSWORD_RECOVERY') _pendingRecovery = true;
+});
+
+export function consumePasswordRecovery(): boolean {
+  const val = _pendingRecovery;
+  _pendingRecovery = false;
+  return val;
+}

@@ -3,7 +3,7 @@ import type { ReactNode } from 'react';
 import type { AuthSession, AuthUser, LoginCredentials, RegisterPayload, AuthError } from '../../types/auth';
 import { mockLogin, mockRegister, mockChangePassword } from './mockSession';
 import { setApiToken, api } from '../../lib/api';
-import { supabase, hasSupabase } from '../../lib/supabase';
+import { supabase, hasSupabase, consumePasswordRecovery } from '../../lib/supabase';
 
 interface AuthContextValue {
   session: AuthSession | null;
@@ -72,10 +72,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   });
   const [isLoading,       setIsLoading]       = useState(false);
   const [error,           setError]           = useState<AuthError | null>(null);
-  const [passwordRecovery, setPasswordRecovery] = useState(() => {
-    const params = new URLSearchParams(window.location.hash.replace('#', '?').slice(1));
-    return params.get('type') === 'recovery';
-  });
+  const [passwordRecovery, setPasswordRecovery] = useState(() => consumePasswordRecovery());
 
   useEffect(() => {
     if (!hasSupabase) return;

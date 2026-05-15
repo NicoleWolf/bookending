@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import type { AuthorReaderChapterNoteRecord } from '@bookending/shared';
 import { Avatar } from '../../shared/ui/atoms';
 import styles from './FeedbackPanel.module.css';
 
@@ -14,11 +15,12 @@ interface ReaderAnnotation {
 }
 
 interface Props {
-  manuscriptId:     string;
-  chapterHtml:      string;
-  readerAnnotations: ReaderAnnotation[];
-  focusedCommentId: string | null;
-  onClearFocus:     () => void;
+  manuscriptId:       string;
+  chapterHtml:        string;
+  readerAnnotations:  ReaderAnnotation[];
+  readerChapterNotes: AuthorReaderChapterNoteRecord[];
+  focusedCommentId:   string | null;
+  onClearFocus:       () => void;
 }
 
 function passageInChapter(passage: string, chapterHtml: string): boolean {
@@ -28,7 +30,7 @@ function passageInChapter(passage: string, chapterHtml: string): boolean {
 }
 
 export default function FeedbackPanel({
-  chapterHtml, readerAnnotations,
+  chapterHtml, readerAnnotations, readerChapterNotes,
   focusedCommentId, onClearFocus,
 }: Props) {
   const [filter, setFilter] = useState('All');
@@ -97,6 +99,27 @@ export default function FeedbackPanel({
           ))
         )}
       </div>
+
+      {readerChapterNotes.length > 0 && (
+        <div className={styles.chapterNotes}>
+          <div className={styles.chapterNotesHead}>
+            <span className={styles.headTitle}>Chapter notes</span>
+            <span className={styles.headCount}>{readerChapterNotes.length}</span>
+          </div>
+          {readerChapterNotes.map(n => (
+            <div key={n.id} className={styles.card}>
+              <p className={`serif ${styles.note}`}>{n.body}</p>
+              <div className={styles.author}>
+                <Avatar initials={n.readerName.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase()} tone="accent" size={20} />
+                <span className={styles.authorName}>{n.readerName}</span>
+                <span className={styles.authorTime}>
+                  {new Date(n.createdAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })}
+                </span>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

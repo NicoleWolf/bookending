@@ -24,6 +24,7 @@ import RestoreModal from './RestoreModal';
 import ChapterSidebar from './ChapterSidebar';
 import { useQuietMode } from '../quiet-mode/QuietModeContext';
 import { api } from '../../lib/api';
+import type { AuthorReaderChapterNoteRecord } from '@bookending/shared';
 import styles from './DocumentEditor.module.css';
 
 // ── Helpers ───────────────────────────────────────────────────────
@@ -245,8 +246,9 @@ export default function DocumentEditor({ manuscriptId }: Props) {
   });
   const [selectedText,      setSelectedText]      = useState('');
   const [focusedCommentId,  setFocusedCommentId]  = useState<string | null>(null);
-  const [readerAnnotations, setReaderAnnotations] = useState<ReaderAnnotation[]>([]);
-  const [readerImpressions, setReaderImpressions] = useState<ReaderImpression[]>([]);
+  const [readerAnnotations,   setReaderAnnotations]   = useState<ReaderAnnotation[]>([]);
+  const [readerImpressions,   setReaderImpressions]   = useState<ReaderImpression[]>([]);
+  const [readerChapterNotes,  setReaderChapterNotes]  = useState<AuthorReaderChapterNoteRecord[]>([]);
   const [versions,              setVersions]              = useState<VersionMeta[]>([]);
   const [selectedVersionId,     setSelectedVersionId]     = useState<string | null>(null);
   const [selectedVersionDetail, setSelectedVersionDetail] = useState<VersionDetail | null>(null);
@@ -378,6 +380,9 @@ export default function DocumentEditor({ manuscriptId }: Props) {
       .catch(() => {});
     api.get<ReaderImpression[]>(`/api/manuscripts/${manuscriptId}/reader-impressions`)
       .then(data => setReaderImpressions(data))
+      .catch(() => {});
+    api.get<AuthorReaderChapterNoteRecord[]>(`/api/manuscripts/${manuscriptId}/reader-chapter-notes`)
+      .then(data => setReaderChapterNotes(data))
       .catch(() => {});
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [manuscriptId]);
@@ -990,6 +995,9 @@ export default function DocumentEditor({ manuscriptId }: Props) {
               manuscriptId={manuscriptId}
               chapterHtml={chapters[activeChapter]?.html ?? ''}
               readerAnnotations={readerAnnotations}
+              readerChapterNotes={readerChapterNotes.filter(
+                n => n.chapterNum === (chapterNumbersRef.current[activeChapter] ?? activeChapter)
+              )}
               focusedCommentId={focusedCommentId}
               onClearFocus={() => setFocusedCommentId(null)}
             />

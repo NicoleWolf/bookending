@@ -12,6 +12,7 @@ import {
   DismissRecommendationSchema,
   CreateReplySchema,
   UpsertImpressionSchema,
+  UpsertReaderChapterNoteSchema,
 } from '@bookending/shared';
 import type {
   HubWarmItem,
@@ -301,7 +302,7 @@ router.get('/:msRef', async (req, res, next: NextFunction) => {
   const { msRef } = req.params;
   try {
 
-  const [progress, annotations, cohortCount] = await Promise.all([
+  const [progress, annotations, cohortCount, chapterNotes] = await Promise.all([
     prisma.readingProgress.findUnique({ where: { userId_manuscriptRef: { userId, manuscriptRef: msRef } } }),
     prisma.annotation.findMany({
       where: { userId, manuscriptRef: msRef },
@@ -309,6 +310,10 @@ router.get('/:msRef', async (req, res, next: NextFunction) => {
       include: { replies: { orderBy: { createdAt: 'asc' } } },
     }),
     prisma.betaReader.count({ where: { manuscriptId: msRef } }),
+    prisma.readerChapterNote.findMany({
+      where: { userId, manuscriptRef: msRef },
+      orderBy: { chapterNum: 'asc' },
+    }),
   ]);
 
   const annotationsWithReplies = annotations.map(a => ({
@@ -322,7 +327,7 @@ router.get('/:msRef', async (req, res, next: NextFunction) => {
     })),
   }));
 
-  res.json({ data: { progress, annotations: annotationsWithReplies, cohortCount } });
+  res.json({ data: { progress, annotations: annotationsWithReplies, cohortCount, chapterNotes } });
   } catch (err) { next(err); }
 });
 
@@ -512,10 +517,16 @@ router.post('/:msRef/chapters/:chapterNum/submit', async (req, res, next: NextFu
   const chNum = parseInt(chapterNum, 10);
   if (isNaN(chNum)) { res.status(400).json({ error: 'invalid chapterNum' }); return; }
   try {
-    const result = await prisma.annotation.updateMany({
-      where: { userId, manuscriptRef: msRef, chapterId: chNum, status: 'draft' },
-      data:  { status: 'submitted' },
-    });
+    const [result] = await Promise.all([
+      prisma.annotation.updateMany({
+        where: { userId, manuscriptRef: msRef, chapterId: chNum, status: 'draft' },
+        data:  { status: 'submitted' },
+      }),
+      prisma.readerChapterNote.updateMany({
+        where: { userId, manuscriptRef: msRef, chapterNum: chNum, status: 'draft' },
+        data:  { status: 'submitted' },
+      }),
+    ]);
     await prisma.readingProgress.upsert({
       where:  { userId_manuscriptRef: { userId, manuscriptRef: msRef } },
       update: { lastActivityAt: new Date() },
@@ -650,6 +661,25 @@ router.get('/:msRef/chapter-notes', async (req, res, next: NextFunction) => {
       .filter(ch => ch.notes.length > 0)
       .map(ch => ({ chapterNum: ch.number, body: ch.notes[0].body }));
     res.json({ data: result });
+  } catch (err) { next(err); }
+});
+
+// ── PUT /api/reading/:msRef/chapters/:chapterNum/reader-note ──────────────────
+
+router.put('/:msRef/chapters/:chapterNum/reader-note', async (req, res, next: NextFunction) => {
+  const userId = req.user!.id;
+  const { msRef, chapterNum } = req.params;
+  const chNum = parseInt(chapterNum, 10);
+  if (isNaN(chNum)) { res.status(400).json({ error: 'invalid chapterNum' }); return; }
+  const body = parseBody(UpsertReaderChapterNoteSchema, req.body, res);
+  if (!body) return;
+  try {
+    const note = await prisma.readerChapterNote.upsert({
+      where:  { userId_manuscriptRef_chapterNum: { userId, manuscriptRef: msRef, chapterNum: chNum } },
+      update: { body: body.body },
+      create: { userId, manuscriptRef: msRef, chapterNum: chNum, body: body.body },
+    });
+    res.json({ data: note });
   } catch (err) { next(err); }
 });
 

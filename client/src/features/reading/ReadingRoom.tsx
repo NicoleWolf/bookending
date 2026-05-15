@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect, useCallback, type ReactElement } from 'react';
 import { Btn } from '../../shared/ui/atoms';
 import { IconCheck } from '../../shared/ui/icons';
-import type { Manuscript, Highlight, Pending, Submission, AnnotationRecord, ProgressRecord, ImpressionPointRecord } from './types';
+import type { Manuscript, Highlight, Pending, Submission, AnnotationRecord, ProgressRecord, ImpressionPointRecord, ReaderChapterNoteRecord } from './types';
 import { STAR_LABELS, STANCE_ORDER, STANCE_VALUE } from './data';
 import { useAuth } from '../auth';
 import styles from './Reading.module.css';
@@ -39,6 +39,7 @@ export default function ReadingRoom({ msRef, onBack }: ReadingRoomProps) {
   const [focusedHighlightId, setFocusedHighlightId] = useState<string | null>(null);
   const [submittedChapters,  setSubmittedChapters]  = useState<Set<number>>(new Set());
   const [notesSheetOpen,     setNotesSheetOpen]     = useState(false);
+  const [chapterNoteMap,     setChapterNoteMap]     = useState<Record<number, ReaderChapterNoteRecord>>({});
   const readingRef = useRef<HTMLDivElement>(null);
   const paraRefMap = useRef<Map<string, HTMLElement>>(new Map());
 
@@ -59,11 +60,11 @@ export default function ReadingRoom({ msRef, onBack }: ReadingRoomProps) {
       .finally(() => setMsLoading(false));
 
     void (async () => {
-      let data: { progress: ProgressRecord | null; annotations: AnnotationRecord[]; cohortCount: number } | null = null;
+      let data: { progress: ProgressRecord | null; annotations: AnnotationRecord[]; cohortCount: number; chapterNotes: ReaderChapterNoteRecord[] } | null = null;
       try { data = await api.get(`/api/reading/${msRef}`); } catch { return; }
       if (!data) return;
 
-      const { progress, annotations, cohortCount: cc } = data;
+      const { progress, annotations, cohortCount: cc, chapterNotes } = data;
       setCohortCount(cc);
       if (progress) {
         const done = new Set<number>(JSON.parse(progress.doneChapters ?? '[]') as number[]);
@@ -88,6 +89,11 @@ export default function ReadingRoom({ msRef, onBack }: ReadingRoomProps) {
         setSubmittedChapters(new Set(
           annotations.filter(a => a.status === 'submitted').map(a => a.chapterId)
         ));
+      }
+      if (chapterNotes?.length > 0) {
+        const map: Record<number, ReaderChapterNoteRecord> = {};
+        chapterNotes.forEach(n => { map[n.chapterNum] = n; });
+        setChapterNoteMap(map);
       }
     })();
 
@@ -218,8 +224,22 @@ export default function ReadingRoom({ msRef, onBack }: ReadingRoomProps) {
 
   const submitChapter = (chapterNum: number) => {
     setHighlights(prev => prev.map(h => h.chapterId === chapterNum ? { ...h, status: 'submitted' as const } : h));
+    setChapterNoteMap(prev => {
+      const note = prev[chapterNum];
+      if (!note) return prev;
+      return { ...prev, [chapterNum]: { ...note, status: 'submitted' } };
+    });
     setSubmittedChapters(prev => new Set([...prev, chapterNum]));
     if (session?.token) void api.post(`/api/reading/${msRef}/chapters/${chapterNum}/submit`, {}).catch(() => {});
+  };
+
+  const saveChapterNote = (chapterNum: number, body: string) => {
+    if (!session?.token) return;
+    setChapterNoteMap(prev => ({
+      ...prev,
+      [chapterNum]: { id: prev[chapterNum]?.id ?? '', chapterNum, body, status: prev[chapterNum]?.status ?? 'draft', createdAt: prev[chapterNum]?.createdAt ?? new Date().toISOString() },
+    }));
+    void api.put(`/api/reading/${msRef}/chapters/${chapterNum}/reader-note`, { body }).catch(() => {});
   };
 
   const renderPara = (text: string, cId: number, pId: number) => {
@@ -403,6 +423,23 @@ export default function ReadingRoom({ msRef, onBack }: ReadingRoomProps) {
 
               {/* Chapter footer — impression picker + send */}
               <div className={styles.chFooter}>
+                {/* Chapter-level note (no highlight required) */}
+                <div className={styles.chNoteRow}>
+                  <span className={styles.chFooterLabel}>CHAPTER NOTE</span>
+                  <textarea
+                    className={styles.chNoteTextarea}
+                    placeholder={`A note for ${authorFirstName} about this chapter…`}
+                    defaultValue={chapterNoteMap[chapter.number]?.body ?? ''}
+                    key={chapter.number}
+                    onBlur={e => {
+                      const val = e.currentTarget.value.trim();
+                      if (val !== (chapterNoteMap[chapter.number]?.body ?? '')) {
+                        saveChapterNote(chapter.number, val);
+                      }
+                    }}
+                  />
+                </div>
+
                 <div className={styles.chFooterRow}>
                   <span className={styles.chFooterLabel}>YOUR IMPRESSION</span>
                   <div className={styles.stanceRow}>

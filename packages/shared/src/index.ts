@@ -167,6 +167,28 @@ export const ProgressRecordSchema = z.object({
 });
 export type ProgressRecord = z.infer<typeof ProgressRecordSchema>;
 
+export const ReaderChapterNoteSchema = z.object({
+  id:            z.string(),
+  chapterNum:    z.number(),
+  body:          z.string(),
+  status:        z.string(),
+  createdAt:     z.string(),
+});
+export type ReaderChapterNoteRecord = z.infer<typeof ReaderChapterNoteSchema>;
+
+export const AuthorReaderChapterNoteSchema = z.object({
+  id:            z.string(),
+  chapterNum:    z.number(),
+  body:          z.string(),
+  readerName:    z.string(),
+  createdAt:     z.string(),
+});
+export type AuthorReaderChapterNoteRecord = z.infer<typeof AuthorReaderChapterNoteSchema>;
+
+export const UpsertReaderChapterNoteSchema = z.object({
+  body: z.string(),
+});
+
 // SettingsPayload doubles as the request schema for PUT /api/storefront/settings
 export const SettingsPayloadSchema = z.object({
   shopName: z.string().optional(), shopSlug: z.string().optional(),

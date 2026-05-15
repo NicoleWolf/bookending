@@ -1441,6 +1441,36 @@
   gap: 12px;
 }
 
+.chNoteRow {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.chNoteTextarea {
+  width: 100%;
+  min-height: 72px;
+  background: color-mix(in srgb, var(--ink) 60%, transparent);
+  border: 1px solid var(--rule);
+  color: var(--paper);
+  font-family: var(--serif);
+  font-size: 14px;
+  line-height: 1.6;
+  padding: 10px 12px;
+  resize: vertical;
+  box-sizing: border-box;
+}
+
+.chNoteTextarea::placeholder {
+  color: var(--muted);
+  font-style: italic;
+}
+
+.chNoteTextarea:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
 .chFooterLabel {
   font-family: var(--mono);
   font-size: 9.5px;

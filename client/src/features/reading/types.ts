@@ -18,4 +18,4 @@ export interface Pending { chapterId: number; paraId: number; text: string; }
 export interface Submission { stars: number; message: string; }
 
 export type { ThreadEntry } from '@bookending/shared';
-export type { AnnotationRecord, ProgressRecord, ImpressionPointRecord } from '@bookending/shared';
+export type { AnnotationRecord, ProgressRecord, ImpressionPointRecord, ReaderChapterNoteRecord } from '@bookending/shared';

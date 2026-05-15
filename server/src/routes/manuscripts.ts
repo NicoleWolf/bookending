@@ -339,6 +339,31 @@ router.get('/:id/reader-impressions', async (req, res, next: NextFunction) => {
   } catch (err) { next(err); }
 });
 
+// GET /api/manuscripts/:id/reader-chapter-notes — all submitted reader chapter notes (author only)
+router.get('/:id/reader-chapter-notes', async (req, res, next: NextFunction) => {
+  const authorId = req.user!.id;
+  const { id }   = req.params;
+
+  const ms = await prisma.manuscript.findUnique({ where: { id } });
+  if (!ms)                      { res.status(404).json({ error: 'Manuscript not found' }); return; }
+  if (ms.authorId !== authorId) { res.status(403).json({ error: 'Forbidden' }); return; }
+
+  try {
+    const notes = await prisma.readerChapterNote.findMany({
+      where:   { manuscriptRef: id, status: 'submitted' },
+      orderBy: [{ chapterNum: 'asc' }, { createdAt: 'asc' }],
+      include: { user: { select: { name: true } } },
+    });
+    res.json({ data: notes.map(n => ({
+      id:         n.id,
+      chapterNum: n.chapterNum,
+      body:       n.body,
+      readerName: n.user.name,
+      createdAt:  n.createdAt.toISOString(),
+    })) });
+  } catch (err) { next(err); }
+});
+
 router.use('/:id/readers', betaReadersRouter);
 router.use('/:id/chapters', chapterNotesRouter);
 router.use('/:id/versions', versionsRouter);

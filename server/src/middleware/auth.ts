@@ -91,15 +91,38 @@ export async function requireAuth(req: Request, res: Response, next: NextFunctio
     if (role === 'READER') {
       await prisma.betaReader.updateMany({
         where: { email: data.user.email!, userId: null },
-        data:  { userId: data.user.id },
+        data:  { userId: dbUser.id },
       });
     }
 
-    req.user = { id: data.user.id, email: data.user.email!, role, isAdmin: dbUser.isAdmin };
+    req.user = { id: dbUser.id, email: dbUser.email, role: dbUser.role, isAdmin: dbUser.isAdmin };
   } catch (err) {
-    logger.error('DB user provisioning failed', { err });
-    // Still allow the request through — identity confirmed by Supabase, DB record is best-effort
-    req.user = { id: data.user.id, email: data.user.email!, role, isAdmin: false };
+    const code = (err as { code?: string }).code;
+    if (code === 'P2002') {
+      // Email already exists under a different ID (user created before Supabase auth was wired).
+      // Find the existing row and use its ID so FK constraints on downstream operations work.
+      try {
+        const existing = await prisma.user.findUnique({ where: { email: data.user.email! } });
+        if (existing) {
+          await prisma.user.update({ where: { id: existing.id }, data: { lastLoginAt: new Date(), role } });
+          if (role === 'READER') {
+            await prisma.betaReader.updateMany({
+              where: { email: data.user.email!, userId: null },
+              data:  { userId: existing.id },
+            });
+          }
+          req.user = { id: existing.id, email: existing.email, role: existing.role, isAdmin: existing.isAdmin };
+        } else {
+          req.user = { id: data.user.id, email: data.user.email!, role, isAdmin: false };
+        }
+      } catch (inner) {
+        logger.error('DB user reconciliation failed', { inner });
+        req.user = { id: data.user.id, email: data.user.email!, role, isAdmin: false };
+      }
+    } else {
+      logger.error('DB user provisioning failed', { err });
+      req.user = { id: data.user.id, email: data.user.email!, role, isAdmin: false };
+    }
   }
 
   next();

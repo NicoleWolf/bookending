@@ -103,12 +103,19 @@
   color: color-mix(in srgb, var(--muted) 40%, transparent);
 }
 
-/* ── Error message ────────────────────────────────────────────────── */
+/* ── Error / success messages ─────────────────────────────────────── */
 .errorMsg {
   font-family: var(--sans);
   font-size: 12px;
   color: var(--danger);
   line-height: 1.4;
+}
+
+.successMsg {
+  font-family: var(--sans);
+  font-size: 13px;
+  color: var(--muted);
+  line-height: 1.6;
 }
 
 /* ── Submit button ────────────────────────────────────────────────── */

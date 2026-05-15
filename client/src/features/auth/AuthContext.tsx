@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useMemo, useCallback } from 'react';
+import { createContext, useContext, useState, useMemo, useCallback, useEffect } from 'react';
 import type { ReactNode } from 'react';
 import type { AuthSession, AuthUser, LoginCredentials, RegisterPayload, AuthError } from '../../types/auth';
 import { mockLogin, mockRegister, mockChangePassword } from './mockSession';
@@ -10,12 +10,15 @@ interface AuthContextValue {
   currentUser: AuthUser | null;
   isLoading: boolean;
   error: AuthError | null;
+  passwordRecovery: boolean;
   login: (creds: LoginCredentials) => Promise<void>;
   register: (payload: RegisterPayload) => Promise<void>;
   logout: () => Promise<void>;
   clearError: () => void;
   updateProfile: (data: Partial<Pick<AuthUser, 'name' | 'email' | 'avatarUrl' | 'theme' | 'betaReaderPrivate'>>) => void;
   changePassword: (current: string, next: string) => Promise<void>;
+  forgotPassword: (email: string) => Promise<void>;
+  resetPassword: (password: string) => Promise<void>;
 }
 
 const SESSION_KEY = 'bookending_session';
@@ -62,13 +65,22 @@ async function buildUserFromSupabase(
 // ── Provider ───────────────────────────────────────────────────────────────
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [session,   setSession]   = useState<AuthSession | null>(() => {
+  const [session,         setSession]         = useState<AuthSession | null>(() => {
     const stored = loadStoredSession();
     if (stored?.token) setApiToken(stored.token);
     return stored;
   });
-  const [isLoading, setIsLoading] = useState(false);
-  const [error,     setError]     = useState<AuthError | null>(null);
+  const [isLoading,       setIsLoading]       = useState(false);
+  const [error,           setError]           = useState<AuthError | null>(null);
+  const [passwordRecovery, setPasswordRecovery] = useState(false);
+
+  useEffect(() => {
+    if (!hasSupabase) return;
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
+      if (event === 'PASSWORD_RECOVERY') setPasswordRecovery(true);
+    });
+    return () => subscription.unsubscribe();
+  }, []);
 
   function applySession(s: AuthSession | null) {
     setApiToken(s?.token ?? null);
@@ -206,18 +218,62 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }, [session]);
 
+  const forgotPassword = useCallback(async (email: string) => {
+    setError(null);
+    setIsLoading(true);
+    try {
+      const { error: sbError } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: window.location.origin,
+      });
+      if (sbError) throw { code: 'UNKNOWN', message: sbError.message } as AuthError;
+    } catch (err) {
+      setError(err as AuthError);
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
+
+  const resetPassword = useCallback(async (password: string) => {
+    setError(null);
+    setIsLoading(true);
+    try {
+      const { data, error: sbError } = await supabase.auth.updateUser({ password });
+      if (sbError || !data.user) throw { code: 'UNKNOWN', message: sbError?.message ?? 'Password reset failed' } as AuthError;
+      const { data: sessionData } = await supabase.auth.getSession();
+      if (sessionData.session) {
+        const user = await buildUserFromSupabase(data.user, sessionData.session.access_token);
+        const s: AuthSession = {
+          user,
+          token: sessionData.session.access_token,
+          expiresAt: sessionData.session.expires_at
+            ? new Date(sessionData.session.expires_at * 1000).toISOString()
+            : null,
+        };
+        applySession(s);
+      }
+      setPasswordRecovery(false);
+    } catch (err) {
+      setError(err as AuthError);
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
+
   const value = useMemo<AuthContextValue>(() => ({
     session,
     currentUser: session?.user ?? null,
     isLoading,
     error,
+    passwordRecovery,
     login,
     register,
     logout,
     clearError,
     updateProfile,
     changePassword,
-  }), [session, isLoading, error, login, register, logout, clearError, updateProfile, changePassword]);
+    forgotPassword,
+    resetPassword,
+  }), [session, isLoading, error, passwordRecovery, login, register, logout, clearError, updateProfile, changePassword, forgotPassword, resetPassword]);
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }

@@ -4,6 +4,7 @@ import { prisma } from '../lib/prisma';
 import { parseBody } from '../lib/validate';
 import { JoinBetaRequestSchema, PatchBetaRequestSchema } from '@bookending/shared';
 import type { Prisma } from '@prisma/client';
+import { logger } from '../lib/logger';
 
 // mergeParams exposes :id (manuscriptId) from the parent manuscripts router
 const router = Router({ mergeParams: true });
@@ -127,7 +128,10 @@ router.post('/join', async (req, res, next: NextFunction) => {
       },
     });
     res.status(201).json({ data: reader });
-  } catch (err) { next(err); }
+  } catch (err) {
+    logger.error('JOIN /readers/join failed', { userId, manuscriptId, err });
+    next(err);
+  }
 });
 
 // â”€â”€ Join-request endpoints (REQUEST betaMode) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€

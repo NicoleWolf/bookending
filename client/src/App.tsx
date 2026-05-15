@@ -175,7 +175,13 @@ async function fetchAndMigrateManuscripts(userId: string): Promise<{ books: Book
 }
 
 function LoggedOutShell() {
+  const { passwordRecovery } = useAuth();
   const [view, setView] = useState<'landing' | 'login'>('landing');
+
+  useEffect(() => {
+    if (passwordRecovery) setView('login');
+  }, [passwordRecovery]);
+
   return (
     <div>
       <Masthead

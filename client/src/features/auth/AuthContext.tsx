@@ -72,7 +72,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   });
   const [isLoading,       setIsLoading]       = useState(false);
   const [error,           setError]           = useState<AuthError | null>(null);
-  const [passwordRecovery, setPasswordRecovery] = useState(false);
+  const [passwordRecovery, setPasswordRecovery] = useState(() => {
+    const params = new URLSearchParams(window.location.hash.replace('#', '?').slice(1));
+    return params.get('type') === 'recovery';
+  });
 
   useEffect(() => {
     if (!hasSupabase) return;

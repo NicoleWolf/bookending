@@ -83,13 +83,14 @@ router.patch('/:id', async (req, res, next: NextFunction) => {
     const existing = await prisma.formattingProject.findFirst({ where: { id, userId } });
     if (!existing) { res.status(404).json({ error: 'Formatting project not found.' }); return; }
 
-    const { currentStep, source, encoding, smartQuotes, pastedContent, frontMatter } = req.body as {
+    const { currentStep, source, encoding, smartQuotes, pastedContent, frontMatter, typeSettings } = req.body as {
       currentStep?:   number;
       source?:        string;
       encoding?:      string;
       smartQuotes?:   string;
       pastedContent?: string;
       frontMatter?:   string;
+      typeSettings?:  string;
     };
 
     const updated = await prisma.formattingProject.update({
@@ -101,6 +102,7 @@ router.patch('/:id', async (req, res, next: NextFunction) => {
         smartQuotes:   smartQuotes   ?? undefined,
         pastedContent: pastedContent ?? undefined,
         frontMatter:   frontMatter   ?? undefined,
+        typeSettings:  typeSettings  ?? undefined,
       },
     });
 

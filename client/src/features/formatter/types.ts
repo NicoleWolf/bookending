@@ -18,6 +18,7 @@ export interface FormattingProjectRecord {
   uploadedDocxUrl: string | null;
   pastedContent: string | null;
   frontMatter: string | null;
+  typeSettings: string | null;
   createdAt: string;
   updatedAt: string;
 }
@@ -160,4 +161,83 @@ export interface DetectedItem {
   isRequired?:    boolean;
   isHidden?:      boolean;
   flag?:          string;     // human-readable reason for low confidence
+}
+
+// ── Type-setting ────────────────────────────────────────────────────
+
+export type ThemeKey     = 'modern' | 'classic' | 'literary' | 'romance';
+export type SceneBreakKey = 'stars' | 'fleuron' | 'dot' | 'dots';
+
+export const SCENE_BREAK_SYMBOLS: Record<SceneBreakKey, string> = {
+  stars:   '✦',
+  fleuron: '❦',
+  dot:     '·',
+  dots:    '· · ·',
+};
+
+export interface ThemeDef {
+  key:              ThemeKey;
+  label:            string;
+  bodyFont:         string;   // display name
+  headingFont:      string;   // display name
+  bodyStack:        string;   // CSS font-family value
+  headingStack:     string;
+  defaultSceneBreak: SceneBreakKey;
+  defaultDropCap:   boolean;
+  defaultSmallCaps: boolean;
+}
+
+export const THEME_DEFS: ThemeDef[] = [
+  {
+    key: 'modern', label: 'Modern',
+    bodyFont: 'Source Serif 4', headingFont: 'Inter',
+    bodyStack: "'Source Serif 4', Georgia, serif",
+    headingStack: "Inter, system-ui, sans-serif",
+    defaultSceneBreak: 'dots', defaultDropCap: false, defaultSmallCaps: false,
+  },
+  {
+    key: 'classic', label: 'Classic',
+    bodyFont: 'EB Garamond', headingFont: 'EB Garamond',
+    bodyStack: "'EB Garamond', Garamond, Georgia, serif",
+    headingStack: "'EB Garamond', Garamond, Georgia, serif",
+    defaultSceneBreak: 'stars', defaultDropCap: true, defaultSmallCaps: true,
+  },
+  {
+    key: 'literary', label: 'Literary',
+    bodyFont: 'Lora', headingFont: 'Lora italic',
+    bodyStack: "'Lora', Georgia, serif",
+    headingStack: "'Lora', Georgia, serif",
+    defaultSceneBreak: 'dot', defaultDropCap: true, defaultSmallCaps: false,
+  },
+  {
+    key: 'romance', label: 'Romance',
+    bodyFont: 'Crimson Pro', headingFont: 'Cormorant italic',
+    bodyStack: "'Crimson Pro', 'Crimson Text', Georgia, serif",
+    headingStack: "'Cormorant Garamond', 'Cormorant', Georgia, serif",
+    defaultSceneBreak: 'fleuron', defaultDropCap: true, defaultSmallCaps: false,
+  },
+];
+
+export interface SetTypeState {
+  theme:       ThemeKey;
+  dropCap:     boolean;
+  dropCapLines: number;
+  sceneBreak:  SceneBreakKey;
+  smallCaps:   boolean;
+}
+
+export function buildDefaultTypeSettings(existingJson: string | null): SetTypeState {
+  const defaults: SetTypeState = {
+    theme:        'classic',
+    dropCap:      true,
+    dropCapLines: 4,
+    sceneBreak:   'stars',
+    smallCaps:    true,
+  };
+  if (!existingJson) return defaults;
+  try {
+    return { ...defaults, ...(JSON.parse(existingJson) as Partial<SetTypeState>) };
+  } catch {
+    return defaults;
+  }
 }

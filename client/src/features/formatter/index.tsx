@@ -2,13 +2,14 @@ import { useState, useEffect } from 'react';
 import { STEPS } from './steps';
 import { api } from '../../lib/api';
 import { deriveMockStructure } from './data';
-import type { ManuscriptSummary, FormattingProjectRecord, IngestSettings, DetectedItem, FrontMatterState } from './types';
-import { buildDefaultFrontMatter } from './types';
+import type { ManuscriptSummary, FormattingProjectRecord, IngestSettings, DetectedItem, FrontMatterState, SetTypeState } from './types';
+import { buildDefaultFrontMatter, buildDefaultTypeSettings } from './types';
 import BinderySidebar from './components/BinderySidebar';
 import LiveProofPanel from './components/LiveProofPanel';
 import BringIn from './components/BringIn';
 import MarkUp from './components/MarkUp';
 import FrontMatter from './components/FrontMatter';
+import SetTheType from './components/SetTheType';
 import styles from './Formatter.module.css';
 
 export type Device = 'paperwhite' | 'phone' | 'tablet';
@@ -22,6 +23,7 @@ export default function FormatterHub() {
   const [projectLoading,       setProjectLoading]       = useState(false);
   const [structureItems,       setStructureItems]       = useState<DetectedItem[]>([]);
   const [frontMatterState,     setFrontMatterState]     = useState<FrontMatterState | null>(null);
+  const [typeSettingsState,    setTypeSettingsState]    = useState<SetTypeState>(buildDefaultTypeSettings(null));
 
   // Fetch manuscripts on mount; auto-select most recently updated
   useEffect(() => {
@@ -65,6 +67,11 @@ export default function FormatterHub() {
       buildDefaultFrontMatter(ms.title, authorName, project?.frontMatter ?? null)
     );
   }, [selectedManuscriptId, manuscripts, project?.frontMatter]);
+
+  // Re-sync type settings when project loads
+  useEffect(() => {
+    setTypeSettingsState(buildDefaultTypeSettings(project?.typeSettings ?? null));
+  }, [project?.typeSettings]);
 
   async function handlePull(manuscriptId: string, settings: IngestSettings) {
     const created = await api.post<FormattingProjectRecord>('/api/formatter', {
@@ -187,6 +194,15 @@ export default function FormatterHub() {
               onAdvance={() => setActiveStep(4)}
             />
           )}
+          {activeStep === 4 && (
+            <SetTheType
+              project={project}
+              state={typeSettingsState}
+              onStateChange={setTypeSettingsState}
+              onBack={() => setActiveStep(3)}
+              onAdvance={() => setActiveStep(5)}
+            />
+          )}
         </main>
 
         <LiveProofPanel
@@ -195,6 +211,7 @@ export default function FormatterHub() {
           activeStep={activeStep}
           structureItems={structureItems}
           frontMatterState={frontMatterState ?? undefined}
+          typeSettingsState={typeSettingsState}
         />
       </div>
     </div>

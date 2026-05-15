@@ -1,13 +1,15 @@
 import type { Device } from '../index';
-import type { DetectedItem, FrontMatterState, BlockKey } from '../types';
+import type { DetectedItem, FrontMatterState, BlockKey, SetTypeState } from '../types';
+import { THEME_DEFS, SCENE_BREAK_SYMBOLS } from '../types';
 import styles from './LiveProofPanel.module.css';
 
 interface Props {
-  device:             Device;
-  onDeviceChange:     (device: Device) => void;
-  activeStep?:        number;
-  structureItems?:    DetectedItem[];
-  frontMatterState?:  FrontMatterState;
+  device:              Device;
+  onDeviceChange:      (device: Device) => void;
+  activeStep?:         number;
+  structureItems?:     DetectedItem[];
+  frontMatterState?:   FrontMatterState;
+  typeSettingsState?:  SetTypeState;
 }
 
 const DEVICES: { id: Device; label: string }[] = [
@@ -174,16 +176,49 @@ function FrontMatterProof({ state }: { state: FrontMatterState }) {
   );
 }
 
-export default function LiveProofPanel({ device, onDeviceChange, activeStep = 1, structureItems = [], frontMatterState }: Props) {
+// ── Chapter proof ──────────────────────────────────────────────────
+
+const CH_TITLE = 'Chapter One';
+const CH_P1    = 'ara was nine the first night her father climbed the lantern alone, and she watched from the kitchen window with her chin on the sill, breath fogging a half-moon on the glass. The light went up at twenty past eight — earlier than any night that summer — and for a long minute she could see his shape against it, dark on gold, before the storm closed over him.';
+const CH_P2    = 'By morning the storm had moved east, the gulls were already arguing over the breakwater, and her father was at the kitchen table reading yesterday\'s newspaper.';
+
+function ChapterProof({ state }: { state: SetTypeState }) {
+  const def         = THEME_DEFS.find(t => t.key === state.theme)!;
+  const sceneSymbol = SCENE_BREAK_SYMBOLS[state.sceneBreak];
+
+  return (
+    <div className={styles.chProof} style={{ fontFamily: def.bodyStack } as React.CSSProperties}>
+      <div
+        className={styles.chHeading}
+        style={{ fontFamily: def.headingStack, fontVariant: state.smallCaps ? 'small-caps' : 'normal' } as React.CSSProperties}
+      >
+        {CH_TITLE}
+      </div>
+      <p className={styles.chBody}>
+        {state.dropCap && (
+          <span className={styles.chDropCap} style={{ fontFamily: def.bodyStack } as React.CSSProperties}>
+            M
+          </span>
+        )}
+        {state.dropCap ? CH_P1 : 'M' + CH_P1}
+      </p>
+      <div className={styles.chBreak}>{sceneSymbol}</div>
+      <p className={styles.chBody}>{CH_P2}</p>
+    </div>
+  );
+}
+
+export default function LiveProofPanel({ device, onDeviceChange, activeStep = 1, structureItems = [], frontMatterState, typeSettingsState }: Props) {
   const showTOC = activeStep === 2 && structureItems.length > 0;
   const showFM  = activeStep === 3 && !!frontMatterState;
+  const showCh  = activeStep === 4 && !!typeSettingsState;
 
   return (
     <aside className={styles.panel}>
       <div className={styles.header}>
         <span className={`mono ${styles.headerLabel}`}>LIVE PROOF</span>
         <span className={`mono ${styles.headerMeta}`}>
-          {showTOC ? '— TOC · IN EPUB' : showFM ? '— FRONT MATTER · IN EPUB' : '— · IN EPUB'}
+          {showTOC ? '— TOC · IN EPUB' : showFM ? '— FRONT MATTER · IN EPUB' : showCh ? '— CHAPTER · IN EPUB' : '— · IN EPUB'}
         </span>
       </div>
 
@@ -206,6 +241,8 @@ export default function LiveProofPanel({ device, onDeviceChange, activeStep = 1,
             <TOCProof items={structureItems} />
           ) : showFM ? (
             <FrontMatterProof state={frontMatterState!} />
+          ) : showCh ? (
+            <ChapterProof state={typeSettingsState!} />
           ) : (
             <div className={styles.frameEmpty}>
               <span className={`mono ${styles.frameEmptyText}`}>No preview yet</span>
@@ -222,6 +259,11 @@ export default function LiveProofPanel({ device, onDeviceChange, activeStep = 1,
       {showFM && (
         <p className={`mono ${styles.tocNote}`}>
           Provisional · typography applies once you set the type.
+        </p>
+      )}
+      {showCh && (
+        <p className={`mono ${styles.tocNote}`}>
+          Live re-render · theme applied.
         </p>
       )}
 

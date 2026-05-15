@@ -429,6 +429,7 @@ model FormattingProject {
   uploadedDocxUrl String?
   pastedContent  String?
   frontMatter    String?
+  typeSettings   String?
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
 

@@ -299,3 +299,39 @@
 .btnIcon {
   font-size: 12px;
 }
+
+/* ── Responsive ──────────────────────────────────────────────────── */
+
+@media (max-width: 1023px) {
+  .wrap {
+    height: auto;
+    min-height: 0;
+    overflow: visible;
+  }
+
+  .grid {
+    overflow: visible;
+  }
+
+  .footer {
+    padding: 12px 16px;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+}
+
+@media (max-width: 479px) {
+  /* Single column on small phones */
+  .grid {
+    grid-template-columns: 1fr;
+  }
+
+  /* Remove right-border on cards in single-column layout */
+  .card {
+    border-right: none;
+    border-bottom: 1px solid var(--rule);
+  }
+  .card:last-child { border-bottom: none; }
+
+  .footerNote { display: none; }
+}

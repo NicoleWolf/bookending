@@ -563,9 +563,83 @@
 
 .backBtn:hover { color: var(--paper); }
 
+/* ── Detail close button (hidden on desktop) ─────────────────────── */
+
+.detailClose { display: none; }
+
 /* ── Shared helpers ──────────────────────────────────────────────── */
 
 .btnIcon { font-size: 11px; }
+
+/* ── Responsive ──────────────────────────────────────────────────── */
+
+@media (max-width: 1023px) {
+  /* Remove the negative bleed margin */
+  .splitPane {
+    margin: 8px 0 0;
+  }
+
+  /* Outline fills full width */
+  .outlineList {
+    flex: 1;
+    max-height: none;
+    height: 100%;
+    border-right: none;
+  }
+
+  /* Detail panel becomes a fixed bottom sheet */
+  .detailPanel {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    max-height: 70vh;
+    overflow-y: auto;
+    z-index: 250;
+    background: var(--ink);
+    border-top: 1px solid var(--rule);
+    box-shadow: 0 -6px 32px rgba(0, 0, 0, 0.5);
+    transform: translateY(100%);
+    transition: transform 0.22s ease;
+  }
+
+  .detailPanel[data-open] {
+    transform: translateY(0);
+  }
+
+  /* Show the close button */
+  .detailClose {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 16px;
+    background: none;
+    border: none;
+    border-bottom: 1px solid var(--rule);
+    color: var(--muted);
+    font-size: 9px;
+    letter-spacing: 0.1em;
+    cursor: pointer;
+    width: 100%;
+    text-align: left;
+    transition: color 0.1s;
+  }
+  .detailClose:hover { color: var(--paper); }
+}
+
+@media (max-width: 767px) {
+  .controls {
+    flex-direction: column;
+    gap: 12px;
+    padding-bottom: 12px;
+  }
+
+  .rightControls {
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+}
 
 /* ── Split modal ─────────────────────────────────────────────────── */
 

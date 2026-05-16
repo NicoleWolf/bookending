@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import type { Device } from '../index';
 import type { DetectedItem, FrontMatterState, BlockKey, SetTypeState, FontSize, BackMatterState, ProfileSnapshot, CoverPressState } from '../types';
 import { THEME_DEFS, SCENE_BREAK_SYMBOLS, FONT_SIZE_SCALE } from '../types';
@@ -396,6 +397,8 @@ function CoverProof({ state }: { state: CoverPressState }) {
 }
 
 export default function LiveProofPanel({ device, onDeviceChange, activeStep = 1, structureItems = [], frontMatterState, typeSettingsState, backMatterState, coverPressState, profile, fontSize = 'M', jumpChapter = 0, hideDeviceToggle = false }: Props) {
+  const [open, setOpen] = useState(false);
+
   const showTOC    = activeStep === 2 && structureItems.length > 0;
   const showFM     = activeStep === 3 && !!frontMatterState;
   const showCh     = activeStep === 4 && !!typeSettingsState;
@@ -404,7 +407,24 @@ export default function LiveProofPanel({ device, onDeviceChange, activeStep = 1,
   const showCover  = activeStep === 7 && !!coverPressState;
 
   return (
-    <aside className={styles.panel}>
+    <>
+    {/* Trigger button — only visible on tablet/mobile via CSS */}
+    <button
+      type="button"
+      className={`mono ${styles.proofTrigger}`}
+      data-open={open ? '' : undefined}
+      onClick={() => setOpen(o => !o)}
+      aria-label="Toggle live proof"
+    >
+      PROOF
+    </button>
+
+    {/* Backdrop — only visible on tablet/mobile when open */}
+    {open && (
+      <div className={styles.backdrop} onClick={() => setOpen(false)} />
+    )}
+
+    <aside className={styles.panel} data-open={open ? '' : undefined}>
       <div className={styles.header}>
         <span className={`mono ${styles.headerLabel}`}>LIVE PROOF</span>
         <span className={`mono ${styles.headerMeta}`}>
@@ -416,6 +436,15 @@ export default function LiveProofPanel({ device, onDeviceChange, activeStep = 1,
            : showCover ? '— COVER · KDP-READY'
            : '— · IN EPUB'}
         </span>
+        {/* Close button — only visible on tablet/mobile via CSS */}
+        <button
+          type="button"
+          className={`mono ${styles.closeBtn}`}
+          onClick={() => setOpen(false)}
+          aria-label="Close live proof"
+        >
+          ✕
+        </button>
       </div>
 
       {!hideDeviceToggle && (
@@ -516,5 +545,6 @@ export default function LiveProofPanel({ device, onDeviceChange, activeStep = 1,
         )}
       </div>
     </aside>
+    </>
   );
 }

@@ -613,3 +613,63 @@
   transition: color 0.1s;
 }
 .kdpBtn:hover { color: var(--paper); }
+
+/* ── Responsive ──────────────────────────────────────────────────── */
+
+@media (max-width: 1023px) {
+  .wrap {
+    height: auto;
+    min-height: 0;
+    overflow: visible;
+  }
+
+  .body {
+    flex-direction: column;
+    overflow: visible;
+  }
+
+  .leftCol {
+    width: 100%;
+    border-right: none;
+    border-bottom: 1px solid var(--rule);
+    overflow: visible;
+    padding-bottom: 20px;
+    /* Cover drop zone: max out at a sensible preview size */
+    max-width: 320px;
+    align-self: center;
+  }
+
+  .rightCol {
+    overflow: visible;
+    padding: 16px;
+  }
+
+  .topBar {
+    flex-wrap: wrap;
+    gap: 10px;
+    padding: 10px 16px;
+  }
+
+  .topBarLeft {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .footer {
+    padding: 12px 16px;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+}
+
+@media (max-width: 767px) {
+  .headingRow { padding: 14px 16px; }
+  .heading    { font-size: 17px; }
+
+  .leftCol {
+    max-width: 100%;
+    padding: 12px;
+  }
+
+  .footerNote { display: none; }
+}

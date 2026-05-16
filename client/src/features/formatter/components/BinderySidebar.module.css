@@ -142,3 +142,81 @@
   color: var(--muted);
   margin: 0;
 }
+
+/* ── Responsive ──────────────────────────────────────────────────── */
+
+/* Tablet: sidebar becomes a horizontal step strip */
+@media (max-width: 1023px) {
+  .sidebar {
+    width: 100%;
+    min-width: 0;
+    flex-direction: row;
+    align-items: stretch;
+    border-right: none;
+    border-bottom: 1px solid var(--rule);
+  }
+
+  /* Hide static prose elements */
+  .header,
+  .footer {
+    display: none;
+  }
+
+  /* Steps scroll horizontally */
+  .steps {
+    flex-direction: row;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding: 0;
+    scrollbar-width: none;
+    flex: 1;
+  }
+  .steps::-webkit-scrollbar { display: none; }
+
+  .step {
+    flex-direction: row;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 14px;
+    white-space: nowrap;
+    opacity: 1;
+    border-bottom: 2px solid transparent;
+    flex-shrink: 0;
+  }
+
+  /* Replace left bar with bottom border for active */
+  .step[data-active]::before { display: none; }
+  .step[data-active] { border-bottom-color: var(--accent); }
+
+  .step[data-locked] { opacity: 0.35; }
+  .step:not([data-locked]):not([data-active]):hover { opacity: 0.7; }
+
+  .stepRow { gap: 5px; }
+
+  .stepNum {
+    font-size: 9px;
+    letter-spacing: 0.06em;
+    color: var(--muted-2);
+  }
+
+  .stepLabel {
+    font-size: 11px;
+    font-weight: 400;
+  }
+
+  /* Hide sub-label — not enough room */
+  .stepSub { display: none; }
+}
+
+/* Mobile: even more compact — number + active label only */
+@media (max-width: 767px) {
+  .step {
+    padding: 10px 10px;
+  }
+
+  .stepNum { font-size: 9px; }
+
+  /* Non-active steps: number only */
+  .step:not([data-active]):not([data-complete]) .stepLabel { display: none; }
+  .step:not([data-active]) .stepLabel { display: none; }
+}

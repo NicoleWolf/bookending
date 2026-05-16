@@ -518,7 +518,19 @@ export default function MarkUp({ items, onItemsChange, onBack, onAdvance }: Prop
         </div>
 
         {/* Detail panel */}
-        <aside className={styles.detailPanel} data-testid="detail-panel">
+        <aside
+          className={styles.detailPanel}
+          data-testid="detail-panel"
+          data-open={selectedId ? '' : undefined}
+        >
+          <button
+            type="button"
+            className={`mono ${styles.detailClose}`}
+            onClick={() => setSelectedId(null)}
+            aria-label="Close detail panel"
+          >
+            ✕ Close
+          </button>
           {renderDetail()}
         </aside>
 

@@ -603,3 +603,47 @@
 
 .btnIcon   { font-size: 11px; }
 .fileInput { display: none; }
+
+/* ── Responsive ──────────────────────────────────────────────────── */
+
+@media (max-width: 767px) {
+  .controls {
+    flex-direction: column;
+    gap: 16px;
+    padding: 14px 16px;
+  }
+
+  .rightControls {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+
+  .infoCard {
+    margin: 8px 0 0;
+    padding: 16px;
+  }
+
+  .infoCardBody {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .dropZone {
+    margin: 16px 0;
+  }
+
+  .pasteArea {
+    padding: 16px 0;
+  }
+}
+
+@media (max-width: 479px) {
+  .sourceTabs {
+    gap: 14px;
+  }
+
+  .infoCardHeadline {
+    font-size: 17px;
+  }
+}

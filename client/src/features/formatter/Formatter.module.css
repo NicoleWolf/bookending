@@ -49,3 +49,37 @@
   border-right: 1px solid var(--rule);
 }
 
+/* ── Responsive ──────────────────────────────────────────────────── */
+
+@media (max-width: 1023px) {
+  .breadcrumb {
+    padding: 10px 20px;
+    gap: 12px;
+  }
+
+  .columns {
+    flex-direction: column;
+  }
+
+  .content {
+    padding: 20px 24px;
+    border-right: none;
+  }
+}
+
+@media (max-width: 767px) {
+  .breadcrumb {
+    padding: 8px 14px;
+  }
+
+  .content {
+    padding: 16px 14px;
+  }
+}
+
+@media (max-width: 479px) {
+  .breadcrumbManuscript {
+    display: none;
+  }
+}
+

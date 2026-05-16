@@ -84,36 +84,12 @@
   animation: fadeUp 1s ease 0.4s forwards;
 }
 
-.heroForm {
+.heroCtas {
   display: flex;
-  gap: 12px;
-  max-width: 480px;
+  gap: 16px;
   align-items: stretch;
   opacity: 0;
   animation: fadeUp 1s ease 0.6s forwards;
-}
-
-.heroInput {
-  flex: 1;
-  padding: 16px 20px;
-  border: 1px solid var(--lp-rule);
-  background: rgba(255, 255, 255, 0.4);
-  font-family: 'EB Garamond', serif;
-  font-size: 17px;
-  color: var(--lp-ink);
-  border-radius: 2px;
-  transition: border-color 0.3s, background 0.3s;
-}
-
-.heroInput:focus {
-  outline: none;
-  border-color: var(--lp-ink);
-  background: rgba(255, 255, 255, 0.7);
-}
-
-.heroInput::placeholder {
-  color: var(--lp-ink-faint);
-  font-style: italic;
 }
 
 .btnPrimary {
@@ -132,6 +108,26 @@
 
 .btnPrimary:hover {
   background: var(--lp-accent);
+  transform: translateY(-1px);
+}
+
+.btnSecondary {
+  background: transparent;
+  color: var(--lp-ink);
+  border: 1px solid var(--lp-rule);
+  padding: 16px 28px;
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  letter-spacing: 0.05em;
+  cursor: pointer;
+  border-radius: 2px;
+  transition: border-color 0.3s, color 0.3s, transform 0.3s;
+  white-space: nowrap;
+}
+
+.btnSecondary:hover {
+  border-color: var(--lp-accent);
+  color: var(--lp-accent);
   transform: translateY(-1px);
 }
 
@@ -495,88 +491,11 @@
   line-height: 1.6;
 }
 
-.signupTeam {
-  font-family: 'Cormorant Garamond', serif;
-  font-style: italic;
-  color: var(--lp-ink-faint);
-  margin-top: 32px;
-  font-size: 17px;
-}
-
-.roleToggle {
-  display: inline-flex;
-  border: 1px solid var(--lp-rule);
-  border-radius: 2px;
-  margin-bottom: 24px;
-  background: rgba(255, 255, 255, 0.4);
-}
-
-.roleBtn {
-  padding: 10px 24px;
-  background: transparent;
-  border: none;
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 16px;
-  font-style: italic;
-  color: var(--lp-ink-soft);
-  cursor: pointer;
-  transition: background 0.3s, color 0.3s;
-  border-radius: 2px;
-}
-
-.roleBtn[data-active] {
-  background: var(--lp-ink);
-  color: var(--lp-paper);
-}
-
-.signupForm {
+.signupCtas {
   display: flex;
-  gap: 12px;
-  max-width: 460px;
-  margin: 0 auto;
-}
-
-.signupInput {
-  flex: 1;
-  padding: 14px 18px;
-  border: 1px solid var(--lp-rule);
-  background: rgba(255, 255, 255, 0.6);
-  font-family: 'EB Garamond', serif;
-  font-size: 16px;
-  color: var(--lp-ink);
-  border-radius: 2px;
-}
-
-.signupInput:focus {
-  outline: none;
-  border-color: var(--lp-ink);
-}
-
-.signupFineprint {
-  font-family: 'Inter', sans-serif;
-  font-size: 12px;
-  color: var(--lp-ink-faint);
-  margin-top: 24px;
-  letter-spacing: 0.02em;
-}
-
-.signupAlt {
-  font-family: 'Inter', sans-serif;
-  font-size: 13px;
-  color: var(--lp-ink-faint);
-  margin-top: 16px;
-}
-
-.signupSignInLink {
-  background: none;
-  border: none;
-  font-family: 'Inter', sans-serif;
-  font-size: 13px;
-  color: var(--lp-accent);
-  cursor: pointer;
-  padding: 0;
-  text-decoration: underline;
-  text-underline-offset: 2px;
+  justify-content: center;
+  gap: 16px;
+  flex-wrap: wrap;
 }
 
 /* ── Footer ─────────────────────────────────────────────────────── */
@@ -683,8 +602,9 @@
   .quoteMark { font-size: 80px; }
 
   .signup { padding: 60px 0 40px; }
-  .signupForm { flex-direction: column; }
   .signupCard { padding: 32px 20px; }
+  .heroCtas { flex-direction: column; align-items: stretch; }
+  .signupCtas { flex-direction: column; align-items: stretch; }
 
   .footerContent {
     flex-direction: column;
@@ -693,6 +613,3 @@
   }
   .footerLinks { gap: 20px; flex-wrap: wrap; justify-content: center; }
 }
-
-.signupParaMt  { margin-top: 24px; }
-.roleHighlight { color: var(--accent); }

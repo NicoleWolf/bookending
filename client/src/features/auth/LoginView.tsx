@@ -4,9 +4,9 @@ import styles from './LoginView.module.css';
 
 type Mode = 'login' | 'register' | 'forgot-password' | 'reset-password';
 
-export function LoginView() {
+export function LoginView({ initialMode = 'login' }: { initialMode?: 'login' | 'register' }) {
   const { login, register, forgotPassword, resetPassword, isLoading, error, clearError, passwordRecovery } = useAuth();
-  const [mode,     setMode]     = useState<Mode>('login');
+  const [mode,     setMode]     = useState<Mode>(initialMode);
   const [name,     setName]     = useState('');
   const [email,    setEmail]    = useState('');
   const [password, setPassword] = useState('');

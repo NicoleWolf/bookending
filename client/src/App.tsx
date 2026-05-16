@@ -176,7 +176,13 @@ async function fetchAndMigrateManuscripts(userId: string): Promise<{ books: Book
 
 function LoggedOutShell() {
   const { passwordRecovery } = useAuth();
-  const [view, setView] = useState<'landing' | 'login'>(passwordRecovery ? 'login' : 'landing');
+  const [view,     setView]     = useState<'landing' | 'login'>(passwordRecovery ? 'login' : 'landing');
+  const [authMode, setAuthMode] = useState<'login' | 'register'>('login');
+
+  function goAuth(mode: 'login' | 'register') {
+    setAuthMode(mode);
+    setView('login');
+  }
 
   return (
     <div>
@@ -186,11 +192,11 @@ function LoggedOutShell() {
         notifications={[]}
         onMarkRead={() => {}}
         onMarkAllRead={() => {}}
-        onLogin={() => setView('login')}
+        onLogin={() => goAuth('login')}
       />
       {view === 'landing'
-        ? <Landing onEnter={() => setView('login')} onLogin={() => setView('login')} />
-        : <LoginView />
+        ? <Landing onSignIn={() => goAuth('login')} onRegister={() => goAuth('register')} />
+        : <LoginView initialMode={authMode} />
       }
     </div>
   );
@@ -555,7 +561,7 @@ function AuthorApp() {
         </div>
       )}
 
-      {activeTab === 'Landing' && <Landing onEnter={() => setActiveTab('Dashboard')} />}
+      {activeTab === 'Landing' && <Landing onSignIn={() => setActiveTab('Dashboard')} onRegister={() => setActiveTab('Dashboard')} />}
       {activeTab === 'Dashboard' && <DashboardPreview />}
       {activeTab === 'Manuscripts' && (
         <Library

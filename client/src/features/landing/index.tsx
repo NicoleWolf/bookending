@@ -1,16 +1,13 @@
-import { useState, useEffect, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import styles from './Landing.module.css';
 
 interface LandingProps {
-  onEnter:  () => void;
-  onLogin?: () => void;
+  onSignIn:   () => void;
+  onRegister: () => void;
 }
 
-export default function Landing({ onEnter, onLogin }: LandingProps) {
-  const [role,     setRole]     = useState<'writer' | 'reader'>('writer');
-  const [signedUp, setSignedUp] = useState(false);
+export default function Landing({ onSignIn, onRegister }: LandingProps) {
   const landingRef = useRef<HTMLDivElement>(null);
-  const signupRef  = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const root = landingRef.current;
@@ -22,11 +19,6 @@ export default function Landing({ onEnter, onLogin }: LandingProps) {
     root.querySelectorAll(`.${styles.reveal}`).forEach(el => observer.observe(el));
     return () => observer.disconnect();
   }, []);
-
-  function scrollToSignup(e: React.FormEvent) {
-    e.preventDefault();
-    signupRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }
 
   return (
     <div className={styles.landing} ref={landingRef}>
@@ -44,10 +36,10 @@ export default function Landing({ onEnter, onLogin }: LandingProps) {
             Bookending brings writers and readers together at every stage — from the first uncertain draft
             to the book in someone's hands. Community, tools, and a path through, all in one place.
           </p>
-          <form className={styles.heroForm} onSubmit={scrollToSignup}>
-            <input type="email" placeholder="your@email.com" className={styles.heroInput} required />
-            <button type="submit" className={styles.btnPrimary}>Join the early list</button>
-          </form>
+          <div className={styles.heroCtas}>
+            <button className={styles.btnPrimary} onClick={onRegister}>Create your account</button>
+            <button className={styles.btnSecondary} onClick={onSignIn}>Sign in</button>
+          </div>
 
           <svg className={styles.heroDecoration} viewBox="0 0 200 240" xmlns="http://www.w3.org/2000/svg" fill="none" aria-hidden="true">
             <path d="M20 60 Q100 40 100 60 L100 200 Q100 180 20 200 Z" stroke="#8b3a2f" strokeWidth="1.2" fill="rgba(255,255,255,0.2)" />
@@ -158,51 +150,15 @@ export default function Landing({ onEnter, onLogin }: LandingProps) {
       <div className={styles.ornament}><span>❦</span></div>
 
       {/* ── Signup ────────────────────────────────────────────────────── */}
-      <section className={`${styles.signup} ${styles.reveal}`} id="signup" ref={signupRef}>
+      <section className={`${styles.signup} ${styles.reveal}`} id="signup">
         <div className={styles.container}>
           <div className={styles.signupCard}>
-            {signedUp ? (
-              <>
-                <h2 className={styles.signupTitle}>Welcome, <em className={styles.signupEm}>friend.</em></h2>
-                <p className={`${styles.signupPara} ${styles.signupParaMt}`}>
-                  We've got you down as a <strong className={styles.roleHighlight}>{role}</strong>. We'll write soon.
-                </p>
-                <div className={styles.signupTeam}>— The Bookending team</div>
-              </>
-            ) : (
-              <>
-                <h2 className={styles.signupTitle}>Find your <em className={styles.signupEm}>company</em><br />on the page.</h2>
-                <p className={styles.signupPara}>We're opening the doors slowly. Tell us who you are and we'll save you a seat.</p>
-
-                <div className={styles.roleToggle}>
-                  <button
-                    className={styles.roleBtn}
-                    data-active={role === 'writer' ? 'true' : undefined}
-                    onClick={() => setRole('writer')}
-                  >I'm a writer</button>
-                  <button
-                    className={styles.roleBtn}
-                    data-active={role === 'reader' ? 'true' : undefined}
-                    onClick={() => setRole('reader')}
-                  >I'm a reader</button>
-                </div>
-
-                <form
-                  className={styles.signupForm}
-                  onSubmit={e => { e.preventDefault(); setSignedUp(true); }}
-                >
-                  <input type="email" placeholder="your@email.com" className={styles.signupInput} required />
-                  <button type="submit" className={styles.btnPrimary}>Save my seat</button>
-                </form>
-
-                <div className={styles.signupFineprint}>No spam. No noise. A short note when there's something worth saying.</div>
-
-                <div className={styles.signupAlt}>
-                  Already have an account?{' '}
-                  <button className={styles.signupSignInLink} onClick={onLogin ?? onEnter}>Sign in</button>
-                </div>
-              </>
-            )}
+            <h2 className={styles.signupTitle}>Find your <em className={styles.signupEm}>people</em><br />on the page.</h2>
+            <p className={styles.signupPara}>A home for writers and readers walking the publishing journey together. Come in.</p>
+            <div className={styles.signupCtas}>
+              <button className={styles.btnPrimary} onClick={onRegister}>Create your account</button>
+              <button className={styles.btnSecondary} onClick={onSignIn}>Sign in</button>
+            </div>
           </div>
         </div>
       </section>

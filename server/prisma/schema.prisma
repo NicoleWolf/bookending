@@ -431,6 +431,7 @@ model FormattingProject {
   frontMatter    String?
   typeSettings   String?
   backMatter     String?
+  coverPress     String?
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
 

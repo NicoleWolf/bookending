@@ -20,6 +20,7 @@ export interface FormattingProjectRecord {
   frontMatter: string | null;
   typeSettings: string | null;
   backMatter: string | null;
+  coverPress: string | null;
   createdAt: string;
   updatedAt: string;
 }
@@ -319,6 +320,70 @@ export interface ProofWarning {
   location: string;
   message:  string;
   fixStep?: number;
+}
+
+// ── Cover · Press ────────────────────────────────────────────────────
+
+export type EpubFormat  = 'epub3-kdp' | 'epub2';
+export type BuildStatus = 'idle' | 'building' | 'passed' | 'failed';
+
+export interface CoverFileState {
+  fileName:   string;
+  format:     'JPEG' | 'PNG';
+  widthPx:    number;
+  heightPx:   number;
+  fileSizeMB: number;
+  colorSpace: 'sRGB' | 'CMYK' | 'unknown';
+  isValid:    boolean;
+  dataUrl:    string | null;
+}
+
+export interface EpubBuildRecord {
+  buildNumber:   number;
+  status:        BuildStatus;
+  errorCount:    number;
+  warningCount:  number;
+  fileSizeKB:    number;
+  builtAt:       string | null;
+  schemaVersion: string;
+  pageCount:     number;
+  fontSizeKB:    number;
+}
+
+export interface CoverPressState {
+  format: EpubFormat;
+  cover:  CoverFileState | null;
+  build:  EpubBuildRecord;
+}
+
+export function buildDefaultCoverPress(existingJson: string | null): CoverPressState {
+  const defaults: CoverPressState = {
+    format: 'epub3-kdp',
+    cover:  null,
+    build: {
+      buildNumber:   0,
+      status:        'idle',
+      errorCount:    0,
+      warningCount:  0,
+      fileSizeKB:    0,
+      builtAt:       null,
+      schemaVersion: 'EPUB 3',
+      pageCount:     0,
+      fontSizeKB:    0,
+    },
+  };
+  if (!existingJson) return defaults;
+  try {
+    const saved = JSON.parse(existingJson) as Partial<CoverPressState>;
+    return {
+      ...defaults,
+      ...saved,
+      build: { ...defaults.build, ...(saved.build ?? {}), status: 'idle' as BuildStatus },
+      cover: saved.cover ? { ...saved.cover, dataUrl: null } : null,
+    };
+  } catch {
+    return defaults;
+  }
 }
 
 export function buildDefaultTypeSettings(existingJson: string | null): SetTypeState {

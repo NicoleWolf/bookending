@@ -1,5 +1,5 @@
 import type { Device } from '../index';
-import type { DetectedItem, FrontMatterState, BlockKey, SetTypeState, FontSize, BackMatterState, ProfileSnapshot } from '../types';
+import type { DetectedItem, FrontMatterState, BlockKey, SetTypeState, FontSize, BackMatterState, ProfileSnapshot, CoverPressState } from '../types';
 import { THEME_DEFS, SCENE_BREAK_SYMBOLS, FONT_SIZE_SCALE } from '../types';
 import styles from './LiveProofPanel.module.css';
 
@@ -11,6 +11,7 @@ interface Props {
   frontMatterState?:   FrontMatterState;
   typeSettingsState?:  SetTypeState;
   backMatterState?:    BackMatterState;
+  coverPressState?:    CoverPressState;
   profile?:            ProfileSnapshot | null;
   fontSize?:           FontSize;
   jumpChapter?:        number;
@@ -375,23 +376,44 @@ function BackMatterProof({
   );
 }
 
-export default function LiveProofPanel({ device, onDeviceChange, activeStep = 1, structureItems = [], frontMatterState, typeSettingsState, backMatterState, profile, fontSize = 'M', jumpChapter = 0, hideDeviceToggle = false }: Props) {
-  const showTOC  = activeStep === 2 && structureItems.length > 0;
-  const showFM   = activeStep === 3 && !!frontMatterState;
-  const showCh   = activeStep === 4 && !!typeSettingsState;
-  const showFull = activeStep === 5 && !!typeSettingsState;
-  const showBM   = activeStep === 6 && !!backMatterState && !!typeSettingsState;
+// ── Cover proof (Step 7) ───────────────────────────────────────────
+
+function CoverProof({ state }: { state: CoverPressState }) {
+  if (state.cover?.dataUrl) {
+    return (
+      <img
+        src={state.cover.dataUrl}
+        alt="Cover"
+        style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+      />
+    );
+  }
+  return (
+    <div className={styles.frameEmpty}>
+      <span className={`mono ${styles.frameEmptyText}`}>No cover yet</span>
+    </div>
+  );
+}
+
+export default function LiveProofPanel({ device, onDeviceChange, activeStep = 1, structureItems = [], frontMatterState, typeSettingsState, backMatterState, coverPressState, profile, fontSize = 'M', jumpChapter = 0, hideDeviceToggle = false }: Props) {
+  const showTOC    = activeStep === 2 && structureItems.length > 0;
+  const showFM     = activeStep === 3 && !!frontMatterState;
+  const showCh     = activeStep === 4 && !!typeSettingsState;
+  const showFull   = activeStep === 5 && !!typeSettingsState;
+  const showBM     = activeStep === 6 && !!backMatterState && !!typeSettingsState;
+  const showCover  = activeStep === 7 && !!coverPressState;
 
   return (
     <aside className={styles.panel}>
       <div className={styles.header}>
         <span className={`mono ${styles.headerLabel}`}>LIVE PROOF</span>
         <span className={`mono ${styles.headerMeta}`}>
-          {showTOC  ? '— TOC · IN EPUB'
-           : showFM  ? '— FRONT MATTER · IN EPUB'
-           : showCh  ? '— CHAPTER · IN EPUB'
+          {showTOC   ? '— TOC · IN EPUB'
+           : showFM   ? '— FRONT MATTER · IN EPUB'
+           : showCh   ? '— CHAPTER · IN EPUB'
            : showFull ? '— CHAPTER · IN EPUB'
-           : showBM  ? '— BACK MATTER · IN EPUB'
+           : showBM   ? '— BACK MATTER · IN EPUB'
+           : showCover ? '— COVER · KDP-READY'
            : '— · IN EPUB'}
         </span>
       </div>
@@ -434,6 +456,8 @@ export default function LiveProofPanel({ device, onDeviceChange, activeStep = 1,
               profile={profile ?? null}
               totalWords={structureItems.reduce((s, i) => s + (i.wordCount || 0), 0)}
             />
+          ) : showCover ? (
+            <CoverProof state={coverPressState!} />
           ) : (
             <div className={styles.frameEmpty}>
               <span className={`mono ${styles.frameEmptyText}`}>No preview yet</span>
@@ -467,6 +491,11 @@ export default function LiveProofPanel({ device, onDeviceChange, activeStep = 1,
           Showing the {BM_BLOCK_LABELS[backMatterState!.selectedBlock] ?? backMatterState!.selectedBlock} page.
         </p>
       )}
+      {showCover && (
+        <p className={`mono ${styles.tocNote}`}>
+          Cover preview · KDP-ready.
+        </p>
+      )}
 
       <div className={styles.epubcheck}>
         <div className={styles.epubcheckHeader}>
@@ -475,9 +504,16 @@ export default function LiveProofPanel({ device, onDeviceChange, activeStep = 1,
           <span className={`mono ${styles.epubcheckMeta}`}>LAST BUILD</span>
         </div>
         <hr className="rule" />
-        <p className={`mono ${styles.epubcheckStatus}`}>
-          No build yet — run after Step 02.
-        </p>
+        {showCover && coverPressState && coverPressState.build.status === 'passed' ? (
+          <p className={`mono ${styles.epubcheckStatus}`}>
+            {coverPressState.build.errorCount} errors · {coverPressState.build.warningCount} warnings.
+            {' '}BUILD #{coverPressState.build.buildNumber} · {(coverPressState.build.fileSizeKB / 1024).toFixed(2)} MB
+          </p>
+        ) : (
+          <p className={`mono ${styles.epubcheckStatus}`}>
+            No build yet — run after Step 02.
+          </p>
+        )}
       </div>
     </aside>
   );

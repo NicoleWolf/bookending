@@ -2,8 +2,8 @@ import { useState, useEffect } from 'react';
 import { STEPS } from './steps';
 import { api } from '../../lib/api';
 import { deriveMockStructure } from './data';
-import type { ManuscriptSummary, FormattingProjectRecord, IngestSettings, DetectedItem, FrontMatterState, SetTypeState, FontSize, BackMatterState, ProfileSnapshot } from './types';
-import { buildDefaultFrontMatter, buildDefaultTypeSettings, buildDefaultBackMatter } from './types';
+import type { ManuscriptSummary, FormattingProjectRecord, IngestSettings, DetectedItem, FrontMatterState, SetTypeState, FontSize, BackMatterState, ProfileSnapshot, CoverPressState } from './types';
+import { buildDefaultFrontMatter, buildDefaultTypeSettings, buildDefaultBackMatter, buildDefaultCoverPress } from './types';
 import BinderySidebar from './components/BinderySidebar';
 import LiveProofPanel from './components/LiveProofPanel';
 import BringIn from './components/BringIn';
@@ -12,6 +12,7 @@ import FrontMatter from './components/FrontMatter';
 import SetTheType from './components/SetTheType';
 import Proof from './components/Proof';
 import BackMatter from './components/BackMatter';
+import CoverPress from './components/CoverPress';
 import styles from './Formatter.module.css';
 
 export type Device = 'paperwhite' | 'phone' | 'tablet';
@@ -30,6 +31,7 @@ export default function FormatterHub() {
   const [jumpChapter,          setJumpChapter]          = useState(0);
   const [authorProfile,        setAuthorProfile]        = useState<ProfileSnapshot | null>(null);
   const [backMatterState,      setBackMatterState]      = useState<BackMatterState | null>(null);
+  const [coverPressState,      setCoverPressState]      = useState<CoverPressState>(buildDefaultCoverPress(null));
 
   // Fetch author profile on mount for back matter pre-fill
   useEffect(() => {
@@ -97,6 +99,11 @@ export default function FormatterHub() {
   useEffect(() => {
     setTypeSettingsState(buildDefaultTypeSettings(project?.typeSettings ?? null));
   }, [project?.typeSettings]);
+
+  // Re-sync cover press when project loads
+  useEffect(() => {
+    setCoverPressState(buildDefaultCoverPress(project?.coverPress ?? null));
+  }, [project?.coverPress]);
 
   // Re-sync back matter when project or profile changes
   useEffect(() => {
@@ -250,6 +257,14 @@ export default function FormatterHub() {
               onAdvance={() => setActiveStep(7)}
             />
           )}
+          {activeStep === 7 && (
+            <CoverPress
+              project={project}
+              state={coverPressState}
+              onStateChange={setCoverPressState}
+              onBack={() => setActiveStep(6)}
+            />
+          )}
           {activeStep === 5 && (
             <Proof
               project={project}
@@ -277,6 +292,7 @@ export default function FormatterHub() {
           frontMatterState={frontMatterState ?? undefined}
           typeSettingsState={typeSettingsState}
           backMatterState={backMatterState ?? undefined}
+          coverPressState={coverPressState}
           profile={authorProfile}
           fontSize={fontSize}
           jumpChapter={jumpChapter}

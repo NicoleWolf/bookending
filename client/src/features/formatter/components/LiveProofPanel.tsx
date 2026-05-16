@@ -1,6 +1,6 @@
 import type { Device } from '../index';
-import type { DetectedItem, FrontMatterState, BlockKey, SetTypeState } from '../types';
-import { THEME_DEFS, SCENE_BREAK_SYMBOLS } from '../types';
+import type { DetectedItem, FrontMatterState, BlockKey, SetTypeState, FontSize } from '../types';
+import { THEME_DEFS, SCENE_BREAK_SYMBOLS, FONT_SIZE_SCALE } from '../types';
 import styles from './LiveProofPanel.module.css';
 
 interface Props {
@@ -10,6 +10,9 @@ interface Props {
   structureItems?:     DetectedItem[];
   frontMatterState?:   FrontMatterState;
   typeSettingsState?:  SetTypeState;
+  fontSize?:           FontSize;
+  jumpChapter?:        number;
+  hideDeviceToggle?:   boolean;
 }
 
 const DEVICES: { id: Device; label: string }[] = [
@@ -208,32 +211,109 @@ function ChapterProof({ state }: { state: SetTypeState }) {
   );
 }
 
-export default function LiveProofPanel({ device, onDeviceChange, activeStep = 1, structureItems = [], frontMatterState, typeSettingsState }: Props) {
+// ── Full chapter proof (Step 5) ────────────────────────────────────
+
+function FullChapterProof({
+  chapter,
+  state,
+  fontSize,
+  allChapters,
+  totalWords,
+}: {
+  chapter:     DetectedItem | null;
+  state:       SetTypeState;
+  fontSize:    FontSize;
+  allChapters: DetectedItem[];
+  totalWords:  number;
+}) {
+  if (!chapter) return <div className={styles.frameEmpty}><span className={`mono ${styles.frameEmptyText}`}>No chapters</span></div>;
+
+  const def         = THEME_DEFS.find(t => t.key === state.theme)!;
+  const sceneSymbol = SCENE_BREAK_SYMBOLS[state.sceneBreak];
+  const scale       = FONT_SIZE_SCALE[fontSize];
+  const basePx      = 11.5 * scale;
+
+  const chapterIdx  = allChapters.indexOf(chapter);
+  const wordsRead   = allChapters.slice(0, chapterIdx).reduce((s, c) => s + (c.wordCount || 0), 0);
+  const totalPages  = Math.ceil(totalWords / 250) + 7;
+  const startPage   = 7 + Math.ceil(wordsRead / 250);
+  const pct         = Math.round((startPage / totalPages) * 100);
+
+  // Use snippet if available, otherwise use a placeholder
+  const body = chapter.snippet ||
+    "The story continues here — this chapter’s content will render once the manuscript is fully processed.";
+
+  const firstLetter = body[0] ?? '';
+  const restOfBody  = body.slice(1);
+
+  return (
+    <div
+      className={styles.chProof}
+      style={{ fontFamily: def.bodyStack, fontSize: `${basePx}px` } as React.CSSProperties}
+    >
+      <div
+        className={styles.chHeading}
+        style={{
+          fontFamily: def.headingStack,
+          fontVariant: state.smallCaps ? 'small-caps' : 'normal',
+          fontSize: `${13 * scale}px`,
+        } as React.CSSProperties}
+      >
+        {chapter.title}
+      </div>
+      <p className={styles.chBody}>
+        {state.dropCap
+          ? <><span className={styles.chDropCap} style={{ fontFamily: def.bodyStack } as React.CSSProperties}>{firstLetter}</span>{restOfBody}</>
+          : body
+        }
+      </p>
+      <div className={styles.chBreak}>{sceneSymbol}</div>
+      <p className={styles.chBody}>
+        The barometer fell three points before breakfast. She opened the keeper's log and wrote,
+        in her father's hand as best she could remember it, the day's weather and the time of the
+        first lamp-lighting. The ink dried slowly in the cold.
+      </p>
+      <div className={`mono ${styles.chFooter}`}>
+        {startPage} of {totalPages} · {pct}%
+        {chapter.title && ` · ${chapter.title}`}
+      </div>
+    </div>
+  );
+}
+
+export default function LiveProofPanel({ device, onDeviceChange, activeStep = 1, structureItems = [], frontMatterState, typeSettingsState, fontSize = 'M', jumpChapter = 0, hideDeviceToggle = false }: Props) {
   const showTOC = activeStep === 2 && structureItems.length > 0;
   const showFM  = activeStep === 3 && !!frontMatterState;
   const showCh  = activeStep === 4 && !!typeSettingsState;
+  const showFull = activeStep === 5 && !!typeSettingsState;
 
   return (
     <aside className={styles.panel}>
       <div className={styles.header}>
         <span className={`mono ${styles.headerLabel}`}>LIVE PROOF</span>
         <span className={`mono ${styles.headerMeta}`}>
-          {showTOC ? '— TOC · IN EPUB' : showFM ? '— FRONT MATTER · IN EPUB' : showCh ? '— CHAPTER · IN EPUB' : '— · IN EPUB'}
+          {showTOC  ? '— TOC · IN EPUB'
+           : showFM  ? '— FRONT MATTER · IN EPUB'
+           : showCh  ? '— CHAPTER · IN EPUB'
+           : showFull ? '— CHAPTER · IN EPUB'
+           : '— · IN EPUB'}
         </span>
       </div>
 
-      <div className={styles.deviceToggle}>
-        {DEVICES.map(d => (
-          <button
-            key={d.id}
-            className={`mono ${styles.deviceBtn}`}
-            data-active={d.id === device ? '' : undefined}
-            onClick={() => onDeviceChange(d.id)}
-          >
-            {d.label}
-          </button>
-        ))}
-      </div>
+      {!hideDeviceToggle && (
+        <div className={styles.deviceToggle}>
+          {DEVICES.map(d => (
+            <button
+              key={d.id}
+              className={`mono ${styles.deviceBtn}`}
+              data-active={d.id === device ? '' : undefined}
+              onClick={() => onDeviceChange(d.id)}
+            >
+              {d.label}
+            </button>
+          ))}
+        </div>
+      )}
 
       <div className={styles.frameWrap}>
         <div className={styles.deviceFrame} data-device={device}>
@@ -243,6 +323,14 @@ export default function LiveProofPanel({ device, onDeviceChange, activeStep = 1,
             <FrontMatterProof state={frontMatterState!} />
           ) : showCh ? (
             <ChapterProof state={typeSettingsState!} />
+          ) : showFull ? (
+            <FullChapterProof
+              chapter={structureItems.filter(i => i.subtype === 'chapter')[jumpChapter] ?? null}
+              state={typeSettingsState!}
+              fontSize={fontSize}
+              allChapters={structureItems.filter(i => i.subtype === 'chapter')}
+              totalWords={structureItems.reduce((s, i) => s + (i.wordCount || 0), 0)}
+            />
           ) : (
             <div className={styles.frameEmpty}>
               <span className={`mono ${styles.frameEmptyText}`}>No preview yet</span>
@@ -264,6 +352,11 @@ export default function LiveProofPanel({ device, onDeviceChange, activeStep = 1,
       {showCh && (
         <p className={`mono ${styles.tocNote}`}>
           Live re-render · theme applied.
+        </p>
+      )}
+      {showFull && (
+        <p className={`mono ${styles.tocNote}`}>
+          Live re-render · {fontSize} · theme applied.
         </p>
       )}
 

@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { STEPS } from './steps';
 import { api } from '../../lib/api';
 import { deriveMockStructure } from './data';
-import type { ManuscriptSummary, FormattingProjectRecord, IngestSettings, DetectedItem, FrontMatterState, SetTypeState } from './types';
+import type { ManuscriptSummary, FormattingProjectRecord, IngestSettings, DetectedItem, FrontMatterState, SetTypeState, FontSize } from './types';
 import { buildDefaultFrontMatter, buildDefaultTypeSettings } from './types';
 import BinderySidebar from './components/BinderySidebar';
 import LiveProofPanel from './components/LiveProofPanel';
@@ -10,6 +10,7 @@ import BringIn from './components/BringIn';
 import MarkUp from './components/MarkUp';
 import FrontMatter from './components/FrontMatter';
 import SetTheType from './components/SetTheType';
+import Proof from './components/Proof';
 import styles from './Formatter.module.css';
 
 export type Device = 'paperwhite' | 'phone' | 'tablet';
@@ -24,6 +25,8 @@ export default function FormatterHub() {
   const [structureItems,       setStructureItems]       = useState<DetectedItem[]>([]);
   const [frontMatterState,     setFrontMatterState]     = useState<FrontMatterState | null>(null);
   const [typeSettingsState,    setTypeSettingsState]    = useState<SetTypeState>(buildDefaultTypeSettings(null));
+  const [fontSize,             setFontSize]             = useState<FontSize>('M');
+  const [jumpChapter,          setJumpChapter]          = useState(0);
 
   // Fetch manuscripts on mount; auto-select most recently updated
   useEffect(() => {
@@ -203,6 +206,23 @@ export default function FormatterHub() {
               onAdvance={() => setActiveStep(5)}
             />
           )}
+          {activeStep === 5 && (
+            <Proof
+              project={project}
+              structureItems={structureItems}
+              frontMatterState={frontMatterState}
+              typeSettingsState={typeSettingsState}
+              device={device}
+              onDeviceChange={setDevice}
+              fontSize={fontSize}
+              onFontSizeChange={setFontSize}
+              jumpChapter={jumpChapter}
+              onJumpChapter={setJumpChapter}
+              onGoToStep={setActiveStep}
+              onBack={() => setActiveStep(4)}
+              onAdvance={() => setActiveStep(6)}
+            />
+          )}
         </main>
 
         <LiveProofPanel
@@ -212,6 +232,9 @@ export default function FormatterHub() {
           structureItems={structureItems}
           frontMatterState={frontMatterState ?? undefined}
           typeSettingsState={typeSettingsState}
+          fontSize={fontSize}
+          jumpChapter={jumpChapter}
+          hideDeviceToggle={activeStep === 5}
         />
       </div>
     </div>

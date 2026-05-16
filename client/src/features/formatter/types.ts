@@ -226,6 +226,21 @@ export interface SetTypeState {
   smallCaps:   boolean;
 }
 
+// ── Proof ────────────────────────────────────────────────────────────
+
+export type FontSize = 'S' | 'M' | 'L' | 'XL';
+
+export const FONT_SIZE_SCALE: Record<FontSize, number> = {
+  S: 0.85, M: 1, L: 1.15, XL: 1.3,
+};
+
+export interface ProofWarning {
+  level:    'warn' | 'info' | 'ok';
+  location: string;
+  message:  string;
+  fixStep?: number;
+}
+
 export function buildDefaultTypeSettings(existingJson: string | null): SetTypeState {
   const defaults: SetTypeState = {
     theme:        'classic',

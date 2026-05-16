@@ -1,4 +1,5 @@
-import type { DetectedItem, ManuscriptSummary } from './types';
+import type { DetectedItem, ManuscriptSummary, FrontMatterState, SetTypeState, ProofWarning } from './types';
+import { THEME_DEFS } from './types';
 
 /* ── Known snippets for demo manuscripts ─────────────────────────── */
 
@@ -148,4 +149,69 @@ export function deriveMockStructure(ms: ManuscriptSummary): DetectedItem[] {
   });
 
   return items;
+}
+
+/* ── Derive proof warnings from existing state ────────────────────── */
+
+export function deriveWarnings(
+  structureItems: DetectedItem[],
+  frontMatterState: FrontMatterState | null,
+  typeSettingsState: SetTypeState | null,
+): ProofWarning[] {
+  const warnings: ProofWarning[] = [];
+
+  // Flagged structure items → warn
+  const chapters = structureItems.filter(i => i.subtype === 'chapter');
+  chapters.forEach((ch, i) => {
+    if (ch.flag) {
+      warnings.push({
+        level:    'warn',
+        location: `Ch · ${String(i + 1).padStart(2, '0')}`,
+        message:  `${ch.flag} Fix in Step 02.`,
+        fixStep:  2,
+      });
+    }
+  });
+
+  // Long chapters (>700 words) → info
+  chapters.forEach((ch, i) => {
+    if (ch.wordCount > 700) {
+      const pages = Math.ceil(ch.wordCount / 250);
+      warnings.push({
+        level:    'info',
+        location: `Ch · ${String(i + 1).padStart(2, '0')}`,
+        message:  `Long chapter (${ch.wordCount.toLocaleString()} words). Reads on Paperwhite as ${pages} swipes.`,
+      });
+    }
+  });
+
+  // Copyright auto-filled → info
+  if (frontMatterState?.blocks.copyright.included) {
+    warnings.push({
+      level:    'info',
+      location: 'FM · ii',
+      message:  `Copyright year (${new Date().getFullYear()}) auto-filled from your profile.`,
+    });
+  }
+
+  // TOC generated → ok
+  warnings.push({
+    level:    'ok',
+    location: 'TOC',
+    message:  'NCX + nav doc both generated.',
+  });
+
+  // Fonts → ok
+  if (typeSettingsState) {
+    const def = THEME_DEFS.find(t => t.key === typeSettingsState.theme);
+    if (def) {
+      warnings.push({
+        level:    'ok',
+        location: 'Fonts',
+        message:  `${def.bodyFont} embedded · OFL · ~312 KB.`,
+      });
+    }
+  }
+
+  return warnings;
 }

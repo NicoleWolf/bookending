@@ -418,3 +418,15 @@
   color: #5a4a38;
   margin: 12px 0;
 }
+
+.chFooter {
+  margin-top: auto;
+  padding-top: 10px;
+  font-size: 7.5px;
+  letter-spacing: 0.08em;
+  color: #8a7560;
+  border-top: 0.5px solid #d4c9b8;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

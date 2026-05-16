@@ -430,6 +430,7 @@ model FormattingProject {
   pastedContent  String?
   frontMatter    String?
   typeSettings   String?
+  backMatter     String?
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
 

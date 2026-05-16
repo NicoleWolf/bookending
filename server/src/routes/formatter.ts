@@ -91,6 +91,7 @@ router.patch('/:id', async (req, res, next: NextFunction) => {
       pastedContent?: string;
       frontMatter?:   string;
       typeSettings?:  string;
+      backMatter?:    string;
     };
 
     const updated = await prisma.formattingProject.update({
@@ -103,6 +104,7 @@ router.patch('/:id', async (req, res, next: NextFunction) => {
         pastedContent: pastedContent ?? undefined,
         frontMatter:   frontMatter   ?? undefined,
         typeSettings:  typeSettings  ?? undefined,
+        backMatter:    backMatter    ?? undefined,
       },
     });
 

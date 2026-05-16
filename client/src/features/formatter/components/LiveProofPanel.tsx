@@ -1,5 +1,5 @@
 import type { Device } from '../index';
-import type { DetectedItem, FrontMatterState, BlockKey, SetTypeState, FontSize } from '../types';
+import type { DetectedItem, FrontMatterState, BlockKey, SetTypeState, FontSize, BackMatterState, ProfileSnapshot } from '../types';
 import { THEME_DEFS, SCENE_BREAK_SYMBOLS, FONT_SIZE_SCALE } from '../types';
 import styles from './LiveProofPanel.module.css';
 
@@ -10,6 +10,8 @@ interface Props {
   structureItems?:     DetectedItem[];
   frontMatterState?:   FrontMatterState;
   typeSettingsState?:  SetTypeState;
+  backMatterState?:    BackMatterState;
+  profile?:            ProfileSnapshot | null;
   fontSize?:           FontSize;
   jumpChapter?:        number;
   hideDeviceToggle?:   boolean;
@@ -281,11 +283,104 @@ function FullChapterProof({
   );
 }
 
-export default function LiveProofPanel({ device, onDeviceChange, activeStep = 1, structureItems = [], frontMatterState, typeSettingsState, fontSize = 'M', jumpChapter = 0, hideDeviceToggle = false }: Props) {
-  const showTOC = activeStep === 2 && structureItems.length > 0;
-  const showFM  = activeStep === 3 && !!frontMatterState;
-  const showCh  = activeStep === 4 && !!typeSettingsState;
+// ── Back matter proof (Step 6) ─────────────────────────────────────
+
+const BM_BLOCK_LABELS: Record<string, string> = {
+  'acknowledgments': 'acknowledgments',
+  'about-author':    'about the author',
+  'also-by':         'also by',
+  'newsletter-cta':  'newsletter CTA',
+  'colophon':        'colophon',
+};
+
+function BackMatterProof({
+  state,
+  typeState,
+  profile,
+  totalWords,
+}: {
+  state:       BackMatterState;
+  typeState:   SetTypeState;
+  profile:     ProfileSnapshot | null;
+  totalWords:  number;
+}) {
+  const def       = THEME_DEFS.find(t => t.key === typeState.theme)!;
+  const sel       = state.selectedBlock;
+  const totalPages = Math.ceil(totalWords / 250) + 7;
+  const startPage  = Math.max(1, totalPages - 8);
+  const pct        = Math.round((startPage / totalPages) * 100);
+
+  return (
+    <div className={styles.bmProof} style={{ fontFamily: def.bodyStack } as React.CSSProperties}>
+
+      {sel === 'acknowledgments' && (() => {
+        const f = state.blocks['acknowledgments'].fields;
+        return <>
+          <div className={styles.bmHeading} style={{ fontFamily: def.headingStack } as React.CSSProperties}>
+            Acknowledgments
+          </div>
+          <p className={styles.bmBody}>{f.text || 'Acknowledgments text will appear here.'}</p>
+          {f.signOff && <p className={styles.bmSignOff}>{f.signOff}</p>}
+        </>;
+      })()}
+
+      {sel === 'about-author' && (() => {
+        const f = state.blocks['about-author'].fields;
+        return <>
+          <div className={styles.bmHeading} style={{ fontFamily: def.headingStack } as React.CSSProperties}>
+            About the Author
+          </div>
+          <p className={styles.bmBody}>{f.text || profile?.bio || 'Bio will appear here.'}</p>
+        </>;
+      })()}
+
+      {sel === 'also-by' && (
+        <>
+          <div className={styles.bmHeading} style={{ fontFamily: def.headingStack } as React.CSSProperties}>
+            Also by the Author
+          </div>
+          {profile && profile.otherTitles.length > 0
+            ? <ul className={styles.bmAlsoByList}>
+                {profile.otherTitles.map(t => (
+                  <li key={t.id} className={styles.bmAlsoByItem}>{t.title}</li>
+                ))}
+              </ul>
+            : <p className={styles.bmBody}>No other titles yet.</p>
+          }
+        </>
+      )}
+
+      {sel === 'newsletter-cta' && (() => {
+        const f = state.blocks['newsletter-cta'].fields;
+        return <>
+          <div className={styles.bmHeading} style={{ fontFamily: def.headingStack } as React.CSSProperties}>
+            Stay in touch
+          </div>
+          <p className={styles.bmBody}>{f.callout}</p>
+          {f.url && <p className={`mono ${styles.bmCtaUrl}`}>{f.url}</p>}
+        </>;
+      })()}
+
+      {sel === 'colophon' && (() => {
+        const f = state.blocks['colophon'].fields;
+        return <>
+          <p className={styles.bmColophon}>{f.text}</p>
+        </>;
+      })()}
+
+      <div className={`mono ${styles.chFooter}`}>
+        {startPage} of {totalPages} · {pct}% · Showing the {BM_BLOCK_LABELS[sel] ?? sel} page.
+      </div>
+    </div>
+  );
+}
+
+export default function LiveProofPanel({ device, onDeviceChange, activeStep = 1, structureItems = [], frontMatterState, typeSettingsState, backMatterState, profile, fontSize = 'M', jumpChapter = 0, hideDeviceToggle = false }: Props) {
+  const showTOC  = activeStep === 2 && structureItems.length > 0;
+  const showFM   = activeStep === 3 && !!frontMatterState;
+  const showCh   = activeStep === 4 && !!typeSettingsState;
   const showFull = activeStep === 5 && !!typeSettingsState;
+  const showBM   = activeStep === 6 && !!backMatterState && !!typeSettingsState;
 
   return (
     <aside className={styles.panel}>
@@ -296,6 +391,7 @@ export default function LiveProofPanel({ device, onDeviceChange, activeStep = 1,
            : showFM  ? '— FRONT MATTER · IN EPUB'
            : showCh  ? '— CHAPTER · IN EPUB'
            : showFull ? '— CHAPTER · IN EPUB'
+           : showBM  ? '— BACK MATTER · IN EPUB'
            : '— · IN EPUB'}
         </span>
       </div>
@@ -331,6 +427,13 @@ export default function LiveProofPanel({ device, onDeviceChange, activeStep = 1,
               allChapters={structureItems.filter(i => i.subtype === 'chapter')}
               totalWords={structureItems.reduce((s, i) => s + (i.wordCount || 0), 0)}
             />
+          ) : showBM ? (
+            <BackMatterProof
+              state={backMatterState!}
+              typeState={typeSettingsState!}
+              profile={profile ?? null}
+              totalWords={structureItems.reduce((s, i) => s + (i.wordCount || 0), 0)}
+            />
           ) : (
             <div className={styles.frameEmpty}>
               <span className={`mono ${styles.frameEmptyText}`}>No preview yet</span>
@@ -357,6 +460,11 @@ export default function LiveProofPanel({ device, onDeviceChange, activeStep = 1,
       {showFull && (
         <p className={`mono ${styles.tocNote}`}>
           Live re-render · {fontSize} · theme applied.
+        </p>
+      )}
+      {showBM && (
+        <p className={`mono ${styles.tocNote}`}>
+          Showing the {BM_BLOCK_LABELS[backMatterState!.selectedBlock] ?? backMatterState!.selectedBlock} page.
         </p>
       )}
 

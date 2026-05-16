@@ -2,8 +2,8 @@ import { useState, useEffect } from 'react';
 import { STEPS } from './steps';
 import { api } from '../../lib/api';
 import { deriveMockStructure } from './data';
-import type { ManuscriptSummary, FormattingProjectRecord, IngestSettings, DetectedItem, FrontMatterState, SetTypeState, FontSize } from './types';
-import { buildDefaultFrontMatter, buildDefaultTypeSettings } from './types';
+import type { ManuscriptSummary, FormattingProjectRecord, IngestSettings, DetectedItem, FrontMatterState, SetTypeState, FontSize, BackMatterState, ProfileSnapshot } from './types';
+import { buildDefaultFrontMatter, buildDefaultTypeSettings, buildDefaultBackMatter } from './types';
 import BinderySidebar from './components/BinderySidebar';
 import LiveProofPanel from './components/LiveProofPanel';
 import BringIn from './components/BringIn';
@@ -11,6 +11,7 @@ import MarkUp from './components/MarkUp';
 import FrontMatter from './components/FrontMatter';
 import SetTheType from './components/SetTheType';
 import Proof from './components/Proof';
+import BackMatter from './components/BackMatter';
 import styles from './Formatter.module.css';
 
 export type Device = 'paperwhite' | 'phone' | 'tablet';
@@ -27,6 +28,27 @@ export default function FormatterHub() {
   const [typeSettingsState,    setTypeSettingsState]    = useState<SetTypeState>(buildDefaultTypeSettings(null));
   const [fontSize,             setFontSize]             = useState<FontSize>('M');
   const [jumpChapter,          setJumpChapter]          = useState(0);
+  const [authorProfile,        setAuthorProfile]        = useState<ProfileSnapshot | null>(null);
+  const [backMatterState,      setBackMatterState]      = useState<BackMatterState | null>(null);
+
+  // Fetch author profile on mount for back matter pre-fill
+  useEffect(() => {
+    api.get<{
+      id: string; name: string; bio: string | null; location: string | null;
+      avatarUrl: string | null; manuscripts: { id: string; title: string }[];
+    }>('/api/author-profile')
+      .then(data => {
+        setAuthorProfile({
+          name:        data.name,
+          location:    data.location,
+          bio:         data.bio,
+          avatarUrl:   data.avatarUrl,
+          otherTitles: data.manuscripts.map(m => ({ id: m.id, title: m.title })),
+          syncedAt:    new Date().toISOString(),
+        });
+      })
+      .catch(() => {});
+  }, []);
 
   // Fetch manuscripts on mount; auto-select most recently updated
   useEffect(() => {
@@ -75,6 +97,18 @@ export default function FormatterHub() {
   useEffect(() => {
     setTypeSettingsState(buildDefaultTypeSettings(project?.typeSettings ?? null));
   }, [project?.typeSettings]);
+
+  // Re-sync back matter when project or profile changes
+  useEffect(() => {
+    const ms = manuscripts.find(m => m.id === selectedManuscriptId);
+    // Filter out the current manuscript from the "also by" list
+    const profile = authorProfile
+      ? { ...authorProfile, otherTitles: authorProfile.otherTitles.filter(t => t.id !== selectedManuscriptId) }
+      : null;
+    setBackMatterState(
+      buildDefaultBackMatter(profile, ms?.title ?? 'Untitled', project?.backMatter ?? null)
+    );
+  }, [selectedManuscriptId, manuscripts, authorProfile, project?.backMatter]);
 
   async function handlePull(manuscriptId: string, settings: IngestSettings) {
     const created = await api.post<FormattingProjectRecord>('/api/formatter', {
@@ -206,6 +240,16 @@ export default function FormatterHub() {
               onAdvance={() => setActiveStep(5)}
             />
           )}
+          {activeStep === 6 && backMatterState && (
+            <BackMatter
+              project={project}
+              state={backMatterState}
+              onStateChange={setBackMatterState}
+              profile={authorProfile}
+              onBack={() => setActiveStep(5)}
+              onAdvance={() => setActiveStep(7)}
+            />
+          )}
           {activeStep === 5 && (
             <Proof
               project={project}
@@ -232,6 +276,8 @@ export default function FormatterHub() {
           structureItems={structureItems}
           frontMatterState={frontMatterState ?? undefined}
           typeSettingsState={typeSettingsState}
+          backMatterState={backMatterState ?? undefined}
+          profile={authorProfile}
           fontSize={fontSize}
           jumpChapter={jumpChapter}
           hideDeviceToggle={activeStep === 5}

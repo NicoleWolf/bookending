@@ -19,6 +19,7 @@ export interface FormattingProjectRecord {
   pastedContent: string | null;
   frontMatter: string | null;
   typeSettings: string | null;
+  backMatter: string | null;
   createdAt: string;
   updatedAt: string;
 }
@@ -224,6 +225,85 @@ export interface SetTypeState {
   dropCapLines: number;
   sceneBreak:  SceneBreakKey;
   smallCaps:   boolean;
+}
+
+// ── Back matter ──────────────────────────────────────────────────────
+
+export type BackMatterBlockKey = 'acknowledgments' | 'about-author' | 'also-by' | 'newsletter-cta' | 'colophon';
+export type AckTone = 'warm' | 'brief' | 'formal';
+
+export interface AckFields          { text: string; signOff: string; tone: AckTone; }
+export interface AboutAuthorFields  { text: string; }
+export interface AlsoByBMFields     { auto: true; }
+export interface NewsletterCtaFields { url: string; callout: string; }
+export interface ColophonFields     { text: string; }
+
+export interface ProfileSnapshot {
+  name:        string;
+  location:    string | null;
+  bio:         string | null;
+  avatarUrl:   string | null;
+  otherTitles: { id: string; title: string }[];
+  syncedAt:    string;
+}
+
+export interface BackMatterState {
+  selectedBlock: BackMatterBlockKey;
+  blocks: {
+    'acknowledgments': { fields: AckFields;          included: true };
+    'about-author':    { fields: AboutAuthorFields;  included: boolean };
+    'also-by':         { fields: AlsoByBMFields;     included: boolean };
+    'newsletter-cta':  { fields: NewsletterCtaFields; included: boolean };
+    'colophon':        { fields: ColophonFields;      included: boolean };
+  };
+}
+
+const COLOPHON_TEMPLATE = (title: string, year: string) =>
+  `${title} was typeset in the Bookending Bindery. Body text is set in the selected typeface at 11.5/18pt. The cover was designed by the author. This edition was published in ${year}.`;
+
+export function buildDefaultBackMatter(
+  profile: ProfileSnapshot | null,
+  manuscriptTitle: string,
+  existingJson: string | null,
+): BackMatterState {
+  const year     = String(new Date().getFullYear());
+  const signOff  = profile
+    ? `— ${profile.name}${profile.location ? `, ${profile.location}` : ''}`
+    : '';
+
+  const defaults: BackMatterState = {
+    selectedBlock: 'acknowledgments',
+    blocks: {
+      'acknowledgments': { included: true,  fields: { text: '', signOff, tone: 'warm' } },
+      'about-author':    { included: true,  fields: { text: profile?.bio ?? '' } },
+      'also-by':         { included: true,  fields: { auto: true } },
+      'newsletter-cta':  { included: false, fields: { url: '', callout: 'Join my mailing list for news, early access, and reader updates.' } },
+      'colophon':        { included: false, fields: { text: COLOPHON_TEMPLATE(manuscriptTitle, year) } },
+    },
+  };
+
+  if (!existingJson) return defaults;
+  try {
+    const saved = JSON.parse(existingJson) as Partial<BackMatterState>;
+    return {
+      selectedBlock: saved.selectedBlock ?? defaults.selectedBlock,
+      blocks: {
+        'acknowledgments': saved.blocks?.['acknowledgments'] ?? defaults.blocks['acknowledgments'],
+        'about-author':    {
+          ...(saved.blocks?.['about-author'] ?? defaults.blocks['about-author']),
+          // Re-sync bio from profile if block text is empty
+          fields: {
+            text: saved.blocks?.['about-author']?.fields?.text || profile?.bio || '',
+          },
+        },
+        'also-by':        defaults.blocks['also-by'],
+        'newsletter-cta': saved.blocks?.['newsletter-cta'] ?? defaults.blocks['newsletter-cta'],
+        'colophon':       saved.blocks?.['colophon']       ?? defaults.blocks['colophon'],
+      },
+    };
+  } catch {
+    return defaults;
+  }
 }
 
 // ── Proof ────────────────────────────────────────────────────────────

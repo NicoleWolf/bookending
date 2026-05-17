@@ -364,6 +364,160 @@ router.get('/:id/reader-chapter-notes', async (req, res, next: NextFunction) => 
   } catch (err) { next(err); }
 });
 
+// POST /api/manuscripts/:id/enter-revision — transition to IN_REVISION, archive reader feedback
+router.post('/:id/enter-revision', async (req, res, next: NextFunction) => {
+  const { id }   = req.params;
+  const authorId = req.user!.id;
+
+  const ms = await prisma.manuscript.findUnique({ where: { id } });
+  if (!ms)                         { res.status(404).json({ error: 'Manuscript not found' }); return; }
+  if (ms.authorId !== authorId)    { res.status(403).json({ error: 'Forbidden' }); return; }
+  if (ms.status === 'IN_REVISION') { res.status(400).json({ error: 'Already in revision' }); return; }
+
+  try {
+    const [updated] = await Promise.all([
+      prisma.manuscript.update({
+        where: { id },
+        data:  { status: 'IN_REVISION', revisionPausedAt: new Date() },
+      }),
+      prisma.annotation.updateMany({
+        where: { manuscriptRef: id, status: 'submitted' },
+        data:  { status: 'archived_in_revision' },
+      }),
+      prisma.readerChapterNote.updateMany({
+        where: { manuscriptRef: id, status: 'submitted' },
+        data:  { status: 'archived_in_revision' },
+      }),
+      prisma.betaReader.updateMany({
+        where: { manuscriptId: id },
+        data:  { devotionQueued: true },
+      }),
+    ]);
+    res.json({ data: { ...updated, revisionPausedAt: updated.revisionPausedAt?.toISOString() ?? null } });
+  } catch (err) { next(err); }
+});
+
+// PATCH /api/manuscripts/:id/editorial-note — update or clear the author's note to readers
+router.patch('/:id/editorial-note', async (req, res, next: NextFunction) => {
+  const { id }   = req.params;
+  const authorId = req.user!.id;
+  const { note } = req.body as { note?: string };
+
+  const ms = await prisma.manuscript.findUnique({ where: { id } });
+  if (!ms)                      { res.status(404).json({ error: 'Manuscript not found' }); return; }
+  if (ms.authorId !== authorId) { res.status(403).json({ error: 'Forbidden' }); return; }
+
+  try {
+    const updated = await prisma.manuscript.update({
+      where: { id },
+      data:  { editorialNote: note ?? null },
+    });
+    res.json({ data: { editorialNote: updated.editorialNote } });
+  } catch (err) { next(err); }
+});
+
+// POST /api/manuscripts/:id/open-door — exit IN_REVISION, apply queued devotion + ARC reservation
+router.post('/:id/open-door', async (req, res, next: NextFunction) => {
+  const { id }   = req.params;
+  const authorId = req.user!.id;
+
+  const ms = await prisma.manuscript.findUnique({ where: { id } });
+  if (!ms)                         { res.status(404).json({ error: 'Manuscript not found' }); return; }
+  if (ms.authorId !== authorId)    { res.status(403).json({ error: 'Forbidden' }); return; }
+  if (ms.status !== 'IN_REVISION') { res.status(400).json({ error: 'Manuscript is not in revision' }); return; }
+
+  try {
+    const [updated] = await Promise.all([
+      prisma.manuscript.update({
+        where: { id },
+        data:  { status: 'DRAFTING', revisionPausedAt: null },
+      }),
+      prisma.betaReader.updateMany({
+        where: { manuscriptId: id, devotionQueued: true },
+        data:  { devotionQueued: false, arcReservationEarned: true },
+      }),
+    ]);
+    res.json({ data: { status: updated.status, revisionPausedAt: null } });
+  } catch (err) { next(err); }
+});
+
+// GET /api/manuscripts/:id/notes-from-before — writer's view of archived reader feedback
+router.get('/:id/notes-from-before', async (req, res, next: NextFunction) => {
+  const { id }   = req.params;
+  const authorId = req.user!.id;
+
+  const ms = await prisma.manuscript.findUnique({ where: { id } });
+  if (!ms)                      { res.status(404).json({ error: 'Manuscript not found' }); return; }
+  if (ms.authorId !== authorId) { res.status(403).json({ error: 'Forbidden' }); return; }
+
+  try {
+    const [annotations, chapterNotes] = await Promise.all([
+      prisma.annotation.findMany({
+        where:   { manuscriptRef: id, status: 'archived_in_revision' },
+        orderBy: [{ chapterId: 'asc' }, { createdAt: 'asc' }],
+        include: { user: { select: { id: true, name: true } } },
+      }),
+      prisma.readerChapterNote.findMany({
+        where:   { manuscriptRef: id, status: 'archived_in_revision' },
+        orderBy: [{ chapterNum: 'asc' }, { createdAt: 'asc' }],
+        include: { user: { select: { name: true } } },
+      }),
+    ]);
+
+    const data = [
+      ...annotations.map(a => ({
+        id:           a.id,
+        kind:         'annotation' as const,
+        chapterNum:   a.chapterId,
+        readerName:   a.user.name,
+        selectedText: a.selectedText,
+        body:         a.note,
+        revisionTag:  a.revisionTag,
+        createdAt:    a.createdAt.toISOString(),
+      })),
+      ...chapterNotes.map(n => ({
+        id:           n.id,
+        kind:         'chapter_note' as const,
+        chapterNum:   n.chapterNum,
+        readerName:   n.user.name,
+        selectedText: null,
+        body:         n.body,
+        revisionTag:  n.revisionTag,
+        createdAt:    n.createdAt.toISOString(),
+      })),
+    ].sort((a, b) => a.chapterNum - b.chapterNum);
+
+    res.json({ data });
+  } catch (err) { next(err); }
+});
+
+// PATCH /api/manuscripts/:id/notes-from-before/:noteId — tag an archived note (Open/Addressed/Themed)
+router.patch('/:id/notes-from-before/:noteId', async (req, res, next: NextFunction) => {
+  const { id, noteId } = req.params;
+  const authorId       = req.user!.id;
+  const { kind, revisionTag } = req.body as { kind: 'annotation' | 'chapter_note'; revisionTag: string | null };
+
+  const ms = await prisma.manuscript.findUnique({ where: { id } });
+  if (!ms)                      { res.status(404).json({ error: 'Manuscript not found' }); return; }
+  if (ms.authorId !== authorId) { res.status(403).json({ error: 'Forbidden' }); return; }
+
+  try {
+    if (kind === 'annotation') {
+      const updated = await prisma.annotation.update({
+        where: { id: noteId },
+        data:  { revisionTag: revisionTag ?? null },
+      });
+      res.json({ data: { id: updated.id, revisionTag: updated.revisionTag } });
+    } else {
+      const updated = await prisma.readerChapterNote.update({
+        where: { id: noteId },
+        data:  { revisionTag: revisionTag ?? null },
+      });
+      res.json({ data: { id: updated.id, revisionTag: updated.revisionTag } });
+    }
+  } catch (err) { next(err); }
+});
+
 router.use('/:id/readers', betaReadersRouter);
 router.use('/:id/chapters', chapterNotesRouter);
 router.use('/:id/versions', versionsRouter);

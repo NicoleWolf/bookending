@@ -1001,16 +1001,294 @@
   padding: 1px 4px;
 }
 
+/* ── In Revision status row ─────────────────────────────────────────── */
+
+.revisionStatusRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 48px;
+  background: var(--ink-2);
+  border-bottom: 1px solid var(--rule);
+}
+
+.revisionStatusDot {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--accent);
+  margin-right: 8px;
+  flex-shrink: 0;
+}
+
+.revisionStatusLabel {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 9.5px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--accent);
+  display: flex;
+  align-items: center;
+}
+
+.revisionStatusSep {
+  color: var(--muted-2);
+  margin: 0 8px;
+}
+
+.revisionDayCount {
+  color: var(--muted);
+}
+
+.revisionOpenDoorBtn {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 9.5px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--paper);
+  background: none;
+  border: 1px solid var(--rule);
+  padding: 5px 14px;
+  cursor: pointer;
+  transition: border-color 0.1s, color 0.1s;
+}
+
+.revisionOpenDoorBtn:hover {
+  border-color: var(--paper);
+}
+
+/* ── Editorial note rail (pull-quote) ───────────────────────────────── */
+
+.editorialNoteRail {
+  margin: 24px 0 0;
+  border-left: 3px solid var(--accent);
+  padding: 14px 20px;
+  background: var(--ink-2);
+}
+
+.editorialNotePrompt {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 9px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 10px;
+}
+
+.editorialNoteText {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--paper);
+  margin: 0 0 12px;
+}
+
+.editorialNotePlaceholder {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 14px;
+  color: var(--muted);
+  margin: 0 0 12px;
+}
+
+.editorialNoteActions {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+}
+
+.editorialNoteActionLink {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 9.5px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  transition: color 0.1s;
+}
+
+.editorialNoteActionLink:hover {
+  color: var(--paper);
+}
+
+.editorialNoteActionLink[data-accent] {
+  color: var(--accent);
+}
+
+.editorialNoteActionLink[data-accent]:hover {
+  color: var(--paper);
+}
+
+.editorialNoteEditArea {
+  width: 100%;
+  box-sizing: border-box;
+  background: var(--ink);
+  border: 1px solid var(--rule);
+  color: var(--paper);
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 14px;
+  line-height: 1.6;
+  padding: 10px 12px;
+  resize: vertical;
+  outline: none;
+  border-radius: 0;
+  margin-bottom: 10px;
+}
+
+.editorialNoteEditArea:focus {
+  border-color: var(--muted);
+}
+
+.editorialNoteEditRow {
+  display: flex;
+  gap: 10px;
+}
+
+/* ── Revision stats row ─────────────────────────────────────────────── */
+
+.revisionStatsRow {
+  display: flex;
+  gap: 1px;
+  background: var(--rule);
+  margin: 0 0 24px;
+  border-bottom: 1px solid var(--rule);
+}
+
+.revisionStatCell {
+  background: var(--ink);
+  padding: 14px 20px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.revisionStatCellLabel {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 8.5px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.revisionStatCellValue {
+  font-family: var(--serif);
+  font-size: 22px;
+  color: var(--paper);
+  font-weight: 400;
+}
+
+/* ── Notes from before ──────────────────────────────────────────────── */
+
+.nfbWrap {
+  padding: 24px 0 0;
+}
+
+.nfbEmpty {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  padding: 40px 0;
+  text-align: center;
+}
+
+.nfbChapterGroup {
+  margin-bottom: 0;
+}
+
+.nfbChapterLabel {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 9px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--muted);
+  padding: 10px 0 8px;
+  border-bottom: 1px solid var(--rule);
+  margin-bottom: 0;
+}
+
+.nfbNoteRow {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 16px;
+  align-items: start;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--rule);
+}
+
+.nfbNoteAttrib {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 9px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 6px;
+}
+
+.nfbNoteAnchor {
+  font-family: var(--serif);
+  font-size: 12.5px;
+  color: var(--muted);
+  font-style: italic;
+  margin-bottom: 5px;
+}
+
+.nfbNoteBody {
+  font-family: var(--serif);
+  font-size: 13.5px;
+  line-height: 1.6;
+  color: var(--paper);
+  margin: 0;
+}
+
+.nfbTagSelect {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 9px;
+  letter-spacing: 0.06em;
+  background: var(--ink-2);
+  border: 1px solid var(--rule);
+  color: var(--muted);
+  padding: 4px 8px;
+  cursor: pointer;
+  outline: none;
+  border-radius: 0;
+}
+
+.nfbTagSelect[data-tagged] {
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
 /* ── Responsive ──────────────────────────────────────────────────────── */
 
 @media (max-width: 1023px) {
-  .section   { padding: 28px 32px; }
-  .viewTabs  { margin: 0 -32px 0; padding: 0 32px; }
+  .section             { padding: 28px 32px; }
+  .viewTabs            { margin: 0 -32px 0; padding: 0 32px; }
+  .revisionStatusRow   { padding: 10px 32px; }
 }
 
 @media (max-width: 767px) {
-  .section   { padding: 20px 20px; }
-  .viewTabs  { margin: 0 -20px 0; padding: 0 20px; }
+  .section             { padding: 20px 20px; }
+  .viewTabs            { margin: 0 -20px 0; padding: 0 20px; }
+  .revisionStatusRow   { padding: 10px 20px; }
+  .revisionStatsRow    { flex-direction: column; gap: 0; }
 }
 
 /* ── Mobile responsive (≤ 639px) ────────────────────────────────── */

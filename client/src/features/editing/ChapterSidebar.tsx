@@ -12,9 +12,11 @@ interface Props {
   onRename: (idx: number, title: string) => void;
   open?: boolean;
   onClose?: () => void;
+  inRevision?: boolean;
+  unreleasedChapters?: ChapterSlice[];
 }
 
-export default function ChapterSidebar({ chapters, activeIndex, onSwitch, onAdd, onDelete, onRename, open, onClose }: Props) {
+export default function ChapterSidebar({ chapters, activeIndex, onSwitch, onAdd, onDelete, onRename, open, onClose, inRevision, unreleasedChapters }: Props) {
   const [renameIdx, setRenameIdx] = useState<number | null>(null);
   const [renameVal, setRenameVal] = useState('');
   const inputRef = useRef<HTMLInputElement>(null);
@@ -98,6 +100,17 @@ export default function ChapterSidebar({ chapters, activeIndex, onSwitch, onAdd,
         ))}
       </nav>
 
+      {inRevision && unreleasedChapters && unreleasedChapters.length > 0 && (
+        <div className={styles.behindDoorSection}>
+          <div className={styles.behindDoorLabel}>Behind the door</div>
+          {unreleasedChapters.map((ch, idx) => (
+            <div key={idx} className={styles.behindDoorItem}>
+              <span className={styles.behindDoorNum}>{chapters.length + idx + 1}</span>
+              <span className={styles.behindDoorTitle}>{ch.title}</span>
+            </div>
+          ))}
+        </div>
+      )}
       </aside>
     </>
   );

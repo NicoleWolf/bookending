@@ -34,6 +34,8 @@ export interface BookMetadata {
   coverUploaded: boolean;
   spineColor: SpineColor;
   contentWarnings: string[];
+  editorialNote?: string | null;
+  revisionPausedAt?: string | null;
 }
 
 export const CONTENT_WARNINGS = [

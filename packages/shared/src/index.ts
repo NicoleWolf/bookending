@@ -21,6 +21,8 @@ export const ManuscriptRecordSchema = z.object({
   pricePaperback: z.string().nullable(), language: z.string(),
   estimatedPages: z.number().nullable(), spineColor: z.string(),
   coverUrl: z.string().nullable(), readerInstructions: z.string().nullable(),
+  editorialNote: z.string().nullable().optional(),
+  revisionPausedAt: z.string().nullable().optional(),
   authorId: z.string(), createdAt: z.string(), updatedAt: z.string(),
 });
 export type ManuscriptRecord = z.infer<typeof ManuscriptRecordSchema>;

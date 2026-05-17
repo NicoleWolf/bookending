@@ -102,6 +102,8 @@ function recordToBook(m: ManuscriptRecord): BookMetadata {
     maxBetaReaders: m.maxBetaReaders ?? null,
     coverUploaded:  !!m.coverUrl,
     spineColor:     (m.spineColor as SpineColor) || 'spine-amber',
+    editorialNote:  m.editorialNote ?? null,
+    revisionPausedAt: m.revisionPausedAt ?? null,
   };
 }
 

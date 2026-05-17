@@ -11,6 +11,7 @@ import type { BetaReader, Reader, ReaderRating, CorrespondenceThread, Comment } 
 import type { BookMetadata } from '../library/data';
 import DocumentEditor from './DocumentEditor';
 import NotesArchive from './NotesArchive';
+import NotesFromBefore from './NotesFromBefore';
 import PendingRequests from './PendingRequests';
 import WriterSparkline, { type ReaderImpression } from './WriterSparkline';
 import {
@@ -19,7 +20,7 @@ import {
 } from './data';
 import styles from './Editing.module.css';
 
-type HubView = 'editor' | 'feedback' | 'correspondence' | 'notes';
+type HubView = 'editor' | 'feedback' | 'correspondence' | 'notes' | 'notes-from-before';
 
 
 import { api } from '../../lib/api';
@@ -71,6 +72,19 @@ export default function EditingHub({ savedBooks, onTabChange }: EditingHubProps)
   const [msDropdownOpen, setMsDropdownOpen] = useState(false);
 
   const [readerImpressions, setReaderImpressions] = useState<ReaderImpression[]>([]);
+
+  const [editorialNote, setEditorialNote]     = useState<string | null>(null);
+  const [editingNote, setEditingNote]         = useState(false);
+  const [noteDraft, setNoteDraft]             = useState('');
+  const [revisionPausedAt, setRevisionPausedAt] = useState<string | null>(null);
+
+  // Sync editorial note + revision date from active book metadata
+  useEffect(() => {
+    const book = savedBooks[activeId];
+    setEditorialNote(book?.editorialNote ?? null);
+    setRevisionPausedAt(book?.revisionPausedAt ?? null);
+    setEditingNote(false);
+  }, [activeId]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Fetch readers + instructions from API whenever the active manuscript changes
   useEffect(() => {
@@ -167,6 +181,20 @@ export default function EditingHub({ savedBooks, onTabChange }: EditingHubProps)
     setEditingInstr(false);
     void api.patch(`/api/manuscripts/${activeId}`, { readerInstructions: draftInstr }).catch(() => {});
   };
+
+  async function saveEditorialNote() {
+    const trimmed = noteDraft.trim() || null;
+    setEditorialNote(trimmed);
+    setEditingNote(false);
+    await api.patch(`/api/manuscripts/${activeId}/editorial-note`, { note: trimmed }).catch(() => {});
+  }
+
+  async function handleOpenDoor() {
+    if (!window.confirm('Open the door? This will reopen feedback and apply Devotion +1 to your held readers.')) return;
+    await api.post(`/api/manuscripts/${activeId}/open-door`).catch(() => {});
+    setRevisionPausedAt(null);
+    setView('editor');
+  }
 
   function readerThread(readerId: string): CorrespondenceThread | undefined {
     return threads.find(t => t.reader.id === readerId);
@@ -269,6 +297,11 @@ export default function EditingHub({ savedBooks, onTabChange }: EditingHubProps)
     return last?.author === 'reader';
   }).length;
 
+  const isInRevision = activeBook?.status === 'in-revision';
+  const revisionDay  = revisionPausedAt
+    ? Math.max(1, Math.ceil((Date.now() - new Date(revisionPausedAt).getTime()) / 86_400_000))
+    : null;
+
   return (
     <section className={styles.section}>
       <SectionHead
@@ -279,6 +312,25 @@ export default function EditingHub({ savedBooks, onTabChange }: EditingHubProps)
         <Btn tone="ghost"><IconQuote size={14} /> Feedback · {openCount} open</Btn>
         <Btn tone="primary" icon={<IconArrow size={14} />}>Upload revision</Btn>
       </SectionHead>
+
+      {/* ── In Revision status row ── */}
+      {isInRevision && (
+        <div className={styles.revisionStatusRow}>
+          <span className={styles.revisionStatusLabel}>
+            <span className={styles.revisionStatusDot} />
+            In Revision
+            {revisionDay !== null && (
+              <>
+                <span className={styles.revisionStatusSep}>·</span>
+                <span className={styles.revisionDayCount}>Day {revisionDay}</span>
+              </>
+            )}
+          </span>
+          <button className={styles.revisionOpenDoorBtn} onClick={handleOpenDoor}>
+            Open the door
+          </button>
+        </div>
+      )}
 
       {/* ── View toggle ── */}
       <div className={styles.viewTabs}>
@@ -309,6 +361,15 @@ export default function EditingHub({ savedBooks, onTabChange }: EditingHubProps)
         >
           Notes
         </button>
+        {isInRevision && (
+          <button
+            className={styles.viewTab}
+            data-active={view === 'notes-from-before' ? 'true' : undefined}
+            onClick={() => setView('notes-from-before')}
+          >
+            Notes from before
+          </button>
+        )}
       </div>
 
       {/* ── Manuscript tabs ── */}
@@ -369,6 +430,70 @@ export default function EditingHub({ savedBooks, onTabChange }: EditingHubProps)
       {/* ── Editor view ── */}
       {view === 'editor' && <>
         <DocumentEditor key={activeId} manuscriptId={activeId} />
+
+        {/* ── Editorial note rail (in-revision only) ── */}
+        {isInRevision && (
+          <div className={styles.editorialNoteRail}>
+            <div className={styles.editorialNotePrompt}>Note to readers</div>
+            {editingNote ? (
+              <>
+                <textarea
+                  className={styles.editorialNoteEditArea}
+                  rows={4}
+                  value={noteDraft}
+                  onChange={e => setNoteDraft(e.target.value)}
+                  placeholder="Write a short note to your readers about the revision…"
+                  autoFocus
+                />
+                <div className={styles.editorialNoteEditRow}>
+                  <button className={styles.editorialNoteActionLink} onClick={saveEditorialNote}>Save note</button>
+                  <button className={styles.editorialNoteActionLink} onClick={() => setEditingNote(false)}>Cancel</button>
+                </div>
+              </>
+            ) : editorialNote ? (
+              <>
+                <p className={styles.editorialNoteText}>{editorialNote}</p>
+                <div className={styles.editorialNoteActions}>
+                  <button
+                    className={styles.editorialNoteActionLink}
+                    onClick={() => { setNoteDraft(editorialNote ?? ''); setEditingNote(true); }}
+                  >Edit note</button>
+                  <button
+                    className={styles.editorialNoteActionLink}
+                    data-accent=""
+                    onClick={handleOpenDoor}
+                  >Open the door</button>
+                </div>
+              </>
+            ) : (
+              <>
+                <p className={styles.editorialNotePlaceholder}>
+                  Your readers can see that you're in revision. Add a note to tell them what you're working on.
+                </p>
+                <div className={styles.editorialNoteActions}>
+                  <button
+                    className={styles.editorialNoteActionLink}
+                    onClick={() => { setNoteDraft(''); setEditingNote(true); }}
+                  >Write a note</button>
+                </div>
+              </>
+            )}
+          </div>
+        )}
+
+        {isInRevision && (
+          <div className={styles.revisionStatsRow}>
+            <div className={styles.revisionStatCell}>
+              <span className={styles.revisionStatCellLabel}>Notes from before</span>
+              <span className={styles.revisionStatCellValue}>
+                <button
+                  style={{ all: 'unset', cursor: 'pointer', textDecoration: 'underline' }}
+                  onClick={() => setView('notes-from-before')}
+                >View →</button>
+              </span>
+            </div>
+          </div>
+        )}
 
         <div className={styles.panelGrid}>
           <div className={styles.panel}>
@@ -691,6 +816,11 @@ export default function EditingHub({ savedBooks, onTabChange }: EditingHubProps)
         <NotesArchive key={activeId} manuscriptId={activeId} />
       )}
 
+      {/* ── Notes from before view (in-revision only) ── */}
+      {view === 'notes-from-before' && (
+        <NotesFromBefore key={activeId} manuscriptId={activeId} />
+      )}
+
       {/* ── Mobile bottom nav ── */}
       <nav className={styles.bottomNav}>
         <button
@@ -716,6 +846,13 @@ export default function EditingHub({ savedBooks, onTabChange }: EditingHubProps)
           data-active={view === 'notes' ? '' : undefined}
           onClick={() => setView('notes')}
         >Notes</button>
+        {isInRevision && (
+          <button
+            className={styles.bottomNavTab}
+            data-active={view === 'notes-from-before' ? '' : undefined}
+            onClick={() => setView('notes-from-before')}
+          >Before</button>
+        )}
       </nav>
 
       {showInviteModal && (

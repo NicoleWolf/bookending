@@ -685,6 +685,16 @@ function AuthorProfilePage({ author, followed, onToggleFollow, onBack, onNotify,
               : `Q&A · ${qaList.length}${isOwnProfile && pendingQs.length > 0 ? ` · ${pendingQs.length} pending` : ''}`}
           </button>
         ))}
+        {arcProgram && (
+          <button
+            className={styles.profileTab}
+            data-active={tab === 'arc' ? '' : undefined}
+            onClick={() => setTab('arc')}
+          >
+            <span className={styles.arcTabDot} data-open={arcProgram.isOpen ? '' : undefined} />
+            ARC
+          </button>
+        )}
       </div>
 
       {/* Overview */}
@@ -982,6 +992,105 @@ function AuthorProfilePage({ author, followed, onToggleFollow, onBack, onNotify,
               ))}
             </div>
           )}
+        </div>
+      )}
+
+      {/* ARC tab */}
+      {tab === 'arc' && arcProgram && (
+        <div className={styles.profileBody}>
+          <div className={styles.arcTabPage}>
+
+            {/* Project context strip */}
+            {author.featuredProject && (
+              <div className={styles.arcTabProject}>
+                <div className={styles.arcTabProjectMeta}>
+                  <span className={`label ${styles.arcTabProjectLabel}`}>
+                    {[author.featuredProject.genre, author.featuredProject.subgenre].filter(Boolean).join(' · ')}
+                  </span>
+                  <Pill tone={STATUS_TONE[author.featuredProject.status.toLowerCase().replace('_', '-')] ?? 'neutral'}>
+                    {STATUS_LABEL[author.featuredProject.status.toLowerCase().replace('_', '-')] ?? author.featuredProject.status}
+                  </Pill>
+                </div>
+                <div className={`serif ${styles.arcTabProjectTitle}`}>{author.featuredProject.title}</div>
+                {author.featuredProject.description && (
+                  <p className={styles.arcTabProjectDesc}>{author.featuredProject.description}</p>
+                )}
+              </div>
+            )}
+
+            {/* ARC block */}
+            {isOwnProfile ? (
+              <div className={styles.arcTabOwner}>
+                <div className={styles.arcTabOwnerRow}>
+                  <span className={`label ${styles.arcTabOwnerLabel}`}>
+                    {arcProgram.isOpen ? 'Program is open' : 'Program is not open'}
+                  </span>
+                  <span className={styles.arcTabDot} data-open={arcProgram.isOpen ? '' : undefined} />
+                </div>
+                <div className={styles.arcTabOwnerGrid}>
+                  <div className={styles.arcTabOwnerCell}>
+                    <span className={`label ${styles.arcTabOwnerCellLabel}`}>Mode</span>
+                    <span className={styles.arcTabOwnerCellVal}>
+                      {arcProgram.mode === 'MANUAL' ? 'Manual review' : 'Auto-accept'}
+                    </span>
+                  </div>
+                  {arcProgram.cap && (
+                    <div className={styles.arcTabOwnerCell}>
+                      <span className={`label ${styles.arcTabOwnerCellLabel}`}>Cap</span>
+                      <span className={styles.arcTabOwnerCellVal}>{arcProgram.cap} readers</span>
+                    </div>
+                  )}
+                  <div className={styles.arcTabOwnerCell}>
+                    <span className={`label ${styles.arcTabOwnerCellLabel}`}>Reading now</span>
+                    <span className={styles.arcTabOwnerCellVal}>{arcProgram.acceptedCount}</span>
+                  </div>
+                  <div className={styles.arcTabOwnerCell}>
+                    <span className={`label ${styles.arcTabOwnerCellLabel}`}>Under review</span>
+                    <span className={styles.arcTabOwnerCellVal}>{arcProgram.pendingCount}</span>
+                  </div>
+                  {arcProgram.reviewDeadline && (
+                    <div className={styles.arcTabOwnerCell}>
+                      <span className={`label ${styles.arcTabOwnerCellLabel}`}>Review due</span>
+                      <span className={styles.arcTabOwnerCellVal}>
+                        {new Date(arcProgram.reviewDeadline).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                      </span>
+                    </div>
+                  )}
+                  {arcProgram.launchDate && (
+                    <div className={styles.arcTabOwnerCell}>
+                      <span className={`label ${styles.arcTabOwnerCellLabel}`}>Launch date</span>
+                      <span className={styles.arcTabOwnerCellVal}>
+                        {new Date(arcProgram.launchDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                      </span>
+                    </div>
+                  )}
+                </div>
+                <p className={styles.arcTabOwnerNote}>
+                  Manage applications, configure the program, and track reading progress in the ARC Hub.
+                </p>
+              </div>
+            ) : (
+              <ArcAffordance
+                program={arcProgram}
+                authorFirstName={author.name.split(' ')[0] ?? author.name}
+                followed={followed}
+                followerCount={author.followerCount}
+                onApply={() => onApplyForArc?.(author.featuredProject!.id)}
+                onContinueReading={() => onContinueArcReading?.(author.featuredProject!.id)}
+                onToggleFollow={onToggleFollow}
+                onWithdraw={async () => {
+                  try {
+                    await api.post(`/api/manuscripts/${author.featuredProject!.id}/arc/withdraw`);
+                    setArcProgram(prev => prev
+                      ? { ...prev, myApplication: prev.myApplication
+                          ? { ...prev.myApplication, status: 'WITHDRAWN' }
+                          : null }
+                      : null);
+                  } catch { /* leave state as-is */ }
+                }}
+              />
+            )}
+          </div>
         </div>
       )}
 

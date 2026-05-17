@@ -1181,6 +1181,114 @@
 
 /* ── ARC affordance ────────────────────────────────────────────────────────── */
 
+/* ── ARC tab ─────────────────────────────────────────────────────── */
+
+.arcTabDot {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--muted);
+  flex-shrink: 0;
+}
+
+.arcTabDot[data-open] { background: var(--accent); }
+
+.arcTabPage {
+  max-width: 560px;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+.arcTabProject {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--rule);
+}
+
+.arcTabProjectMeta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.arcTabProjectLabel {
+  font-size: 0.62rem;
+  letter-spacing: 0.1em;
+  color: var(--muted);
+}
+
+.arcTabProjectTitle {
+  font-size: 1.35rem;
+  color: var(--paper);
+  line-height: 1.25;
+}
+
+.arcTabProjectDesc {
+  font-size: 0.82rem;
+  color: var(--muted);
+  line-height: 1.55;
+  margin: 4px 0 0;
+}
+
+/* own-profile view */
+
+.arcTabOwner {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.arcTabOwnerRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.arcTabOwnerLabel {
+  font-size: 0.64rem;
+  letter-spacing: 0.1em;
+  color: var(--muted);
+}
+
+.arcTabOwnerGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1px;
+  background: var(--rule);
+  border: 1px solid var(--rule);
+}
+
+.arcTabOwnerCell {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 12px 14px;
+  background: var(--ink);
+}
+
+.arcTabOwnerCellLabel {
+  font-size: 0.6rem;
+  letter-spacing: 0.1em;
+  color: var(--muted);
+}
+
+.arcTabOwnerCellVal {
+  font-family: var(--mono);
+  font-size: 0.82rem;
+  color: var(--paper);
+}
+
+.arcTabOwnerNote {
+  font-size: 0.78rem;
+  color: var(--muted);
+  line-height: 1.5;
+  margin: 0;
+}
+
 /* ── ARC affordance ──────────────────────────────────────────────── */
 
 .arcBlock {

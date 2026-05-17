@@ -8,6 +8,7 @@ import StorefrontTab from './features/storefront';
 import AudienceTab from './features/audience';
 import EditingHub from './features/editing';
 import Reading from './features/reading';
+import ReadingRoom from './features/reading/ReadingRoom';
 import RoyaltiesTab from './features/royalties';
 import { ConnectionsView } from './features/connections';
 import { SeasonsView } from './features/seasons';
@@ -27,6 +28,10 @@ import AuthorProfiles from './features/author-profiles';
 import StorefrontHub from './features/storefront-hub';
 import PurchasesView from './features/purchases/PurchasesView';
 import FormatterHub from './features/formatter';
+import ARCHub from './features/arc';
+import ARCApplicationForm from './features/arc/ARCApplicationForm';
+import MyARCs from './features/arc/MyARCs';
+import ARCReviewComposer from './features/arc/ARCReviewComposer';
 import type { AuthorProfile, ProfileTab } from './features/author-profiles/types';
 import { api } from './lib/api';
 import type { ManuscriptRecord, NotificationRecord } from '@bookending/shared';
@@ -212,8 +217,9 @@ function ReaderApp() {
   const [profileInitialTab, setProfileInitialTab] = useState<HubTab>('Profile');
   const [notifications,     setNotifications]     = useState<AppNotification[]>([]);
   const [toasts,            setToasts]            = useState<AppNotification[]>([]);
-  const [followedAuthors,   setFollowedAuthors]   = useState<Set<string>>(new Set());
-  const [authorTarget,      setAuthorTarget]      = useState<{ authorId: string; tab: ProfileTab } | null>(null);
+  const [followedAuthors,         setFollowedAuthors]         = useState<Set<string>>(new Set());
+  const [authorTarget,            setAuthorTarget]            = useState<{ authorId: string; tab: ProfileTab } | null>(null);
+  const [arcApplicationManuscriptId, setArcApplicationManuscriptId] = useState<string | null>(null);
   const toastTimers = useRef<Map<string, ReturnType<typeof setTimeout>>>(new Map());
 
   useEffect(() => {
@@ -296,12 +302,41 @@ function ReaderApp() {
           onNotify={addNotification}
           target={authorTarget}
           onTargetConsumed={() => setAuthorTarget(null)}
+          onApplyForArc={id => { setArcApplicationManuscriptId(id); setActiveTab('ARC Application'); }}
         />
       )}
       {activeTab === 'Purchases' && <PurchasesView />}
       {activeTab === 'Community' && <Community section="mentorship" />}
       {activeTab === 'Profile' && (
         <ProfileHub onBack={() => setActiveTab('Reading')} onToast={addToast} initialTab={profileInitialTab} />
+      )}
+      {activeTab === 'ARC Application' && arcApplicationManuscriptId && (
+        <ARCApplicationForm
+          manuscriptId={arcApplicationManuscriptId}
+          onBack={() => setActiveTab('Author Profiles')}
+          onSubmitted={() => setActiveTab('My ARCs')}
+        />
+      )}
+      {activeTab === 'My ARCs' && (
+        <MyARCs
+          onReadArc={id => { setArcApplicationManuscriptId(id); setActiveTab('ARC Reading'); }}
+          onReview={id => { setArcApplicationManuscriptId(id); setActiveTab('ARC Review'); }}
+        />
+      )}
+      {activeTab === 'ARC Reading' && arcApplicationManuscriptId && (
+        <ReadingRoom
+          msRef={arcApplicationManuscriptId}
+          onBack={() => setActiveTab('My ARCs')}
+          arcMode
+          onArcFinished={() => { setActiveTab('ARC Review'); }}
+        />
+      )}
+      {activeTab === 'ARC Review' && arcApplicationManuscriptId && (
+        <ARCReviewComposer
+          manuscriptId={arcApplicationManuscriptId}
+          onBack={() => setActiveTab('My ARCs')}
+          onPosted={() => setActiveTab('My ARCs')}
+        />
       )}
 
       <ToastStack toasts={toasts} onDismiss={dismissToast} onCta={handleNotifCta} />
@@ -330,8 +365,9 @@ function AuthorApp() {
   const [openNewManuscript, setOpenNewManuscript] = useState(false);
   const [notifications,     setNotifications]     = useState<AppNotification[]>([]);
   const [toasts,            setToasts]            = useState<AppNotification[]>([]);
-  const [followedAuthors,   setFollowedAuthors]   = useState<Set<string>>(new Set());
-  const [authorTarget,      setAuthorTarget]      = useState<{ authorId: string; tab: ProfileTab } | null>(null);
+  const [followedAuthors,            setFollowedAuthors]            = useState<Set<string>>(new Set());
+  const [authorTarget,               setAuthorTarget]               = useState<{ authorId: string; tab: ProfileTab } | null>(null);
+  const [arcApplicationManuscriptId, setArcApplicationManuscriptId] = useState<string | null>(null);
   const toastTimers = useRef<Map<string, ReturnType<typeof setTimeout>>>(new Map());
 
   useEffect(() => {
@@ -594,6 +630,7 @@ function AuthorApp() {
           onNotify={addNotification}
           target={authorTarget}
           onTargetConsumed={() => setAuthorTarget(null)}
+          onApplyForArc={id => { setArcApplicationManuscriptId(id); setActiveTab('ARC Application'); }}
         />
       )}
       {(activeTab === 'Community' || activeTab === 'Mentorship' || activeTab === 'Writing Circle') && (
@@ -604,6 +641,14 @@ function AuthorApp() {
             Writing circles, mentorship, and the reader community are on their way.
           </p>
         </section>
+      )}
+      {activeTab === 'ARC' && <ARCHub />}
+      {activeTab === 'ARC Application' && arcApplicationManuscriptId && (
+        <ARCApplicationForm
+          manuscriptId={arcApplicationManuscriptId}
+          onBack={() => setActiveTab('Author Profiles')}
+          onSubmitted={() => setActiveTab('My ARCs')}
+        />
       )}
       {activeTab === 'Print & Distribution' && <PrintDistribution />}
       {activeTab === 'My Store' && <StorefrontTab savedBooks={savedBooks} onTabChange={setActiveTab} />}

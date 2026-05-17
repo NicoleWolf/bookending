@@ -13,11 +13,13 @@ import MarginColumn from './MarginColumn';
 interface ReadingRoomProps {
   msRef: string;
   onBack: () => void;
+  arcMode?: boolean;
+  onArcFinished?: () => void;
 }
 
 
-export default function ReadingRoom({ msRef, onBack }: ReadingRoomProps) {
-  const { session } = useAuth();
+export default function ReadingRoom({ msRef, onBack, arcMode, onArcFinished }: ReadingRoomProps) {
+  const { session, currentUser } = useAuth();
 
   const [ms,                setMs]                = useState<Manuscript | null>(null);
   const [msLoading,         setMsLoading]         = useState(true);
@@ -136,6 +138,15 @@ export default function ReadingRoom({ msRef, onBack }: ReadingRoomProps) {
         ? releasedChapters.length > 0 && releasedChapters.every(ch => doneChapters.has(ch.id)) && !nextUnreleased
         : doneChapters.size === chapters.length)
     : false;
+
+  // ARC mode: sync reading progress when chapters complete
+  useEffect(() => {
+    if (!arcMode || !ms) return;
+    const total = ms.chapters.length;
+    if (total === 0) return;
+    const pct = Math.round((doneChapters.size / total) * 100);
+    void api.patch(`/api/manuscripts/${msRef}/arc/progress`, { readingProgress: pct }).catch(() => {});
+  }, [arcMode, doneChapters, ms, msRef]);
 
   useEffect(() => {
     if (pending) setNotesSheetOpen(true);
@@ -421,7 +432,21 @@ export default function ReadingRoom({ msRef, onBack }: ReadingRoomProps) {
 
           {/* Manuscript body */}
           {chapter && (
-            <article ref={readingRef} onMouseUp={handleMouseUp} className={styles.articleBody}>
+            <article
+              ref={readingRef}
+              onMouseUp={arcMode ? undefined : handleMouseUp}
+              className={styles.articleBody}
+              style={arcMode ? { userSelect: 'none', position: 'relative' } : undefined}
+            >
+              {arcMode && (
+                <div
+                  aria-hidden
+                  className={styles.arcWatermark}
+                  style={{
+                    '--wm-text': `"${currentUser?.name?.split(' ')[0] ?? 'ARC'} · ARC"`,
+                  } as React.CSSProperties}
+                />
+              )}
               <h2 className={`serif ${styles.chTitle}`}>
                 <span className={styles.chTitleNum}>Chapter {chapter.number + 1}</span>
                 {chapter.title !== `Chapter ${chapter.number + 1}` && (
@@ -584,8 +609,22 @@ export default function ReadingRoom({ msRef, onBack }: ReadingRoomProps) {
         stanceValue={STANCE_VALUE}
       />
 
+      {/* ── ARC completion gesture ───────────────────────────────── */}
+      {arcMode && allDone && (
+        <div className={styles.arcFinish}>
+          <div className={`label ${styles.arcFinishEyebrow}`}>Advance reader copy</div>
+          <p className={`serif ${styles.arcFinishTitle}`}>You've read {ms.title}.</p>
+          <p className={styles.arcFinishBody}>
+            Now share your honest reaction — whatever it is. Your review appears on the book's listing the day it launches.
+          </p>
+          <button className={styles.arcFinishBtn} onClick={onArcFinished}>
+            Post your review →
+          </button>
+        </div>
+      )}
+
       {/* ── Manuscript completion panel ──────────────────────────── */}
-      {allDone && (
+      {!arcMode && allDone && (
         <div className={styles.completion}>
           {alreadySub ? (
             <div className={styles.alreadySub}>

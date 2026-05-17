@@ -2006,3 +2006,84 @@
   max-width: 680px;
   padding: 32px 0;
 }
+
+/* ── ARC reading mode ───────────────────────────────────────────────────────── */
+
+.arcWatermark {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+  opacity: 0.04;
+}
+
+.arcWatermark::before {
+  content: var(--wm-text, "ARC");
+  position: absolute;
+  inset: -50%;
+  font-family: var(--mono);
+  font-size: 14px;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--paper);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-image: repeating-linear-gradient(
+    -45deg,
+    transparent,
+    transparent 80px,
+    currentColor 80px,
+    currentColor 81px
+  );
+  word-spacing: 100vw;
+  white-space: nowrap;
+  line-height: 80px;
+}
+
+/* ── ARC completion gesture ─────────────────────────────────────────────────── */
+
+.arcFinish {
+  max-width: 600px;
+  margin: 48px auto;
+  padding: 36px 40px;
+  border: 1px solid var(--accent);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.arcFinishEyebrow {
+  font-size: 0.65rem;
+  letter-spacing: 0.12em;
+  color: var(--accent);
+}
+
+.arcFinishTitle {
+  font-size: 1.6rem;
+  font-weight: 400;
+  color: var(--paper);
+  margin: 0;
+}
+
+.arcFinishBody {
+  font-family: var(--serif);
+  font-size: 0.95rem;
+  color: var(--muted);
+  line-height: 1.6;
+  margin: 0;
+}
+
+.arcFinishBtn {
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  background: var(--accent);
+  border: none;
+  color: var(--paper);
+  padding: 12px 22px;
+  cursor: pointer;
+  align-self: flex-start;
+}

@@ -5,6 +5,7 @@ import type { ManuscriptStatus, BetaMode } from '@prisma/client';
 import betaReadersRouter from './beta-readers';
 import chapterNotesRouter from './chapterNotes';
 import versionsRouter from './manuscriptVersions';
+import arcProgramRouter from './arc-program';
 import { parseBody } from '../lib/validate';
 import { CreateManuscriptSchema, UpdateManuscriptSchema } from '@bookending/shared';
 
@@ -600,5 +601,6 @@ router.delete('/:id/revision-changelog/:idx', async (req, res, next: NextFunctio
 router.use('/:id/readers', betaReadersRouter);
 router.use('/:id/chapters', chapterNotesRouter);
 router.use('/:id/versions', versionsRouter);
+router.use('/:id/arc', arcProgramRouter);
 
 export default router;

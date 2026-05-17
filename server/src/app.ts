@@ -20,6 +20,7 @@ import adminRouter from './routes/admin';
 import readerProfileRouter from './routes/reader-profile';
 import authorProfileRouter from './routes/author-profile';
 import authRouter from './routes/auth';
+import arcRouter from './routes/arc';
 import { requireAuth, optionalAuth } from './middleware/auth';
 import { zodErrorHandler } from './middleware/zodError';
 import { errorHandler } from './middleware/errorHandler';
@@ -80,6 +81,7 @@ app.use('/api/formatter',      requireAuth, formatterRouter);
 app.use('/api/admin',          requireAuth, adminRouter);
 app.use('/api/reader-profile',  requireAuth, readerProfileRouter);
 app.use('/api/author-profile',  requireAuth, authorProfileRouter);
+app.use('/api/arc',             requireAuth, arcRouter);
 
 app.use(zodErrorHandler);
 app.use(errorHandler);

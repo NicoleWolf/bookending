@@ -39,6 +39,7 @@ model User {
   authorQa             AuthorQA[]
   formattingProjects   FormattingProject[]
   manuscriptVersions   ManuscriptVersion[]
+  arcApplications      ArcApplication[]
 
   bio               String?
   location          String?
@@ -123,6 +124,7 @@ model Manuscript {
   products         Product[]
   formattingProjects FormattingProject[]
   versions         ManuscriptVersion[]
+  arcProgram       ArcProgram?
 }
 
 enum ManuscriptStatus {
@@ -467,6 +469,55 @@ model ManuscriptVersionChapter {
   title      String
   content    String
   wordCount  Int               @default(0)
+}
+
+enum ArcProgramMode {
+  MANUAL
+  AUTO
+}
+
+enum ArcApplicationStatus {
+  PENDING
+  ACCEPTED
+  DECLINED
+  WITHDRAWN
+  FULFILLED
+  UNFULFILLED
+}
+
+model ArcProgram {
+  id             String           @id @default(cuid())
+  manuscriptId   String           @unique
+  manuscript     Manuscript       @relation(fields: [manuscriptId], references: [id], onDelete: Cascade)
+  mode           ArcProgramMode   @default(MANUAL)
+  cap            Int?
+  reviewDeadline DateTime?
+  launchDate     DateTime?
+  isOpen         Boolean          @default(false)
+  openedAt       DateTime?
+  closedAt       DateTime?
+  applications   ArcApplication[]
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+}
+
+model ArcApplication {
+  id              String               @id @default(cuid())
+  programId       String
+  program         ArcProgram           @relation(fields: [programId], references: [id], onDelete: Cascade)
+  readerId        String
+  reader          User                 @relation(fields: [readerId], references: [id])
+  pitch           String?
+  status          ArcApplicationStatus @default(PENDING)
+  readingProgress Float                @default(0)
+  appliedAt       DateTime             @default(now())
+  decidedAt       DateTime?
+  reviewBody      String?
+  reviewPostedAt  DateTime?
+  createdAt       DateTime             @default(now())
+  updatedAt       DateTime             @updatedAt
+
+  @@unique([programId, readerId])
 }
 
 model Invite {

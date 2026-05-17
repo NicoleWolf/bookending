@@ -1,0 +1,522 @@
+/* ── Hub shell ─────────────────────────────────────────────────────────────── */
+
+.hub {
+  padding: 0 0 80px;
+}
+
+.hubBody {
+  padding: 0 32px;
+  max-width: 900px;
+}
+
+/* ── Manuscript selector bar ────────────────────────────────────────────────── */
+
+.msBar {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 28px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--rule);
+}
+
+.msSelect {
+  font-family: var(--serif);
+  font-size: 1.05rem;
+  background: transparent;
+  border: 1px solid var(--rule);
+  color: var(--paper);
+  padding: 6px 10px;
+  cursor: pointer;
+  min-width: 280px;
+}
+
+.msSelect:focus { outline: 1px solid var(--accent); }
+
+.msLoading, .msNone {
+  font-size: 0.8rem;
+  color: var(--muted);
+  letter-spacing: 0.08em;
+}
+
+.msNone {
+  font-family: var(--serif);
+  font-size: 0.9rem;
+  line-height: 1.5;
+  max-width: 500px;
+}
+
+.msOpenBadge {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.1em;
+  color: var(--accent);
+  text-transform: uppercase;
+}
+
+.msOpenDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--accent);
+}
+
+/* ── Tab bar ────────────────────────────────────────────────────────────────── */
+
+.tabBar {
+  display: flex;
+  gap: 0;
+  border-bottom: 1px solid var(--rule);
+  margin-bottom: 28px;
+}
+
+.tabBtn {
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+  background: none;
+  border: none;
+  padding: 10px 20px;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+  transition: color 0.15s, border-color 0.15s;
+}
+
+.tabBtn:hover { color: var(--paper); }
+
+.tabBtn[data-active] {
+  color: var(--paper);
+  border-bottom-color: var(--accent);
+}
+
+/* ── Program setup tab ──────────────────────────────────────────────────────── */
+
+.programOpenBanner {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  border: 1px solid var(--accent);
+  margin-bottom: 24px;
+  background: color-mix(in srgb, var(--accent) 8%, transparent);
+}
+
+.programOpenDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--accent);
+  flex-shrink: 0;
+}
+
+.programOpenLabel {
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--accent);
+  flex: 1;
+}
+
+.programOpenCount {
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+}
+
+.programCloseBtn {
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+  background: none;
+  border: 1px solid var(--rule);
+  padding: 4px 10px;
+  cursor: pointer;
+}
+
+.programCloseBtn:hover { color: var(--paper); border-color: var(--muted); }
+
+.setupWrap { display: flex; flex-direction: column; gap: 0; }
+
+.setupGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  margin-bottom: 24px;
+}
+
+.setupField { display: flex; flex-direction: column; gap: 6px; }
+
+.setupLabel {
+  color: var(--muted);
+  font-size: 0.68rem;
+}
+
+.setupInput {
+  font-family: var(--serif);
+  font-size: 0.95rem;
+  background: transparent;
+  border: 1px solid var(--rule);
+  color: var(--paper);
+  padding: 7px 10px;
+}
+
+.setupInput:focus { outline: 1px solid var(--accent); }
+
+.setupHint {
+  font-size: 0.78rem;
+  color: var(--muted);
+  line-height: 1.4;
+  margin: 0;
+}
+
+.modeToggle {
+  display: flex;
+  border: 1px solid var(--rule);
+}
+
+.modeBtn {
+  flex: 1;
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  background: none;
+  border: none;
+  color: var(--muted);
+  padding: 8px 12px;
+  cursor: pointer;
+  transition: background 0.12s, color 0.12s;
+}
+
+.modeBtn[data-active] {
+  background: var(--accent);
+  color: var(--paper);
+}
+
+.setupActions {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.saveBtn {
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  background: none;
+  border: 1px solid var(--rule);
+  color: var(--paper);
+  padding: 8px 18px;
+  cursor: pointer;
+}
+
+.saveBtn:hover { border-color: var(--paper); }
+.saveBtn:disabled { opacity: 0.5; cursor: default; }
+
+.openBtn {
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  background: var(--accent);
+  border: none;
+  color: var(--paper);
+  padding: 8px 18px;
+  cursor: pointer;
+}
+
+.openBtn:disabled { opacity: 0.5; cursor: default; }
+
+.setupOpenHint {
+  font-size: 0.8rem;
+  color: var(--muted);
+  line-height: 1.5;
+  margin: 0;
+  max-width: 480px;
+}
+
+/* ── Applications tab ───────────────────────────────────────────────────────── */
+
+.appsWrap { display: flex; flex-direction: column; gap: 0; }
+
+.appsToolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.appsCount {
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+  text-transform: uppercase;
+}
+
+.sortSelect {
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  background: transparent;
+  border: 1px solid var(--rule);
+  color: var(--muted);
+  padding: 4px 8px;
+  cursor: pointer;
+}
+
+.appsEmpty {
+  padding: 48px 0;
+  font-size: 0.88rem;
+  color: var(--muted);
+  line-height: 1.6;
+  max-width: 440px;
+}
+
+.autoModeNotice {
+  padding: 24px 0;
+}
+
+.autoModeText {
+  font-family: var(--serif);
+  font-size: 1rem;
+  color: var(--paper);
+  margin: 0 0 8px;
+}
+
+.autoModeCount {
+  font-size: 0.82rem;
+  color: var(--muted);
+  margin: 0;
+}
+
+.appSection { margin-bottom: 32px; }
+
+.appSectionLabel {
+  color: var(--muted);
+  font-size: 0.68rem;
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--rule);
+}
+
+/* ── Application row ────────────────────────────────────────────────────────── */
+
+.appRow {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 16px 24px;
+  padding: 20px 0;
+  border-bottom: 1px solid var(--rule);
+  align-items: start;
+}
+
+.appRow[data-status="declined"],
+.appRow[data-status="withdrawn"] {
+  opacity: 0.6;
+}
+
+.appRowLeft {
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+}
+
+.appReaderInfo { display: flex; flex-direction: column; gap: 3px; }
+
+.appReaderName {
+  font-family: var(--serif);
+  font-size: 1rem;
+  color: var(--paper);
+}
+
+.appReaderLocation, .appReaderGenres {
+  font-size: 0.78rem;
+  color: var(--muted);
+}
+
+.appRowMeta {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  align-items: flex-end;
+}
+
+.appStatusPending  { color: var(--muted); font-size: 0.78rem; }
+.appStatusAccepted { color: var(--good, #4a9e6e); font-size: 0.78rem; }
+.appStatusDeclined { color: var(--muted); font-size: 0.78rem; }
+.appStatusMuted    { color: var(--muted); font-size: 0.78rem; }
+
+.appAppliedAt {
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  color: var(--muted);
+  letter-spacing: 0.06em;
+}
+
+.appPitchWrap {
+  grid-column: 1 / -1;
+}
+
+.appPitchToggle {
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.appPitchToggle:hover { color: var(--paper); }
+
+.appPitchBody {
+  font-family: var(--serif);
+  font-size: 0.9rem;
+  color: var(--paper);
+  line-height: 1.6;
+  margin: 10px 0 0;
+  padding-left: 16px;
+  border-left: 3px solid var(--accent);
+}
+
+.appActions {
+  grid-column: 1 / -1;
+  display: flex;
+  gap: 10px;
+}
+
+.appAccept {
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  background: var(--accent);
+  border: none;
+  color: var(--paper);
+  padding: 7px 16px;
+  cursor: pointer;
+}
+
+.appDecline {
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  background: none;
+  border: 1px solid var(--rule);
+  color: var(--muted);
+  padding: 7px 16px;
+  cursor: pointer;
+}
+
+.appDecline:hover { border-color: var(--muted); color: var(--paper); }
+
+/* ── Telemetry tab ──────────────────────────────────────────────────────────── */
+
+.telemetryWrap { display: flex; flex-direction: column; gap: 0; }
+
+.telemetryStats {
+  display: flex;
+  gap: 0;
+  margin-bottom: 28px;
+  border: 1px solid var(--rule);
+}
+
+.telemetryStat {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 16px 8px;
+  border-right: 1px solid var(--rule);
+  gap: 4px;
+}
+
+.telemetryStat:last-child { border-right: none; }
+
+.telemetryStatVal {
+  font-family: var(--serif);
+  font-size: 1.6rem;
+  color: var(--paper);
+  line-height: 1;
+}
+
+.telemetryStatLabel {
+  font-size: 0.62rem;
+  color: var(--muted);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.telemetryRow {
+  display: grid;
+  grid-template-columns: 32px 200px 1fr 48px auto;
+  gap: 14px;
+  align-items: center;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--rule);
+}
+
+.telemetryReaderName {
+  font-family: var(--serif);
+  font-size: 0.9rem;
+  color: var(--paper);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.telemetryBar {
+  height: 4px;
+  background: var(--rule);
+}
+
+.telemetryBarFill {
+  height: 100%;
+  width: var(--pct, 0%);
+  background: var(--accent);
+  transition: width 0.3s;
+}
+
+.telemetryPct {
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  color: var(--muted);
+  text-align: right;
+}
+
+/* ── Responsive ─────────────────────────────────────────────────────────────── */
+
+@media (max-width: 767px) {
+  .hubBody { padding: 0 16px; }
+
+  .setupGrid { grid-template-columns: 1fr; }
+
+  .appRow { grid-template-columns: 1fr; }
+  .appRowMeta { align-items: flex-start; }
+
+  .telemetryRow { grid-template-columns: 32px 1fr auto; }
+  .telemetryBar { display: none; }
+  .telemetryPct { display: none; }
+
+  .telemetryStats { flex-wrap: wrap; }
+  .telemetryStat { min-width: 33%; }
+}

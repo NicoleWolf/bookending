@@ -1,0 +1,251 @@
+/* ── Shell ──────────────────────────────────────────────────────────────────── */
+
+.wrap {
+  padding: 0 0 80px;
+}
+
+.body {
+  padding: 0 32px;
+  max-width: 720px;
+}
+
+/* ── Empty state ────────────────────────────────────────────────────────────── */
+
+.empty, .emptyState {
+  padding: 48px 0;
+  color: var(--muted);
+}
+
+.emptyText {
+  font-family: var(--serif);
+  font-size: 1.1rem;
+  margin: 0 0 10px;
+  color: var(--paper);
+}
+
+.emptyHint {
+  font-size: 0.85rem;
+  color: var(--muted);
+  line-height: 1.6;
+  margin: 0;
+  max-width: 400px;
+}
+
+/* ── Section ────────────────────────────────────────────────────────────────── */
+
+.section {
+  margin-bottom: 44px;
+}
+
+.sectionLabel {
+  font-size: 0.65rem;
+  color: var(--muted);
+  letter-spacing: 0.1em;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--rule);
+  margin-bottom: 16px;
+}
+
+/* ── ARC card ───────────────────────────────────────────────────────────────── */
+
+.arcCard {
+  padding: 20px 0;
+  border-bottom: 1px solid var(--rule);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.arcCardHead {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+.arcCardMeta { display: flex; flex-direction: column; gap: 3px; }
+
+.arcCardTitle {
+  font-family: var(--serif);
+  font-size: 1.05rem;
+  color: var(--paper);
+}
+
+.arcCardAuthor, .arcCardGenre {
+  font-size: 0.78rem;
+  color: var(--muted);
+}
+
+.arcCardStatus { flex-shrink: 0; }
+
+/* ── Progress bar ───────────────────────────────────────────────────────────── */
+
+.progressRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.progressBar {
+  flex: 1;
+  height: 3px;
+  background: var(--rule);
+}
+
+.progressFill {
+  height: 100%;
+  width: var(--pct, 0%);
+  background: var(--accent);
+  transition: width 0.3s;
+}
+
+.progressPct {
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  color: var(--muted);
+  width: 36px;
+  text-align: right;
+}
+
+/* ── Deadline ───────────────────────────────────────────────────────────────── */
+
+.deadlineRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.78rem;
+}
+
+.deadlineLabel {
+  font-family: var(--mono);
+  font-size: 0.65rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.deadlineDate { color: var(--paper); }
+
+.deadlineUrgent {
+  font-family: var(--mono);
+  font-size: 0.65rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.deadlineSoon {
+  font-family: var(--mono);
+  font-size: 0.65rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--gold, #c4923a);
+}
+
+/* ── Card actions ───────────────────────────────────────────────────────────── */
+
+.arcCardActions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.readBtn {
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--accent);
+  background: none;
+  border: 1px solid var(--accent);
+  padding: 7px 14px;
+  cursor: pointer;
+}
+
+.readBtn:hover { background: var(--accent); color: var(--paper); }
+
+.reviewBtn {
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--paper);
+  background: none;
+  border: 1px solid var(--rule);
+  padding: 7px 14px;
+  cursor: pointer;
+}
+
+.reviewBtn:hover { border-color: var(--paper); }
+
+.withdrawBtn {
+  font-family: var(--mono);
+  font-size: 0.65rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted);
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  margin-left: auto;
+}
+
+.withdrawBtn:hover { color: var(--paper); }
+
+/* ── Review quote ───────────────────────────────────────────────────────────── */
+
+.reviewQuote {
+  font-family: var(--serif);
+  font-size: 0.9rem;
+  color: var(--muted);
+  line-height: 1.6;
+  margin: 0;
+  padding-left: 14px;
+  border-left: 3px solid var(--rule);
+}
+
+/* ── Awaiting rows ──────────────────────────────────────────────────────────── */
+
+.awaitingRow, .pastRow {
+  padding: 16px 0;
+  border-bottom: 1px solid var(--rule);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.awaitingTitle, .pastTitle {
+  font-family: var(--serif);
+  font-size: 1rem;
+  color: var(--paper);
+}
+
+.awaitingMeta, .pastMeta {
+  font-size: 0.78rem;
+  color: var(--muted);
+}
+
+.awaitingStatus {
+  font-size: 0.8rem;
+  color: var(--muted);
+  line-height: 1.5;
+  margin-top: 4px;
+}
+
+.pastStatus {
+  font-size: 0.78rem;
+  color: var(--muted);
+  margin-top: 2px;
+}
+
+/* ── Responsive ─────────────────────────────────────────────────────────────── */
+
+@media (max-width: 767px) {
+  .body { padding: 0 16px; }
+  .arcCardActions { flex-direction: column; align-items: flex-start; }
+  .withdrawBtn { margin-left: 0; }
+}

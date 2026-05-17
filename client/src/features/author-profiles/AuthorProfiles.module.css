@@ -1178,3 +1178,77 @@
   padding: 8px 24px;
   cursor: pointer;
 }
+
+/* ── ARC affordance ────────────────────────────────────────────────────────── */
+
+.arcAffordance {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.arcAffordanceRule {
+  height: 1px;
+  background: var(--rule);
+  margin-bottom: 4px;
+}
+
+.arcAffordanceLabel {
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.arcAffordanceMeta {
+  font-size: 0.78rem;
+  color: var(--muted);
+  line-height: 1.4;
+}
+
+.arcAffordanceMuted {
+  font-size: 0.78rem;
+  color: var(--muted);
+}
+
+.arcAffordanceOpen {
+  font-size: 0.82rem;
+  color: var(--paper);
+  line-height: 1.5;
+}
+
+.arcAffordanceModeHint {
+  color: var(--muted);
+}
+
+.arcAffordanceDates {
+  display: flex;
+  gap: 16px;
+  font-family: var(--mono);
+  font-size: 0.66rem;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+  text-transform: uppercase;
+}
+
+.arcApplyBtn {
+  display: inline-block;
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--accent);
+  background: none;
+  border: 1px solid var(--accent);
+  padding: 7px 14px;
+  cursor: pointer;
+  align-self: flex-start;
+  transition: background 0.12s, color 0.12s;
+}
+
+.arcApplyBtn:hover {
+  background: var(--accent);
+  color: var(--paper);
+}

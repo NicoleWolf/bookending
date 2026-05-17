@@ -5,6 +5,7 @@ import { AvailabilityCard } from './AvailabilityCard';
 import { ProfileCard } from './ProfileCard';
 import { AboutCard } from './AboutCard';
 import { GenresCard } from './GenresCard';
+import { EarlyReaderCard } from './EarlyReaderCard';
 import styles from './ReaderProfileEdit.module.css';
 
 interface Props {
@@ -128,6 +129,7 @@ export function ReaderProfileEdit({ profile, onProfileChange, onDone, onToast }:
           genresRaw={profile.genres ?? ''}
           onChange={handleGenresChange}
         />
+        <EarlyReaderCard />
       </div>
     </div>
   );

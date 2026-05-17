@@ -103,6 +103,7 @@ interface Props {
   onNotify: (n: AppNotification) => void;
   target?: { authorId: string; tab: ProfileTab } | null;
   onTargetConsumed?: () => void;
+  onApplyForArc?: (manuscriptId: string) => void;
 }
 
 // ── Directory card ────────────────────────────────────────────────
@@ -170,13 +171,14 @@ function AuthorCard({ author, followed, onFollow, onSelect }: {
 
 // ── Profile page ──────────────────────────────────────────────────
 
-function AuthorProfilePage({ author, followed, onToggleFollow, onBack, onNotify, initialTab }: {
+function AuthorProfilePage({ author, followed, onToggleFollow, onBack, onNotify, initialTab, onApplyForArc }: {
   author: AuthorProfile;
   followed: boolean;
   onToggleFollow: () => void;
   onBack: () => void;
   onNotify: (n: AppNotification) => void;
   initialTab?: ProfileTab;
+  onApplyForArc?: (manuscriptId: string) => void;
 }) {
   const { currentUser, session } = useAuth();
   const [tab, setTab] = useState<ProfileTab>(initialTab ?? 'overview');
@@ -194,6 +196,23 @@ function AuthorProfilePage({ author, followed, onToggleFollow, onBack, onNotify,
   const sortedActivity = [...author.activity].sort(
     (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
   );
+
+  // ── ARC state ─────────────────────────────────────────────────
+  interface ArcProgramView {
+    id: string; isOpen: boolean; mode: 'MANUAL' | 'AUTO'; cap: number | null;
+    reviewDeadline: string | null; launchDate: string | null; openedAt: string | null;
+    myApplication: { id: string; status: string; appliedAt: string } | null;
+  }
+  const [arcProgram, setArcProgram] = useState<ArcProgramView | null>(null);
+
+  useEffect(() => {
+    if (!author.featuredProject) return;
+    const msStatus = author.featuredProject.status?.toUpperCase();
+    if (msStatus !== 'IN_REVISION' && msStatus !== 'PUBLISHED') return;
+    api.get<ArcProgramView | null>(`/api/manuscripts/${author.featuredProject.id}/arc/program`)
+      .then(data => setArcProgram(data))
+      .catch(() => {});
+  }, [author.featuredProject]);
 
   // ── Join state ────────────────────────────────────────────────
   const [joinState, setJoinState] = useState<'idle' | 'loading' | 'joined' | 'requested'>('idle');
@@ -451,6 +470,73 @@ function AuthorProfilePage({ author, followed, onToggleFollow, onBack, onNotify,
                   )}
                   {!isOwnProfile && author.featuredProject.betaMode === 'INVITE_ONLY' && (
                     <div className={styles.inviteOnlyLabel}>Invite only</div>
+                  )}
+
+                  {/* ARC affordance — only visible when the program is open or the reader has applied */}
+                  {!isOwnProfile && arcProgram && (arcProgram.isOpen || arcProgram.myApplication) && (
+                    <div className={styles.arcAffordance}>
+                      <div className={styles.arcAffordanceRule} />
+                      {(() => {
+                        const app = arcProgram.myApplication;
+                        const status = app?.status;
+                        if (status === 'ACCEPTED') {
+                          return (
+                            <>
+                              <div className={styles.arcAffordanceLabel}>You're reading an advance copy</div>
+                              {arcProgram.reviewDeadline && (
+                                <div className={styles.arcAffordanceMeta}>
+                                  Review due {new Date(arcProgram.reviewDeadline).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}
+                                </div>
+                              )}
+                            </>
+                          );
+                        }
+                        if (status === 'PENDING') {
+                          return (
+                            <>
+                              <div className={styles.arcAffordanceLabel}>Your application is with the author</div>
+                              <div className={styles.arcAffordanceMeta}>
+                                {arcProgram.mode === 'MANUAL' ? 'The author personally reviews each application.' : ''}
+                              </div>
+                            </>
+                          );
+                        }
+                        if (status === 'DECLINED') {
+                          return (
+                            <div className={styles.arcAffordanceMuted}>Not selected for this ARC.</div>
+                          );
+                        }
+                        if (arcProgram.isOpen) {
+                          return (
+                            <>
+                              <div className={styles.arcAffordanceOpen}>
+                                Open for early readers —{' '}
+                                <span className={styles.arcAffordanceModeHint}>
+                                  {arcProgram.mode === 'MANUAL'
+                                    ? 'the author personally reviews each application.'
+                                    : `accepted on submission${arcProgram.cap ? `, up to ${arcProgram.cap} readers.` : '.'}`}
+                                </span>
+                              </div>
+                              <div className={styles.arcAffordanceDates}>
+                                {arcProgram.reviewDeadline && (
+                                  <span>Review by {new Date(arcProgram.reviewDeadline).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}</span>
+                                )}
+                                {arcProgram.launchDate && (
+                                  <span>Launches {new Date(arcProgram.launchDate).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}</span>
+                                )}
+                              </div>
+                              <button
+                                className={styles.arcApplyBtn}
+                                onClick={() => onApplyForArc?.(author.featuredProject!.id)}
+                              >
+                                Apply for early access →
+                              </button>
+                            </>
+                          );
+                        }
+                        return null;
+                      })()}
+                    </div>
                   )}
                 </div>
               )}
@@ -722,7 +808,7 @@ function AuthorProfilePage({ author, followed, onToggleFollow, onBack, onNotify,
 
 // ── Root component ────────────────────────────────────────────────
 
-export default function AuthorProfiles({ followedAuthors, onToggleFollow, onNotify, target, onTargetConsumed }: Props) {
+export default function AuthorProfiles({ followedAuthors, onToggleFollow, onNotify, target, onTargetConsumed, onApplyForArc }: Props) {
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [targetTab,  setTargetTab]  = useState<ProfileTab | undefined>(undefined);
   const [profiles,   setProfiles]   = useState<AuthorProfile[]>([]);
@@ -755,6 +841,7 @@ export default function AuthorProfiles({ followedAuthors, onToggleFollow, onNoti
         onBack={() => { setSelectedId(null); setTargetTab(undefined); }}
         onNotify={onNotify}
         initialTab={targetTab}
+        onApplyForArc={onApplyForArc}
       />
     );
   }

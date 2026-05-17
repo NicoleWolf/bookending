@@ -1,0 +1,94 @@
+/* ── Card shell ─────────────────────────────────────────────────────────────── */
+
+.card {
+  background: var(--ink);
+  border: 1px solid var(--rule);
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.cardHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.cardLabel {
+  font-size: 0.65rem;
+  letter-spacing: 0.1em;
+  color: var(--muted);
+}
+
+.cardCount {
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.08em;
+  color: var(--accent);
+}
+
+.cardSubhead {
+  font-size: 0.82rem;
+  color: var(--muted);
+  line-height: 1.5;
+  margin: 0;
+}
+
+/* ── Credit list ────────────────────────────────────────────────────────────── */
+
+.creditList {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.creditRow {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--rule);
+}
+
+.creditRow:last-child { border-bottom: none; }
+
+/* ── Cover ──────────────────────────────────────────────────────────────────── */
+
+.creditCover {
+  width: 36px;
+  height: 48px;
+  flex-shrink: 0;
+  background: var(--rule);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.coverImg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.coverPlaceholder {
+  font-family: var(--serif);
+  font-size: 1.2rem;
+  color: var(--muted);
+}
+
+/* ── Credit info ────────────────────────────────────────────────────────────── */
+
+.creditInfo { display: flex; flex-direction: column; gap: 3px; }
+
+.creditTitle {
+  font-family: var(--serif);
+  font-size: 0.95rem;
+  color: var(--paper);
+}
+
+.creditAuthor, .creditGenre {
+  font-size: 0.75rem;
+  color: var(--muted);
+}

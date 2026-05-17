@@ -95,6 +95,282 @@ function pct(current: number, target: number): number {
   return Math.min(100, Math.round((current / target) * 100));
 }
 
+// ── ARC affordance ────────────────────────────────────────────────
+
+interface ArcProgramViewShared {
+  id: string; isOpen: boolean; mode: 'MANUAL' | 'AUTO'; cap: number | null;
+  reviewDeadline: string | null; launchDate: string | null; openedAt: string | null;
+  acceptedCount: number; pendingCount: number;
+  myApplication: {
+    id: string; status: string; appliedAt: string;
+    decidedAt: string | null; readingProgress: number;
+  } | null;
+}
+
+function ArcAffordance({ program, authorFirstName, followed, followerCount, onApply, onContinueReading, onToggleFollow, onWithdraw }: {
+  program: ArcProgramViewShared;
+  authorFirstName: string;
+  followed: boolean;
+  followerCount: number;
+  onApply: () => void;
+  onContinueReading: () => void;
+  onToggleFollow: () => void;
+  onWithdraw: () => Promise<void>;
+}) {
+  const [withdrawing, setWithdrawing] = useState(false);
+  const app = program.myApplication;
+  const status = app?.status;
+  const isFull = program.isOpen && program.cap !== null && program.acceptedCount >= program.cap;
+
+  function fmtShort(iso: string) {
+    return new Date(iso).toLocaleDateString('en-US', { month: 'long', day: 'numeric' });
+  }
+  function fmtSubmitted(iso: string) {
+    const d = new Date(iso);
+    return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) + ' · ' +
+      d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+  }
+
+  async function handleWithdraw() {
+    setWithdrawing(true);
+    await onWithdraw();
+    setWithdrawing(false);
+  }
+
+  // ── State: ACCEPTED / reading ──────────────────────────────────
+  if (status === 'ACCEPTED') {
+    const progress = Math.round(app!.readingProgress);
+    return (
+      <div className={styles.arcBlock} data-arc-state="accepted">
+        <div className={styles.arcRule} />
+        <div className={styles.arcDotRow}>
+          <span className={styles.arcDot} data-tone="good" />
+          <span className={`label ${styles.arcEyebrow}`}>You&apos;re an early reader</span>
+        </div>
+        <p className={`serif ${styles.arcHeadline}`}>
+          Welcome in. You&apos;re reading <em>{/* manuscript title not in scope here */}</em>
+        </p>
+        {(program.reviewDeadline || program.launchDate) && (
+          <p className={styles.arcBody}>
+            {program.reviewDeadline && <>Review due {fmtShort(program.reviewDeadline)}</>}
+            {program.reviewDeadline && program.launchDate && ', '}
+            {program.launchDate && <>ahead of the {fmtShort(program.launchDate)} launch</>}
+            {'. Step back any time — it’s better than a missed deadline.'}
+          </p>
+        )}
+        <div className={styles.arcCTARow}>
+          <button className={styles.arcPrimaryBtn} onClick={onContinueReading}>
+            Continue reading →
+          </button>
+          {progress > 0 && (
+            <span className={styles.arcSocialProof}>{progress}% read</span>
+          )}
+        </div>
+      </div>
+    );
+  }
+
+  // ── State: PENDING / awaiting decision ─────────────────────────
+  if (status === 'PENDING') {
+    return (
+      <div className={styles.arcBlock} data-arc-state="pending">
+        <div className={styles.arcRule} />
+        <div className={styles.arcDotRow}>
+          <span className={styles.arcDot} data-tone="accent" />
+          <span className={`label ${styles.arcEyebrow}`}>Application submitted</span>
+        </div>
+        <p className={`serif ${styles.arcHeadline}`}>
+          Your application is with {authorFirstName}.
+        </p>
+        <p className={styles.arcBody}>
+          {program.mode === 'MANUAL'
+            ? `The author personally reviews each application.`
+            : 'You’ll hear back soon.'}
+          {program.reviewDeadline && ` You’ll hear back by ${fmtShort(program.reviewDeadline)}.`}
+        </p>
+        <div className={styles.arcCTARow}>
+          <button
+            className={styles.arcGhostBtn}
+            onClick={handleWithdraw}
+            disabled={withdrawing}
+          >
+            {withdrawing ? '…' : 'Withdraw application'}
+          </button>
+          {app?.appliedAt && (
+            <span className={styles.arcSocialProof}>Submitted {fmtSubmitted(app.appliedAt)}</span>
+          )}
+        </div>
+      </div>
+    );
+  }
+
+  // ── State: DECLINED ────────────────────────────────────────────
+  if (status === 'DECLINED') {
+    return (
+      <div className={styles.arcBlock} data-arc-state="declined">
+        <div className={styles.arcRule} />
+        <div className={styles.arcDotRow}>
+          <span className={styles.arcDot} data-tone="muted" />
+          <span className={`label ${styles.arcEyebrow}`}>Not selected this time</span>
+        </div>
+        <p className={`serif ${styles.arcHeadline}`}>
+          {authorFirstName} has the readers {authorFirstName === authorFirstName ? 'she' : 'they'} needs for this one.
+        </p>
+        <p className={styles.arcBody}>
+          That&apos;s not a verdict on your reading — every program shapes its own group.
+          Follow {authorFirstName}, and you&apos;ll be first in line when the next project opens.
+        </p>
+        <div className={styles.arcCTARow}>
+          <button
+            className={followed ? styles.arcGhostBtn : styles.arcPrimaryBtn}
+            onClick={onToggleFollow}
+          >
+            {followed ? `Following ${authorFirstName}` : `Follow ${authorFirstName}`}
+          </button>
+          {app?.decidedAt && (
+            <span className={styles.arcSocialProof}>Notified {fmtShort(app.decidedAt)}</span>
+          )}
+        </div>
+      </div>
+    );
+  }
+
+  // ── State: WITHDRAWN ───────────────────────────────────────────
+  if (status === 'WITHDRAWN') {
+    return (
+      <div className={styles.arcBlock} data-arc-state="withdrawn">
+        <div className={styles.arcRule} />
+        <div className={styles.arcDotRow}>
+          <span className={styles.arcDot} data-tone="muted" />
+          <span className={`label ${styles.arcEyebrow}`}>You stepped back from this one</span>
+        </div>
+        {program.isOpen && !isFull ? (
+          <>
+            <p className={styles.arcBody}>Changed your mind? The program is still open.</p>
+            <button className={styles.arcPrimaryBtn} onClick={onApply}>
+              Apply again →
+            </button>
+          </>
+        ) : (
+          <p className={styles.arcBody}>
+            Follow {authorFirstName} and you&apos;ll hear about the next one.
+          </p>
+        )}
+      </div>
+    );
+  }
+
+  // ── State: FULFILLED ───────────────────────────────────────────
+  if (status === 'FULFILLED') {
+    return (
+      <div className={styles.arcBlock} data-arc-state="fulfilled">
+        <div className={styles.arcRule} />
+        <div className={styles.arcDotRow}>
+          <span className={styles.arcDot} data-tone="good" />
+          <span className={`label ${styles.arcEyebrow}`}>Early reader credit earned</span>
+        </div>
+        <p className={styles.arcBody}>Your review is posted. This credit stays with your profile.</p>
+      </div>
+    );
+  }
+
+  // ── State: PROGRAM IS FULL (no application, cap reached) ───────
+  if (isFull) {
+    return (
+      <div className={styles.arcBlock} data-arc-state="full">
+        <div className={styles.arcRule} />
+        <div className={styles.arcDotRow}>
+          <span className={styles.arcDot} data-tone="muted" />
+          <span className={`label ${styles.arcEyebrow}`}>Early reader program is full</span>
+        </div>
+        <p className={`serif ${styles.arcHeadline}`}>
+          {program.acceptedCount === 1 ? 'One reader is' : `${program.acceptedCount} readers are`} reading the manuscript right now.
+        </p>
+        <div className={styles.arcCTARow}>
+          <button
+            className={followed ? styles.arcGhostBtn : styles.arcPrimaryBtn}
+            onClick={onToggleFollow}
+          >
+            {followed ? `Following ${authorFirstName}` : `Follow ${authorFirstName} for the launch`}
+          </button>
+          {followerCount > 0 && (
+            <span className={styles.arcSocialProof}>{followerCount.toLocaleString()} followers</span>
+          )}
+        </div>
+      </div>
+    );
+  }
+
+  // ── State: OPEN & ELIGIBLE ────────────────────────────────────
+  if (program.isOpen) {
+    return (
+      <div className={styles.arcBlock} data-arc-state="open">
+        <div className={styles.arcRule} />
+        <div className={styles.arcDotRow}>
+          <span className={styles.arcDot} data-tone="accent" />
+          <span className={`label ${styles.arcEyebrow}`}>Open for early readers</span>
+        </div>
+        <p className={`serif ${styles.arcHeadline}`}>Read it before anyone else does.</p>
+        <p className={styles.arcBody}>
+          {program.mode === 'MANUAL'
+            ? `The author personally reviews each application.`
+            : `Accepted on submission${program.cap ? ` — up to ${program.cap} readers` : ''}.`}
+        </p>
+        {(program.reviewDeadline || program.launchDate) && (
+          <div className={styles.arcMetaGrid}>
+            {program.reviewDeadline && (
+              <div className={styles.arcMetaCell}>
+                <span className={`label ${styles.arcMetaLabel}`}>Review due</span>
+                <span className={styles.arcMetaVal}>{fmtShort(program.reviewDeadline)}</span>
+              </div>
+            )}
+            {program.launchDate && (
+              <div className={styles.arcMetaCell}>
+                <span className={`label ${styles.arcMetaLabel}`}>Launches</span>
+                <span className={styles.arcMetaVal}>{fmtShort(program.launchDate)}</span>
+              </div>
+            )}
+          </div>
+        )}
+        <div className={styles.arcCTARow}>
+          <button className={styles.arcPrimaryBtn} onClick={onApply}>
+            Apply for early access →
+          </button>
+          {(program.acceptedCount > 0 || program.pendingCount > 0) && (
+            <span className={styles.arcSocialProof}>
+              {[
+                program.acceptedCount > 0 && `${program.acceptedCount} reading`,
+                program.pendingCount > 0 && `${program.pendingCount} under review`,
+              ].filter(Boolean).join(' · ')}
+            </span>
+          )}
+        </div>
+      </div>
+    );
+  }
+
+  // ── State: NOT YET OPEN ────────────────────────────────────────
+  return (
+    <div className={styles.arcBlock} data-arc-state="not-open">
+      <div className={styles.arcRule} />
+      <div className={styles.arcDotRow}>
+        <span className={styles.arcDot} data-tone="muted" />
+        <span className={`label ${styles.arcEyebrow}`}>Early reader applications</span>
+      </div>
+      <p className={styles.arcBody}>
+        {authorFirstName} hasn&apos;t opened applications for this project yet. Follow{' '}
+        {authorFirstName} and we&apos;ll let you know the moment they do.
+      </p>
+      <button
+        className={followed ? styles.arcGhostBtn : styles.arcPrimaryBtn}
+        onClick={onToggleFollow}
+      >
+        {followed ? `Following ${authorFirstName}` : 'Follow to be notified'}
+      </button>
+    </div>
+  );
+}
+
 // ── Props ─────────────────────────────────────────────────────────
 
 interface Props {
@@ -104,6 +380,7 @@ interface Props {
   target?: { authorId: string; tab: ProfileTab } | null;
   onTargetConsumed?: () => void;
   onApplyForArc?: (manuscriptId: string) => void;
+  onContinueArcReading?: (manuscriptId: string) => void;
 }
 
 // ── Directory card ────────────────────────────────────────────────
@@ -171,7 +448,7 @@ function AuthorCard({ author, followed, onFollow, onSelect }: {
 
 // ── Profile page ──────────────────────────────────────────────────
 
-function AuthorProfilePage({ author, followed, onToggleFollow, onBack, onNotify, initialTab, onApplyForArc }: {
+function AuthorProfilePage({ author, followed, onToggleFollow, onBack, onNotify, initialTab, onApplyForArc, onContinueArcReading }: {
   author: AuthorProfile;
   followed: boolean;
   onToggleFollow: () => void;
@@ -179,6 +456,7 @@ function AuthorProfilePage({ author, followed, onToggleFollow, onBack, onNotify,
   onNotify: (n: AppNotification) => void;
   initialTab?: ProfileTab;
   onApplyForArc?: (manuscriptId: string) => void;
+  onContinueArcReading?: (manuscriptId: string) => void;
 }) {
   const { currentUser, session } = useAuth();
   const [tab, setTab] = useState<ProfileTab>(initialTab ?? 'overview');
@@ -201,18 +479,20 @@ function AuthorProfilePage({ author, followed, onToggleFollow, onBack, onNotify,
   interface ArcProgramView {
     id: string; isOpen: boolean; mode: 'MANUAL' | 'AUTO'; cap: number | null;
     reviewDeadline: string | null; launchDate: string | null; openedAt: string | null;
-    myApplication: { id: string; status: string; appliedAt: string } | null;
+    acceptedCount: number; pendingCount: number;
+    myApplication: {
+      id: string; status: string; appliedAt: string;
+      decidedAt: string | null; readingProgress: number;
+    } | null;
   }
   const [arcProgram, setArcProgram] = useState<ArcProgramView | null>(null);
 
   useEffect(() => {
     if (!author.featuredProject) return;
-    const msStatus = author.featuredProject.status?.toUpperCase();
-    if (msStatus !== 'IN_REVISION' && msStatus !== 'PUBLISHED') return;
     api.get<ArcProgramView | null>(`/api/manuscripts/${author.featuredProject.id}/arc/program`)
       .then(data => setArcProgram(data))
       .catch(() => {});
-  }, [author.featuredProject]);
+  }, [author.featuredProject?.id]);
 
   // ── Join state ────────────────────────────────────────────────
   const [joinState, setJoinState] = useState<'idle' | 'loading' | 'joined' | 'requested'>('idle');
@@ -472,71 +752,27 @@ function AuthorProfilePage({ author, followed, onToggleFollow, onBack, onNotify,
                     <div className={styles.inviteOnlyLabel}>Invite only</div>
                   )}
 
-                  {/* ARC affordance — only visible when the program is open or the reader has applied */}
-                  {!isOwnProfile && arcProgram && (arcProgram.isOpen || arcProgram.myApplication) && (
-                    <div className={styles.arcAffordance}>
-                      <div className={styles.arcAffordanceRule} />
-                      {(() => {
-                        const app = arcProgram.myApplication;
-                        const status = app?.status;
-                        if (status === 'ACCEPTED') {
-                          return (
-                            <>
-                              <div className={styles.arcAffordanceLabel}>You're reading an advance copy</div>
-                              {arcProgram.reviewDeadline && (
-                                <div className={styles.arcAffordanceMeta}>
-                                  Review due {new Date(arcProgram.reviewDeadline).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}
-                                </div>
-                              )}
-                            </>
-                          );
-                        }
-                        if (status === 'PENDING') {
-                          return (
-                            <>
-                              <div className={styles.arcAffordanceLabel}>Your application is with the author</div>
-                              <div className={styles.arcAffordanceMeta}>
-                                {arcProgram.mode === 'MANUAL' ? 'The author personally reviews each application.' : ''}
-                              </div>
-                            </>
-                          );
-                        }
-                        if (status === 'DECLINED') {
-                          return (
-                            <div className={styles.arcAffordanceMuted}>Not selected for this ARC.</div>
-                          );
-                        }
-                        if (arcProgram.isOpen) {
-                          return (
-                            <>
-                              <div className={styles.arcAffordanceOpen}>
-                                Open for early readers —{' '}
-                                <span className={styles.arcAffordanceModeHint}>
-                                  {arcProgram.mode === 'MANUAL'
-                                    ? 'the author personally reviews each application.'
-                                    : `accepted on submission${arcProgram.cap ? `, up to ${arcProgram.cap} readers.` : '.'}`}
-                                </span>
-                              </div>
-                              <div className={styles.arcAffordanceDates}>
-                                {arcProgram.reviewDeadline && (
-                                  <span>Review by {new Date(arcProgram.reviewDeadline).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}</span>
-                                )}
-                                {arcProgram.launchDate && (
-                                  <span>Launches {new Date(arcProgram.launchDate).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}</span>
-                                )}
-                              </div>
-                              <button
-                                className={styles.arcApplyBtn}
-                                onClick={() => onApplyForArc?.(author.featuredProject!.id)}
-                              >
-                                Apply for early access →
-                              </button>
-                            </>
-                          );
-                        }
-                        return null;
-                      })()}
-                    </div>
+                  {/* ARC affordance — shown whenever the author has an ARC program on this project */}
+                  {!isOwnProfile && arcProgram && (
+                    <ArcAffordance
+                      program={arcProgram}
+                      authorFirstName={author.name.split(' ')[0] ?? author.name}
+                      followed={followed}
+                      followerCount={author.followerCount}
+                      onApply={() => onApplyForArc?.(author.featuredProject!.id)}
+                      onContinueReading={() => onContinueArcReading?.(author.featuredProject!.id)}
+                      onToggleFollow={onToggleFollow}
+                      onWithdraw={async () => {
+                        try {
+                          await api.post(`/api/manuscripts/${author.featuredProject!.id}/arc/withdraw`);
+                          setArcProgram(prev => prev
+                            ? { ...prev, myApplication: prev.myApplication
+                                ? { ...prev.myApplication, status: 'WITHDRAWN' }
+                                : null }
+                            : null);
+                        } catch { /* leave state as-is */ }
+                      }}
+                    />
                   )}
                 </div>
               )}
@@ -808,7 +1044,7 @@ function AuthorProfilePage({ author, followed, onToggleFollow, onBack, onNotify,
 
 // ── Root component ────────────────────────────────────────────────
 
-export default function AuthorProfiles({ followedAuthors, onToggleFollow, onNotify, target, onTargetConsumed, onApplyForArc }: Props) {
+export default function AuthorProfiles({ followedAuthors, onToggleFollow, onNotify, target, onTargetConsumed, onApplyForArc, onContinueArcReading }: Props) {
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [targetTab,  setTargetTab]  = useState<ProfileTab | undefined>(undefined);
   const [profiles,   setProfiles]   = useState<AuthorProfile[]>([]);
@@ -842,6 +1078,7 @@ export default function AuthorProfiles({ followedAuthors, onToggleFollow, onNoti
         onNotify={onNotify}
         initialTab={targetTab}
         onApplyForArc={onApplyForArc}
+        onContinueArcReading={onContinueArcReading}
       />
     );
   }

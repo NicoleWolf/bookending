@@ -303,6 +303,7 @@ function ReaderApp() {
           target={authorTarget}
           onTargetConsumed={() => setAuthorTarget(null)}
           onApplyForArc={id => { setArcApplicationManuscriptId(id); setActiveTab('ARC Application'); }}
+          onContinueArcReading={id => { setArcApplicationManuscriptId(id); setActiveTab('ARC Reading'); }}
         />
       )}
       {activeTab === 'Purchases' && <PurchasesView />}
@@ -631,6 +632,7 @@ function AuthorApp() {
           target={authorTarget}
           onTargetConsumed={() => setAuthorTarget(null)}
           onApplyForArc={id => { setArcApplicationManuscriptId(id); setActiveTab('ARC Application'); }}
+          onContinueArcReading={id => { setArcApplicationManuscriptId(id); setActiveTab('ARC Reading'); }}
         />
       )}
       {(activeTab === 'Community' || activeTab === 'Mentorship' || activeTab === 'Writing Circle') && (

@@ -1181,74 +1181,123 @@
 
 /* ── ARC affordance ────────────────────────────────────────────────────────── */
 
-.arcAffordance {
+/* ── ARC affordance ──────────────────────────────────────────────── */
+
+.arcBlock {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 10px;
   margin-top: 4px;
 }
 
-.arcAffordanceRule {
+.arcRule {
   height: 1px;
   background: var(--rule);
-  margin-bottom: 4px;
+  margin-bottom: 2px;
 }
 
-.arcAffordanceLabel {
+.arcDotRow {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.arcDot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  background: var(--muted);
+}
+
+.arcDot[data-tone="accent"] { background: var(--accent); }
+.arcDot[data-tone="good"]   { background: var(--good); }
+.arcDot[data-tone="muted"]  { background: var(--muted); }
+
+.arcEyebrow {
+  font-size: 0.64rem;
+  letter-spacing: 0.1em;
+  color: var(--muted);
+}
+
+.arcHeadline {
+  font-size: 0.95rem;
+  color: var(--paper);
+  line-height: 1.4;
+  margin: 0;
+}
+
+.arcBody {
+  font-size: 0.78rem;
+  color: var(--muted);
+  line-height: 1.55;
+  margin: 0;
+}
+
+.arcMetaGrid {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.arcMetaCell {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.arcMetaLabel {
+  font-size: 0.6rem;
+  letter-spacing: 0.1em;
+  color: var(--muted);
+}
+
+.arcMetaVal {
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  color: var(--paper);
+}
+
+.arcCTARow {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.arcPrimaryBtn {
   font-family: var(--mono);
   font-size: 0.68rem;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--accent);
-}
-
-.arcAffordanceMeta {
-  font-size: 0.78rem;
-  color: var(--muted);
-  line-height: 1.4;
-}
-
-.arcAffordanceMuted {
-  font-size: 0.78rem;
-  color: var(--muted);
-}
-
-.arcAffordanceOpen {
-  font-size: 0.82rem;
-  color: var(--paper);
-  line-height: 1.5;
-}
-
-.arcAffordanceModeHint {
-  color: var(--muted);
-}
-
-.arcAffordanceDates {
-  display: flex;
-  gap: 16px;
-  font-family: var(--mono);
-  font-size: 0.66rem;
-  letter-spacing: 0.06em;
-  color: var(--muted);
-  text-transform: uppercase;
-}
-
-.arcApplyBtn {
-  display: inline-block;
-  font-family: var(--mono);
-  font-size: 0.7rem;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--accent);
-  background: none;
-  border: 1px solid var(--accent);
-  padding: 7px 14px;
+  color: var(--paper);
+  background: var(--accent);
+  border: none;
+  padding: 8px 14px;
   cursor: pointer;
-  align-self: flex-start;
-  transition: background 0.12s, color 0.12s;
+  transition: opacity 0.12s;
 }
 
-.arcApplyBtn:hover {
-  background: var(--accent);
-  color: var(--paper);
+.arcPrimaryBtn:hover { opacity: 0.85; }
+.arcPrimaryBtn:disabled { opacity: 0.5; cursor: default; }
+
+.arcGhostBtn {
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+  background: none;
+  border: 1px solid var(--rule);
+  padding: 7px 14px;
+  cursor: pointer;
+  transition: border-color 0.12s, color 0.12s;
+}
+
+.arcGhostBtn:hover { border-color: var(--muted); color: var(--paper); }
+.arcGhostBtn:disabled { opacity: 0.5; cursor: default; }
+
+.arcSocialProof {
+  font-size: 0.72rem;
+  color: var(--muted);
 }

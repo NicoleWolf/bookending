@@ -21,7 +21,10 @@ router.get('/program', async (req, res, next: NextFunction) => {
       where: { manuscriptId: id },
       include: {
         _count: { select: { applications: true } },
-        applications: isOwner ? false : { where: { readerId: userId }, select: { id: true, status: true, appliedAt: true } },
+        applications: isOwner ? false : {
+          where: { readerId: userId },
+          select: { id: true, status: true, appliedAt: true, decidedAt: true, readingProgress: true },
+        },
       },
     });
 
@@ -30,8 +33,14 @@ router.get('/program', async (req, res, next: NextFunction) => {
     if (isOwner) {
       res.json({ data: program });
     } else {
-      // Reader view — only expose public fields and their own application
-      const myApplication = (program.applications as { id: string; status: string; appliedAt: Date }[])[0] ?? null;
+      // Reader view — public fields + their own application + aggregate counts for social proof
+      const [acceptedCount, pendingCount] = await Promise.all([
+        prisma.arcApplication.count({ where: { programId: program.id, status: 'ACCEPTED' } }),
+        prisma.arcApplication.count({ where: { programId: program.id, status: 'PENDING' } }),
+      ]);
+      const myApplication = (program.applications as {
+        id: string; status: string; appliedAt: Date; decidedAt: Date | null; readingProgress: number;
+      }[])[0] ?? null;
       res.json({
         data: {
           id:             program.id,
@@ -41,6 +50,8 @@ router.get('/program', async (req, res, next: NextFunction) => {
           reviewDeadline: program.reviewDeadline,
           launchDate:     program.launchDate,
           openedAt:       program.openedAt,
+          acceptedCount,
+          pendingCount,
           myApplication,
         },
       });

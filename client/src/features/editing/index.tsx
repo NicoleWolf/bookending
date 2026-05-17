@@ -12,6 +12,7 @@ import type { BookMetadata } from '../library/data';
 import DocumentEditor from './DocumentEditor';
 import NotesArchive from './NotesArchive';
 import NotesFromBefore from './NotesFromBefore';
+import RevisionChangelogView from './RevisionChangelogView';
 import PendingRequests from './PendingRequests';
 import WriterSparkline, { type ReaderImpression } from './WriterSparkline';
 import {
@@ -20,7 +21,7 @@ import {
 } from './data';
 import styles from './Editing.module.css';
 
-type HubView = 'editor' | 'feedback' | 'correspondence' | 'notes' | 'notes-from-before';
+type HubView = 'editor' | 'feedback' | 'correspondence' | 'notes' | 'notes-from-before' | 'changelog';
 
 
 import { api } from '../../lib/api';
@@ -28,17 +29,19 @@ import type { BetaReaderRecord } from '@bookending/shared';
 
 function recordToReader(r: BetaReaderRecord, index: number): Reader {
   return {
-    id:       r.id,
-    name:     r.name,
-    email:    r.email,
-    initials: r.name.split(/\s+/).map((w: string) => w[0]).join('').toUpperCase().slice(0, 2),
-    tone:     TONES[index % TONES.length],
-    progress: r.progress,
-    chapter:  r.progress >= 1 ? 'Done' : r.progress > 0 ? '—' : 'Ch. 1',
-    verdict:  r.verdict ?? 'just invited',
-    last:     r.lastSeenAt ? 'recently' : 'never',
-    notes:    r.notesCount,
-    since:    'first book',
+    id:                  r.id,
+    name:                r.name,
+    email:               r.email,
+    initials:            r.name.split(/\s+/).map((w: string) => w[0]).join('').toUpperCase().slice(0, 2),
+    tone:                TONES[index % TONES.length],
+    progress:            r.progress,
+    chapter:             r.progress >= 1 ? 'Done' : r.progress > 0 ? '—' : 'Ch. 1',
+    verdict:             r.verdict ?? 'just invited',
+    last:                r.lastSeenAt ? 'recently' : 'never',
+    notes:               r.notesCount,
+    since:               'first book',
+    devotionQueued:      r.devotionQueued,
+    arcReservationEarned: r.arcReservationEarned,
   };
 }
 
@@ -370,6 +373,15 @@ export default function EditingHub({ savedBooks, onTabChange }: EditingHubProps)
             Notes from before
           </button>
         )}
+        {isInRevision && (
+          <button
+            className={styles.viewTab}
+            data-active={view === 'changelog' ? 'true' : undefined}
+            onClick={() => setView('changelog')}
+          >
+            Revision changelog
+          </button>
+        )}
       </div>
 
       {/* ── Manuscript tabs ── */}
@@ -613,6 +625,8 @@ export default function EditingHub({ savedBooks, onTabChange }: EditingHubProps)
                       <div className={styles.readerNameRow}>
                         <span className={styles.readerName}>{r.name}</span>
                         <Pill tone={verdictTone[r.verdict] ?? 'neutral'}>{r.verdict}</Pill>
+                        {r.arcReservationEarned && <Pill tone="good">ARC Reserved</Pill>}
+                        {r.devotionQueued && !r.arcReservationEarned && <Pill tone="accent">Devotion +1</Pill>}
                       </div>
                       <div className={styles.readerProgressRow}>
                         <span className={styles.readerProgressLabel}>{r.chapter}</span>
@@ -821,6 +835,11 @@ export default function EditingHub({ savedBooks, onTabChange }: EditingHubProps)
         <NotesFromBefore key={activeId} manuscriptId={activeId} />
       )}
 
+      {/* ── Revision changelog view (in-revision only) ── */}
+      {view === 'changelog' && (
+        <RevisionChangelogView key={activeId} manuscriptId={activeId} />
+      )}
+
       {/* ── Mobile bottom nav ── */}
       <nav className={styles.bottomNav}>
         <button
@@ -852,6 +871,13 @@ export default function EditingHub({ savedBooks, onTabChange }: EditingHubProps)
             data-active={view === 'notes-from-before' ? '' : undefined}
             onClick={() => setView('notes-from-before')}
           >Before</button>
+        )}
+        {isInRevision && (
+          <button
+            className={styles.bottomNavTab}
+            data-active={view === 'changelog' ? '' : undefined}
+            onClick={() => setView('changelog')}
+          >Log</button>
         )}
       </nav>
 

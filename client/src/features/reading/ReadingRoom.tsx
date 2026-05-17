@@ -2,6 +2,7 @@ import { useState, useRef, useEffect, useCallback, type ReactElement } from 'rea
 import { Btn } from '../../shared/ui/atoms';
 import { IconCheck } from '../../shared/ui/icons';
 import type { Manuscript, Highlight, Pending, Submission, AnnotationRecord, ProgressRecord, ImpressionPointRecord, ReaderChapterNoteRecord } from './types';
+import InRevisionReaderView from './InRevisionReaderView';
 import { STAR_LABELS, STANCE_ORDER, STANCE_VALUE } from './data';
 import { useAuth } from '../auth';
 import styles from './Reading.module.css';
@@ -40,6 +41,7 @@ export default function ReadingRoom({ msRef, onBack }: ReadingRoomProps) {
   const [submittedChapters,  setSubmittedChapters]  = useState<Set<number>>(new Set());
   const [notesSheetOpen,     setNotesSheetOpen]     = useState(false);
   const [chapterNoteMap,     setChapterNoteMap]     = useState<Record<number, ReaderChapterNoteRecord>>({});
+  const [rereadMode,         setRereadMode]         = useState(false);
   const readingRef = useRef<HTMLDivElement>(null);
   const paraRefMap = useRef<Map<string, HTMLElement>>(new Map());
 
@@ -51,6 +53,7 @@ export default function ReadingRoom({ msRef, onBack }: ReadingRoomProps) {
     void api.get<Manuscript>(`/api/reading/${msRef}/manuscript`)
       .then(data => {
         setMs(data);
+        if (data.status === 'IN_REVISION') return; // show InRevisionReaderView first
         const first = data.mode === 'serialized'
           ? (data.chapters.find(ch => ch.releasedAt != null) ?? data.chapters[0])
           : data.chapters[0];
@@ -152,6 +155,7 @@ export default function ReadingRoom({ msRef, onBack }: ReadingRoomProps) {
   }, [pending]);
 
   const goToChapter = (id: number) => {
+    setRereadMode(true);
     setChapterId(id);
     setPending(null);
     setDraftNote('');
@@ -292,6 +296,8 @@ export default function ReadingRoom({ msRef, onBack }: ReadingRoomProps) {
     );
   }
 
+  const isInRevision = ms.status === 'IN_REVISION';
+
   const authorFirstName = 'the author';
   const readerName  = (session as { user?: { name?: string } } | null)?.user?.name?.split(' ')[0];
   const readerLabel = readerName ? `${readerName}'s desk` : 'your desk';
@@ -316,6 +322,15 @@ export default function ReadingRoom({ msRef, onBack }: ReadingRoomProps) {
       <div className={styles.roomHeader}>
         <div className={styles.roomHeaderLeft}>
           <button className={styles.backBtn} onClick={onBack}>← Back to reading</button>
+          {isInRevision && rereadMode && (
+            <button
+              className={styles.backBtn}
+              style={{ marginLeft: 16 }}
+              onClick={() => { setRereadMode(false); setChapterId(null); }}
+            >
+              ← Back to overview
+            </button>
+          )}
           <span className={styles.roomEyebrow}>§ · READING ROOM · {readerLabel.toUpperCase()}</span>
           <h1 className={`serif ${styles.roomTitle}`}>{ms.title}</h1>
           <span className={styles.roomKicker}>
@@ -330,8 +345,17 @@ export default function ReadingRoom({ msRef, onBack }: ReadingRoomProps) {
         )}
       </div>
 
-      {/* ── Chapter tabs ──────────────────────────────────────────── */}
-      <div className={styles.chTabs}>
+      {/* ── In Revision landing view ──────────────────────────────── */}
+      {isInRevision && !rereadMode && (
+        <InRevisionReaderView
+          ms={ms}
+          highlights={highlights}
+          onReread={goToChapter}
+        />
+      )}
+
+      {/* ── Chapter tabs (hidden in in-revision landing) ─────────── */}
+      <div className={styles.chTabs} style={isInRevision && !rereadMode ? { display: 'none' } : undefined}>
         {chapters.map((ch) => {
           const active    = ch.id === chapterId;
           const released  = !isSerial || isReleased(ch);
@@ -370,7 +394,7 @@ export default function ReadingRoom({ msRef, onBack }: ReadingRoomProps) {
       </div>
 
       {/* ── Body grid ──────────────────────────────────────────────── */}
-      <div className={styles.bodyGrid}>
+      <div className={styles.bodyGrid} style={isInRevision && !rereadMode ? { display: 'none' } : undefined}>
         <div className={styles.bodyMain}>
 
           {/* Author guidelines — collapsible, top of reading area */}

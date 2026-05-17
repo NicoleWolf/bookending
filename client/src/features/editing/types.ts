@@ -10,6 +10,8 @@ export interface Reader {
   id: string; name: string; email?: string; initials: string; tone: ReaderTone;
   progress: number; chapter: string; verdict: string;
   last: string; notes: number; since: string;
+  devotionQueued?: boolean;
+  arcReservationEarned?: boolean;
 }
 
 export interface ReaderRating { stars: number; tags: string[]; note: string; }

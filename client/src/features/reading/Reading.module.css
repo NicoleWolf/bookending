@@ -1819,3 +1819,190 @@
     font-size: 11px;
   }
 }
+
+/* ── In Revision reader view ─────────────────────────────────────────── */
+
+.irStatusRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 0 24px;
+}
+
+.irStatusDot {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--accent);
+  flex-shrink: 0;
+}
+
+.irStatusLabel {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 9px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.irStatusSep {
+  color: var(--muted-2);
+}
+
+.irStatusMuted {
+  color: var(--muted);
+}
+
+.irNoteRail {
+  border-left: 3px solid var(--accent);
+  padding: 14px 20px;
+  margin-bottom: 32px;
+  background: var(--ink-2);
+}
+
+.irNoteText {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 16px;
+  line-height: 1.65;
+  color: var(--paper);
+  margin: 0 0 12px;
+}
+
+.irNotePlaceholder {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 15px;
+  color: var(--muted);
+  margin: 0 0 12px;
+}
+
+.irNoteSystemLine {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 12.5px;
+  color: var(--muted);
+  margin: 0;
+  padding-top: 10px;
+  border-top: 1px solid var(--rule);
+}
+
+.irChaptersLabel {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 9px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 16px;
+}
+
+.irChapterList {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  margin-bottom: 40px;
+}
+
+.irChapterRow {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 16px;
+  align-items: center;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--rule);
+}
+
+.irChapterRow:first-child {
+  border-top: 1px solid var(--rule);
+}
+
+.irChapterRowLocked {
+  opacity: 0.45;
+}
+
+.irChapterTitle {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 15px;
+  color: var(--paper);
+  margin-bottom: 4px;
+}
+
+.irChapterMeta {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 8.5px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.irChapterAction {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--accent);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  white-space: nowrap;
+  transition: color 0.1s;
+}
+
+.irChapterAction:hover {
+  color: var(--paper);
+}
+
+.irChapterActionLocked {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 9px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted-2);
+  white-space: nowrap;
+}
+
+.irCloserBlock {
+  border: 1px solid var(--rule);
+  padding: 22px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.irCloserLabel {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 9px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.irCloserStatement {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 17px;
+  color: var(--paper);
+  margin: 0;
+}
+
+.irCloserBody {
+  font-family: var(--sans);
+  font-size: 13px;
+  line-height: 1.65;
+  color: var(--muted);
+  margin: 0;
+}
+
+.irWrap {
+  max-width: 680px;
+  padding: 32px 0;
+}

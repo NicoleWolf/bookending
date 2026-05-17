@@ -611,10 +611,13 @@ router.get('/:msRef/manuscript', async (req, res, next: NextFunction) => {
       : ms.chapters.filter(ch => ch.releasedAt !== null);
 
     res.json({ data: {
-      id:           ms.id,
-      title:        ms.title,
-      draft:        ms.wordCount > 0 ? `${ms.wordCount.toLocaleString()} words` : 'Draft 1',
-      instructions: ms.readerInstructions ?? '',
+      id:               ms.id,
+      title:            ms.title,
+      draft:            ms.wordCount > 0 ? `${ms.wordCount.toLocaleString()} words` : 'Draft 1',
+      instructions:     ms.readerInstructions ?? '',
+      status:           ms.status,
+      editorialNote:    ms.editorialNote ?? null,
+      revisionPausedAt: ms.revisionPausedAt?.toISOString() ?? null,
       mode,
       chapters: accessibleChapters.map(ch => ({
         id:         ch.number,

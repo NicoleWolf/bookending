@@ -203,6 +203,10 @@ router.put('/:id/chapters/:chapterNum', async (req, res, next: NextFunction) => 
 
   const wc = countWords(content);
 
+  function stripHtml(html: string): string {
+    return html.replace(/<[^>]+>/g, ' ').replace(/&\w+;/g, ' ').replace(/\s+/g, ' ').trim().toLowerCase();
+  }
+
   try {
     const existing = await prisma.chapter.findFirst({ where: { manuscriptId: id, number: chapterNum } });
     const chapter = existing
@@ -213,6 +217,25 @@ router.put('/:id/chapters/:chapterNum', async (req, res, next: NextFunction) => 
       : await prisma.chapter.create({
           data: { manuscriptId: id, number: chapterNum, title: title ?? `Chapter ${chapterNum + 1}`, content, wordCount: wc },
         });
+
+    // Annotation graduation: during IN_REVISION, check if anchors still exist in the revised text
+    if (ms.status === 'IN_REVISION') {
+      const plainText = stripHtml(content);
+      const anchored = await prisma.annotation.findMany({
+        where: { manuscriptRef: id, chapterId: chapterNum, status: 'archived_in_revision' },
+        select: { id: true, selectedText: true },
+      });
+      const toGraduate = anchored
+        .filter(a => a.selectedText && !plainText.includes(a.selectedText.toLowerCase()))
+        .map(a => a.id);
+      if (toGraduate.length > 0) {
+        await prisma.annotation.updateMany({
+          where: { id: { in: toGraduate } },
+          data:  { status: 'graduated' },
+        });
+      }
+    }
+
     const allChapters = await prisma.chapter.findMany({
       where: { manuscriptId: id }, select: { wordCount: true },
     });
@@ -515,6 +538,62 @@ router.patch('/:id/notes-from-before/:noteId', async (req, res, next: NextFuncti
       });
       res.json({ data: { id: updated.id, revisionTag: updated.revisionTag } });
     }
+  } catch (err) { next(err); }
+});
+
+// GET /api/manuscripts/:id/revision-changelog — list changelog entries
+router.get('/:id/revision-changelog', async (req, res, next: NextFunction) => {
+  const { id }   = req.params;
+  const authorId = req.user!.id;
+
+  const ms = await prisma.manuscript.findUnique({ where: { id }, select: { authorId: true, revisionChangelog: true } });
+  if (!ms)                      { res.status(404).json({ error: 'Manuscript not found' }); return; }
+  if (ms.authorId !== authorId) { res.status(403).json({ error: 'Forbidden' }); return; }
+
+  try {
+    const entries = JSON.parse(ms.revisionChangelog ?? '[]') as unknown[];
+    res.json({ data: entries });
+  } catch (err) { next(err); }
+});
+
+// POST /api/manuscripts/:id/revision-changelog — add a changelog entry
+router.post('/:id/revision-changelog', async (req, res, next: NextFunction) => {
+  const { id }   = req.params;
+  const authorId = req.user!.id;
+  const { noteId, noteKind, chapterNum, description } = req.body as {
+    noteId?: string; noteKind?: string; chapterNum?: number; description: string;
+  };
+  if (!description?.trim()) { res.status(400).json({ error: 'description is required' }); return; }
+
+  const ms = await prisma.manuscript.findUnique({ where: { id }, select: { authorId: true, revisionChangelog: true } });
+  if (!ms)                      { res.status(404).json({ error: 'Manuscript not found' }); return; }
+  if (ms.authorId !== authorId) { res.status(403).json({ error: 'Forbidden' }); return; }
+
+  try {
+    const entries = JSON.parse(ms.revisionChangelog ?? '[]') as unknown[];
+    const newEntry = { noteId: noteId ?? null, noteKind: noteKind ?? null, chapterNum: chapterNum ?? null, description: description.trim(), addedAt: new Date().toISOString() };
+    entries.push(newEntry);
+    await prisma.manuscript.update({ where: { id }, data: { revisionChangelog: JSON.stringify(entries) } });
+    res.status(201).json({ data: newEntry });
+  } catch (err) { next(err); }
+});
+
+// DELETE /api/manuscripts/:id/revision-changelog/:idx — remove a changelog entry by index
+router.delete('/:id/revision-changelog/:idx', async (req, res, next: NextFunction) => {
+  const { id, idx: rawIdx } = req.params;
+  const authorId = req.user!.id;
+  const idx = parseInt(rawIdx, 10);
+  if (isNaN(idx)) { res.status(400).json({ error: 'idx must be an integer' }); return; }
+
+  const ms = await prisma.manuscript.findUnique({ where: { id }, select: { authorId: true, revisionChangelog: true } });
+  if (!ms)                      { res.status(404).json({ error: 'Manuscript not found' }); return; }
+  if (ms.authorId !== authorId) { res.status(403).json({ error: 'Forbidden' }); return; }
+
+  try {
+    const entries = JSON.parse(ms.revisionChangelog ?? '[]') as unknown[];
+    entries.splice(idx, 1);
+    await prisma.manuscript.update({ where: { id }, data: { revisionChangelog: JSON.stringify(entries) } });
+    res.json({ data: { deleted: true } });
   } catch (err) { next(err); }
 });
 

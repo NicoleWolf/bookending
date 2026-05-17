@@ -249,3 +249,24 @@
 .marginCol[data-layout="sheet"] .connectorTick {
   display: none;
 }
+
+/* ── Graduated annotation ──────────────────────────────────────── */
+
+.noteCard[data-status="graduated"] {
+  border-left: 2px solid var(--muted-2);
+  opacity: 0.8;
+}
+
+.graduatedAnchor {
+  text-decoration: line-through;
+  opacity: 0.6;
+}
+
+.graduatedSystemNote {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  color: var(--muted);
+  margin-top: 6px;
+}

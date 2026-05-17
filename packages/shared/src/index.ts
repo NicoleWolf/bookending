@@ -83,6 +83,8 @@ export const BetaReaderRecordSchema = z.object({
   id: z.string(), name: z.string(), email: z.string(),
   progress: z.number(), verdict: z.string().nullable(), notesCount: z.number(),
   joinedAt: z.string(), lastSeenAt: z.string().nullable(), manuscriptId: z.string(),
+  devotionQueued: z.boolean().optional(),
+  arcReservationEarned: z.boolean().optional(),
 });
 export type BetaReaderRecord = z.infer<typeof BetaReaderRecordSchema>;
 

@@ -5,12 +5,15 @@ export interface Chapter  { id: number; number: number; title: string; paras: Pa
 export interface Manuscript {
   id: string | number; title: string; draft: string; instructions: string; chapters: Chapter[];
   mode: 'complete' | 'serialized';
+  status?: string;
+  editorialNote?: string | null;
+  revisionPausedAt?: string | null;
 }
 
 export interface Highlight {
   id: string; chapterId: number; paraId: number;
   selectedText: string; note: string;
-  status: 'draft' | 'submitted';
+  status: 'draft' | 'submitted' | 'graduated';
   thread: ThreadEntry[];
   time: string;
 }

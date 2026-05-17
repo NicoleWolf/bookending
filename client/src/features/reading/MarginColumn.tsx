@@ -156,13 +156,20 @@ export default function MarginColumn({
               {/* Connector tick */}
               <div className={styles.connectorTick} />
 
-              {/* Anchor quote */}
-              <blockquote className={`serif ${styles.anchorQuote}`}>
+              {/* Anchor quote — struck through if graduated */}
+              <blockquote className={`serif ${styles.anchorQuote}${h.status === 'graduated' ? ` ${styles.graduatedAnchor}` : ''}`}>
                 "{truncateAtWord(h.selectedText, 120)}"
               </blockquote>
+              {h.status === 'graduated' && (
+                <div className={styles.graduatedSystemNote}>
+                  {authorFirstName.charAt(0).toUpperCase() + authorFirstName.slice(1)} revised this passage.
+                </div>
+              )}
 
               {/* Reader's initial note */}
-              {isEditing ? (
+              {h.status === 'graduated' ? (
+                h.note && <p className={styles.readerBody}>{h.note}</p>
+              ) : isEditing ? (
                 <div className={styles.editArea}>
                   <textarea
                     autoFocus
@@ -205,14 +212,16 @@ export default function MarginColumn({
                   </span>
                 ) : (
                   <span className={styles.footerStatus} data-status={h.status}>
-                    {h.status === 'draft' ? 'Draft — not yet sent' : `Sent · ${h.time}`}
+                    {h.status === 'graduated'
+                      ? 'Passage revised'
+                      : h.status === 'draft' ? 'Draft — not yet sent' : `Sent · ${h.time}`}
                   </span>
                 )}
                 <div className={styles.footerActions}>
-                  {!isEditing && (
+                  {!isEditing && h.status !== 'graduated' && (
                     <button className={styles.editBtn} onClick={() => onEdit(h.id, h.note)}>Edit</button>
                   )}
-                  {!isEditing && (
+                  {!isEditing && h.status !== 'graduated' && (
                     <button className={styles.deleteBtn} onClick={() => onDelete(h.id)}>✕</button>
                   )}
                   {hasWriterReply && (

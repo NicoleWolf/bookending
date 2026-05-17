@@ -57,3 +57,15 @@
   color: var(--ink);
   font-weight: 700;
 }
+
+/* ── Responsive ───────────────────────────────────────────── */
+
+@media (max-width: 1023px) {
+  .header { padding: 24px 24px 0; }
+  .tabs   { overflow-x: auto; scrollbar-width: none; }
+  .tabs::-webkit-scrollbar { display: none; }
+}
+
+@media (max-width: 767px) {
+  .header { padding: 16px 16px 0; }
+}

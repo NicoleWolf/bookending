@@ -510,3 +510,36 @@
   border-color: var(--muted);
   color: var(--paper);
 }
+
+/* ── Responsive ──────────────────────────────────────────────────────── */
+
+@media (max-width: 1023px) {
+  .sectionHeader { padding: 28px 32px 0; }
+  .filterBar     { padding: 20px 32px; }
+  .sectionLabel  { padding: 16px 32px 12px; }
+  .hubTabs       { padding: 0 32px; }
+  .empty         { padding: 48px 32px; }
+  .grid          { grid-template-columns: repeat(2, 1fr); }
+  .featuredGrid  { grid-template-columns: 1fr; }
+  .productGrid   { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 767px) {
+  .sectionHeader { padding: 20px 20px 0; }
+  .filterBar     { padding: 16px 20px; }
+  .sectionLabel  { padding: 12px 20px 10px; }
+  .hubTabs       { padding: 0 20px; overflow-x: auto; scrollbar-width: none; }
+  .hubTabs::-webkit-scrollbar { display: none; }
+  .empty         { padding: 40px 20px; }
+  .grid          { grid-template-columns: 1fr; }
+  .featuredCard  { flex-direction: column; gap: 20px; }
+  .featuredCardRight { align-items: flex-start; }
+}
+
+@media (max-width: 479px) {
+  .sectionHeader { padding: 16px 16px 0; }
+  .filterBar     { padding: 12px 16px; }
+  .sectionLabel  { padding: 10px 16px; }
+  .hubTabs       { padding: 0 16px; }
+  .productGrid   { grid-template-columns: 1fr; }
+}

@@ -712,3 +712,27 @@
 .labelSm  { margin-bottom: 12px; }
 .labelMd  { margin-bottom: 14px; }
 .labelLg  { margin-bottom: 16px; }
+
+/* ── Responsive ───────────────────────────────────────────── */
+
+@media (max-width: 1023px) {
+  .pkGrid      { grid-template-columns: 200px 1fr; }
+  .prGrid      { grid-template-columns: 1fr; }
+  .prPanel     { border-right: none; border-bottom: 1px solid var(--rule); padding: 24px 28px; }
+  .prSidePanel { padding: 24px 28px; }
+  .editorWrapper { padding: 24px 28px; }
+  .fileGrid    { grid-template-columns: 1fr; gap: 20px; }
+}
+
+@media (max-width: 767px) {
+  .pkGrid      { grid-template-columns: 1fr; }
+  .sidebar     { border-right: none; border-bottom: 1px solid var(--rule); }
+  .prPanel, .prSidePanel { padding: 20px; }
+  .editorWrapper { padding: 20px; }
+  .rightPane   { padding: 20px; }
+}
+
+@media (max-width: 479px) {
+  .prPanel, .prSidePanel, .editorWrapper, .rightPane { padding: 16px; }
+  .voiceGrid { grid-template-columns: 1fr; }
+}

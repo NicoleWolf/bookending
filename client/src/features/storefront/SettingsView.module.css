@@ -493,3 +493,21 @@
   border-left: 2px solid var(--rule);
   padding-left: 12px;
 }
+
+/* ── Responsive ───────────────────────────────────────────── */
+
+@media (max-width: 1023px) {
+  .settingsGrid { grid-template-columns: 1fr; }
+  .leftCol      { border-right: none; padding: 24px; }
+  .rightCol     { padding: 24px; }
+  .leftSection  { border-right: none; padding: 24px; }
+  .rightSection { padding: 24px; }
+  .fullSection  { padding: 24px; }
+  .templatesGrid { grid-template-columns: 1fr 1fr; gap: 16px; }
+  .refundGrid   { grid-template-columns: 1fr; gap: 20px; }
+}
+
+@media (max-width: 767px) {
+  .leftCol, .rightCol, .leftSection, .rightSection, .fullSection { padding: 16px; }
+  .templatesGrid { grid-template-columns: 1fr; }
+}

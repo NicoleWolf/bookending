@@ -301,3 +301,30 @@
 }
 
 .searchIcon { color: var(--muted); flex-shrink: 0; }
+
+/* ── Responsive ───────────────────────────────────────────── */
+
+@media (max-width: 1023px) {
+  .toolbar, .tableHead, .productRow { padding-left: 20px; padding-right: 20px; }
+  .coversHeader                     { padding-left: 20px; padding-right: 20px; }
+  .coversGrid                       { grid-template-columns: 1fr; }
+  .coverItem:nth-child(odd)         { border-right: none; }
+  .coverItem                        { border-bottom: 1px solid var(--rule); }
+  .coverItem:last-child             { border-bottom: none; }
+}
+
+@media (max-width: 767px) {
+  .toolbar, .tableHead, .productRow { padding-left: 16px; padding-right: 16px; }
+  .coversHeader                     { padding-left: 16px; padding-right: 16px; }
+  .coverItem                        { padding: 16px; }
+}
+
+@media (max-width: 479px) {
+  .tableHead  { display: none; }
+  .productRow {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: 12px 16px;
+  }
+}

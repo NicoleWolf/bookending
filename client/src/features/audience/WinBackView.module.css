@@ -117,3 +117,26 @@
   gap: 10px;
   flex-shrink: 0;
 }
+
+/* ── Responsive ───────────────────────────────────────────── */
+
+@media (max-width: 1023px) {
+  .header   { padding: 24px 24px 20px; }
+  .noteGrid { grid-template-columns: 1fr; }
+  .noteCard:not(:last-child) { border-right: none; border-bottom: 1px solid var(--rule); }
+  .noteCard { padding: 24px; }
+  .footer   { padding: 20px 24px; }
+}
+
+@media (max-width: 767px) {
+  .header   { padding: 20px 20px 16px; }
+  .noteCard { padding: 20px; }
+  .footer   { flex-direction: column; gap: 16px; padding: 16px 20px; }
+}
+
+@media (max-width: 479px) {
+  .header   { padding: 16px 16px 12px; }
+  .noteCard { padding: 16px; }
+  .footer   { padding: 16px; }
+  .footerActions { flex-wrap: wrap; }
+}

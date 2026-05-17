@@ -437,3 +437,28 @@
   color: var(--muted);
   letter-spacing: 0.08em;
 }
+
+/* ── Responsive ───────────────────────────────────────────── */
+
+@media (max-width: 1023px) {
+  .identityGrid  { grid-template-columns: 1fr; }
+  .leftPane      { border-right: none; border-bottom: 1px solid var(--rule); }
+  .rightPane     { padding: 20px 24px; }
+  .subscribeGrid { grid-template-columns: 1fr; gap: 24px; }
+  .subscribePreviewWrap { position: static; }
+}
+
+@media (max-width: 767px) {
+  .identitySection, .bioSection, .genreSection, .socialSection { padding: 20px; }
+  .subscribeSection { padding: 20px 20px 28px; }
+  .genreGrid { grid-template-columns: 1fr 1fr; }
+  .rightPane { padding: 16px; }
+}
+
+@media (max-width: 479px) {
+  .identitySection, .bioSection, .genreSection, .socialSection { padding: 16px; }
+  .subscribeSection { padding: 16px 16px 24px; }
+  .genreGrid { grid-template-columns: 1fr; }
+  .nameGrid  { grid-template-columns: 1fr; }
+  .socialRow { grid-template-columns: 1fr; gap: 8px; }
+}

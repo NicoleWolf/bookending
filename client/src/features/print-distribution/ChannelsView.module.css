@@ -344,3 +344,35 @@
   flex-direction: column;
   gap: 8px;
 }
+
+/* ── Responsive ───────────────────────────────────────────── */
+
+@media (max-width: 1023px) {
+  .statsGrid { grid-template-columns: 1fr 1fr; }
+  .statCell:nth-child(even)  { border-right: none; }
+  .statCell:nth-child(n + 3) { border-top: 1px solid var(--rule); }
+  .mainGrid     { grid-template-columns: 1fr; }
+  .channelsList { border-right: none; border-bottom: 1px solid var(--rule); }
+  .tableHead, .channelRow { padding-left: 16px; padding-right: 16px; }
+  .expandedRow { padding: 12px 16px 16px; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .proofPanel  { padding: 20px 16px; }
+}
+
+@media (max-width: 767px) {
+  .statsGrid { grid-template-columns: 1fr; }
+  .statCell  { border-right: none; border-top: none; border-bottom: 1px solid var(--rule); padding: 20px 16px; }
+  .statCell:last-child { border-bottom: none; }
+  .statValue { font-size: 32px; }
+  .expandedRow { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 479px) {
+  .tableHead  { display: none; }
+  .channelRow {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 12px 16px;
+  }
+  .expandedRow { padding: 10px 16px; }
+}

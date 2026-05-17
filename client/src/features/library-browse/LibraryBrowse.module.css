@@ -82,3 +82,23 @@
   padding: 48px 0;
   margin: 0;
 }
+
+/* ── Responsive ───────────────────────────────────────────────────────── */
+
+@media (max-width: 1023px) {
+  .mastheadWrap { padding: 0 32px; }
+  .searchWrap   { padding: 12px 32px; }
+  .content      { padding: 0 32px; }
+}
+
+@media (max-width: 767px) {
+  .mastheadWrap { padding: 0 20px; }
+  .searchWrap   { padding: 10px 20px; }
+  .content      { padding: 0 20px; }
+}
+
+@media (max-width: 479px) {
+  .mastheadWrap { padding: 0 16px; }
+  .searchWrap   { padding: 10px 16px; }
+  .content      { padding: 0 16px; }
+}

@@ -114,6 +114,14 @@
   border-color: var(--muted-2);
 }
 
+@media (max-width: 1023px) {
+  .bar { padding: 0 32px; }
+}
+
+@media (max-width: 767px) {
+  .bar { padding: 0 20px; }
+}
+
 @media (max-width: 599px) {
   .bar {
     padding: 0 20px;

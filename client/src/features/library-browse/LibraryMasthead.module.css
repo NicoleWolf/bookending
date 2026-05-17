@@ -105,3 +105,14 @@
   flex-shrink: 0;
 }
 .filterBtn:hover { color: var(--lib-text); border-color: var(--lib-text); }
+
+/* ── Responsive ───────────────────────────────────────────────────────── */
+
+@media (max-width: 767px) {
+  .title { font-size: 28px; }
+}
+
+@media (max-width: 479px) {
+  .title  { font-size: 24px; }
+  .nav    { gap: 14px; flex-wrap: wrap; }
+}

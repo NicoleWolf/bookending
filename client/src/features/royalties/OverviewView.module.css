@@ -259,3 +259,24 @@
   color: var(--muted);
   letter-spacing: 0.08em;
 }
+
+/* ── Responsive ───────────────────────────────────────────── */
+
+@media (max-width: 1023px) {
+  .statsStrip { flex-wrap: wrap; }
+  .statCell   { flex: 0 0 50%; box-sizing: border-box; }
+  .mainGrid   { grid-template-columns: 1fr; }
+  .leftPanel  { padding: 24px; border-right: none; border-bottom: 1px solid var(--rule); }
+  .channelSidebar { padding: 24px; }
+}
+
+@media (max-width: 767px) {
+  .statCell       { flex: 0 0 100%; }
+  .leftPanel,
+  .channelSidebar { padding: 16px; }
+}
+
+@media (max-width: 479px) {
+  .tableHead { display: none; }
+  .tableRow  { display: flex; flex-direction: column; gap: 4px; padding: 10px 0; }
+}

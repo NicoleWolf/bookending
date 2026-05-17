@@ -357,3 +357,39 @@
 }
 
 .iconInk { color: var(--ink); }
+
+/* ── Responsive ───────────────────────────────────────────── */
+
+@media (max-width: 1023px) {
+  .header       { padding: 20px 24px 16px; }
+  .channelStrip { padding: 10px 24px; }
+  .tabs         { overflow-x: auto; scrollbar-width: none; }
+  .tabs::-webkit-scrollbar { display: none; }
+  .taskRow      { padding: 14px 24px; }
+  .channelRow   { padding: 14px 24px; }
+  .timelineTab  { padding: 24px; }
+}
+
+@media (max-width: 767px) {
+  .header {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 16px 16px 0;
+  }
+  .headerMeta  { padding-bottom: 16px; }
+  .headerStats {
+    border-left: none;
+    border-top: 1px solid var(--rule);
+    margin-left: 0;
+    padding: 16px 0;
+    width: 100%;
+    justify-content: space-around;
+  }
+  .statBox      { padding: 0 16px; }
+  .channelStrip { padding: 10px 16px; flex-wrap: wrap; }
+  .taskRow      { padding: 12px 16px; }
+  .channelRow   { padding: 12px 16px; }
+  .channelRowName { width: 80px; }
+  .timelineTab  { padding: 16px; }
+  .timelineWeek { width: 64px; }
+}

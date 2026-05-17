@@ -648,3 +648,32 @@
 .pendingLabel  { margin-bottom: 4px; }
 .btnInk        { color: var(--ink); }
 .karmaLabel    { color: var(--muted); }
+
+/* ── Responsive ──────────────────────────────────────────────────────── */
+
+@media (max-width: 1023px) {
+  .section       { padding: 28px 32px; }
+  .mentorGrid    { grid-template-columns: 1fr 1fr; }
+  .circleGrid    { grid-template-columns: 1fr; }
+  .circleSidebar { position: static; }
+  .dashCard      { padding: 28px 32px 36px; }
+  .dashCardsGrid { grid-template-columns: 1fr 1fr; }
+  .dashArticle:not(:last-child) { border-right: none; border-bottom: 1px solid #00000020; }
+  .dashArticle:nth-child(odd)   { border-right: 1px solid #00000020; }
+  .dashArticle:nth-child(even)  { border-right: none; }
+}
+
+@media (max-width: 767px) {
+  .section       { padding: 20px 20px; }
+  .mentorGrid    { grid-template-columns: 1fr; }
+  .dashCard      { padding: 20px 20px 28px; }
+  .dashCardsGrid { grid-template-columns: 1fr; }
+  .dashArticle:nth-child(odd) { border-right: none; }
+  .dashTitle     { font-size: 36px; }
+  .karmaBar      { flex-direction: column; align-items: flex-start; }
+}
+
+@media (max-width: 479px) {
+  .section { padding: 16px 16px; }
+  .dashCard { padding: 16px 16px 24px; }
+}

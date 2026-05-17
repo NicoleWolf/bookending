@@ -1031,6 +1031,31 @@
   border-color: var(--muted);
 }
 
+/* ── Responsive ──────────────────────────────────────────────────────── */
+
+@media (max-width: 1023px) {
+  .sectionHeader { padding: 28px 32px 0; }
+  .grid          { grid-template-columns: repeat(2, 1fr); margin: 20px 32px 32px; }
+  .profileWrap   { padding: 28px 32px 48px; }
+  .profileGrid   { grid-template-columns: 1fr; gap: 28px; }
+  .profileTabs   { overflow-x: auto; scrollbar-width: none; }
+  .profileTabs::-webkit-scrollbar { display: none; }
+}
+
+@media (max-width: 767px) {
+  .sectionHeader { padding: 20px 20px 0; }
+  .grid          { grid-template-columns: 1fr; margin: 16px 20px 20px; }
+  .profileWrap   { padding: 20px 20px 40px; }
+  .profileHeader { flex-direction: column; gap: 16px; }
+  .profileHeaderRight { align-items: flex-start; }
+}
+
+@media (max-width: 479px) {
+  .sectionHeader { padding: 16px 16px 0; }
+  .grid          { margin: 12px 16px 16px; }
+  .profileWrap   { padding: 16px 16px 32px; }
+}
+
 /* ── Thank you modal ─────────────────────────────────────────────── */
 
 .modalOverlay {

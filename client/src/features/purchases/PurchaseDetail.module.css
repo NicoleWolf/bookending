@@ -359,3 +359,17 @@
   color: var(--muted);
   letter-spacing: 0.04em;
 }
+
+/* ── Responsive ───────────────────────────────────────────── */
+
+@media (max-width: 1023px) {
+  .body  { grid-template-columns: 1fr; }
+  .left  { padding: 28px 32px 40px; border-right: none; border-bottom: 1px solid var(--rule); }
+  .right { padding: 28px 32px 40px; }
+}
+
+@media (max-width: 767px) {
+  .backBar      { padding: 0 16px; }
+  .left,
+  .right        { padding: 20px 16px 32px; }
+}

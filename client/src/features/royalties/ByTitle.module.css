@@ -209,3 +209,28 @@
   color: var(--muted);
   padding: 8px 0 4px;
 }
+
+/* ── Responsive ───────────────────────────────────────────── */
+
+@media (max-width: 1023px) {
+  .view        { padding: 24px; }
+  .titleTotals { gap: 20px; }
+}
+
+@media (max-width: 767px) {
+  .view              { padding: 16px; }
+  .titleTotals       { flex-wrap: wrap; gap: 12px; }
+  .channelTableHead  { display: none; }
+  .channelRow {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 10px 0;
+  }
+  .totalsRow {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 10px 0 0;
+  }
+}

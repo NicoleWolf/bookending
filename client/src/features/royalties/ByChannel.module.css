@@ -188,3 +188,21 @@
   width: 60px;
   text-align: right;
 }
+
+/* ── Responsive ───────────────────────────────────────────── */
+
+@media (max-width: 1023px) {
+  .view      { padding: 24px; }
+  .cardsGrid { grid-template-columns: repeat(2, 1fr); }
+  .card:nth-child(even)  { border-right: none; }
+  .card:nth-child(n + 3) { border-top: 1px solid var(--rule); }
+  .compLabel { width: 130px; }
+}
+
+@media (max-width: 767px) {
+  .view      { padding: 16px; }
+  .cardsGrid { grid-template-columns: 1fr; }
+  .card      { border-right: none; border-top: none; border-bottom: 1px solid var(--rule); }
+  .card:last-child { border-bottom: none; }
+  .compLabel { width: 100px; }
+}

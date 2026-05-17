@@ -472,3 +472,30 @@
   display: flex;
   gap: 8px;
 }
+
+/* ── Responsive ───────────────────────────────────────────── */
+
+@media (max-width: 1023px) {
+  .viewHeader { padding: 16px 20px; }
+  .tableHead, .isbnRow { padding-left: 20px; padding-right: 20px; }
+  .isbnExpanded { padding: 16px 20px 20px; }
+  .prefixBox { padding: 20px; }
+  .barcodeCanvas { width: 100%; max-width: 300px; }
+}
+
+@media (max-width: 767px) {
+  .viewHeader { padding: 14px 16px; }
+  .tableHead, .isbnRow { padding-left: 16px; padding-right: 16px; }
+  .isbnExpanded { padding: 14px 16px 16px; }
+  .prefixBox { padding: 16px; }
+}
+
+@media (max-width: 479px) {
+  .tableHead { display: none; }
+  .isbnRow {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 12px 16px;
+  }
+}

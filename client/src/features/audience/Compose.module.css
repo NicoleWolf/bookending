@@ -469,3 +469,25 @@
 
 .accentCheckbox { accent-color: var(--accent); }
 .iconInk        { color: var(--ink); }
+
+/* ── Responsive ───────────────────────────────────────────── */
+
+@media (max-width: 1023px) {
+  .composeGrid { grid-template-columns: 1fr; }
+  .editorPanel { border-right: none; border-bottom: 1px solid var(--rule); padding: 24px 28px; }
+  .sidePanel   { padding: 24px 28px; }
+  .chooser, .adaptScreen { padding: 32px 28px; }
+}
+
+@media (max-width: 767px) {
+  .editorPanel { padding: 20px; }
+  .sidePanel   { padding: 20px; }
+  .chooser, .adaptScreen { padding: 24px 20px; }
+  .sentState   { padding: 48px 24px; }
+}
+
+@media (max-width: 479px) {
+  .editorPanel { padding: 16px; }
+  .sidePanel   { padding: 16px; }
+  .chooser, .adaptScreen { padding: 20px 16px; }
+}

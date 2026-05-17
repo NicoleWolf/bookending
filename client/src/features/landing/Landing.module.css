@@ -571,39 +571,47 @@
 }
 
 /* ── Responsive ─────────────────────────────────────────────────── */
-@media (max-width: 639px) {
-  .container { padding: 0 16px; }
-  .hero { padding: 40px 0 60px; }
-  .heroDecoration { display: none; }
-  .heroForm { flex-direction: column; }
-  .heroSub { font-size: 18px; margin-bottom: 32px; }
 
-  .promise { padding: 60px 0; }
-  .promisePara { font-size: clamp(22px, 5.5vw, 30px); }
+/* Tablet */
+@media (max-width: 1023px) {
+  .container    { padding: 0 24px; }
+  .journeyInner { padding: 0 24px; }
 
-  .audiences { padding: 60px 0; }
-  .audienceGrid {
-    grid-template-columns: 1fr;
-    gap: 40px;
-  }
-  .audienceDivider { display: none; }
-  .audienceTitle { font-size: 28px; }
+  .hero { padding: 60px 0 80px; }
 
-  .journey { padding: 60px 0; margin: 40px 0; }
-  .journeyInner { padding: 0 16px; }
-  .journeyHeader { margin-bottom: 40px; }
+  .promise   { padding: 80px 0; }
+  .audiences { padding: 70px 0; }
+  .audienceGrid { gap: 48px; }
+
   .stages {
-    grid-template-columns: 1fr;
-    gap: 32px;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 40px;
   }
   .stages::before { display: none; }
 
-  .testimony { padding: 60px 0; }
-  .quoteMark { font-size: 80px; }
+  .testimony { padding: 80px 0; }
 
-  .signup { padding: 60px 0 40px; }
-  .signupCard { padding: 32px 20px; }
-  .heroCtas { flex-direction: column; align-items: stretch; }
+  .signup     { padding: 80px 0 60px; }
+  .signupCard { padding: 48px 32px; }
+}
+
+/* Large phone */
+@media (max-width: 767px) {
+  .heroDecoration { display: none; }
+  .heroCtas       { flex-direction: column; align-items: stretch; }
+
+  .audiences    { padding: 60px 0; }
+  .audienceGrid { grid-template-columns: 1fr; gap: 40px; }
+  .audienceDivider { display: none; }
+  .audienceTitle   { font-size: 28px; }
+
+  .journey       { padding: 60px 0; margin: 40px 0; }
+  .journeyHeader { margin-bottom: 40px; }
+  .stages        { grid-template-columns: 1fr; gap: 32px; }
+
+  .testimony { padding: 60px 0; }
+
+  .signup     { padding: 60px 0 40px; }
   .signupCtas { flex-direction: column; align-items: stretch; }
 
   .footerContent {
@@ -612,4 +620,23 @@
     text-align: center;
   }
   .footerLinks { gap: 20px; flex-wrap: wrap; justify-content: center; }
+}
+
+/* Small phone */
+@media (max-width: 479px) {
+  .container    { padding: 0 16px; }
+  .journeyInner { padding: 0 16px; }
+
+  .hero    { padding: 40px 0 60px; }
+  .heroSub { font-size: 18px; margin-bottom: 32px; }
+
+  .btnPrimary,
+  .btnSecondary { min-height: 44px; }
+
+  .promise     { padding: 60px 0; }
+  .promisePara { font-size: clamp(22px, 5.5vw, 30px); }
+
+  .quoteMark  { font-size: 80px; }
+
+  .signupCard { padding: 32px 20px; }
 }

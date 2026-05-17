@@ -617,3 +617,36 @@
 
 .labelMb18 { margin-bottom: 18px; }
 .labelMb14 { margin-bottom: 14px; }
+
+/* ── Responsive ───────────────────────────────────────────── */
+
+@media (max-width: 1023px) {
+  .actionQueue { grid-template-columns: repeat(2, 1fr); }
+  .actionCell:nth-child(even)  { border-right: none; }
+  .actionCell:nth-child(n + 3) { border-top: 1px solid var(--rule); }
+  .mainGrid    { grid-template-columns: 1fr; }
+  .leftPanel   { border-right: none; border-bottom: 1px solid var(--rule); }
+  .chartSection, .funnelSection { padding: 20px 24px; }
+  .ordersHeader { padding: 12px 24px; }
+  .orderRow   { padding: 10px 24px; }
+}
+
+@media (max-width: 767px) {
+  .actionRow   { flex-direction: column; }
+  .actionQueue { grid-template-columns: 1fr; }
+  .actionCell  { border-right: none; border-top: none; border-bottom: 1px solid var(--rule); }
+  .actionCell:last-child { border-bottom: none; }
+  .revenueCallout { border-top: 1px solid var(--rule); min-width: unset; }
+  .chartSection, .funnelSection, .ordersHeader { padding: 16px; }
+  .orderRow   { padding: 10px 16px; }
+  .rightPanel { padding: 16px; }
+}
+
+@media (max-width: 479px) {
+  .orderRow {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 12px 16px;
+  }
+}

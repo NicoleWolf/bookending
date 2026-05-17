@@ -208,3 +208,29 @@
   color: var(--muted);
   opacity: 0.6;
 }
+
+/* ── Responsive ───────────────────────────────────────────── */
+
+@media (max-width: 1023px) {
+  .viewHeader { padding: 16px 20px; }
+  .approvalLog { padding: 12px 20px; }
+  .tableHead, .fileRow { padding-left: 20px; padding-right: 20px; }
+  .dropZone { margin: 16px 20px 20px; }
+}
+
+@media (max-width: 767px) {
+  .viewHeader { padding: 14px 16px; }
+  .approvalLog { padding: 12px 16px; }
+  .tableHead, .fileRow { padding-left: 16px; padding-right: 16px; }
+  .dropZone { margin: 14px 16px; }
+}
+
+@media (max-width: 479px) {
+  .tableHead { display: none; }
+  .fileRow {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 12px 16px;
+  }
+}

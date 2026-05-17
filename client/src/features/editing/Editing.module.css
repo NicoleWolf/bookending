@@ -1001,6 +1001,18 @@
   padding: 1px 4px;
 }
 
+/* ── Responsive ──────────────────────────────────────────────────────── */
+
+@media (max-width: 1023px) {
+  .section   { padding: 28px 32px; }
+  .viewTabs  { margin: 0 -32px 0; padding: 0 32px; }
+}
+
+@media (max-width: 767px) {
+  .section   { padding: 20px 20px; }
+  .viewTabs  { margin: 0 -20px 0; padding: 0 20px; }
+}
+
 /* ── Mobile responsive (≤ 639px) ────────────────────────────────── */
 
 @media (max-width: 639px) {

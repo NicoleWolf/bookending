@@ -237,3 +237,25 @@
   line-height: 1.6;
   max-width: 520px;
 }
+
+/* ── Responsive ───────────────────────────────────────────── */
+
+@media (max-width: 1023px) {
+  .view         { padding: 24px; }
+  .summaryStrip { flex-wrap: wrap; }
+  .summaryCell  { flex: 0 0 50%; box-sizing: border-box; }
+}
+
+@media (max-width: 767px) {
+  .view         { padding: 16px; }
+  .summaryCell  { flex: 0 0 100%; }
+  .tableHead    { display: none; }
+  .tableRow {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 10px 0;
+  }
+  .totalsRow { display: flex; flex-wrap: wrap; gap: 8px; }
+  .exportRow { flex-wrap: wrap; }
+}

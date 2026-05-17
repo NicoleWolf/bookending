@@ -54,3 +54,13 @@
   background: var(--accent);
   color: var(--ink);
 }
+
+/* ── Responsive ───────────────────────────────────────────── */
+
+@media (max-width: 767px) {
+  .item { padding: 12px 20px; flex-wrap: wrap; }
+}
+
+@media (max-width: 479px) {
+  .item { padding: 12px 16px; }
+}

@@ -191,3 +191,26 @@
   letter-spacing: 0.06em;
   text-align: right;
 }
+
+/* ── Responsive ───────────────────────────────────────────── */
+
+@media (max-width: 1023px) {
+  .view         { padding: 24px; }
+  .pendingCards { grid-template-columns: repeat(2, 1fr); }
+  .pendingCard:nth-child(even)  { border-right: none; }
+  .pendingCard:nth-child(n + 3) { border-top: 1px solid var(--rule); }
+}
+
+@media (max-width: 767px) {
+  .view         { padding: 16px; }
+  .pendingCards { grid-template-columns: 1fr; }
+  .pendingCard  { border-right: none; border-top: none; border-bottom: 1px solid var(--rule); }
+  .pendingCard:last-child { border-bottom: none; }
+  .tableHead    { display: none; }
+  .tableRow {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 12px 0;
+  }
+}

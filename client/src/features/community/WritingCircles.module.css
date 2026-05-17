@@ -772,3 +772,20 @@
 
 .btnXs   { font-size: 10.5px; padding: 4px 10px; }
 .btnRsvp { justify-content: center; font-size: 11px; }
+
+/* ── Responsive ──────────────────────────────────────────────────────── */
+
+@media (max-width: 1023px) {
+  .cardGrid    { grid-template-columns: 1fr 1fr; }
+  .detailGrid  { grid-template-columns: 1fr; }
+  .detailSidebar { position: static; }
+}
+
+@media (max-width: 767px) {
+  .cardGrid    { grid-template-columns: 1fr; }
+  .listHeader  { flex-direction: column; gap: 16px; }
+}
+
+@media (max-width: 479px) {
+  .row2 { grid-template-columns: 1fr; }
+}

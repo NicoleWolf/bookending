@@ -873,3 +873,31 @@
   gap: 10px;
   margin-top: 8px;
 }
+
+/* ── Responsive ──────────────────────────────────────────────────────── */
+
+@media (max-width: 1023px) {
+  .sectionHeader { padding: 28px 32px 0; }
+  .filterBar     { padding: 20px 32px; }
+  .grid          { grid-template-columns: 1fr; margin: 0 32px 32px; }
+  .profileWrap   { padding: 28px 32px 48px; }
+}
+
+@media (max-width: 767px) {
+  .sectionHeader { padding: 20px 20px 0; }
+  .filterBar     { padding: 16px 20px; gap: 16px; }
+  .grid          { margin: 0 20px 20px; }
+  .profileWrap   { padding: 20px 20px 40px; }
+  .profileHeader { flex-direction: column; gap: 16px; }
+  .profileHeaderRight { align-items: flex-start; }
+  .profileLabelsStrip { flex-wrap: wrap; }
+  .profileLabelCell   { flex: 1 0 40%; }
+}
+
+@media (max-width: 479px) {
+  .sectionHeader { padding: 16px 16px 0; }
+  .filterBar     { padding: 12px 16px; }
+  .grid          { margin: 0 16px 16px; }
+  .profileWrap   { padding: 16px 16px 32px; }
+  .profileLabelCell { flex: 1 0 100%; }
+}

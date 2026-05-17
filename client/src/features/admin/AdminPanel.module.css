@@ -524,3 +524,43 @@
 
 .tempPwBreak    { font-size: 11px; word-break: break-all; }
 .accentCheckbox { accent-color: var(--accent); }
+
+/* ── Responsive ───────────────────────────────────────────── */
+
+@media (max-width: 1023px) {
+  .sectionHeader   { padding: 24px 24px 0; }
+  .tableHead,
+  .userRow         { padding-left: 24px; padding-right: 24px; }
+  .expandedPanel   { padding: 16px 24px 20px; }
+  .inviteFormRow   { padding: 12px 24px; }
+  .inviteTableHead,
+  .inviteRow       { padding-left: 24px; padding-right: 24px; }
+  .devLinkBox      { margin-left: 24px; margin-right: 24px; }
+  .loadingState,
+  .emptyState      { padding-left: 24px; padding-right: 24px; }
+}
+
+@media (max-width: 767px) {
+  .sectionHeader   { padding: 20px 16px 0; }
+  .tableHead       { display: none; }
+  .userRow {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 14px 16px;
+    align-items: center;
+  }
+  .expandedPanel   { padding: 14px 16px; }
+  .editRow         { flex-direction: column; }
+  .inviteFormRow   { padding: 10px 16px; flex-wrap: wrap; }
+  .inviteTableHead { display: none; }
+  .inviteRow {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 12px 16px;
+  }
+  .devLinkBox      { margin-left: 16px; margin-right: 16px; }
+  .loadingState,
+  .emptyState      { padding-left: 16px; padding-right: 16px; }
+}

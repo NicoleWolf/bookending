@@ -318,3 +318,22 @@
 .page {
   min-height: 100%;
 }
+
+/* ── Responsive ───────────────────────────────────────────── */
+
+@media (max-width: 1023px) {
+  .profile   { padding: 20px 24px; }
+  .body      { grid-template-columns: 1fr; }
+  .mainCol   { border-right: none; border-bottom: 1px solid var(--rule); padding: 24px; }
+  .sideCol   { padding: 20px 24px; }
+  .profileStats { border-left: none; border-top: 1px solid var(--rule); margin-top: 16px; }
+}
+
+@media (max-width: 767px) {
+  .profile   { padding: 16px; flex-wrap: wrap; }
+  .mainCol   { padding: 16px; }
+  .sideCol   { padding: 16px; }
+  .profileStats { justify-content: space-around; }
+  .statItem  { padding: 0 16px; }
+  .backBtn   { padding: 14px 16px; }
+}

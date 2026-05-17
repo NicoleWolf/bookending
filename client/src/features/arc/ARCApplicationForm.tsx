@@ -100,7 +100,7 @@ export default function ARCApplicationForm({ manuscriptId, onBack, onSubmitted }
         <div className={styles.successBlock}>
           <div className={`label ${styles.successEyebrow}`}>ARC</div>
           <h2 className={`serif ${styles.successTitle}`}>
-            {isAutoAccept ? 'You're in.' : 'Application submitted.'}
+            {isAutoAccept ? "You're in." : 'Application submitted.'}
           </h2>
           <p className={styles.successBody}>
             {isAutoAccept

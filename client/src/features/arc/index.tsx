@@ -462,8 +462,6 @@ export default function ARCHub() {
       .catch(() => setProgram(null));
   }, [selectedId]);
 
-  const selectedMs = manuscripts.find(m => m.id === selectedId);
-
   return (
     <div className={styles.hub}>
       <SectionHead

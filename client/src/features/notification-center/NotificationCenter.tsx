@@ -1,9 +1,8 @@
 import { useState, useEffect, useRef } from 'react';
 import { WRITER_ROWS, READER_ROWS, ACCOUNT_SECURITY_ROWS } from './row-data';
 import type { NotificationRow, Cadence } from './row-data';
+import { api } from '../../lib/api';
 import styles from './NotificationCenter.module.css';
-
-const API = import.meta.env.VITE_API_URL ?? '';
 
 interface RowPref {
   rowKey:    string;
@@ -140,16 +139,17 @@ export default function NotificationCenter() {
 
   // ── Fetch on mount ───────────────────────────────────────────────
   useEffect(() => {
-    fetch(`${API}/api/notification-preferences`, { credentials: 'include' })
-      .then(r => r.json())
-      .then(body => {
+    api.get<{ preferences: RowPref[]; writingMode: boolean; writingModeSince: string | null }>(
+      '/api/notification-preferences'
+    )
+      .then(data => {
         const map: Record<string, LocalPref> = {};
-        for (const p of (body.data.preferences as RowPref[])) {
+        for (const p of data.preferences) {
           map[p.rowKey] = { emailOn: p.emailOn, inAppOn: p.inAppOn, cadence: p.cadence };
         }
         setPrefs(map);
-        setWritingMode(body.data.writingMode ?? false);
-        setWritingModeSince(body.data.writingModeSince ?? null);
+        setWritingMode(data.writingMode ?? false);
+        setWritingModeSince(data.writingModeSince ?? null);
       })
       .catch(() => setError('Failed to load preferences.'))
       .finally(() => setLoading(false));
@@ -162,13 +162,7 @@ export default function NotificationCenter() {
     setPrefs(p => ({ ...p, [key]: next }));
     setSaving();
     try {
-      const r = await fetch(`${API}/api/notification-preferences/${key}`, {
-        method: 'PATCH',
-        credentials: 'include',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(patch),
-      });
-      if (!r.ok) throw new Error();
+      await api.patch(`/api/notification-preferences/${key}`, patch);
       flashSaved();
       announce('Preference saved.');
     } catch {
@@ -188,15 +182,11 @@ export default function NotificationCenter() {
     setWritingMode(next);
     setSaving();
     try {
-      const r = await fetch(`${API}/api/notification-preferences/writing-mode`, {
-        method: 'PATCH',
-        credentials: 'include',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ on: next }),
-      });
-      if (!r.ok) throw new Error();
-      const body = await r.json();
-      setWritingModeSince(body.data.writingModeSince ?? null);
+      const data = await api.patch<{ writingMode: boolean; writingModeSince: string | null }>(
+        '/api/notification-preferences/writing-mode',
+        { on: next }
+      );
+      setWritingModeSince(data.writingModeSince ?? null);
       flashSaved();
       announce(next ? 'Writing Mode on.' : 'Writing Mode off.');
     } catch {

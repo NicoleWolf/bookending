@@ -286,7 +286,7 @@ router.get('/:id/reader-annotations', async (req, res, next: NextFunction) => {
 
   try {
     const annotations = await prisma.annotation.findMany({
-      where:   { manuscriptRef: id, status: 'submitted' },
+      where:   { manuscriptRef: id, status: { in: ['submitted', 'archived_in_revision'] } },
       orderBy: [{ chapterId: 'asc' }, { createdAt: 'asc' }],
       include: {
         user:    { select: { id: true, name: true } },
@@ -374,7 +374,7 @@ router.get('/:id/reader-chapter-notes', async (req, res, next: NextFunction) => 
 
   try {
     const notes = await prisma.readerChapterNote.findMany({
-      where:   { manuscriptRef: id, status: 'submitted' },
+      where:   { manuscriptRef: id, status: { in: ['submitted', 'archived_in_revision'] } },
       orderBy: [{ chapterNum: 'asc' }, { createdAt: 'asc' }],
       include: { user: { select: { name: true } } },
     });

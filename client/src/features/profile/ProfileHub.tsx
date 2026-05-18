@@ -2,12 +2,13 @@ import { useState } from 'react';
 import ProfileView from './ProfileView';
 import ReaderProfilePage from '../reader-profile';
 import AuthorProfilePage from '../author-profile';
+import NotificationCenter from '../notification-center/NotificationCenter';
 import type { AppNotification } from '../notifications/data';
 import styles from './ProfileHub.module.css';
 
-export type HubTab = 'Profile' | 'My Reader Profile' | 'My Author Profile';
+export type HubTab = 'Profile' | 'My Reader Profile' | 'My Author Profile' | 'Notifications';
 
-const TABS: HubTab[] = ['Profile', 'My Reader Profile', 'My Author Profile'];
+const TABS: HubTab[] = ['Profile', 'My Reader Profile', 'My Author Profile', 'Notifications'];
 
 interface Props {
   onBack: () => void;
@@ -42,6 +43,9 @@ export default function ProfileHub({ onBack, onToast, initialTab = 'Profile' }: 
         )}
         {activeTab === 'My Author Profile' && (
           <AuthorProfilePage onDone={() => setActiveTab('Profile')} onToast={onToast} />
+        )}
+        {activeTab === 'Notifications' && (
+          <NotificationCenter />
         )}
       </div>
     </div>

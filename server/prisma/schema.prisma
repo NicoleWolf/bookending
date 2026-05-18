@@ -39,7 +39,8 @@ model User {
   authorQa             AuthorQA[]
   formattingProjects   FormattingProject[]
   manuscriptVersions   ManuscriptVersion[]
-  arcApplications      ArcApplication[]
+  arcApplications         ArcApplication[]
+  notificationPreferences NotificationPreference[]
 
   bio               String?
   location          String?
@@ -51,9 +52,25 @@ model User {
   featuredManuscriptId    String?
   showActivityPublicly    Boolean  @default(true)
 
+  writingMode      Boolean   @default(false)
+  writingModeSince DateTime?
+
   isAdmin     Boolean  @default(false)
   status      String   @default("active")
   sentInvites Invite[] @relation("InvitedBy")
+}
+
+model NotificationPreference {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  rowKey    String
+  emailOn   Boolean  @default(false)
+  inAppOn   Boolean  @default(false)
+  cadence   String   @default("instant")
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, rowKey])
 }
 
 model Notification {

@@ -1,0 +1,355 @@
+/* ── Page shell ───────────────────────────────────────────────── */
+.page {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 40px 48px 80px;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+/* ── Loading / error ──────────────────────────────────────────── */
+.loadingShell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 80px 48px;
+}
+
+.loadingText {
+  font-family: var(--sans);
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.errorText {
+  font-family: var(--sans);
+  font-size: 13px;
+  color: var(--danger);
+}
+
+/* ── Page header ──────────────────────────────────────────────── */
+.pageHeader {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 24px;
+  padding-bottom: 28px;
+  border-bottom: 2px solid var(--paper);
+  margin-bottom: 0;
+}
+
+.pageHeaderLeft {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.pageTitle {
+  font-family: var(--serif);
+  font-size: 28px;
+  font-weight: 400;
+  color: var(--paper);
+  margin: 0;
+  line-height: 1.1;
+}
+
+.pageSubtitle {
+  font-family: var(--sans);
+  font-size: 13px;
+  color: var(--muted);
+  margin: 0;
+}
+
+.saveIndicator {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+  min-width: 56px;
+  text-align: right;
+  padding-bottom: 4px;
+  visibility: hidden;
+}
+
+.saveIndicator[data-state="saving"] { visibility: visible; color: var(--muted); }
+.saveIndicator[data-state="saved"]  { visibility: visible; color: var(--good); }
+.saveIndicator[data-state="error"]  { visibility: visible; color: var(--danger); }
+
+/* ── Writing Mode block ───────────────────────────────────────── */
+.writingModeBlock {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 20px 0;
+  border-bottom: 0.5px solid var(--rule);
+  margin-bottom: 0;
+  transition: background 0.15s;
+}
+
+.writingModeBlock[data-on] {
+  background: color-mix(in srgb, var(--accent) 6%, transparent);
+  padding: 20px 16px;
+  margin: 0 -16px;
+  border-bottom-color: color-mix(in srgb, var(--accent) 30%, var(--rule));
+}
+
+.writingModeText {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.writingModeLabel {
+  font-family: var(--sans);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--paper);
+}
+
+.writingModeDesc {
+  font-family: var(--sans);
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+/* ── Sections wrapper ─────────────────────────────────────────── */
+.sections {
+  display: flex;
+  flex-direction: column;
+}
+
+.sections[data-muted] {
+  opacity: 0.4;
+  pointer-events: none;
+}
+
+/* ── Section ──────────────────────────────────────────────────── */
+.section {
+  margin-top: 40px;
+}
+
+/* ── Section header ───────────────────────────────────────────── */
+.sectionHeader {
+  display: grid;
+  grid-template-columns: 1fr 80px 80px 120px;
+  align-items: end;
+  gap: 0;
+  padding-bottom: 10px;
+  border-bottom: 0.5px solid var(--rule);
+  margin-bottom: 0;
+}
+
+.sectionEyebrow {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  grid-column: 1;
+  grid-row: 1;
+  padding-bottom: 2px;
+}
+
+.sectionTitle {
+  font-family: var(--serif);
+  font-size: 18px;
+  font-weight: 400;
+  color: var(--paper);
+  margin: 0;
+  line-height: 1.2;
+  grid-column: 1;
+  grid-row: 2;
+}
+
+.colHeaders {
+  grid-column: 2 / -1;
+  grid-row: 1 / 3;
+  display: grid;
+  grid-template-columns: 80px 80px 120px;
+  align-self: end;
+  padding-bottom: 10px;
+}
+
+.colHeaders > span {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+  text-align: center;
+}
+
+.colHeaders > span:last-child {
+  text-align: left;
+  padding-left: 8px;
+}
+
+/* ── Row list ─────────────────────────────────────────────────── */
+.rowList {
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── Row ──────────────────────────────────────────────────────── */
+.row {
+  display: grid;
+  grid-template-columns: 1fr 80px 80px 120px;
+  align-items: center;
+  gap: 0;
+  padding: 14px 0;
+  border-bottom: 0.5px solid var(--rule);
+}
+
+.row:last-child {
+  border-bottom: none;
+}
+
+/* ── Row meta ─────────────────────────────────────────────────── */
+.rowMeta {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding-right: 24px;
+}
+
+.rowLabel {
+  font-family: var(--sans);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--paper);
+  line-height: 1.3;
+}
+
+.rowDesc {
+  font-family: var(--sans);
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.4;
+}
+
+/* ── Row controls ─────────────────────────────────────────────── */
+.rowControls {
+  grid-column: 2 / -1;
+  display: grid;
+  grid-template-columns: 80px 80px 120px;
+  align-items: center;
+}
+
+.rowControls > * {
+  display: flex;
+  justify-content: center;
+}
+
+.rowControls > *:last-child {
+  justify-content: flex-start;
+  padding-left: 8px;
+}
+
+/* ── Toggle ───────────────────────────────────────────────────── */
+.toggle {
+  position: relative;
+  width: 36px;
+  height: 20px;
+  background: var(--rule);
+  border: 0.5px solid var(--rule);
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.toggle[data-on] {
+  background: var(--accent);
+  border-color: var(--accent);
+}
+
+.toggle:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.toggleThumb {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 12px;
+  height: 12px;
+  background: var(--ink);
+  transition: transform 0.15s;
+}
+
+.toggle[data-on] .toggleThumb {
+  transform: translateX(16px);
+  background: var(--paper);
+}
+
+/* ── Cadence select ───────────────────────────────────────────── */
+.cadenceSelect {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  color: var(--paper);
+  background: var(--ink-3);
+  border: 0.5px solid var(--rule);
+  padding: 4px 8px;
+  appearance: none;
+  cursor: pointer;
+  width: 100px;
+  transition: border-color 0.1s, opacity 0.1s;
+}
+
+.cadenceSelect:hover { border-color: var(--paper); }
+.cadenceSelect:focus { outline: 2px solid var(--accent); outline-offset: 2px; }
+.cadenceSelect:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+/* ── Always-on label ──────────────────────────────────────────── */
+.alwaysOn {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+  white-space: nowrap;
+  grid-column: 1 / -1;
+}
+
+/* ── Screen-reader only ───────────────────────────────────────── */
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ── Responsive ───────────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .page { padding: 24px 20px 64px; }
+
+  .sectionHeader {
+    grid-template-columns: 1fr 56px 56px 96px;
+  }
+
+  .colHeaders {
+    grid-template-columns: 56px 56px 96px;
+  }
+
+  .row {
+    grid-template-columns: 1fr 56px 56px 96px;
+  }
+
+  .rowControls {
+    grid-template-columns: 56px 56px 96px;
+  }
+
+  .cadenceSelect { width: 80px; font-size: 10px; }
+}

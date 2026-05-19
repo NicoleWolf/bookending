@@ -21,12 +21,13 @@ export default function ReaderProfilePage({ onDone, onToast }: Props) {
       .catch(() => {
         if (currentUser) {
           setProfile({
-            name: currentUser.name,
-            bio: null,
-            location: null,
-            genres: null,
+            displayName:       currentUser.displayName ?? null,
+            name:              currentUser.name,
+            bio:               null,
+            location:          currentUser.location ?? null,
+            genres:            null,
             availableForReads: true,
-            avatarUrl: currentUser.avatarUrl ?? null,
+            avatarUrl:         currentUser.avatarUrl ?? null,
           });
         }
         setLoading(false);

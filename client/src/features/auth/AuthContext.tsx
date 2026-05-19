@@ -15,7 +15,7 @@ interface AuthContextValue {
   register: (payload: RegisterPayload) => Promise<void>;
   logout: () => Promise<void>;
   clearError: () => void;
-  updateProfile: (data: Partial<Pick<AuthUser, 'name' | 'email' | 'avatarUrl' | 'theme' | 'betaReaderPrivate'>>) => void;
+  updateProfile: (data: Partial<Pick<AuthUser, 'name' | 'displayName' | 'location' | 'email' | 'avatarUrl' | 'theme'>>) => void;
   changePassword: (current: string, next: string) => Promise<void>;
   forgotPassword: (email: string) => Promise<void>;
   resetPassword: (password: string) => Promise<void>;

@@ -89,9 +89,10 @@ export default function AuthorProfilePage({ onDone, onToast }: Props) {
       if (currentUser) {
         setProfile({
           id:                   currentUser.id,
+          displayName:          currentUser.displayName ?? null,
           name:                 currentUser.name,
-          location:             null,
-          bio:                  null,
+          location:             currentUser.location ?? null,
+          authorBio:            null,
           writingProcess:       null,
           genres:               [],
           subgenres:            [],

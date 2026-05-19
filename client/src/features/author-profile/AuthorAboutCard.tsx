@@ -14,9 +14,9 @@ export function AuthorAboutCard({ bio, onChange }: Props) {
   return (
     <div className={styles.card}>
       <div className={styles.head}>
-        <span className={styles.label}>About</span>
+        <span className={styles.label}>Author bio</span>
         <span className={styles.hint}>
-          Your author bio — who you are, what you write. Shown on your public profile.
+          Who you are, what you write. Shown on your public profile.
         </span>
       </div>
       <div className={styles.textareaWrap}>
@@ -26,7 +26,7 @@ export function AuthorAboutCard({ bio, onChange }: Props) {
           onChange={e => onChange(e.target.value)}
           rows={5}
           placeholder="A short author bio…"
-          aria-label="About"
+          aria-label="Author bio"
         />
         <span className={styles.counter} data-over={over ? '' : undefined}>
           {count}/{SOFT_LIMIT}

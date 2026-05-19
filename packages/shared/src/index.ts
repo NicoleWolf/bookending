@@ -47,7 +47,10 @@ export const SubscriberRecordSchema = z.object({
 export type SubscriberRecord = z.infer<typeof SubscriberRecordSchema>;
 
 export const AuthorRecordSchema = z.object({
-  id: z.string(), name: z.string(), bio: z.string().nullable(),
+  id: z.string(), name: z.string(),
+  displayName: z.string().nullable().optional(),
+  authorBio: z.string().nullable().optional(),
+  bio: z.string().nullable().optional(),
   location: z.string().nullable(), genres: z.string().nullable(),
   writingProcess: z.string().nullable(), createdAt: z.string(),
   featuredManuscriptId: z.string().nullable().optional(),
@@ -211,6 +214,7 @@ export type SettingsPayload = z.infer<typeof SettingsPayloadSchema>;
 // ─── Reader profile ───────────────────────────────────────────────────────────
 
 export const ReaderProfileRecordSchema = z.object({
+  displayName:       z.string().nullable(),
   name:              z.string(),
   bio:               z.string().nullable(),
   location:          z.string().nullable(),
@@ -221,12 +225,9 @@ export const ReaderProfileRecordSchema = z.object({
 export type ReaderProfileRecord = z.infer<typeof ReaderProfileRecordSchema>;
 
 export const PatchReaderProfileSchema = z.object({
-  name:              z.string().min(1).max(60).optional(),
   bio:               z.string().max(500).nullable().optional(),
-  location:          z.string().max(80).nullable().optional(),
   genres:            z.string().nullable().optional(),
   availableForReads: z.boolean().optional(),
-  avatarUrl:         z.string().nullable().optional(),
 });
 export type PatchReaderProfilePayload = z.infer<typeof PatchReaderProfileSchema>;
 

@@ -7,6 +7,7 @@ import { PatchReaderProfileSchema } from '@bookending/shared';
 const router = Router();
 
 const PROFILE_SELECT = {
+  displayName:       true,
   name:              true,
   bio:               true,
   location:          true,
@@ -37,12 +38,9 @@ router.patch('/', async (req, res, next: NextFunction) => {
   if (!body) return;
 
   const data: Record<string, unknown> = {};
-  if (body.name              !== undefined) data.name              = body.name;
   if (body.bio               !== undefined) data.bio               = body.bio;
-  if (body.location          !== undefined) data.location          = body.location;
   if (body.genres            !== undefined) data.genres            = body.genres;
   if (body.availableForReads !== undefined) data.availableForReads = body.availableForReads;
-  if (body.avatarUrl         !== undefined) data.avatarUrl         = body.avatarUrl;
 
   try {
     const user = await prisma.user.update({

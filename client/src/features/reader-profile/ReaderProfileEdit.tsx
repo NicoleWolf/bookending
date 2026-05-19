@@ -2,10 +2,10 @@ import type { ReaderProfileRecord } from '@bookending/shared';
 import type { AppNotification } from '../notifications/data';
 import { useAutosave } from './useAutosave';
 import { AvailabilityCard } from './AvailabilityCard';
-import { ProfileCard } from './ProfileCard';
 import { AboutCard } from './AboutCard';
 import { GenresCard } from './GenresCard';
 import { EarlyReaderCard } from './EarlyReaderCard';
+import { IdentityStrip } from '../../shared/ui/IdentityStrip';
 import styles from './ReaderProfileEdit.module.css';
 
 interface Props {
@@ -113,13 +113,12 @@ export function ReaderProfileEdit({ profile, onProfileChange, onDone, onToast }:
           available={profile.availableForReads}
           onChange={handleAvailabilityToggle}
         />
-        <ProfileCard
+        <IdentityStrip
           name={profile.name}
-          location={profile.location ?? ''}
-          avatarUrl={profile.avatarUrl ?? null}
-          onNameChange={name => patch({ name })}
-          onLocationChange={location => patch({ location: location || null })}
-          onAvatarChange={avatarUrl => patch({ avatarUrl })}
+          displayName={profile.displayName}
+          location={profile.location}
+          avatarUrl={profile.avatarUrl}
+          onGoToAccountProfile={onDone}
         />
         <AboutCard
           bio={profile.bio ?? ''}

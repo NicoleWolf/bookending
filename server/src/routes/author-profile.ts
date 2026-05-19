@@ -8,8 +8,9 @@ const router = Router();
 
 const PROFILE_SELECT = {
   id:                   true,
+  displayName:          true,
   name:                 true,
-  bio:                  true,
+  authorBio:            true,
   location:             true,
   genres:               true,
   subgenres:            true,
@@ -26,13 +27,10 @@ const PROFILE_SELECT = {
 } as const;
 
 const PatchAuthorProfileSchema = z.object({
-  name:                 z.string().min(1).max(80).optional(),
-  location:             z.string().max(100).nullable().optional(),
-  bio:                  z.string().max(2000).nullable().optional(),
+  authorBio:            z.string().max(600).nullable().optional(),
   writingProcess:       z.string().max(2000).nullable().optional(),
   genres:               z.string().nullable().optional(),
   subgenres:            z.string().nullable().optional(),
-  avatarUrl:            z.string().nullable().optional(),
   featuredManuscriptId: z.string().nullable().optional(),
   showActivityPublicly: z.boolean().optional(),
 });
@@ -59,13 +57,10 @@ router.patch('/', async (req, res, next: NextFunction) => {
   if (!body) return;
 
   const data: Record<string, unknown> = {};
-  if (body.name                 !== undefined) data.name                 = body.name;
-  if (body.bio                  !== undefined) data.bio                  = body.bio;
-  if (body.location             !== undefined) data.location             = body.location;
+  if (body.authorBio            !== undefined) data.authorBio            = body.authorBio;
   if (body.genres               !== undefined) data.genres               = body.genres;
   if (body.subgenres            !== undefined) data.subgenres            = body.subgenres;
   if (body.writingProcess       !== undefined) data.writingProcess       = body.writingProcess;
-  if (body.avatarUrl            !== undefined) data.avatarUrl            = body.avatarUrl;
   if (body.featuredManuscriptId !== undefined) data.featuredManuscriptId = body.featuredManuscriptId;
   if (body.showActivityPublicly !== undefined) data.showActivityPublicly = body.showActivityPublicly;
 

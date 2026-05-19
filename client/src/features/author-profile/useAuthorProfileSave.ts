@@ -4,8 +4,9 @@ import { api } from '../../lib/api';
 export interface AuthorProfileData {
   id: string;
   name: string;
+  displayName: string | null;
   location: string | null;
-  bio: string | null;
+  authorBio: string | null;
   writingProcess: string | null;
   genres: string[];
   subgenres: string[];
@@ -29,15 +30,12 @@ export function useAuthorProfileSave(profile: AuthorProfileData): { saveState: S
     setSaveState('saving');
     try {
       await api.patch('/api/author-profile', {
-        name:                 p.name,
-        location:             p.location,
-        bio:                  p.bio,
+        authorBio:            p.authorBio,
         writingProcess:       p.writingProcess,
         genres:               JSON.stringify(p.genres),
         subgenres:            JSON.stringify(p.subgenres),
         featuredManuscriptId: p.featuredManuscriptId,
         showActivityPublicly: p.showActivityPublicly,
-        avatarUrl:            p.avatarUrl,
       });
       setSaveState('saved');
       if (savedTimerRef.current) clearTimeout(savedTimerRef.current);

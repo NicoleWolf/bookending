@@ -41,11 +41,11 @@ function recordToProfile(r: AuthorRecord): AuthorProfile {
 
   return {
     id:             r.id,
-    name:           r.name,
+    name:           r.displayName ?? r.name,
     initials,
     tone:           toneForId(r.id),
     location:       r.location ?? '',
-    bio:            r.bio ?? '',
+    bio:            r.authorBio ?? r.bio ?? '',
     writingProcess: r.writingProcess ?? '',
     genres,
     joinedAt:       r.createdAt,

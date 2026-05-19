@@ -42,7 +42,9 @@ model User {
   arcApplications         ArcApplication[]
   notificationPreferences NotificationPreference[]
 
+  displayName       String?
   bio               String?
+  authorBio         String?
   location          String?
   genres            String?
   subgenres         String?

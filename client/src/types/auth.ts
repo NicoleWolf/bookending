@@ -1,12 +1,13 @@
 export interface AuthUser {
   id: string;
   name: string;
+  displayName?: string | null;
+  location?: string | null;
   email: string;
   role: 'AUTHOR' | 'READER';
   lastLoginAt: string | null;
   avatarUrl?: string | null;
   theme?: 'dark' | 'light';
-  betaReaderPrivate?: boolean;
   isAdmin?: boolean;
 }
 

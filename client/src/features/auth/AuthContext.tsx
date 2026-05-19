@@ -49,12 +49,14 @@ async function buildUserFromSupabase(
   setApiToken(token);
   const [whoami, profile] = await Promise.all([
     api.get<{ id: string; role: string; isAdmin: boolean }>('/api/admin/whoami').catch(() => null),
-    api.get<{ name: string; avatarUrl?: string | null }>('/api/author-profile').catch(() => null),
+    api.get<{ name: string; displayName: string | null; location: string | null; avatarUrl?: string | null }>('/api/profile').catch(() => null),
   ]);
   return {
     id:          supabaseUser.id,
     email:       supabaseUser.email ?? '',
     name:        profile?.name ?? (supabaseUser.user_metadata?.name as string | undefined) ?? supabaseUser.email ?? '',
+    displayName: profile?.displayName ?? null,
+    location:    profile?.location ?? null,
     role:        (whoami?.role ?? supabaseUser.user_metadata?.role ?? 'AUTHOR') as 'AUTHOR' | 'READER',
     lastLoginAt: new Date().toISOString(),
     isAdmin:     whoami?.isAdmin ?? false,
@@ -209,7 +211,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   // ── Update profile ─────────────────────────────────────────────────────
 
-  const updateProfile = useCallback((data: Partial<Pick<AuthUser, 'name' | 'email' | 'avatarUrl' | 'theme' | 'betaReaderPrivate'>>) => {
+  const updateProfile = useCallback((data: Partial<Pick<AuthUser, 'name' | 'displayName' | 'location' | 'email' | 'avatarUrl' | 'theme'>>) => {
     // Optimistic local update
     setSession(prev => {
       if (!prev) return prev;
@@ -217,11 +219,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       persistSession(next);
       return next;
     });
-    // Persist to server in background
+    // Persist identity fields to server in background
     const patch: Record<string, unknown> = {};
-    if (data.name      !== undefined) patch.name      = data.name;
-    if (data.avatarUrl !== undefined) patch.avatarUrl = data.avatarUrl;
-    api.patch('/api/author-profile', patch).catch(() => { /* non-critical */ });
+    if (data.name        !== undefined) patch.name        = data.name;
+    if (data.displayName !== undefined) patch.displayName = data.displayName;
+    if (data.location    !== undefined) patch.location    = data.location;
+    if (data.avatarUrl   !== undefined) patch.avatarUrl   = data.avatarUrl;
+    if (Object.keys(patch).length > 0) {
+      api.patch('/api/profile', patch).catch(() => { /* non-critical */ });
+    }
   }, []);
 
   // ── Change password ────────────────────────────────────────────────────

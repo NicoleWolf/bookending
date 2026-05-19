@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import type { AppNotification } from '../notifications/data';
 import { useAuthorProfileSave, type AuthorProfileData } from './useAuthorProfileSave';
-import { ProfileCard } from '../reader-profile/ProfileCard';
+import { IdentityStrip } from '../../shared/ui/IdentityStrip';
 import { AuthorAboutCard } from './AuthorAboutCard';
 import { WritingProcessCard } from './WritingProcessCard';
 import { AuthorGenresCard } from './AuthorGenresCard';
@@ -110,17 +110,16 @@ export function AuthorProfileEdit({
               </div>
             </div>
           )}
-          <ProfileCard
+          <IdentityStrip
             name={profile.name}
-            location={profile.location ?? ''}
-            avatarUrl={profile.avatarUrl ?? null}
-            onNameChange={name => patch({ name })}
-            onLocationChange={location => patch({ location: location || null })}
-            onAvatarChange={avatarUrl => patch({ avatarUrl })}
+            displayName={profile.displayName}
+            location={profile.location}
+            avatarUrl={profile.avatarUrl}
+            onGoToAccountProfile={onDone}
           />
           <AuthorAboutCard
-            bio={profile.bio ?? ''}
-            onChange={bio => patch({ bio: bio || null })}
+            bio={profile.authorBio ?? ''}
+            onChange={bio => patch({ authorBio: bio || null })}
           />
           <WritingProcessCard
             value={profile.writingProcess ?? ''}

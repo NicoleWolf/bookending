@@ -14,7 +14,7 @@ export function AboutCard({ bio, onChange }: Props) {
   return (
     <div className={styles.card}>
       <div className={styles.head}>
-        <span className={styles.label}>About</span>
+        <span className={styles.label}>Reader bio</span>
         <span className={styles.hint}>
           A few sentences on how you read and what you bring. Shown on your public profile.
         </span>

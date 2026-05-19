@@ -17,12 +17,9 @@ export function useAutosave(profile: ReaderProfileRecord): { saveState: SaveStat
     setSaveState('saving');
     try {
       await api.patch('/api/reader-profile', {
-        name:              p.name,
         bio:               p.bio,
-        location:          p.location,
         genres:            p.genres,
         availableForReads: p.availableForReads,
-        avatarUrl:         p.avatarUrl,
       });
       setSaveState('saved');
       if (savedTimerRef.current) clearTimeout(savedTimerRef.current);

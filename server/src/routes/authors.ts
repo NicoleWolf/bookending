@@ -8,7 +8,7 @@ import { SubmitQuestionSchema, PatchQuestionSchema } from '@bookending/shared';
 const router = Router();
 
 const AUTHOR_SELECT = {
-  id: true, name: true, bio: true, location: true,
+  id: true, name: true, displayName: true, authorBio: true, location: true,
   genres: true, writingProcess: true, createdAt: true,
   featuredManuscriptId: true,
   manuscripts: {

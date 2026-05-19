@@ -13,8 +13,9 @@ interface ManuscriptOption {
 
 interface ApiAuthorProfile {
   id:                   string;
+  displayName:          string | null;
   name:                 string;
-  bio:                  string | null;
+  authorBio:            string | null;
   location:             string | null;
   genres:               string | null;
   subgenres:            string | null;
@@ -60,9 +61,10 @@ export default function AuthorProfilePage({ onDone, onToast }: Props) {
     ]).then(([ap, pqs]) => {
       const data: AuthorProfileData = {
         id:                   ap.id,
+        displayName:          ap.displayName,
         name:                 ap.name,
         location:             ap.location,
-        bio:                  ap.bio,
+        authorBio:            ap.authorBio,
         writingProcess:       ap.writingProcess,
         genres:               parseJsonArray(ap.genres),
         subgenres:            parseJsonArray(ap.subgenres),

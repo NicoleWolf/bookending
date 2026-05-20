@@ -7,7 +7,12 @@ interface Props {
 }
 
 function parseGenres(raw: string): string[] {
-  return raw ? raw.split(',').map(g => g.trim()).filter(Boolean) : [];
+  if (!raw) return [];
+  try {
+    const parsed = JSON.parse(raw);
+    if (Array.isArray(parsed)) return parsed as string[];
+  } catch { /* not JSON — fall through to comma-split */ }
+  return raw.split(',').map(g => g.trim()).filter(Boolean);
 }
 
 function serializeGenres(selected: string[]): string {

@@ -31,9 +31,9 @@ export function AuthorGenresCard({ genres, subgenres, onGenresChange, onSubgenre
     onSubgenresChange(next);
   }
 
-  const availableSubgenres = GENRES
-    .filter(g => genres.includes(g.label))
-    .flatMap(g => g.subgenres);
+  const availableSubgenres = [...new Set(
+    GENRES.filter(g => genres.includes(g.label)).flatMap(g => g.subgenres)
+  )];
 
   return (
     <div className={styles.card}>

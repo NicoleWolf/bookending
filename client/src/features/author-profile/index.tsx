@@ -9,6 +9,7 @@ import { AuthorProfileEdit } from './AuthorProfileEdit';
 interface ManuscriptOption {
   id: string;
   title: string;
+  genre: string | null;
 }
 
 interface ApiAuthorProfile {
@@ -23,7 +24,7 @@ interface ApiAuthorProfile {
   avatarUrl:            string | null;
   featuredManuscriptId: string | null;
   showActivityPublicly: boolean;
-  manuscripts:          ManuscriptOption[];
+  manuscripts:          { id: string; title: string; genre: string | null }[];
   authorQa: { id: string; question: string; answer: string | null; publishedAt: string | null }[];
 }
 

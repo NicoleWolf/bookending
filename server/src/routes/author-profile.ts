@@ -18,7 +18,7 @@ const PROFILE_SELECT = {
   avatarUrl:            true,
   featuredManuscriptId: true,
   showActivityPublicly: true,
-  manuscripts: { select: { id: true, title: true } },
+  manuscripts: { select: { id: true, title: true, genre: true } },
   authorQa: {
     where:   { answer: { not: null }, publishedAt: { not: null } },
     select:  { id: true, question: true, answer: true, publishedAt: true },

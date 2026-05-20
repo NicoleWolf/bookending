@@ -494,6 +494,48 @@ function AuthorProfilePage({ author, followed, onToggleFollow, onBack, onNotify,
       .catch(() => {});
   }, [author.featuredProject?.id]);
 
+  // ── Next Book state ───────────────────────────────────────────
+  interface NextBookView {
+    id: string;
+    manuscriptId: string | null;
+    title: string;
+    description: string | null;
+    genre: string | null;
+    updatedAt: string;
+    _count: { followers: number };
+    isFollowing: boolean;
+  }
+  const [nextBook, setNextBook] = useState<NextBookView | null>(null);
+
+  useEffect(() => {
+    api.get<NextBookView | null>(`/api/authors/${author.id}/next-book`)
+      .then(data => setNextBook(data))
+      .catch(() => {});
+  }, [author.id]);
+
+  async function handleToggleNextBookFollow() {
+    if (!nextBook) return;
+    const wasFollowing = nextBook.isFollowing;
+    setNextBook(prev => prev ? {
+      ...prev,
+      isFollowing: !wasFollowing,
+      _count: { followers: prev._count.followers + (wasFollowing ? -1 : 1) },
+    } : null);
+    try {
+      if (wasFollowing) {
+        await api.del(`/api/authors/${author.id}/next-book/follow`);
+      } else {
+        await api.post(`/api/authors/${author.id}/next-book/follow`);
+      }
+    } catch {
+      setNextBook(prev => prev ? {
+        ...prev,
+        isFollowing: wasFollowing,
+        _count: { followers: prev._count.followers + (wasFollowing ? 1 : -1) },
+      } : null);
+    }
+  }
+
   // ── Join state ────────────────────────────────────────────────
   const [joinState, setJoinState] = useState<'idle' | 'loading' | 'joined' | 'requested'>('idle');
 
@@ -816,6 +858,32 @@ function AuthorProfilePage({ author, followed, onToggleFollow, onBack, onNotify,
                       Started {fmtDate(author.currentProject.startedAt)}
                     </span>
                   </div>
+                </div>
+              )}
+
+              {nextBook && (
+                <div className={styles.nextBookCard}>
+                  <div className={styles.nextBookEyebrow}>Coming next</div>
+                  <div className={`serif ${styles.nextBookTitle}`}>{nextBook.title}</div>
+                  {nextBook.genre && (
+                    <span className={styles.nextBookGenre}>{nextBook.genre}</span>
+                  )}
+                  {nextBook.description && (
+                    <p className={styles.nextBookDesc}>{nextBook.description}</p>
+                  )}
+                  {!isOwnProfile && (
+                    <button
+                      className={nextBook.isFollowing ? styles.nextBookFollowingBtn : styles.nextBookFollowBtn}
+                      onClick={() => void handleToggleNextBookFollow()}
+                    >
+                      {nextBook.isFollowing ? '✓ Following' : 'Notify me + shelve →'}
+                    </button>
+                  )}
+                  {nextBook._count.followers > 0 && (
+                    <div className={styles.nextBookMeta}>
+                      {nextBook._count.followers} {nextBook._count.followers === 1 ? 'reader' : 'readers'} following
+                    </div>
+                  )}
                 </div>
               )}
 

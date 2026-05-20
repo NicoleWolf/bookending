@@ -6,6 +6,7 @@ import { AuthorAboutCard } from './AuthorAboutCard';
 import { WritingProcessCard } from './WritingProcessCard';
 import { AuthorGenresCard } from './AuthorGenresCard';
 import { FeaturedProjectCard } from './FeaturedProjectCard';
+import { NextBookCard } from './NextBookCard';
 import { PrivacyCard } from './PrivacyCard';
 import { QAManagement } from './QAManagement';
 import type { QAEntry, PendingQuestion } from '../author-profiles/types';
@@ -16,6 +17,7 @@ type InternalTab = 'Profile' | 'Q&A';
 interface ManuscriptOption {
   id: string;
   title: string;
+  genre: string | null;
 }
 
 interface Props {
@@ -136,6 +138,7 @@ export function AuthorProfileEdit({
             featuredId={profile.featuredManuscriptId}
             onChange={featuredManuscriptId => patch({ featuredManuscriptId })}
           />
+          <NextBookCard manuscripts={manuscripts} />
           <PrivacyCard
             showActivityPublicly={profile.showActivityPublicly}
             onChange={showActivityPublicly => patch({ showActivityPublicly })}

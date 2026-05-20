@@ -1,7 +1,7 @@
 ﻿import { Router } from 'express';
 import type { NextFunction } from 'express';
 import { prisma } from '../lib/prisma';
-import { requireAuth } from '../middleware/auth';
+import { requireAuth, optionalAuth } from '../middleware/auth';
 import { parseBody } from '../lib/validate';
 import { SubmitQuestionSchema, PatchQuestionSchema } from '@bookending/shared';
 
@@ -131,6 +131,72 @@ router.patch('/:id/questions/:qid', requireAuth, async (req, res, next: NextFunc
       data: { answer: body.answer.trim(), publishedAt: new Date() },
     });
     res.json({ data: updated });
+  } catch (err) { next(err); }
+});
+
+// ── Next Book public routes ────────────────────────────────────────────────
+
+const NEXT_BOOK_PUBLIC_SELECT = {
+  id:          true,
+  manuscriptId: true,
+  title:       true,
+  description: true,
+  genre:       true,
+  updatedAt:   true,
+  _count:      { select: { followers: true } },
+} as const;
+
+// GET /api/authors/:id/next-book
+router.get('/:id/next-book', optionalAuth, async (req, res, next: NextFunction) => {
+  const authorId = req.params['id'] as string;
+  const viewerId = req.user?.id ?? null;
+  try {
+    const entry = await prisma.nextBook.findUnique({
+      where:  { authorId },
+      select: {
+        ...NEXT_BOOK_PUBLIC_SELECT,
+        ...(viewerId ? { followers: { where: { userId: viewerId }, select: { id: true } } } : {}),
+      },
+    });
+    if (!entry) { res.json({ data: null }); return; }
+    const { followers, ...rest } = entry as typeof entry & { followers?: { id: string }[] };
+    res.json({ data: { ...rest, isFollowing: Array.isArray(followers) && followers.length > 0 } });
+  } catch (err) { next(err); }
+});
+
+// POST /api/authors/:id/next-book/follow
+router.post('/:id/next-book/follow', requireAuth, async (req, res, next: NextFunction) => {
+  const authorId = req.params['id'] as string;
+  const userId = req.user!.id;
+  try {
+    const entry = await prisma.nextBook.findUnique({ where: { authorId }, select: { id: true, manuscriptId: true } });
+    if (!entry) { res.status(404).json({ error: 'No next book found for this author' }); return; }
+    await prisma.nextBookFollower.upsert({
+      where:  { nextBookId_userId: { nextBookId: entry.id, userId } },
+      create: { nextBookId: entry.id, userId },
+      update: {},
+    });
+    const manuscriptRef = entry.manuscriptId ?? `next-book:${entry.id}`;
+    await prisma.shelfEntry.upsert({
+      where:  { userId_manuscriptRef: { userId, manuscriptRef } },
+      create: { userId, manuscriptRef, source: 'next_book' },
+      update: {},
+    });
+    res.json({ data: { isFollowing: true } });
+  } catch (err) { next(err); }
+});
+
+// DELETE /api/authors/:id/next-book/follow
+router.delete('/:id/next-book/follow', requireAuth, async (req, res, next: NextFunction) => {
+  const authorId = req.params['id'] as string;
+  const userId = req.user!.id;
+  try {
+    const entry = await prisma.nextBook.findUnique({ where: { authorId }, select: { id: true, manuscriptId: true } });
+    if (!entry) { res.json({ data: { isFollowing: false } }); return; }
+    await prisma.nextBookFollower.deleteMany({ where: { nextBookId: entry.id, userId } });
+    const manuscriptRef = entry.manuscriptId ?? `next-book:${entry.id}`;
+    await prisma.shelfEntry.deleteMany({ where: { userId, manuscriptRef } });
+    res.json({ data: { isFollowing: false } });
   } catch (err) { next(err); }
 });
 

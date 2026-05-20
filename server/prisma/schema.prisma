@@ -41,6 +41,8 @@ model User {
   manuscriptVersions   ManuscriptVersion[]
   arcApplications         ArcApplication[]
   notificationPreferences NotificationPreference[]
+  nextBook                NextBook?
+  nextBookFollowing       NextBookFollower[]
 
   displayName       String?
   bio               String?
@@ -94,6 +96,7 @@ enum NotificationType {
   STAGE_NUDGE
   DEADLINE_WARNING
   ENCOURAGEMENT
+  NEXT_BOOK_ARRIVED
 }
 
 enum NotificationStatus {
@@ -144,6 +147,7 @@ model Manuscript {
   formattingProjects FormattingProject[]
   versions         ManuscriptVersion[]
   arcProgram       ArcProgram?
+  nextBook         NextBook?
 }
 
 enum ManuscriptStatus {
@@ -548,4 +552,29 @@ model Invite {
   invitedById String
   invitedBy   User      @relation("InvitedBy", fields: [invitedById], references: [id], onDelete: Cascade)
   createdAt   DateTime  @default(now())
+}
+
+model NextBook {
+  id           String            @id @default(cuid())
+  authorId     String            @unique
+  author       User              @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  manuscriptId String?           @unique
+  manuscript   Manuscript?       @relation(fields: [manuscriptId], references: [id], onDelete: SetNull)
+  title        String
+  description  String?
+  genre        String?
+  createdAt    DateTime          @default(now())
+  updatedAt    DateTime          @updatedAt
+  followers    NextBookFollower[]
+}
+
+model NextBookFollower {
+  id         String   @id @default(cuid())
+  nextBookId String
+  nextBook   NextBook @relation(fields: [nextBookId], references: [id], onDelete: Cascade)
+  userId     String
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt  DateTime @default(now())
+
+  @@unique([nextBookId, userId])
 }

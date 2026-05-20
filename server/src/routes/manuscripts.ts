@@ -97,6 +97,37 @@ router.patch('/:id', async (req, res, next: NextFunction) => {
         contentWarnings: JSON.parse((manuscript as any).contentWarnings ?? '[]') as string[],
       },
     });
+
+    // Fire Next Book arrival notifications (best-effort — response already sent)
+    const newBetaMode = (body.betaMode ?? existing.betaMode) as string;
+    const newStatus   = (body.status   ?? existing.status)   as string;
+    const betaJustOpened = existing.betaMode === 'CLOSED' && newBetaMode !== 'CLOSED';
+    const justPublished  = existing.status   !== 'PUBLISHED' && newStatus === 'PUBLISHED';
+
+    if (betaJustOpened || justPublished) {
+      try {
+        const nextBook = await prisma.nextBook.findUnique({
+          where:   { manuscriptId: id },
+          include: { followers: { select: { userId: true } } },
+        });
+        if (nextBook && nextBook.followers.length > 0) {
+          const message = justPublished
+            ? `"${existing.title}" is now published.`
+            : `"${existing.title}" is now open for beta readers.`;
+          await prisma.notification.createMany({
+            data: nextBook.followers.map(f => ({
+              userId:      f.userId,
+              type:        'NEXT_BOOK_ARRIVED' as const,
+              stage:       'Next Book',
+              message,
+              scheduledAt: new Date(),
+            })),
+          });
+          // The book has arrived — clear the "next book" slot
+          await prisma.nextBook.delete({ where: { id: nextBook.id } });
+        }
+      } catch { /* notifications are best-effort */ }
+    }
   } catch (err) { next(err); }
 });
 

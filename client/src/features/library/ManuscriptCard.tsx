@@ -7,9 +7,19 @@ import styles from './ManuscriptCard.module.css';
 interface ManuscriptCardProps {
   book: BookMetadata;
   author: string;
+  coverUrl?: string;
   onOpen: (id: string, section?: string) => void;
   onFieldSave: (id: string, updates: Partial<BookMetadata>) => void;
   onDelete: (id: string) => void;
+  onListing?: (id: string) => void;
+}
+
+function listingProgress(book: BookMetadata, coverUrl?: string): { done: number; total: number } {
+  let done = 0;
+  if (coverUrl) done++;
+  if (book.genre && book.description && book.contentRating) done++;
+  if (book.betaMode && book.betaMode !== 'CLOSED') done++;
+  return { done, total: 3 };
 }
 
 type EditingField = 'subtitle' | 'blurb' | 'genre' | 'isbns' | 'keywords' | 'status' | null;
@@ -19,7 +29,7 @@ function statusDisplay(status: BookMetadata['status']): string {
   return status.toUpperCase();
 }
 
-export default function ManuscriptCard({ book, author, onOpen, onFieldSave, onDelete }: ManuscriptCardProps) {
+export default function ManuscriptCard({ book, author, coverUrl, onOpen, onFieldSave, onDelete, onListing }: ManuscriptCardProps) {
   const [editingField, setEditingField] = useState<EditingField>(null);
   const [draftValue, setDraftValue] = useState('');
   const [draftIsbnEbook, setDraftIsbnEbook] = useState('');
@@ -377,6 +387,26 @@ export default function ManuscriptCard({ book, author, onOpen, onFieldSave, onDe
             </>
           )}
         </div>
+
+        {onListing && (() => {
+          const { done, total } = listingProgress(book, coverUrl);
+          const incomplete = done < total;
+          return (
+            <div className={styles.cardActions} onClick={e => e.stopPropagation()}>
+              {incomplete && (
+                <span className={styles.listingProgress}>{done}/{total} steps</span>
+              )}
+              <button
+                type="button"
+                className={styles.listingBtn}
+                data-incomplete={incomplete ? '' : undefined}
+                onClick={() => onListing(book.id)}
+              >
+                {incomplete ? 'Complete listing →' : 'Listing ✓'}
+              </button>
+            </div>
+          );
+        })()}
 
       </div>
     </div>

@@ -7,13 +7,14 @@ import { GENRES } from '../../shared/genres';
 import { useAuth } from '../auth';
 import ManuscriptCard from './ManuscriptCard';
 import NewManuscriptTile from './NewManuscriptTile';
+import PublishChecklist from '../publish-checklist';
 import ControlsBar from './ControlsBar';
 import type { FilterStatus, SortBy } from './ControlsBar';
 import styles from './Library.module.css';
 
 import { api } from '../../lib/api';
 
-type LibraryView = 'landing' | 'edit';
+type LibraryView = 'landing' | 'edit' | 'listing';
 type BookDrafts  = Record<string, BookMetadata>;
 type SavedState  = Record<string, boolean>;
 
@@ -210,6 +211,12 @@ export default function Library({ savedBooks, onSave, onDelete, openNewManuscrip
     setIsNewEntry(false);
     setFocusSection(section ?? null);
     setView('edit');
+  }
+
+  function openListing(id: string) {
+    setActiveId(id);
+    setIsNewEntry(false);
+    setView('listing');
   }
 
   function addManuscript() {
@@ -430,9 +437,11 @@ export default function Library({ savedBooks, onSave, onDelete, openNewManuscrip
                       key={b.id}
                       book={drafts[b.id] ?? b}
                       author={authorName}
+                      coverUrl={coverUrls[b.id]}
                       onOpen={openEditor}
                       onFieldSave={handleFieldSave}
                       onDelete={setDeleteTargetId}
+                      onListing={openListing}
                     />
                   ))
                 )}
@@ -844,6 +853,27 @@ export default function Library({ savedBooks, onSave, onDelete, openNewManuscrip
         </div>
       </div>
       </div>}
+
+      {view === 'listing' && drafts[activeId] && (
+        <PublishChecklist
+          manuscript={drafts[activeId]}
+          coverUrl={coverUrls[activeId] ?? null}
+          authorName={authorName}
+          onBack={() => setView('landing')}
+          onSave={(updates, newCoverUrl) => {
+            if (Object.keys(updates).length > 0) handleFieldSave(activeId, updates);
+            if (newCoverUrl !== undefined) {
+              if (newCoverUrl) {
+                try { localStorage.setItem(`bookending_cover_${activeId}`, newCoverUrl); } catch { /* quota */ }
+                setCoverUrls(prev => ({ ...prev, [activeId]: newCoverUrl }));
+              } else {
+                localStorage.removeItem(`bookending_cover_${activeId}`);
+                setCoverUrls(prev => { const next = { ...prev }; delete next[activeId]; return next; });
+              }
+            }
+          }}
+        />
+      )}
     </div>
   );
 }

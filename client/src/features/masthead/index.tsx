@@ -243,7 +243,7 @@ export default function Masthead({
               >
                 <Avatar initials={initials} tone="paper" size={26} src={currentUser.avatarUrl} />
                 <div className={styles.userInfo}>
-                  <span className={styles.userName}>{currentUser.name}</span>
+                  <span className={styles.userName}>{currentUser.displayName || currentUser.name}</span>
                   <span className={styles.userMeta}>
                     {navMode === 'reader'
                       ? 'READER'
@@ -258,7 +258,7 @@ export default function Masthead({
                     className={styles.userMenuProfile}
                     onClick={() => { setShowUserMenu(false); onTabChange('Profile'); }}
                   >
-                    <span className={styles.userMenuName}>{currentUser.name}</span>
+                    <span className={styles.userMenuName}>{currentUser.displayName || currentUser.name}</span>
                     <span className={styles.userMenuEmail}>{currentUser.email}</span>
                   </button>
                   <div className={styles.userMenuRule} />
@@ -327,7 +327,7 @@ export default function Masthead({
           </nav>
           <div className={styles.mobileNavFooter}>
             <div className={styles.mobileNavUser}>
-              <span className={styles.mobileNavUserName}>{currentUser?.name}</span>
+              <span className={styles.mobileNavUserName}>{currentUser?.displayName || currentUser?.name}</span>
               <span className={styles.mobileNavUserEmail}>{currentUser?.email}</span>
             </div>
             <button

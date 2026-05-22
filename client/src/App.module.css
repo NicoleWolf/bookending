@@ -1,3 +1,21 @@
+/* ── Auth loading screen ─────────────────────────────────────────── */
+
+.authLoading {
+  min-height: 100vh;
+  background: var(--ink);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.authLoadingText {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  color: var(--muted-2);
+  text-transform: uppercase;
+}
+
 /* ── Shared footer ───────────────────────────────────────────────── */
 
 .footer {

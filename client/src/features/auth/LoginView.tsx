@@ -60,7 +60,12 @@ export function LoginView({ initialMode = 'login' }: { initialMode?: 'login' | '
         <div className={styles.formWrap}>
           <div className={styles.eyebrow}>{eyebrow}</div>
 
-          {mode === 'forgot-password' && sent ? (
+          {mode === 'register' && error?.code === 'CONFIRM_EMAIL' ? (
+            <div className={styles.successMsg}>
+              {error.message} Once confirmed, come back and{' '}
+              <button className={styles.switchBtn} onClick={() => switchMode('login')}>sign in</button>.
+            </div>
+          ) : mode === 'forgot-password' && sent ? (
             <div className={styles.successMsg}>
               Check your inbox — we sent a password reset link to <strong>{email}</strong>.
             </div>
@@ -174,7 +179,7 @@ export function LoginView({ initialMode = 'login' }: { initialMode?: 'login' | '
                 </>
               )}
 
-              {error && <div className={styles.errorMsg}>{error.message}</div>}
+              {error && error.code !== 'CONFIRM_EMAIL' && <div className={styles.errorMsg}>{error.message}</div>}
 
               <button
                 className={styles.submitBtn}

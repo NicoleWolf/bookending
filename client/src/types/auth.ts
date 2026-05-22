@@ -30,6 +30,6 @@ export interface RegisterPayload {
 }
 
 export interface AuthError {
-  code: 'INVALID_CREDENTIALS' | 'EMAIL_IN_USE' | 'UNKNOWN';
+  code: 'INVALID_CREDENTIALS' | 'EMAIL_IN_USE' | 'CONFIRM_EMAIL' | 'UNKNOWN';
   message: string;
 }

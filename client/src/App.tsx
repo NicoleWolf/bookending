@@ -711,7 +711,11 @@ export default function App() {
     );
   }
 
-  if (isLoading) return null;
+  if (isLoading) return (
+    <div className={styles.authLoading}>
+      <span className={styles.authLoadingText}>One moment…</span>
+    </div>
+  );
 
   if (!currentUser) return <LoggedOutShell />;
 

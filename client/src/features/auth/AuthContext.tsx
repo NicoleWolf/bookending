@@ -164,18 +164,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setIsLoading(true);
     try {
       if (hasSupabase) {
-        await api.post('/api/auth/register', payload);
-        // After server creates the account, sign in to get the session
-        const { data, error: sbError } = await supabase.auth.signInWithPassword({
+        const { data, error: sbError } = await supabase.auth.signUp({
           email:    payload.email,
           password: payload.password,
+          options:  { data: { name: payload.name, role: payload.role } },
         });
-        if (sbError || !data.session) {
-          const err: AuthError = { code: 'UNKNOWN', message: sbError?.message ?? 'Sign-in after registration failed' };
-          throw err;
+        if (sbError) {
+          throw { code: 'UNKNOWN', message: sbError.message } as AuthError;
+        }
+        if (!data.session) {
+          // Supabase project has email confirmation enabled — user must confirm before signing in
+          throw { code: 'CONFIRM_EMAIL', message: 'Check your inbox and confirm your email address to complete registration.' } as AuthError;
         }
         const token = data.session.access_token;
-        const user  = await buildUserFromSupabase(data.user, token);
+        const user  = await buildUserFromSupabase(data.user!, token);
         const s: AuthSession = {
           user,
           token,

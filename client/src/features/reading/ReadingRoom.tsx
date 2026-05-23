@@ -44,8 +44,21 @@ export default function ReadingRoom({ msRef, onBack, arcMode, onArcFinished }: R
   const [notesSheetOpen,     setNotesSheetOpen]     = useState(false);
   const [chapterNoteMap,     setChapterNoteMap]     = useState<Record<number, ReaderChapterNoteRecord>>({});
   const [rereadMode,         setRereadMode]         = useState(false);
+  const [guidelinesAcked,   setGuidelinesAcked]    = useState(true);
   const readingRef = useRef<HTMLDivElement>(null);
   const paraRefMap = useRef<Map<string, HTMLElement>>(new Map());
+
+  useEffect(() => {
+    if (!ms?.instructions) return;
+    if (!localStorage.getItem(`bookending-instr-ack-${msRef}`)) {
+      setGuidelinesAcked(false);
+    }
+  }, [ms?.instructions, msRef]);
+
+  function acknowledgeGuidelines() {
+    localStorage.setItem(`bookending-instr-ack-${msRef}`, '1');
+    setGuidelinesAcked(true);
+  }
 
   useEffect(() => {
     if (localStorage.getItem(`bookending-first-note-${msRef}`)) setFirstNoteSaved(true);
@@ -329,6 +342,27 @@ export default function ReadingRoom({ msRef, onBack, arcMode, onArcFinished }: R
   return (
     <section className={styles.section}>
 
+      {/* ── Author guidelines gate ──────────────────────────────────── */}
+      {!guidelinesAcked && ms.instructions && (
+        <div className={styles.guideGate} role="dialog" aria-modal="true" aria-label="Author's guidelines">
+          <div className={styles.guidePanel}>
+            <div className={styles.guideEyebrow}>{ms.title}</div>
+            <h2 className={`serif ${styles.guideHeading}`}>Author's Guidelines</h2>
+            <div className={styles.guideDivider} />
+            <p className={`serif ${styles.guideBody}`}>{ms.instructions}</p>
+            <div className={styles.guideDivider} />
+            <div className={styles.guideFooter}>
+              <p className={styles.guideFootnote}>
+                The author asks that you read these before beginning. They won't appear again.
+              </p>
+              <button className={styles.guideAckBtn} onClick={acknowledgeGuidelines}>
+                I've read these — begin reading
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* ── Masthead ────────────────────────────────────────────────── */}
       <div className={styles.roomHeader}>
         <div className={styles.roomHeaderLeft}>
@@ -408,27 +442,17 @@ export default function ReadingRoom({ msRef, onBack, arcMode, onArcFinished }: R
       <div className={styles.bodyGrid} style={isInRevision && !rereadMode ? { display: 'none' } : undefined}>
         <div className={styles.bodyMain}>
 
-          {/* Author guidelines — collapsible, top of reading area */}
-          {chapter && ms.instructions && (() => {
-            const key = `bookending-instr-${msRef}-ch${chapter.id}`;
-            const defaultOpen = !localStorage.getItem(key);
-            return (
-              <details
-                className={styles.instrDetails}
-                open={defaultOpen}
-                onToggle={e => {
-                  if (!(e.currentTarget as HTMLDetailsElement).open) localStorage.setItem(key, '1');
-                }}
-              >
-                <summary className={styles.instrSummary}>
-                  ▾ Author's Guidelines
-                </summary>
-                <div className={styles.instrBody}>
-                  <p className={`serif ${styles.instrText}`}>{ms.instructions}</p>
-                </div>
-              </details>
-            );
-          })()}
+          {/* Author guidelines — collapsible reference strip */}
+          {chapter && ms.instructions && (
+            <details className={styles.instrDetails}>
+              <summary className={styles.instrSummary}>
+                ▾ Author's Guidelines
+              </summary>
+              <div className={styles.instrBody}>
+                <p className={`serif ${styles.instrText}`}>{ms.instructions}</p>
+              </div>
+            </details>
+          )}
 
           {/* Manuscript body */}
           {chapter && (

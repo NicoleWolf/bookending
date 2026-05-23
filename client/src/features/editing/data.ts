@@ -38,13 +38,3 @@ export const MANUSCRIPT_GENRES: Record<string, string[]> = {};
 
 export const BETA_READER_POOL: BetaReader[] = [];
 
-export const RATING_TAGS = [
-  { label: 'Insightful',         positive: true  },
-  { label: 'Thorough',           positive: true  },
-  { label: 'Prompt',             positive: true  },
-  { label: 'Detailed notes',     positive: true  },
-  { label: 'Great communicator', positive: true  },
-  { label: 'Brief notes',        positive: false },
-  { label: 'Slow to respond',    positive: false },
-  { label: 'Partial read',       positive: false },
-];

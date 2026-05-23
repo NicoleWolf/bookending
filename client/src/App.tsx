@@ -653,7 +653,7 @@ function AuthorApp() {
         />
       )}
       {activeTab === 'Print & Distribution' && <PrintDistribution />}
-      {activeTab === 'My Store' && <StorefrontTab savedBooks={savedBooks} onTabChange={setActiveTab} />}
+      {activeTab === 'My Store' && <StorefrontTab savedBooks={savedBooks} onTabChange={setActiveTab} onBookSave={handleBookSave} />}
       {activeTab === 'Audience' && <AudienceTab savedBooks={savedBooks} onOpenSeasons={() => setActiveTab('Seasons')} />}
       {activeTab === 'Seasons' && <SeasonsView onCompose={() => setActiveTab('Audience')} />}
       {activeTab === 'Connections' && <ConnectionsView />}

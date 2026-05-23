@@ -9,6 +9,7 @@ export interface ListingDraft {
   description: string | null;
   contentRating: string | null;
   contentWarnings: string[];
+  keywords: string[];
   betaMode: string;
   maxBetaReaders: number | null;
   readerCount: number;

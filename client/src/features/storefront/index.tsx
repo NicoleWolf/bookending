@@ -17,9 +17,10 @@ type SubView = 'overview' | 'products' | 'orders' | 'settings' | 'storefront';
 interface StorefrontTabProps {
   savedBooks: Record<string, BookMetadata>;
   onTabChange: (tab: string) => void;
+  onBookSave?: (id: string, book: BookMetadata) => void;
 }
 
-export default function StorefrontTab({ savedBooks, onTabChange }: StorefrontTabProps) {
+export default function StorefrontTab({ savedBooks, onTabChange, onBookSave }: StorefrontTabProps) {
   const { session } = useAuth();
   const [view,       setView]       = useState<SubView>('overview');
   const [newOrders,  setNewOrders]  = useState(0);
@@ -93,7 +94,7 @@ export default function StorefrontTab({ savedBooks, onTabChange }: StorefrontTab
 
       {view === 'overview'  && <OverviewView onViewChange={v => setView(v as SubView)} />}
       {view === 'storefront' && <StorefrontView />}
-      {view === 'products'  && <ProductsView savedBooks={savedBooks} onTabChange={onTabChange} />}
+      {view === 'products'  && <ProductsView savedBooks={savedBooks} onTabChange={onTabChange} onBookSave={onBookSave} />}
       {view === 'orders'    && <OrdersView />}
       {view === 'settings'  && <SettingsView />}
     </section>

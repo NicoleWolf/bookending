@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import type { BookMetadata, BetaMode } from '../library/data';
 import { BETA_MODE_OPTIONS, CONTENT_RATINGS, CONTENT_WARNINGS } from '../library/data';
 import { GENRES } from '../../shared/genres';
+import { GENRE_KEYWORDS } from '../../shared/keywords';
 import { api } from '../../lib/api';
 import { ListingPreview, completenessScore } from './ListingPreview';
 import type { ListingDraft } from './ListingPreview';
@@ -29,6 +30,7 @@ export function toDraft(ms: BookMetadata, coverUrl: string | null, authorName: s
     description:     ms.description     || null,
     contentRating:   ms.contentRating   || null,
     contentWarnings: ms.contentWarnings ?? [],
+    keywords:        ms.keywords ? ms.keywords.split(',').map(k => k.trim()).filter(Boolean) : [],
     betaMode:        ms.betaMode        ?? 'CLOSED',
     maxBetaReaders:  ms.maxBetaReaders  ?? null,
     readerCount:     0,
@@ -108,6 +110,9 @@ export default function PublishChecklist({ manuscript, coverUrl, authorName, onB
     if (debouncedDraft.maxBetaReaders  !== prev.maxBetaReaders)  updates.maxBetaReaders  = debouncedDraft.maxBetaReaders;
     if (JSON.stringify(debouncedDraft.contentWarnings) !== JSON.stringify(prev.contentWarnings)) {
       updates.contentWarnings = debouncedDraft.contentWarnings;
+    }
+    if (JSON.stringify(debouncedDraft.keywords) !== JSON.stringify(prev.keywords)) {
+      updates.keywords = debouncedDraft.keywords.join(', ');
     }
 
     prevSavedRef.current = debouncedDraft;
@@ -360,6 +365,47 @@ export default function PublishChecklist({ manuscript, coverUrl, authorName, onB
                                 </button>
                               ))}
                             </div>
+                          </div>
+
+                          <div className={styles.field}>
+                            <span className={styles.fieldLabel}>
+                              Keywords
+                              {draft.keywords.length > 0 && (
+                                <span className={styles.keywordCount}>{draft.keywords.length} selected</span>
+                              )}
+                            </span>
+                            {!draft.genre ? (
+                              <p className={styles.modeHint}>Select a genre above to see keyword suggestions.</p>
+                            ) : (
+                              <>
+                                <p className={styles.modeHint}>
+                                  Based on top-performing {draft.genre} titles. Click to add or remove.
+                                </p>
+                                <div className={styles.chipGrid} role="group" aria-label="Keyword suggestions">
+                                  {(GENRE_KEYWORDS[draft.genre] ?? []).map(kw => {
+                                    const active = draft.keywords.includes(kw);
+                                    return (
+                                      <button
+                                        key={kw}
+                                        type="button"
+                                        className={styles.chip}
+                                        aria-pressed={active}
+                                        data-active={active ? '' : undefined}
+                                        onClick={() => setDraft(d => ({
+                                          ...d,
+                                          keywords: active
+                                            ? d.keywords.filter(k => k !== kw)
+                                            : [...d.keywords, kw],
+                                        }))}
+                                      >
+                                        {active && <span className={styles.chipCheck} aria-hidden="true">✓</span>}
+                                        {kw}
+                                      </button>
+                                    );
+                                  })}
+                                </div>
+                              </>
+                            )}
                           </div>
                         </>
                       )}

@@ -1315,6 +1315,90 @@
   color: var(--paper);
 }
 
+/* ── Author guidelines gate (acknowledge modal) ──────────────────── */
+.guideGate {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  background: rgba(0, 0, 0, 0.82);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+
+.guidePanel {
+  background: var(--ink-3);
+  border: 0.5px solid var(--rule);
+  max-width: 560px;
+  width: 100%;
+  padding: 40px 48px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.guideEyebrow {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted-2);
+}
+
+.guideHeading {
+  font-style: italic;
+  font-size: 26px;
+  font-weight: 400;
+  color: var(--paper);
+  margin: 0;
+  line-height: 1.1;
+}
+
+.guideDivider {
+  height: 0.5px;
+  background: var(--rule);
+}
+
+.guideBody {
+  font-style: italic;
+  font-size: 15px;
+  line-height: 1.75;
+  color: var(--paper);
+  margin: 0;
+  white-space: pre-line;
+}
+
+.guideFooter {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.guideFootnote {
+  font-family: var(--sans);
+  font-size: 11px;
+  color: var(--muted);
+  margin: 0;
+  line-height: 1.5;
+}
+
+.guideAckBtn {
+  font-family: var(--sans);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  color: var(--ink);
+  background: var(--paper);
+  border: none;
+  padding: 12px 24px;
+  cursor: pointer;
+  align-self: flex-start;
+}
+.guideAckBtn:hover { opacity: 0.88; }
+.guideAckBtn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
 /* ── Reader instructions (details/summary) ───────────────────────── */
 .instrDetails {
   border-left: 2px solid color-mix(in srgb, var(--accent) 35%, transparent);

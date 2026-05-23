@@ -1,0 +1,86 @@
+export const GENRE_KEYWORDS: Record<string, string[]> = {
+  'Literary Fiction': [
+    'character-driven', 'coming of age', 'family drama', 'unreliable narrator',
+    'grief and loss', 'identity', 'social commentary', 'book club pick',
+    'dual timeline', 'immigration', 'mother-daughter', 'mental health',
+    'found family', 'epistolary', 'slow burn', 'redemption arc',
+  ],
+  'Fantasy': [
+    'found family', 'enemies to lovers', 'morally grey', 'magic system',
+    'political intrigue', 'diverse cast', 'LGBTQ+', 'slow burn romance',
+    'fae', 'dragons', 'dark magic', 'chosen one subverted',
+    'portal fantasy', 'heist', 'war', 'anti-hero',
+  ],
+  'Science Fiction': [
+    'found family', 'first contact', 'dystopian', 'AI and consciousness',
+    'climate fiction', 'generation ship', 'political', 'hard sci-fi',
+    'near future', 'cyberpunk', 'diverse cast', 'LGBTQ+',
+    'colonialism', 'space opera', 'military sci-fi', 'body horror',
+  ],
+  'Mystery & Thriller': [
+    'psychological thriller', 'unreliable narrator', 'twisty plot',
+    'cozy mystery', 'whodunit', 'dark secrets', 'small town',
+    'cold case', 'atmospheric', 'dual timeline', 'domestic thriller',
+    'female detective', 'historical crime', 'noir', 'slow burn', 'heist',
+  ],
+  'Horror': [
+    'atmospheric', 'folk horror', 'slow burn dread', 'psychological horror',
+    'supernatural', 'gothic', 'haunted house', 'body horror',
+    'cosmic horror', 'grief', 'found family', 'queer horror',
+    'visceral', 'survival horror', 'creature feature', 'quiet horror',
+  ],
+  'Romance': [
+    'enemies to lovers', 'forced proximity', 'slow burn', 'second chance',
+    'small town', 'grumpy/sunshine', 'steamy', 'sweet romance',
+    'found family', 'dual POV', 'age gap', 'forbidden love',
+    'he falls first', 'sports romance', 'paranormal romance', 'historical',
+  ],
+  'Historical Fiction': [
+    'dual timeline', "women's history", 'war', 'spy', 'survival',
+    'historical accuracy', 'untold stories', 'marginalized voices',
+    'Victorian', 'WWII', 'Regency', 'court intrigue',
+    'mythology', 'coming of age', 'slavery', 'resistance',
+  ],
+  'Young Adult': [
+    'coming of age', 'found family', 'first love', 'identity', 'LGBTQ+',
+    'mental health', 'diverse cast', 'enemies to lovers', 'magic school',
+    'dystopian', 'chosen one', 'grief', 'family drama',
+    'contemporary', 'slow burn', 'friendship',
+  ],
+  'Speculative Fiction': [
+    'climate fiction', 'solarpunk', 'hopepunk', 'dystopian', 'utopian',
+    'social commentary', 'weird fiction', 'liminal', 'experimental',
+    'steampunk', 'diverse cast', 'LGBTQ+', 'mythology',
+    'near future', 'hybrid genre', 'body horror',
+  ],
+  'Creative Nonfiction': [
+    'memoir', 'personal essays', 'grief', 'identity', 'immigrant experience',
+    'mother-daughter', 'addiction and recovery', 'place and belonging',
+    'mental health', 'nature writing', 'food and culture', 'travel',
+    'feminist', 'race and racism', 'coming of age', 'trauma and healing',
+  ],
+  'Self-Help & Narrative Nonfiction': [
+    'evidence-based', 'practical tools', 'mindfulness', 'productivity',
+    'leadership', 'relationships', 'burnout', 'habit formation',
+    'neuroscience', 'personal development', 'anxiety', 'wellness',
+    'narrative style', 'storytelling', 'career', 'finance',
+  ],
+  'Poetry & Hybrid': [
+    'lyric essays', 'prose poetry', 'identity', 'grief', 'love',
+    'nature', 'social justice', 'LGBTQ+', 'diaspora', 'experimental',
+    'verse novel', 'feminist', 'memory', 'body', 'place and belonging',
+    'ekphrasis',
+  ],
+  'Graphic Novel & Comics': [
+    'graphic memoir', 'coming of age', 'diverse representation', 'LGBTQ+',
+    'mental health', 'fantasy', 'horror', 'full colour', 'black and white',
+    'slice of life', 'mythology', 'YA', 'literary', 'humour', 'historical',
+    'superhero',
+  ],
+  "Children's": [
+    'middle grade', 'adventure', 'friendship', 'magic', 'school',
+    'diverse characters', 'humour', 'mystery', 'animals', 'family',
+    'identity', 'brave protagonist', 'illustrated', 'series',
+    'fantasy', 'contemporary',
+  ],
+};

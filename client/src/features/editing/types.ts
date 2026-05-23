@@ -14,8 +14,6 @@ export interface Reader {
   arcReservationEarned?: boolean;
 }
 
-export interface ReaderRating { stars: number; tags: string[]; note: string; }
-
 export interface BetaReader {
   id: string;
   name: string;

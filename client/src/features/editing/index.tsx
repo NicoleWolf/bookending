@@ -7,7 +7,7 @@ import InviteReaderModal from './InviteReaderModal';
 import ReaderMatcher from './ReaderMatcher';
 import LetterComposer from './LetterComposer';
 import Correspondence from './Correspondence';
-import type { BetaReader, Reader, ReaderRating, CorrespondenceThread, Comment } from './types';
+import type { BetaReader, Reader, CorrespondenceThread, Comment } from './types';
 import type { BookMetadata } from '../library/data';
 import DocumentEditor from './DocumentEditor';
 import NotesArchive from './NotesArchive';
@@ -17,7 +17,7 @@ import PendingRequests from './PendingRequests';
 import WriterSparkline, { type ReaderImpression } from './WriterSparkline';
 import {
   MANUSCRIPT_META, DEFAULT_EDITING_META, MANUSCRIPT_GENRES,
-  INTEGRATIONS, TONES, RATING_TAGS, verdictTone,
+  INTEGRATIONS, TONES, verdictTone,
 } from './data';
 import styles from './Editing.module.css';
 
@@ -67,11 +67,6 @@ export default function EditingHub({ savedBooks, onTabChange }: EditingHubProps)
   const [threads, setThreads]           = useState<CorrespondenceThread[]>([]);
   const [composingFor, setComposingFor] = useState<Reader | null>(null);
   const [corrThreadId, setCorrThreadId] = useState<number | null>(null);
-  const [ratings, setRatings]           = useState<Record<string, ReaderRating>>({});
-  const [ratingFor, setRatingFor]       = useState<string | null>(null);
-  const [ratingStars, setRatingStars]   = useState(0);
-  const [ratingTags, setRatingTags]     = useState<string[]>([]);
-  const [ratingNote, setRatingNote]     = useState('');
   const [msDropdownOpen, setMsDropdownOpen] = useState(false);
 
   const [readerImpressions, setReaderImpressions] = useState<ReaderImpression[]>([]);
@@ -163,20 +158,6 @@ export default function EditingHub({ savedBooks, onTabChange }: EditingHubProps)
       })
       .catch(err => console.error('Failed to add reader:', err));
   };
-
-  const openRating = (r: Reader) => {
-    const ex = ratings[r.id];
-    setRatingFor(r.id);
-    setRatingStars(ex?.stars ?? 0);
-    setRatingTags(ex?.tags ?? []);
-    setRatingNote(ex?.note ?? '');
-  };
-  const saveRating = (id: string) => {
-    setRatings(p => ({ ...p, [id]: { stars: ratingStars, tags: ratingTags, note: ratingNote } }));
-    setRatingFor(null);
-  };
-  const toggleTag = (tag: string) =>
-    setRatingTags(p => p.includes(tag) ? p.filter(t => t !== tag) : [...p, tag]);
 
   const startEdit = () => { setDraftInstr(activeInstr); setEditingInstr(true); };
   const saveInstr = () => {
@@ -614,8 +595,6 @@ export default function EditingHub({ savedBooks, onTabChange }: EditingHubProps)
             )}
 
             {activeReaders.map(r => {
-              const rating    = ratings[r.id] ?? null;
-              const isEditing = ratingFor === r.id;
               return (
                 <div key={r.id} className={styles.readerCard}>
 
@@ -672,83 +651,6 @@ export default function EditingHub({ savedBooks, onTabChange }: EditingHubProps)
                     return null;
                   })()}
 
-                  {isEditing ? (
-                    <div className={styles.ratingEditFooter}>
-                      <div className={styles.starRow}>
-                        <div className={styles.stars}>
-                          {[1,2,3,4,5].map(n => (
-                            <button
-                              key={n}
-                              className={styles.starBtn}
-                              data-lit={n <= ratingStars ? 'true' : undefined}
-                              onClick={() => setRatingStars(n)}
-                            >★</button>
-                          ))}
-                        </div>
-                        {ratingStars > 0 && (
-                          <button className={styles.clearBtn} onClick={() => setRatingStars(0)}>CLEAR</button>
-                        )}
-                      </div>
-                      <div>
-                        <div className={styles.tagsLabel}>FEEDBACK LABELS</div>
-                        <div className={styles.tagsList}>
-                          {RATING_TAGS.map(({ label, positive }) => {
-                            const active = ratingTags.includes(label);
-                            return (
-                              <button
-                                key={label}
-                                className={styles.ratingTag}
-                                data-active={active ? 'true' : undefined}
-                                data-positive={positive ? 'true' : 'false'}
-                                onClick={() => toggleTag(label)}
-                              >{label}</button>
-                            );
-                          })}
-                        </div>
-                      </div>
-                      <textarea
-                        className={styles.ratingTextarea}
-                        placeholder="Private note about this reader…"
-                        value={ratingNote}
-                        onChange={e => setRatingNote(e.target.value)}
-                      />
-                      <div className={styles.btnRow}>
-                        <Btn tone="primary" className={styles.btnXs} onClick={() => saveRating(r.id)}>Save rating</Btn>
-                        <Btn tone="ghost" className={styles.btnXs} onClick={() => setRatingFor(null)}>Cancel</Btn>
-                      </div>
-                    </div>
-                  ) : (
-                    <div className={styles.ratingFooter}>
-                      {rating ? (
-                        <>
-                          <div className={styles.ratingDisplay}>
-                            <span className={styles.ratingStars}>
-                              {'★'.repeat(rating.stars)}{'☆'.repeat(5 - rating.stars)}
-                            </span>
-                            {rating.tags.map(tag => {
-                              const positive = RATING_TAGS.find(t => t.label === tag)?.positive ?? true;
-                              return (
-                                <span
-                                  key={tag}
-                                  className={styles.ratingTagBadge}
-                                  data-positive={positive ? 'true' : 'false'}
-                                >{tag}</span>
-                              );
-                            })}
-                            {rating.note && (
-                              <span className={styles.ratingNoteSaved}>· note saved</span>
-                            )}
-                          </div>
-                          <button className={styles.ratingEditBtn} onClick={() => openRating(r)}>Edit</button>
-                        </>
-                      ) : (
-                        <>
-                          <span className={styles.ratingNone}>NOT YET RATED</span>
-                          <button className={styles.ratingEditBtn} onClick={() => openRating(r)}>Rate reader</button>
-                        </>
-                      )}
-                    </div>
-                  )}
                 </div>
               );
             })}

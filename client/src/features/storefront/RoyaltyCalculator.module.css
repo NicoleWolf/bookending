@@ -1,0 +1,220 @@
+/* ── Wrapper ─────────────────────────────────────────────── */
+.calc {
+  border-top: 1px solid var(--rule);
+  margin-top: 8px;
+}
+
+.calcHeader {
+  padding: 14px 28px;
+  border-bottom: 1px solid var(--rule);
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+}
+
+.calcSub {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 10px;
+  color: var(--muted);
+  letter-spacing: 0.12em;
+}
+
+/* ── Body grid ───────────────────────────────────────────── */
+.calcBody {
+  padding: 28px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: auto auto auto;
+  gap: 28px 40px;
+}
+
+/* ── Format segmented ────────────────────────────────────── */
+.formatRow {
+  grid-column: 1 / -1;
+}
+
+.segmented {
+  display: flex;
+  border: 0.5px solid var(--rule);
+  width: fit-content;
+}
+
+.seg {
+  padding: 7px 20px;
+  font-family: var(--sans);
+  font-size: 12px;
+  font-weight: 500;
+  background: var(--ink-2);
+  border: none;
+  color: var(--muted);
+  cursor: pointer;
+  transition: background 0.1s, color 0.1s;
+}
+.seg + .seg { border-left: 0.5px solid var(--rule); }
+.seg[data-active] { background: var(--paper); color: var(--ink); }
+
+/* ── Slider column ───────────────────────────────────────── */
+.sliderCol {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.priceDisplay {
+  display: flex;
+  align-items: baseline;
+  gap: 3px;
+  line-height: 1;
+}
+
+.priceCurrency {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 20px;
+  color: var(--muted);
+  align-self: flex-start;
+  padding-top: 8px;
+}
+
+.priceValue {
+  font-style: italic;
+  font-size: 56px;
+  line-height: 1;
+  color: var(--paper);
+}
+
+/* Range slider — square thumb, filled track via gradient */
+.slider {
+  width: 100%;
+  appearance: none;
+  -webkit-appearance: none;
+  height: 2px;
+  background: linear-gradient(
+    to right,
+    var(--paper) 0%,
+    var(--paper) var(--fill, 0%),
+    var(--rule)  var(--fill, 0%),
+    var(--rule)  100%
+  );
+  outline: none;
+  cursor: pointer;
+  border: none;
+}
+
+.slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  background: var(--paper);
+  cursor: pointer;
+  border: none;
+  border-radius: 0;
+}
+
+.slider::-moz-range-thumb {
+  width: 16px;
+  height: 16px;
+  background: var(--paper);
+  cursor: pointer;
+  border: none;
+  border-radius: 0;
+}
+
+.slider:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 4px;
+}
+
+.sliderBounds {
+  display: flex;
+  justify-content: space-between;
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 10px;
+  color: var(--muted-2);
+  letter-spacing: 0.06em;
+}
+
+/* ── Per-sale royalty box ────────────────────────────────── */
+.royaltyBox {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 24px;
+  border: 0.5px solid color-mix(in srgb, var(--good) 40%, transparent);
+  background: color-mix(in srgb, var(--good) 7%, var(--ink-3));
+  align-self: start;
+}
+
+.royaltyLabel {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--good);
+}
+
+.royaltyValue {
+  font-style: italic;
+  font-size: 48px;
+  line-height: 1;
+  color: var(--good);
+}
+
+.royaltyNote {
+  font-family: var(--sans);
+  font-size: 11px;
+  color: color-mix(in srgb, var(--good) 60%, transparent);
+}
+
+/* ── Volume tiers table ──────────────────────────────────── */
+.tiersTable {
+  grid-column: 1 / -1;
+  border: 0.5px solid var(--rule);
+}
+
+.tiersHead {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr 1fr;
+  padding: 9px 16px;
+  border-bottom: 0.5px solid var(--rule);
+  background: color-mix(in srgb, var(--ink) 60%, var(--ink-3));
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.tierRow {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr 1fr;
+  padding: 11px 16px;
+  border-bottom: 0.5px solid var(--rule);
+  align-items: center;
+}
+.tierRow:last-child { border-bottom: none; }
+
+.tierVol {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 11px;
+  color: var(--muted);
+  letter-spacing: 0.06em;
+}
+
+.tierMonthly {
+  font-style: italic;
+  font-size: 17px;
+  color: var(--paper);
+}
+
+.tierAnnual {
+  font-style: italic;
+  font-size: 17px;
+  color: var(--muted);
+}

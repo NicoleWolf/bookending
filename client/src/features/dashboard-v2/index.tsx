@@ -12,7 +12,7 @@ import { DiscoverLane } from './components/DiscoverLane';
 import { ConnectLane } from './components/ConnectLane';
 import { WriterEmptyState } from './components/WriterEmptyState';
 import { ReaderEmptyState } from './components/ReaderEmptyState';
-import { DashboardFooter } from './components/DashboardFooter';
+
 import { adaptWritingData, adaptReadingData } from './adapters';
 import { useDashboardV2 } from './useDashboardV2';
 import styles from './index.module.css';
@@ -112,8 +112,6 @@ export default function DashboardPreview({ writerEmpty = false, readerEmpty = fa
           )}
         </>
       )}
-
-      <DashboardFooter />
 
       {/* Dev-only state toggles */}
       <div className={styles.devBar}>

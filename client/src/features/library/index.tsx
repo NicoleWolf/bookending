@@ -485,7 +485,7 @@ export default function Library({ savedBooks, onSave, onDelete, openNewManuscrip
         <SectionHead
           eyebrow="§ 07 · Manuscripts"
           title={book?.title ?? 'Manuscript'}
-          kicker="Title metadata, ISBNs, descriptions, and pricing."
+          kicker="Title metadata, ISBNs, and descriptions."
         />
       </div>
 
@@ -720,25 +720,6 @@ export default function Library({ savedBooks, onSave, onDelete, openNewManuscrip
             <div className={styles.fieldRow}>
               <span className={styles.fieldLabel}>ISBN — Print</span>
               <input className={styles.fieldInput} value={book?.isbnPrint ?? ''} onChange={e => update('isbnPrint', e.target.value)} placeholder="978-0-000000-01-7" />
-            </div>
-          </div>
-
-          {/* Pricing */}
-          <div id="ms-section-pricing" className={styles.formSection}>
-            <div className={styles.sectionHead}>Pricing</div>
-            <div className={styles.fieldRow}>
-              <span className={styles.fieldLabel}>Ebook</span>
-              <div className={styles.priceRow}>
-                <span className={styles.pricePrefix}>$</span>
-                <input className={styles.priceInput} value={book?.priceEbook ?? ''} onChange={e => update('priceEbook', e.target.value)} placeholder="9.99" />
-              </div>
-            </div>
-            <div className={styles.fieldRow}>
-              <span className={styles.fieldLabel}>Paperback</span>
-              <div className={styles.priceRow}>
-                <span className={styles.pricePrefix}>$</span>
-                <input className={styles.priceInput} value={book?.pricePaperback ?? ''} onChange={e => update('pricePaperback', e.target.value)} placeholder="17.99" />
-              </div>
             </div>
           </div>
 

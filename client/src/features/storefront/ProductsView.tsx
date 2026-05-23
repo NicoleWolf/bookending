@@ -5,6 +5,7 @@ import { PRODUCT_STATUS_TONE } from './data';
 import type { Product, ProductStatus } from './types';
 import type { BookMetadata } from '../library/data';
 import { useAuth } from '../auth';
+import { RoyaltyCalculator } from './RoyaltyCalculator';
 import styles from './ProductsView.module.css';
 
 import { api } from '../../lib/api';
@@ -34,9 +35,10 @@ function recordToProduct(r: ProductRecord): Product {
 interface ProductsViewProps {
   savedBooks: Record<string, BookMetadata>;
   onTabChange?: (tab: string) => void;
+  onBookSave?: (id: string, book: BookMetadata) => void;
 }
 
-export function ProductsView({ savedBooks, onTabChange }: ProductsViewProps) {
+export function ProductsView({ savedBooks, onTabChange, onBookSave }: ProductsViewProps) {
   const { session } = useAuth();
   const [products, setProducts] = useState<Product[]>([]);
   const [search,   setSearch]   = useState('');
@@ -122,6 +124,50 @@ export function ProductsView({ savedBooks, onTabChange }: ProductsViewProps) {
           <div className={`serif ${styles.emptyText}`}>No products match "{search}"</div>
         </div>
       )}
+
+      {onBookSave && Object.values(savedBooks).length > 0 && (
+        <div className={styles.pricingSection}>
+          <div className={styles.pricingHeader}>
+            <div className="label">Manuscript pricing</div>
+            <span className={styles.pricingHeaderSub}>SET PRICES PER FORMAT · SAVED AUTOMATICALLY</span>
+          </div>
+          <div className={styles.pricingGrid}>
+            {Object.values(savedBooks).map((book) => (
+              <div key={book.id} className={styles.pricingItem}>
+                <div className={styles.pricingBookTitle}>{book.title}</div>
+                <div className={styles.pricingFields}>
+                  <div className={styles.pricingField}>
+                    <span className={styles.pricingFieldLabel}>Ebook</span>
+                    <div className={styles.priceRow}>
+                      <span className={styles.pricePrefix}>$</span>
+                      <input
+                        className={styles.priceInput}
+                        value={book.priceEbook ?? ''}
+                        onChange={e => onBookSave(book.id, { ...book, priceEbook: e.target.value })}
+                        placeholder="9.99"
+                      />
+                    </div>
+                  </div>
+                  <div className={styles.pricingField}>
+                    <span className={styles.pricingFieldLabel}>Paperback</span>
+                    <div className={styles.priceRow}>
+                      <span className={styles.pricePrefix}>$</span>
+                      <input
+                        className={styles.priceInput}
+                        value={book.pricePaperback ?? ''}
+                        onChange={e => onBookSave(book.id, { ...book, pricePaperback: e.target.value })}
+                        placeholder="17.99"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      <RoyaltyCalculator />
 
       {listedBooks.length > 0 && (
         <div className={styles.coversSection}>

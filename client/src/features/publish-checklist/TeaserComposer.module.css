@@ -1,0 +1,314 @@
+/* ── TeaserComposer ───────────────────────────────────────── */
+.composer {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+/* Header */
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 14px;
+  border-bottom: 0.5px solid var(--rule);
+  margin-bottom: 18px;
+}
+
+.headerLabel {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.cancelBtn {
+  font-family: var(--sans);
+  font-size: 12px;
+  color: var(--muted);
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+}
+.cancelBtn:hover { color: var(--paper); }
+.cancelBtn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+/* Sections */
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.sectionLabel {
+  font-family: var(--sans);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+/* Include toggles */
+.includeToggles {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.includeChip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-family: var(--sans);
+  font-size: 12px;
+  color: var(--muted);
+  background: transparent;
+  border: 0.5px solid var(--rule);
+  padding: 5px 10px;
+  cursor: pointer;
+  transition: color 0.1s, background 0.1s, border-color 0.1s;
+}
+.includeChip:hover { color: var(--paper); border-color: var(--muted); }
+.includeChip[data-active] { background: var(--paper); color: var(--ink); border-color: var(--paper); }
+.includeChip:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+.chipCheck { font-size: 10px; font-weight: 700; }
+
+/* Caption textarea */
+.captionTextarea {
+  font-family: var(--serif);
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--paper);
+  background: var(--ink-2);
+  border: 0.5px solid var(--rule);
+  padding: 10px 12px;
+  width: 100%;
+  box-sizing: border-box;
+  resize: vertical;
+  outline: none;
+  min-height: 72px;
+}
+.captionTextarea::placeholder { color: var(--muted-2); font-style: italic; }
+.captionTextarea:focus { border-color: var(--accent); }
+
+/* Preview */
+.previewSection {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+/* Community post card */
+.postCard {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 14px;
+  background: var(--ink-2);
+  border: 0.5px solid var(--rule);
+}
+
+.postAuthorRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.postAvatar {
+  width: 28px;
+  height: 28px;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--sans);
+  font-size: 10px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.postAuthorInfo {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.postAuthorName {
+  font-family: var(--sans);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--paper);
+}
+
+.postTime {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--muted);
+  letter-spacing: 0.04em;
+}
+
+.postCaption {
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--paper);
+  margin: 0;
+}
+
+/* Book attachment */
+.postAttachment {
+  display: flex;
+  gap: 10px;
+  background: var(--ink-3);
+  border: 0.5px solid var(--rule);
+  padding: 10px;
+}
+
+.attachCover {
+  width: 48px;
+  aspect-ratio: 2 / 3;
+  object-fit: cover;
+  flex-shrink: 0;
+  display: block;
+}
+
+.attachCoverPlaceholder {
+  width: 48px;
+  aspect-ratio: 2 / 3;
+  background: var(--rule);
+  flex-shrink: 0;
+}
+
+.attachMeta {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.attachGenre {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  color: var(--muted);
+}
+
+.attachTitle {
+  font-size: 14px;
+  color: var(--paper);
+  line-height: 1.2;
+}
+
+.attachBlurb {
+  font-family: var(--sans);
+  font-size: 11px;
+  color: var(--muted);
+  line-height: 1.5;
+  margin: 0;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+.attachLaunch {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  color: var(--accent-text);
+  margin-top: 2px;
+}
+
+/* Social */
+.socialSection {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 16px;
+  padding-top: 16px;
+  border-top: 0.5px solid var(--rule);
+}
+
+.platformToggles {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.platformChip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-family: var(--sans);
+  font-size: 12px;
+  color: var(--muted);
+  background: transparent;
+  border: 0.5px solid var(--rule);
+  padding: 5px 10px;
+  cursor: pointer;
+  transition: color 0.1s, background 0.1s, border-color 0.1s;
+}
+.platformChip:hover { color: var(--paper); border-color: var(--muted); }
+.platformChip[data-active] { background: var(--paper); color: var(--ink); border-color: var(--paper); }
+.platformChip:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+.socialNoAccounts {
+  font-family: var(--sans);
+  font-size: 12px;
+  color: var(--muted);
+  margin: 0;
+  line-height: 1.5;
+}
+
+.connectLink {
+  font-family: var(--sans);
+  font-size: 12px;
+  color: var(--accent-text);
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.connectLink:hover { opacity: 0.8; }
+.connectLink:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+/* Footer */
+.footer {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-top: 16px;
+  border-top: 0.5px solid var(--rule);
+}
+
+.postBtn {
+  font-family: var(--sans);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink);
+  background: var(--accent);
+  border: none;
+  padding: 13px 20px;
+  cursor: pointer;
+  text-align: center;
+  width: 100%;
+  transition: background 0.15s;
+}
+.postBtn:hover { background: var(--accent-2); }
+.postBtn:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+
+.followerNote {
+  font-family: var(--sans);
+  font-size: 11px;
+  color: var(--muted);
+  margin: 0;
+  text-align: center;
+}

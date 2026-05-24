@@ -66,8 +66,10 @@ export function ProductsView({ savedBooks, onTabChange, onBookSave }: ProductsVi
     <div>
       <div className={styles.toolbar}>
         <div className={styles.searchBox}>
-          <IconSearch size={13} className={styles.searchIcon} />
+          <IconSearch size={13} className={styles.searchIcon} aria-hidden="true" />
           <input
+            id="products-search"
+            aria-label="Search products"
             value={search}
             onChange={e => setSearch(e.target.value)}
             placeholder="Search products…"
@@ -113,7 +115,7 @@ export function ProductsView({ savedBooks, onTabChange, onBookSave }: ProductsVi
           <div className={styles.productStock}>{p.stock}</div>
           <div className={`serif ${styles.productSold}`}>{p.sold}</div>
           <Pill tone={PRODUCT_STATUS_TONE[p.status]}>{p.status.replace('-', ' ')}</Pill>
-          <button className={styles.productMore}>
+          <button className={styles.productMore} aria-label={`More options for ${p.title}`}>
             <IconMore size={15} />
           </button>
         </div>
@@ -137,26 +139,34 @@ export function ProductsView({ savedBooks, onTabChange, onBookSave }: ProductsVi
                 <div className={styles.pricingBookTitle}>{book.title}</div>
                 <div className={styles.pricingFields}>
                   <div className={styles.pricingField}>
-                    <span className={styles.pricingFieldLabel}>Ebook</span>
+                    <label htmlFor={`price-ebook-${book.id}`} className={styles.pricingFieldLabel}>Ebook</label>
                     <div className={styles.priceRow}>
-                      <span className={styles.pricePrefix}>$</span>
+                      <span aria-hidden="true" className={styles.pricePrefix}>$</span>
                       <input
+                        id={`price-ebook-${book.id}`}
                         className={styles.priceInput}
+                        type="text"
+                        inputMode="decimal"
                         value={book.priceEbook ?? ''}
                         onChange={e => onBookSave(book.id, { ...book, priceEbook: e.target.value })}
                         placeholder="9.99"
+                        aria-label={`Ebook price for ${book.title} in USD`}
                       />
                     </div>
                   </div>
                   <div className={styles.pricingField}>
-                    <span className={styles.pricingFieldLabel}>Paperback</span>
+                    <label htmlFor={`price-pb-${book.id}`} className={styles.pricingFieldLabel}>Paperback</label>
                     <div className={styles.priceRow}>
-                      <span className={styles.pricePrefix}>$</span>
+                      <span aria-hidden="true" className={styles.pricePrefix}>$</span>
                       <input
+                        id={`price-pb-${book.id}`}
                         className={styles.priceInput}
+                        type="text"
+                        inputMode="decimal"
                         value={book.pricePaperback ?? ''}
                         onChange={e => onBookSave(book.id, { ...book, pricePaperback: e.target.value })}
                         placeholder="17.99"
+                        aria-label={`Paperback price for ${book.title} in USD`}
                       />
                     </div>
                   </div>

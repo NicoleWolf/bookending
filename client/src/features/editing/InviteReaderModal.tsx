@@ -34,10 +34,10 @@ export default function InviteReaderModal({ defaultManuscriptId, manuscripts, on
   if (step === 'sent') {
     return (
       <div className={styles.overlay} onClick={onClose}>
-        <div className={styles.modal} onClick={e => e.stopPropagation()}>
+        <div className={styles.modal} role="dialog" aria-modal="true" aria-labelledby="invite-modal-title" onClick={e => e.stopPropagation()}>
           <div className={styles.sentBody}>
             <div className={styles.sentIcon}>✓</div>
-            <p className={styles.sentTitle}>Invite sent to {name.split(' ')[0]}</p>
+            <p id="invite-modal-title" className={styles.sentTitle}>Invite sent to {name.split(' ')[0]}</p>
             <p className={styles.sentSub}>
               They'll appear in your readers list as pending until they accept and log in to Bookending.
             </p>
@@ -55,10 +55,10 @@ export default function InviteReaderModal({ defaultManuscriptId, manuscripts, on
   if (step === 'preview') {
     return (
       <div className={styles.overlay} onClick={onClose}>
-        <div className={styles.modal} onClick={e => e.stopPropagation()}>
+        <div className={styles.modal} role="dialog" aria-modal="true" aria-labelledby="invite-modal-title" onClick={e => e.stopPropagation()}>
           <div className={styles.head}>
-            <span className={styles.headTitle}>Preview invite</span>
-            <button className={styles.closeBtn} onClick={onClose}>✕</button>
+            <span id="invite-modal-title" className={styles.headTitle}>Preview invite</span>
+            <button className={styles.closeBtn} aria-label="Close" onClick={onClose}>✕</button>
           </div>
 
           <div className={styles.previewBody}>
@@ -100,17 +100,18 @@ export default function InviteReaderModal({ defaultManuscriptId, manuscripts, on
   // ── Form step ──────────────────────────────────────────────────
   return (
     <div className={styles.overlay} onClick={onClose}>
-      <div className={styles.modal} onClick={e => e.stopPropagation()}>
+      <div className={styles.modal} role="dialog" aria-modal="true" aria-labelledby="invite-modal-title" onClick={e => e.stopPropagation()}>
         <div className={styles.head}>
-          <span className={styles.headTitle}>Invite a beta reader</span>
-          <button className={styles.closeBtn} onClick={onClose}>✕</button>
+          <span id="invite-modal-title" className={styles.headTitle}>Invite a beta reader</span>
+          <button className={styles.closeBtn} aria-label="Close" onClick={onClose}>✕</button>
         </div>
 
         <div className={styles.formBody}>
           <div className={styles.row2}>
             <div className={styles.field}>
-              <label className={styles.label}>Full name</label>
+              <label htmlFor="invite-name" className={styles.label}>Full name</label>
               <input
+                id="invite-name"
                 className={styles.input}
                 placeholder="e.g. Sarah Chen"
                 value={name}
@@ -119,8 +120,9 @@ export default function InviteReaderModal({ defaultManuscriptId, manuscripts, on
               />
             </div>
             <div className={styles.field}>
-              <label className={styles.label}>Email address</label>
+              <label htmlFor="invite-email" className={styles.label}>Email address</label>
               <input
+                id="invite-email"
                 className={styles.input}
                 type="email"
                 placeholder="e.g. sarah@example.com"

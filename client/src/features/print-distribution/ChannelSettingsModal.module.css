@@ -1,4 +1,4 @@
-/* ── Overlay & modal shell ───────────────────────────────────────── */
+﻿/* ── Overlay & modal shell ───────────────────────────────────────── */
 .overlay {
   position: fixed;
   inset: 0;
@@ -208,7 +208,7 @@
   font-family: var(--mono);
   font-feature-settings: "ss01";
   font-size: 10px;
-  color: var(--accent);
+  color: var(--accent-text);
   letter-spacing: 0.04em;
 }
 

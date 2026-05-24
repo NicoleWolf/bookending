@@ -1,4 +1,4 @@
-/* ── Root ──────────────────────────────────────────────── */
+﻿/* ── Root ──────────────────────────────────────────────── */
 
 .root {
   display: flex;
@@ -68,7 +68,7 @@
 
 .editToggle:hover,
 .editToggle[data-active] {
-  color: var(--accent);
+  color: var(--accent-text);
   border-color: var(--accent);
 }
 

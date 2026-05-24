@@ -1,4 +1,4 @@
-/* ── Grid layout ──────────────────────────────────────────── */
+﻿/* ── Grid layout ──────────────────────────────────────────── */
 
 .settingsGrid {
   display: grid;
@@ -367,7 +367,7 @@
   font-size: 10px;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: var(--accent);
+  color: var(--accent-text);
   margin-bottom: 8px;
 }
 

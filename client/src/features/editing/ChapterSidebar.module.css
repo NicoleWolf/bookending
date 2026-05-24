@@ -1,4 +1,4 @@
-.sidebar {
+﻿.sidebar {
   position: sticky;
   top: 0;
   height: 100vh;
@@ -24,7 +24,7 @@
   display: block;
   font-size: 10px;
   letter-spacing: 0.1em;
-  color: var(--accent);
+  color: var(--accent-text);
   text-transform: uppercase;
   margin-bottom: 6px;
 }

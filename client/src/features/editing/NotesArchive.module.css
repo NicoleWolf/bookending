@@ -1,4 +1,4 @@
-.wrap {
+﻿.wrap {
   padding: 32px 48px;
   display: flex;
   flex-direction: column;
@@ -180,7 +180,7 @@
   font-size: 9px;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: var(--accent);
+  color: var(--accent-text);
   background: none;
   border: none;
   cursor: pointer;

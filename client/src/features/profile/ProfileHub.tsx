@@ -4,6 +4,7 @@ import ReaderProfilePage from '../reader-profile';
 import AuthorProfilePage from '../author-profile';
 import NotificationCenter from '../notification-center/NotificationCenter';
 import type { AppNotification } from '../notifications/data';
+import type { BookMetadata } from '../library/data';
 import styles from './ProfileHub.module.css';
 
 export type HubTab = 'Profile' | 'My Reader Profile' | 'My Author Profile' | 'Notifications';
@@ -11,12 +12,13 @@ export type HubTab = 'Profile' | 'My Reader Profile' | 'My Author Profile' | 'No
 const TABS: HubTab[] = ['Profile', 'My Reader Profile', 'My Author Profile', 'Notifications'];
 
 interface Props {
-  onBack: () => void;
-  onToast: (n: AppNotification) => void;
-  initialTab?: HubTab;
+  onBack:       () => void;
+  onToast:      (n: AppNotification) => void;
+  initialTab?:  HubTab;
+  savedBooks?:  Record<string, BookMetadata>;
 }
 
-export default function ProfileHub({ onBack, onToast, initialTab = 'Profile' }: Props) {
+export default function ProfileHub({ onBack, onToast, initialTab = 'Profile', savedBooks = {} }: Props) {
   const [activeTab, setActiveTab] = useState<HubTab>(initialTab);
 
   return (
@@ -42,7 +44,7 @@ export default function ProfileHub({ onBack, onToast, initialTab = 'Profile' }: 
           <ReaderProfilePage onDone={() => setActiveTab('Profile')} onToast={onToast} />
         )}
         {activeTab === 'My Author Profile' && (
-          <AuthorProfilePage onDone={() => setActiveTab('Profile')} onToast={onToast} />
+          <AuthorProfilePage onDone={() => setActiveTab('Profile')} onToast={onToast} savedBooks={savedBooks} />
         )}
         {activeTab === 'Notifications' && (
           <NotificationCenter />

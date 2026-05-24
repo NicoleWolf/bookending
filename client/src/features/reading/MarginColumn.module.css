@@ -1,4 +1,4 @@
-.marginCol {
+﻿.marginCol {
   width: 220px;
   flex-shrink: 0;
   position: relative;
@@ -137,7 +137,7 @@
 }
 
 .replyBtn:hover {
-  color: var(--accent);
+  color: var(--accent-text);
 }
 
 .editBtn, .deleteBtn {

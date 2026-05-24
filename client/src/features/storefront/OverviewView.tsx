@@ -5,7 +5,9 @@ import type { Product, Order } from './types';
 import {
   ORDER_STATUS_TONE, ORDER_STATUS_LABEL,
   REVENUE_SERIES, GEOGRAPHY, FUNNEL, REPEAT_RATE,
+  ENGAGEMENT_DATA,
 } from './data';
+import { EngagementChart } from './EngagementChart';
 import styles from './OverviewView.module.css';
 
 // ── Chart helpers ─────────────────────────────────────────────────
@@ -110,6 +112,8 @@ export function OverviewView({ onViewChange }: { onViewChange?: (v: string) => v
           <div className={styles.revenueCalloutSub}>+34% from last period</div>
         </div>
       </div>
+
+      <EngagementChart data={ENGAGEMENT_DATA} />
 
       <div className={styles.mainGrid}>
         {/* ── Left panel ── */}

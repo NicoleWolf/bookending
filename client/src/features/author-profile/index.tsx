@@ -4,6 +4,7 @@ import { api } from '../../lib/api';
 import type { AppNotification } from '../notifications/data';
 import type { QAEntry, PendingQuestion } from '../author-profiles/types';
 import type { AuthorProfileData } from './useAuthorProfileSave';
+import type { BookMetadata } from '../library/data';
 import { AuthorProfileEdit } from './AuthorProfileEdit';
 
 interface ManuscriptOption {
@@ -41,11 +42,14 @@ function parseJsonArray(raw: string | null): string[] {
 }
 
 interface Props {
-  onDone: () => void;
-  onToast: (n: AppNotification) => void;
+  onDone:      () => void;
+  onToast:     (n: AppNotification) => void;
+  savedBooks?: Record<string, BookMetadata>;
 }
 
-export default function AuthorProfilePage({ onDone, onToast }: Props) {
+const MS_90_DAYS = 90 * 24 * 60 * 60 * 1000;
+
+export default function AuthorProfilePage({ onDone, onToast, savedBooks = {} }: Props) {
   const { currentUser } = useAuth();
   const [profile,  setProfile]  = useState<AuthorProfileData | null>(null);
   const [mss,      setMss]      = useState<ManuscriptOption[]>([]);
@@ -108,6 +112,14 @@ export default function AuthorProfilePage({ onDone, onToast }: Props) {
 
   if (loading || !profile) return null;
 
+  // Find the nearest launch — upcoming or within the last 90 days
+  const now = Date.now();
+  const nearestLaunch = Object.values(savedBooks)
+    .filter(b => b.launchDate)
+    .map(b => ({ launchDate: b.launchDate!, title: b.title }))
+    .filter(l => new Date(l.launchDate + 'T00:00:00').getTime() > now - MS_90_DAYS)
+    .sort((a, b) => new Date(a.launchDate + 'T00:00:00').getTime() - new Date(b.launchDate + 'T00:00:00').getTime())[0] ?? null;
+
   return (
     <AuthorProfileEdit
       profile={profile}
@@ -119,6 +131,8 @@ export default function AuthorProfilePage({ onDone, onToast }: Props) {
       onPendingChange={setPending}
       onDone={onDone}
       onToast={onToast}
+      launchDate={nearestLaunch?.launchDate ?? null}
+      launchTitle={nearestLaunch?.title ?? null}
     />
   );
 }

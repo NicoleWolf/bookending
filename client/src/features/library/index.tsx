@@ -26,6 +26,7 @@ interface LibraryProps {
   openNewManuscript?: boolean;
   onOpenNewHandled?: () => void;
   onDirtyChange?: (dirty: boolean) => void;
+  onPublish?: (manuscriptId: string) => void;
 }
 
 const SPINE_PALETTE: SpineColor[] = ['spine-amber', 'spine-slate', 'spine-teal', 'spine-dark', 'spine-muted'];
@@ -79,7 +80,7 @@ function loadImportMeta(ids: string[]): Record<string, string> {
   return meta;
 }
 
-export default function Library({ savedBooks, onSave, onDelete, openNewManuscript, onOpenNewHandled, onDirtyChange }: LibraryProps) {
+export default function Library({ savedBooks, onSave, onDelete, openNewManuscript, onOpenNewHandled, onDirtyChange, onPublish }: LibraryProps) {
   const { currentUser } = useAuth();
   const savedBookList = Object.values(savedBooks)
     .filter(b => typeof b.id === 'string' && b.id.length > 0)
@@ -853,6 +854,7 @@ export default function Library({ savedBooks, onSave, onDelete, openNewManuscrip
               }
             }
           }}
+          onPublish={onPublish ? () => onPublish(activeId) : undefined}
         />
       )}
     </div>

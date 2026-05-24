@@ -1,4 +1,4 @@
-/* ── List view ───────────────────────────────────────────────────── */
+﻿/* ── List view ───────────────────────────────────────────────────── */
 .listHeader {
   display: flex;
   align-items: flex-start;
@@ -94,7 +94,7 @@
   font-size: 9px;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: var(--accent);
+  color: var(--accent-text);
   padding: 2px 8px;
   border: 1px solid var(--accent);
   opacity: 0.8;

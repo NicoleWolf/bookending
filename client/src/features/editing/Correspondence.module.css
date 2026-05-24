@@ -1,4 +1,4 @@
-.wrap {
+﻿.wrap {
   display: flex;
   height: calc(100vh - 300px);
   min-height: 520px;
@@ -230,7 +230,7 @@
 }
 
 .message[data-author="writer"] .messageAuthor {
-  color: var(--accent);
+  color: var(--accent-text);
 }
 
 .messageTime {
@@ -268,7 +268,7 @@
   font-size: 9.5px;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: var(--accent);
+  color: var(--accent-text);
   padding: 10px 20px 0;
 }
 

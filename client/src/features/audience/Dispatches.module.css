@@ -1,4 +1,4 @@
-/* ── Filter bar ───────────────────────────────────────────── */
+﻿/* ── Filter bar ───────────────────────────────────────────── */
 .filterBar {
   padding: 16px 28px;
   border-bottom: 1px solid var(--rule);
@@ -129,7 +129,7 @@
   font-family: var(--serif);
   font-style: italic;
   font-size: 11.5px;
-  color: var(--accent);
+  color: var(--accent-text);
   background: none;
   border: none;
   cursor: pointer;

@@ -1,4 +1,4 @@
-/* ── Navigation ──────────────────────────────────────────────────── */
+﻿/* ── Navigation ──────────────────────────────────────────────────── */
 .breadcrumb {
   padding-bottom: 20px;
   border-bottom: 1px solid var(--rule);
@@ -384,7 +384,7 @@
 
 .previewBadge[data-available="paused"] {
   border-color: var(--accent);
-  color: var(--accent);
+  color: var(--accent-text);
 }
 
 .previewSpecialties {

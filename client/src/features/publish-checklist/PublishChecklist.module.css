@@ -1,4 +1,4 @@
-/* ── Page ────────────────────────────────────────────────── */
+﻿/* ── Page ────────────────────────────────────────────────── */
 .page {
   min-height: 100vh;
   background: var(--ink-2);
@@ -271,7 +271,7 @@
   font-family: var(--mono);
   font-size: 10px;
   letter-spacing: 0.08em;
-  color: var(--accent);
+  color: var(--accent-text);
   font-weight: 400;
   text-transform: none;
 }
@@ -390,7 +390,7 @@
   cursor: pointer;
   width: fit-content;
 }
-.uploadBtn:hover { border-color: var(--accent); color: var(--accent); }
+.uploadBtn:hover { border-color: var(--accent); color: var(--accent-text); }
 .uploadBtn:disabled { opacity: 0.45; cursor: default; }
 
 .removeBtn {
@@ -432,6 +432,189 @@
 .chip:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 
 .chipCheck { font-size: 10px; font-weight: 700; }
+
+/* ── Step 4 — locked state ───────────────────────────────── */
+.step[data-locked] { opacity: 0.5; }
+.step[data-locked] .stepHeader { cursor: not-allowed; }
+.step[data-locked] .stepHeader:hover { background: none; }
+.step[data-locked] .stepCheck { color: var(--muted-2); }
+
+/* ── Launch action items ─────────────────────────────────── */
+.launchActions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.launchAction {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 14px;
+  border: 0.5px solid var(--rule);
+  background: var(--ink-2);
+}
+
+.launchAction[data-done] {
+  border-color: color-mix(in srgb, var(--good) 40%, transparent);
+  background:   color-mix(in srgb, var(--good) 6%, var(--ink-2));
+}
+
+.launchActionHead {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.launchActionMark {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--muted-2);
+  flex-shrink: 0;
+  width: 14px;
+  line-height: 1;
+}
+
+.launchAction[data-done] .launchActionMark { color: var(--good); }
+
+.launchActionTitle {
+  font-family: var(--sans);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--paper);
+}
+
+.launchActionDesc {
+  font-family: var(--sans);
+  font-size: 12px;
+  color: var(--muted);
+  margin: 0;
+  line-height: 1.5;
+}
+
+/* ARC toggle */
+.toggleRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  cursor: pointer;
+}
+
+.toggleLabel {
+  font-family: var(--sans);
+  font-size: 13px;
+  color: var(--paper-dim);
+}
+
+.toggle {
+  position: relative;
+  width: 40px;
+  height: 20px;
+  background: var(--rule);
+  border: 0.5px solid var(--rule);
+  flex-shrink: 0;
+  cursor: pointer;
+  padding: 0;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.toggle[data-on] {
+  background: var(--good);
+  border-color: var(--good);
+}
+
+.toggleThumb {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 14px;
+  height: 14px;
+  background: var(--paper);
+  transition: left 0.15s;
+  pointer-events: none;
+}
+
+.toggle[data-on] .toggleThumb { left: 22px; }
+
+/* Teaser compose */
+.teaserCompose {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.postBtn {
+  font-family: var(--sans);
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--paper);
+  background: transparent;
+  border: 0.5px solid var(--rule);
+  padding: 7px 14px;
+  cursor: pointer;
+  align-self: flex-end;
+  transition: border-color 0.1s, color 0.1s;
+}
+
+.postBtn:hover:not(:disabled) { border-color: var(--accent); color: var(--accent-text); }
+.postBtn:disabled { opacity: 0.45; cursor: default; }
+
+.launchPosted {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  color: var(--good);
+  margin: 0;
+}
+
+.teaserComposeHint {
+  font-family: var(--sans);
+  font-size: 12px;
+  color: var(--muted);
+  margin: 0;
+  font-style: italic;
+}
+
+/* ── Publish section ─────────────────────────────────────── */
+.publishWrap {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.publishBtn {
+  font-family: var(--sans);
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: var(--muted);
+  background: var(--ink-2);
+  border: 0.5px solid var(--rule);
+  padding: 16px 24px;
+  width: 100%;
+  cursor: not-allowed;
+  text-align: center;
+  transition: background 0.15s, color 0.15s;
+}
+
+.publishBtn[data-active] {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--ink);
+  cursor: pointer;
+}
+
+.publishBtn[data-active]:hover { background: var(--accent-2); border-color: var(--accent-2); }
+.publishBtn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+.publishHint {
+  font-family: var(--sans);
+  font-size: 12px;
+  color: var(--good);
+  margin: 0;
+  text-align: center;
+}
 
 /* ── Responsive ──────────────────────────────────────────── */
 @media (max-width: 900px) {

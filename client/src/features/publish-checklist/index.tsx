@@ -6,18 +6,29 @@ import { GENRE_KEYWORDS } from '../../shared/keywords';
 import { api } from '../../lib/api';
 import { ListingPreview, completenessScore } from './ListingPreview';
 import type { ListingDraft } from './ListingPreview';
+import { TeaserComposer } from './TeaserComposer';
+import { PublishCelebration } from './PublishCelebration';
 import styles from './PublishChecklist.module.css';
 
 // ── Types ──────────────────────────────────────────────────────────
 type SaveState = 'idle' | 'saving' | 'saved' | 'error';
-type StepId    = 1 | 2 | 3;
+type StepId    = 1 | 2 | 3 | 4;
+
+interface LaunchState {
+  arcEnabled:   boolean;
+  teaserText:   string;
+  teaserPosted: boolean;
+  launchDate:   string;
+}
 
 export interface PublishChecklistProps {
-  manuscript:  BookMetadata;
-  coverUrl:    string | null;
-  authorName:  string;
-  onBack:      () => void;
-  onSave:      (updates: Partial<BookMetadata>, newCoverUrl?: string) => void;
+  manuscript:     BookMetadata;
+  coverUrl:       string | null;
+  authorName:     string;
+  onBack:         () => void;
+  onSave:         (updates: Partial<BookMetadata>, newCoverUrl?: string) => void;
+  onPublish?:     () => void;
+  socialAccounts?: string[];
 }
 
 // ── Helpers ────────────────────────────────────────────────────────
@@ -40,10 +51,11 @@ export function toDraft(ms: BookMetadata, coverUrl: string | null, authorName: s
   };
 }
 
-function stepComplete(id: StepId, draft: ListingDraft): boolean {
+function stepComplete(id: StepId, draft: ListingDraft, launch?: LaunchState): boolean {
   if (id === 1) return !!draft.coverUrl;
   if (id === 2) return !!(draft.genre && draft.description?.trim() && draft.contentRating);
   if (id === 3) return draft.betaMode !== 'CLOSED';
+  if (id === 4 && launch) return launch.arcEnabled && launch.teaserPosted && !!launch.launchDate;
   return false;
 }
 
@@ -51,7 +63,7 @@ function defaultOpen(draft: ListingDraft): StepId {
   if (!stepComplete(1, draft)) return 1;
   if (!stepComplete(2, draft)) return 2;
   if (!stepComplete(3, draft)) return 3;
-  return 1;
+  return completenessScore(draft) === 5 ? 4 : 1;
 }
 
 function useDebounce<T>(value: T, delay: number): T {
@@ -64,21 +76,30 @@ function useDebounce<T>(value: T, delay: number): T {
 }
 
 const STEPS: { id: StepId; label: string; hint: string }[] = [
-  { id: 1, label: 'Cover',    hint: 'Upload a cover image. Recommended: 1600 × 2400 px (2:3 ratio), JPEG or PNG.' },
-  { id: 2, label: 'Metadata', hint: 'Set genre, description, and content rating so readers can find your book.' },
-  { id: 3, label: 'Access',   hint: 'Choose how readers discover and join your beta read.' },
+  { id: 1, label: 'Cover',           hint: 'Upload a cover image. Recommended: 1600 × 2400 px (2:3 ratio), JPEG or PNG.' },
+  { id: 2, label: 'Metadata',        hint: 'Set genre, description, and content rating so readers can find your book.' },
+  { id: 3, label: 'Access',          hint: 'Choose how readers discover and join your beta read.' },
+  { id: 4, label: 'Launch sequence', hint: 'Build pre-launch momentum. Complete all three actions to activate the Publish button.' },
 ];
 
 const DESC_MAX = 1000;
 const DESC_WARN = 900;
 
 // ── Component ──────────────────────────────────────────────────────
-export default function PublishChecklist({ manuscript, coverUrl, authorName, onBack, onSave }: PublishChecklistProps) {
+export default function PublishChecklist({ manuscript, coverUrl, authorName, onBack, onSave, onPublish, socialAccounts = [] }: PublishChecklistProps) {
   const initialDraft = toDraft(manuscript, coverUrl, authorName);
   const [draft,     setDraft]     = useState<ListingDraft>(initialDraft);
   const [openStep,  setOpenStep]  = useState<StepId>(() => defaultOpen(initialDraft));
   const [saveState, setSaveState] = useState<SaveState>('idle');
   const [coverLoading, setCoverLoading] = useState(false);
+  const [launch, setLaunch] = useState<LaunchState>({
+    arcEnabled:   false,
+    teaserText:   '',
+    teaserPosted: false,
+    launchDate:   '',
+  });
+  const [teaserComposerOpen, setTeaserComposerOpen] = useState(false);
+  const [published, setPublished] = useState(false);
 
   const savedTimerRef  = useRef<ReturnType<typeof setTimeout> | null>(null);
   const loadedRef      = useRef(false);
@@ -148,6 +169,18 @@ export default function PublishChecklist({ manuscript, coverUrl, authorName, onB
     }
   }
 
+  // Save launch date to manuscript metadata when it's set
+  useEffect(() => {
+    if (!launch.launchDate) return;
+    onSave({ launchDate: launch.launchDate });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [launch.launchDate]);
+
+  function handleTeaserPost(caption: string, _socialPlatforms: string[]) {
+    setLaunch(l => ({ ...l, teaserText: caption, teaserPosted: true }));
+    setTeaserComposerOpen(false);
+  }
+
   function handleCoverRemove() {
     setDraft(d => ({ ...d, coverUrl: null }));
     prevSavedRef.current = { ...prevSavedRef.current, coverUrl: null };
@@ -156,12 +189,24 @@ export default function PublishChecklist({ manuscript, coverUrl, authorName, onB
   }
 
   // ── Render ────────────────────────────────────────────────────────
-  const allDone      = completenessScore(draft) === 5;
-  const descLen      = (draft.description ?? '').length;
+  const prepareComplete = completenessScore(draft) === 5;
+  const launchComplete  = stepComplete(4, draft, launch);
+  const allDone         = prepareComplete && launchComplete;
+  const descLen         = (draft.description ?? '').length;
   const availSubgenres = GENRES.find(g => g.label === draft.genre)?.subgenres ?? [];
 
   return (
-    <div className={styles.page}>
+    <>
+    {published && (
+      <PublishCelebration
+        title={draft.title}
+        authorName={draft.authorName}
+        genre={draft.genre}
+        coverUrl={draft.coverUrl}
+        onGoToStore={() => { setPublished(false); onPublish?.(); }}
+      />
+    )}
+    <div className={styles.page} {...(published ? { inert: '' } : {})}>
 
       {/* ── Sticky top bar ────────────────────────────────── */}
       <div className={styles.topBar}>
@@ -201,36 +246,38 @@ export default function PublishChecklist({ manuscript, coverUrl, authorName, onB
             </p>
           </div>
 
-          {allDone && (
+          {prepareComplete && !launchComplete && (
             <div className={styles.allDoneBanner}>
               <span className={styles.allDoneMark} aria-hidden="true">✓</span>
               <span className={styles.allDoneText}>
-                Listing complete — your book is visible to readers.
+                Listing complete — complete the launch sequence to publish.
               </span>
             </div>
           )}
 
           <div className={styles.accordion}>
             {STEPS.map(step => {
-              const done = stepComplete(step.id, draft);
-              const open = openStep === step.id;
+              const locked = step.id === 4 && !prepareComplete;
+              const done   = step.id === 4 ? stepComplete(4, draft, launch) : stepComplete(step.id, draft);
+              const open   = openStep === step.id && !locked;
               return (
                 <div
                   key={step.id}
                   className={styles.step}
                   data-done={done ? '' : undefined}
                   data-open={open ? '' : undefined}
+                  data-locked={locked ? '' : undefined}
                 >
                   <button
                     className={styles.stepHeader}
                     type="button"
                     aria-expanded={open}
-                    onClick={() => setOpenStep(step.id)}
+                    onClick={() => { if (!locked) setOpenStep(step.id); }}
                   >
                     <span className={styles.stepNum}>{step.id}</span>
                     <span className={styles.stepLabel}>{step.label}</span>
-                    <span className={styles.stepCheck} aria-label={done ? 'Complete' : 'Incomplete'}>
-                      {done ? '✓' : '○'}
+                    <span className={styles.stepCheck} aria-label={done ? 'Complete' : locked ? 'Locked' : 'Incomplete'}>
+                      {done ? '✓' : locked ? '⊗' : '○'}
                     </span>
                     <span className={styles.stepCaret} aria-hidden="true">
                       {open ? '▲' : '▽'}
@@ -283,6 +330,7 @@ export default function PublishChecklist({ manuscript, coverUrl, authorName, onB
                             ref={fileInputRef}
                             type="file"
                             accept="image/*"
+                            aria-label="Upload cover image"
                             className={styles.fileInput}
                             onChange={handleCoverChange}
                           />
@@ -410,6 +458,89 @@ export default function PublishChecklist({ manuscript, coverUrl, authorName, onB
                         </>
                       )}
 
+                      {/* ── Step 4: Launch sequence ──────────────────────── */}
+                      {step.id === 4 && (
+                        <div className={styles.launchActions}>
+
+                          {/* ARC sign-ups */}
+                          <div className={styles.launchAction} data-done={launch.arcEnabled ? '' : undefined}>
+                            <div className={styles.launchActionHead}>
+                              <span className={styles.launchActionMark} aria-hidden="true">
+                                {launch.arcEnabled ? '✓' : '○'}
+                              </span>
+                              <span className={styles.launchActionTitle}>Open ARC sign-ups</span>
+                            </div>
+                            <p className={styles.launchActionDesc}>
+                              Advance reader copies let you gather reviews before launch day.
+                            </p>
+                            <label className={styles.toggleRow}>
+                              <span className={styles.toggleLabel}>Open to waitlist</span>
+                              <button
+                                type="button"
+                                role="switch"
+                                aria-checked={launch.arcEnabled}
+                                className={styles.toggle}
+                                data-on={launch.arcEnabled ? '' : undefined}
+                                onClick={() => setLaunch(l => ({ ...l, arcEnabled: !l.arcEnabled }))}
+                              >
+                                <span className={styles.toggleThumb} />
+                              </button>
+                            </label>
+                          </div>
+
+                          {/* Community teaser */}
+                          <div className={styles.launchAction} data-done={launch.teaserPosted ? '' : undefined}>
+                            <div className={styles.launchActionHead}>
+                              <span className={styles.launchActionMark} aria-hidden="true">
+                                {launch.teaserPosted ? '✓' : '○'}
+                              </span>
+                              <span className={styles.launchActionTitle}>Post a community teaser</span>
+                            </div>
+                            <p className={styles.launchActionDesc}>
+                              Give your community a first look at what's coming.
+                            </p>
+                            {launch.teaserPosted ? (
+                              <p className={styles.launchPosted}>Posted to community ✓</p>
+                            ) : teaserComposerOpen ? (
+                              <p className={styles.teaserComposeHint}>Composing in preview panel →</p>
+                            ) : (
+                              <button
+                                type="button"
+                                className={styles.postBtn}
+                                onClick={() => setTeaserComposerOpen(true)}
+                              >
+                                Compose teaser →
+                              </button>
+                            )}
+                          </div>
+
+                          {/* Launch countdown */}
+                          <div className={styles.launchAction} data-done={launch.launchDate ? '' : undefined}>
+                            <div className={styles.launchActionHead}>
+                              <span className={styles.launchActionMark} aria-hidden="true">
+                                {launch.launchDate ? '✓' : '○'}
+                              </span>
+                              <span className={styles.launchActionTitle}>Set launch countdown</span>
+                            </div>
+                            <p className={styles.launchActionDesc}>
+                              A countdown appears on your community profile and listing.
+                            </p>
+                            <div className={styles.field}>
+                              <label htmlFor="pc-launch-date" className={styles.fieldLabel}>Launch date</label>
+                              <input
+                                id="pc-launch-date"
+                                type="date"
+                                className={styles.input}
+                                value={launch.launchDate}
+                                min={new Date().toISOString().split('T')[0]}
+                                onChange={e => setLaunch(l => ({ ...l, launchDate: e.target.value }))}
+                              />
+                            </div>
+                          </div>
+
+                        </div>
+                      )}
+
                       {/* ── Step 3: Access ───────────────────────────────── */}
                       {step.id === 3 && (
                         <>
@@ -493,17 +624,47 @@ export default function PublishChecklist({ manuscript, coverUrl, authorName, onB
               );
             })}
           </div>
+
+          {/* ── Publish ─────────────────────────────────── */}
+          <div className={styles.publishWrap}>
+            <button
+              type="button"
+              className={styles.publishBtn}
+              data-active={launchComplete ? '' : undefined}
+              disabled={!launchComplete}
+              onClick={launchComplete ? () => setPublished(true) : undefined}
+            >
+              {launchComplete ? 'Publish book →' : 'Complete launch sequence to publish'}
+            </button>
+            {allDone && (
+              <p className={styles.publishHint}>
+                Your book will go live on the scheduled launch date.
+              </p>
+            )}
+          </div>
+
         </div>
 
         {/* ── Preview column ────────────────────────────── */}
         <div className={styles.previewCol}>
           <div className={styles.previewSticky}>
-            <ListingPreview draft={draft} />
+            {teaserComposerOpen ? (
+              <TeaserComposer
+                draft={draft}
+                launchDate={launch.launchDate}
+                socialAccounts={socialAccounts}
+                onPost={handleTeaserPost}
+                onClose={() => setTeaserComposerOpen(false)}
+              />
+            ) : (
+              <ListingPreview draft={draft} />
+            )}
           </div>
         </div>
 
       </div>
     </div>
+    </>
   );
 }
 

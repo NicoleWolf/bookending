@@ -1,4 +1,4 @@
-.card {
+﻿.card {
   background: var(--ink-3);
   border: 0.5px solid var(--rule);
   padding: 20px;
@@ -41,7 +41,7 @@
 .followers {
   font-family: var(--mono);
   font-size: 11px;
-  color: var(--accent);
+  color: var(--accent-text);
   letter-spacing: 0.03em;
 }
 
@@ -83,7 +83,7 @@
 
 .seg[data-active] {
   background: color-mix(in srgb, var(--accent) 12%, var(--ink-2));
-  color: var(--accent);
+  color: var(--accent-text);
   border-color: var(--accent);
 }
 

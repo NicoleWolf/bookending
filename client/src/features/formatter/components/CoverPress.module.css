@@ -1,4 +1,4 @@
-/* ── Wrapper ──────────────────────────────────────────────────────── */
+﻿/* ── Wrapper ──────────────────────────────────────────────────────── */
 .wrap {
   display: flex;
   flex-direction: column;
@@ -265,7 +265,7 @@
 .replaceBtn {
   font-size: 9px;
   letter-spacing: 0.07em;
-  color: var(--accent);
+  color: var(--accent-text);
   background: none;
   border: 1px solid var(--rule);
   cursor: pointer;

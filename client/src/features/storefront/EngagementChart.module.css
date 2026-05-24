@@ -1,0 +1,239 @@
+/* ── Section wrapper ─────────────────────────────────────────────── */
+.section {
+  padding: 20px 32px 0;
+  border-bottom: 1px solid var(--rule);
+}
+
+/* ── Header ──────────────────────────────────────────────────────── */
+.head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.eyebrow {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.legend {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.legendDot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.legendDotRev     { background: var(--muted-2); border-radius: 0; width: 8px; height: 8px; }
+.legendDotReviews { background: var(--accent-text); }
+.legendDotQa      { background: var(--paper-dim); }
+.legendDotFol     { background: var(--good); }
+
+.legendLabel {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-right: 8px;
+}
+
+/* ── Stat strip ──────────────────────────────────────────────────── */
+.statStrip {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.stat {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding-right: 24px;
+}
+
+.statVal {
+  font-size: 28px;
+  font-weight: 400;
+  color: var(--paper);
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+
+.statLabel {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.divider {
+  width: 1px;
+  height: 36px;
+  background: var(--rule);
+  margin: 0 24px 0 0;
+  flex-shrink: 0;
+}
+
+/* ── Chart wrapper ───────────────────────────────────────────────── */
+.chartWrap {
+  position: relative;
+}
+
+.svg {
+  width: 100%;
+  height: auto;
+  display: block;
+  overflow: visible;
+}
+
+/* ── Revenue bars ────────────────────────────────────────────────── */
+.revBar {
+  fill: var(--ink-3);
+  transition: fill 80ms;
+}
+
+.revBar[data-hover] {
+  fill: var(--muted-2);
+}
+
+/* ── Community lines ─────────────────────────────────────────────── */
+.lineReviews,
+.lineQa,
+.lineFollowers {
+  fill: none;
+  stroke-width: 1.5;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+}
+
+.lineReviews  { stroke: var(--accent-text); }
+.lineQa       { stroke: var(--paper-dim); }
+.lineFollowers { stroke: var(--good); }
+
+/* ── Dots ────────────────────────────────────────────────────────── */
+.dotReviews  { fill: var(--accent-text); }
+.dotQa       { fill: var(--paper-dim); }
+.dotFollowers { fill: var(--good); }
+
+.dotGroup { pointer-events: none; }
+
+/* ── Event marker ────────────────────────────────────────────────── */
+.noteDot {
+  fill: var(--accent);
+}
+
+/* ── Hover line ──────────────────────────────────────────────────── */
+.hoverLine {
+  stroke: var(--rule);
+  stroke-width: 1;
+  stroke-dasharray: 3 3;
+  pointer-events: none;
+}
+
+/* ── Axis labels ─────────────────────────────────────────────────── */
+.axisLabel {
+  font-family: var(--mono);
+  font-size: 9px;
+  fill: var(--muted);
+  pointer-events: none;
+}
+
+/* ── Tooltip ─────────────────────────────────────────────────────── */
+.tooltip {
+  position: absolute;
+  top: 4px;
+  left: var(--tx, 50%);
+  background: var(--ink-2);
+  border: 0.5px solid var(--rule);
+  padding: 10px 12px;
+  pointer-events: none;
+  z-index: 10;
+  min-width: 140px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+}
+
+.tooltip[data-side="right"]  { transform: translateX(10px); }
+.tooltip[data-side="left"]   { transform: translateX(calc(-100% - 10px)); }
+.tooltip[data-side="center"] { transform: translateX(-50%); }
+
+.tooltipDate {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 8px;
+}
+
+.tooltipRow {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-family: var(--sans);
+  font-size: 12px;
+  color: var(--paper);
+  line-height: 1.8;
+}
+
+.tooltipSwatch {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.swatchRev     { background: var(--muted-2); border-radius: 0; }
+.swatchReviews { background: var(--accent-text); }
+.swatchQa      { background: var(--paper-dim); }
+.swatchFol     { background: var(--good); }
+
+.tooltipEmpty {
+  font-family: var(--sans);
+  font-size: 12px;
+  color: var(--muted);
+  font-style: italic;
+}
+
+.tooltipNote {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--accent-text);
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 0.5px solid var(--rule);
+}
+
+/* ── Responsive ──────────────────────────────────────────────────── */
+@media (max-width: 860px) {
+  .section { padding: 16px 24px 0; }
+  .statVal  { font-size: 22px; }
+  .divider  { height: 28px; }
+  .legend   { display: none; }
+}
+
+@media (max-width: 520px) {
+  .section     { padding: 16px 16px 0; }
+  .stat        { padding-right: 16px; }
+  .divider     { margin-right: 16px; }
+  .tooltipDate,
+  .tooltipRow  { font-size: 11px; }
+}

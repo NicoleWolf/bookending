@@ -1,4 +1,4 @@
-.shell {
+﻿.shell {
   display: grid;
   grid-template-columns: 1fr 1fr;
   min-height: calc(100vh - 60px);
@@ -149,7 +149,7 @@
 .switchBtn {
   background: none;
   border: none;
-  color: var(--accent);
+  color: var(--accent-text);
   font-family: var(--sans);
   font-size: 12px;
   cursor: pointer;
@@ -193,7 +193,7 @@
 }
 
 .roleOption[data-active] .roleOptionTitle {
-  color: var(--accent);
+  color: var(--accent-text);
 }
 
 .roleOptionDesc {

@@ -36,6 +36,7 @@ export interface BookMetadata {
   contentWarnings: string[];
   editorialNote?: string | null;
   revisionPausedAt?: string | null;
+  launchDate?: string;
 }
 
 export const CONTENT_WARNINGS = [

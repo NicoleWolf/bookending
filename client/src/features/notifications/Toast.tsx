@@ -4,7 +4,7 @@ import type { AppNotification } from './data';
 interface Props {
   toasts: AppNotification[];
   onDismiss: (id: string) => void;
-  onCta?: (authorId: string) => void;
+  onCta?: (authorId: string, tab?: string) => void;
 }
 
 export default function ToastStack({ toasts, onDismiss, onCta }: Props) {
@@ -20,9 +20,9 @@ export default function ToastStack({ toasts, onDismiss, onCta }: Props) {
             {t.cta && onCta && (
               <button
                 className={styles.cta}
-                onClick={() => { onDismiss(t.id); onCta(t.cta!.authorId); }}
+                onClick={() => { onDismiss(t.id); onCta(t.cta!.authorId, t.cta!.tab); }}
               >
-                {t.cta.label} →
+                {t.cta.label} <span aria-hidden="true">→</span>
               </button>
             )}
             {t.onUndo && (

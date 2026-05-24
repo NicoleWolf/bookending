@@ -1,4 +1,4 @@
-.root {
+﻿.root {
   display: flex;
   flex-direction: column;
   min-height: 100%;
@@ -354,7 +354,7 @@
   margin-top: 4px;
   font-size: 10px;
   letter-spacing: 0.08em;
-  color: var(--accent);
+  color: var(--accent-text);
   background: none;
   border: 1px solid var(--accent);
   padding: 7px 16px;

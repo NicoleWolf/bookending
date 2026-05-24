@@ -1,4 +1,4 @@
-.sidebar {
+﻿.sidebar {
   width: 212px;
   min-width: 212px;
   display: flex;
@@ -17,7 +17,7 @@
   display: block;
   font-size: 10px;
   letter-spacing: 0.1em;
-  color: var(--accent);
+  color: var(--accent-text);
   text-transform: uppercase;
   margin-bottom: 10px;
 }

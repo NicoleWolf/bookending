@@ -1,4 +1,4 @@
-.root {
+﻿.root {
   display: flex;
   flex-direction: column;
   min-height: 100%;
@@ -69,7 +69,7 @@
 }
 
 .filterTab[data-alert] {
-  color: var(--accent);
+  color: var(--accent-text);
 }
 
 .filterTab[data-active][data-alert] {
@@ -235,7 +235,7 @@
 }
 
 .outlineRow[data-flagged] .rowTitle {
-  color: var(--accent);
+  color: var(--accent-text);
 }
 
 .rowRight {
@@ -254,7 +254,7 @@
 .rowConf {
   font-size: 9px;
   letter-spacing: 0.06em;
-  color: var(--accent);
+  color: var(--accent-text);
   font-weight: 500;
 }
 
@@ -388,7 +388,7 @@
 .flagLabel {
   font-size: 9px;
   letter-spacing: 0.1em;
-  color: var(--accent);
+  color: var(--accent-text);
 }
 
 .flagNote {
@@ -541,7 +541,7 @@
 
 .statItem:first-child::before { display: none; }
 
-.statItem[data-flagged] { color: var(--accent); }
+.statItem[data-flagged] { color: var(--accent-text); }
 
 .footerActions {
   display: flex;

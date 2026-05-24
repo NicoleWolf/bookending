@@ -1,4 +1,4 @@
-.header {
+﻿.header {
   border-bottom: 1px solid var(--rule);
   transition: opacity 0.2s ease;
 }
@@ -271,7 +271,7 @@
   border-radius: 0;
 }
 
-.userMenuProfile:hover .userMenuName { color: var(--accent); }
+.userMenuProfile:hover .userMenuName { color: var(--accent-text); }
 
 .userMenuName {
   font-family: var(--sans);
@@ -518,7 +518,7 @@
   }
 
   .mobileNavItem[data-active="true"] {
-    color: var(--accent);
+    color: var(--accent-text);
   }
 
   .mobileNavFooter {

@@ -1,4 +1,4 @@
-/* ── Action queue ─────────────────────────────────────────────── */
+﻿/* ── Action queue ─────────────────────────────────────────────── */
 
 .actionRow {
   display: flex;
@@ -51,7 +51,7 @@
 }
 
 .actionCell:not([data-zero])[data-tone="accent"] .actionCount {
-  color: var(--accent);
+  color: var(--accent-text);
 }
 
 .actionCell:not([data-zero])[data-tone="danger"] .actionCount {
@@ -159,7 +159,7 @@
 
 .legendThis::before { background: var(--accent); }
 .legendPrev::before { background: var(--muted); }
-.legendThis { color: var(--accent); }
+.legendThis { color: var(--accent-text); }
 .legendPrev { color: var(--muted); }
 
 .lineChart {
@@ -334,7 +334,7 @@
 .visitLink {
   background: transparent;
   border: none;
-  color: var(--accent);
+  color: var(--accent-text);
   font-size: 11px;
   font-family: var(--sans);
   cursor: pointer;

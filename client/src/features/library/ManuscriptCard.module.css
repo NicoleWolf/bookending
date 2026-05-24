@@ -1,4 +1,4 @@
-/* ── Card wrapper ─────────────────────────────────────────────── */
+﻿/* ── Card wrapper ─────────────────────────────────────────────── */
 .card {
   display: flex;
   flex-direction: column;
@@ -163,7 +163,7 @@
   letter-spacing: 0.10em;
   text-transform: uppercase;
   border: 1px solid var(--accent);
-  color: var(--accent);
+  color: var(--accent-text);
   padding: 2px 6px;
   white-space: nowrap;
   line-height: 1.5;
@@ -464,5 +464,5 @@
   cursor: pointer;
   margin-left: auto;
 }
-.listingBtn[data-incomplete] { color: var(--accent); }
+.listingBtn[data-incomplete] { color: var(--accent-text); }
 .listingBtn:hover { text-decoration: underline; }

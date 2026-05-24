@@ -1,4 +1,4 @@
-.box {
+﻿.box {
   border: 1px solid var(--rule);
   margin-bottom: 24px;
 }
@@ -206,7 +206,7 @@
 }
 
 .genreTag[data-match] {
-  color: var(--accent);
+  color: var(--accent-text);
   border-color: var(--accent);
   background: color-mix(in srgb, var(--accent) 8%, transparent);
 }

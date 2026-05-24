@@ -1,4 +1,4 @@
-/* ── Section header ──────────────────────────────────────── */
+﻿/* ── Section header ──────────────────────────────────────── */
 .sectionHeader {
   padding: 40px 48px 0;
 }
@@ -122,7 +122,7 @@
 }
 
 .formatTag[data-digital] {
-  color: var(--accent);
+  color: var(--accent-text);
   border-color: color-mix(in srgb, var(--accent) 40%, transparent);
 }
 

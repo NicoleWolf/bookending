@@ -363,6 +363,9 @@ export default function ReadingRoom({ msRef, onBack, arcMode, onArcFinished }: R
         </div>
       )}
 
+      {/* ── Background content (inert while guidelines gate is open) ── */}
+      <div {...(!guidelinesAcked && ms.instructions ? { inert: '' } : {})}>
+
       {/* ── Masthead ────────────────────────────────────────────────── */}
       <div className={styles.roomHeader}>
         <div className={styles.roomHeaderLeft}>
@@ -741,6 +744,8 @@ export default function ReadingRoom({ msRef, onBack, arcMode, onArcFinished }: R
           </>
         );
       })()}
+
+      </div>{/* end inert wrapper */}
     </section>
   );
 }

@@ -6,6 +6,7 @@ import { AuthorAboutCard } from './AuthorAboutCard';
 import { WritingProcessCard } from './WritingProcessCard';
 import { AuthorGenresCard } from './AuthorGenresCard';
 import { FeaturedProjectCard } from './FeaturedProjectCard';
+import { LaunchCountdownCard } from './LaunchCountdownCard';
 import { NextBookCard } from './NextBookCard';
 import { PrivacyCard } from './PrivacyCard';
 import { QAManagement } from './QAManagement';
@@ -21,15 +22,17 @@ interface ManuscriptOption {
 }
 
 interface Props {
-  profile: AuthorProfileData;
-  manuscripts: ManuscriptOption[];
-  qaList: QAEntry[];
+  profile:          AuthorProfileData;
+  manuscripts:      ManuscriptOption[];
+  qaList:           QAEntry[];
   pendingQuestions: PendingQuestion[];
-  onProfileChange: (p: AuthorProfileData) => void;
-  onQaChange: (list: QAEntry[]) => void;
-  onPendingChange: (list: PendingQuestion[]) => void;
-  onDone: () => void;
-  onToast: (n: AppNotification) => void;
+  onProfileChange:  (p: AuthorProfileData) => void;
+  onQaChange:       (list: QAEntry[]) => void;
+  onPendingChange:  (list: PendingQuestion[]) => void;
+  onDone:           () => void;
+  onToast:          (n: AppNotification) => void;
+  launchDate?:      string | null;
+  launchTitle?:     string | null;
 }
 
 export function AuthorProfileEdit({
@@ -37,6 +40,7 @@ export function AuthorProfileEdit({
   qaList, pendingQuestions,
   onProfileChange, onQaChange, onPendingChange,
   onDone, onToast,
+  launchDate, launchTitle,
 }: Props) {
   const [tab, setTab] = useState<InternalTab>('Profile');
   const { saveState, retry } = useAuthorProfileSave(profile);
@@ -138,6 +142,9 @@ export function AuthorProfileEdit({
             featuredId={profile.featuredManuscriptId}
             onChange={featuredManuscriptId => patch({ featuredManuscriptId })}
           />
+          {launchDate && launchTitle && (
+            <LaunchCountdownCard launchDate={launchDate} bookTitle={launchTitle} />
+          )}
           <NextBookCard manuscripts={manuscripts} />
           <PrivacyCard
             showActivityPublicly={profile.showActivityPublicly}

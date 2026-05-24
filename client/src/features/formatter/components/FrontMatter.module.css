@@ -1,4 +1,4 @@
-/* ── Wrapper ──────────────────────────────────────────────────────── */
+﻿/* ── Wrapper ──────────────────────────────────────────────────────── */
 .wrap {
   display: flex;
   flex-direction: column;
@@ -98,7 +98,7 @@
   border: 1px solid var(--rule);
 }
 .tabBadge[data-req] {
-  color: var(--accent);
+  color: var(--accent-text);
   border-color: color-mix(in srgb, var(--accent) 40%, transparent);
 }
 .tabBadge:empty {
@@ -114,7 +114,7 @@
   cursor: pointer;
   line-height: 1;
 }
-.tabToggle[data-included] { color: var(--accent); }
+.tabToggle[data-included] { color: var(--accent-text); }
 .tabToggle:hover { color: var(--paper); }
 
 /* ── Body ─────────────────────────────────────────────────────────── */
@@ -356,7 +356,7 @@
   padding: 1px 4px;
 }
 .orderBadge[data-req] {
-  color: var(--accent);
+  color: var(--accent-text);
   border-color: color-mix(in srgb, var(--accent) 40%, transparent);
 }
 

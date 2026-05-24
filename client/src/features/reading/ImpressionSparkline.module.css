@@ -1,4 +1,4 @@
-.sparkWrap {
+﻿.sparkWrap {
   padding: 20px 48px 12px;
   border-bottom: 1px solid var(--rule);
 }
@@ -121,7 +121,7 @@
 
 .pickerBtn[data-active] {
   border-color: var(--accent);
-  color: var(--accent);
+  color: var(--accent-text);
 }
 
 .pickerBtn:hover {

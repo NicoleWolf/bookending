@@ -1,4 +1,4 @@
-/* ── View wrapper ────────────────────────────────────────────────── */
+﻿/* ── View wrapper ────────────────────────────────────────────────── */
 .view {
   padding: 36px 48px;
 }
@@ -80,7 +80,7 @@
 }
 
 .pendingDate[data-processing] {
-  color: var(--accent);
+  color: var(--accent-text);
 }
 
 .pendingDate[data-expected] {

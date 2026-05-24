@@ -1,4 +1,4 @@
-/* ── Toolbar ──────────────────────────────────────────────── */
+﻿/* ── Toolbar ──────────────────────────────────────────────── */
 .toolbar {
   padding: 16px 28px;
   border-bottom: 1px solid var(--rule);
@@ -69,7 +69,7 @@
 }
 
 .filterBtnPatron[data-active] {
-  color: var(--accent);
+  color: var(--accent-text);
   border-color: transparent;
   border-bottom: 2px solid var(--accent);
 }

@@ -1,4 +1,4 @@
-/* ── Section header ─────────────────────────────────────────────── */
+﻿/* ── Section header ─────────────────────────────────────────────── */
 .sectionHeader {
   padding: 40px 48px 0;
 }
@@ -303,7 +303,7 @@
   font-size: 9.5px;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: var(--accent);
+  color: var(--accent-text);
   background: none;
   border: 1px solid var(--rule);
   padding: 6px 14px;
@@ -409,7 +409,7 @@
   font-size: 7.5px;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: var(--accent);
+  color: var(--accent-text);
   background: #1a1612;
   border: 1px solid var(--accent);
   padding: 2px 5px;

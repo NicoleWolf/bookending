@@ -1,4 +1,4 @@
-/* ── Layout ──────────────────────────────────────────────── */
+﻿/* ── Layout ──────────────────────────────────────────────── */
 .section {
   padding-bottom: 80px;
 }
@@ -102,7 +102,7 @@
   font-size: 9px;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: var(--accent);
+  color: var(--accent-text);
   margin-left: 6px;
 }
 
@@ -272,7 +272,7 @@
   font-size: 10px;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: var(--accent);
+  color: var(--accent-text);
   background: none;
   border: 1px solid var(--accent);
   cursor: pointer;
@@ -391,12 +391,12 @@
 
 .adminToggle[data-active] {
   border-color: var(--accent);
-  color: var(--accent);
+  color: var(--accent-text);
   background: color-mix(in srgb, var(--accent) 8%, var(--ink));
 }
 
 .adminToggle:hover { border-color: var(--muted); color: var(--paper); }
-.adminToggle[data-active]:hover { border-color: var(--accent); color: var(--accent); }
+.adminToggle[data-active]:hover { border-color: var(--accent); color: var(--accent-text); }
 
 /* ── Save feedback ───────────────────────────────────────── */
 .savedNote {
@@ -500,7 +500,7 @@
   font-family: var(--mono);
   font-feature-settings: "ss01";
   font-size: 10px;
-  color: var(--accent);
+  color: var(--accent-text);
   flex: 1;
   word-break: break-all;
 }

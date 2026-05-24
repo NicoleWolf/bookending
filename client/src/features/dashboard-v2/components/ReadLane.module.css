@@ -1,4 +1,4 @@
-.lane { margin-bottom: 28px; }
+﻿.lane { margin-bottom: 28px; }
 
 .header {
   display: flex;
@@ -116,7 +116,7 @@
   font-size: 10.5px;
   letter-spacing: 0.06em;
   text-transform: uppercase;
-  color: var(--accent);
+  color: var(--accent-text);
   font-weight: 500;
   background: transparent;
   border: 0;
@@ -175,7 +175,7 @@
 .histLabelHot {
   font-size: 10px;
   letter-spacing: 0.06em;
-  color: var(--accent);
+  color: var(--accent-text);
   font-weight: 500;
 }
 

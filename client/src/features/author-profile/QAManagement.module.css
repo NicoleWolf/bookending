@@ -1,4 +1,4 @@
-.wrap {
+﻿.wrap {
   display: flex;
   flex-direction: column;
   gap: 24px;
@@ -65,7 +65,7 @@
 .fromName {
   font-family: var(--mono);
   font-size: 10px;
-  color: var(--accent);
+  color: var(--accent-text);
 }
 
 .pendingDate {

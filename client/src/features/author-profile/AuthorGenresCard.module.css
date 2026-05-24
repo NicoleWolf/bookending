@@ -1,4 +1,4 @@
-.card {
+﻿.card {
   background: var(--ink-3);
   border: 0.5px solid var(--rule);
   padding: 20px;
@@ -96,7 +96,7 @@
 
 .subChip[data-active] {
   background: color-mix(in srgb, var(--accent) 20%, var(--ink));
-  color: var(--accent);
+  color: var(--accent-text);
   border-color: color-mix(in srgb, var(--accent) 60%, transparent);
 }
 

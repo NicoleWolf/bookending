@@ -1,4 +1,4 @@
-/* ── Header ───────────────────────────────────────────────── */
+﻿/* ── Header ───────────────────────────────────────────────── */
 .header {
   padding: 32px 32px 0;
   border-bottom: 1px solid var(--rule);
@@ -213,7 +213,7 @@
   font-size: 11.5px;
   font-weight: 500;
   letter-spacing: 0.03em;
-  color: var(--accent);
+  color: var(--accent-text);
   background: transparent;
   border: 1px solid color-mix(in srgb, var(--accent) 50%, transparent);
   padding: 5px 12px;

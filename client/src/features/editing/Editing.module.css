@@ -1,4 +1,4 @@
-/* Section */
+﻿/* Section */
 .section {
   padding: 40px 48px;
   border-bottom: 1px solid var(--rule);
@@ -384,7 +384,7 @@
 }
 
 .corrBtn[data-unread] {
-  color: var(--accent);
+  color: var(--accent-text);
 }
 
 /* ── Guidelines ──────────────────────────────────────────────────── */
@@ -628,7 +628,7 @@
 }
 
 .commentTypeBtn[data-active][data-tone="accent"] {
-  color: var(--accent);
+  color: var(--accent-text);
   border-color: var(--accent);
   background: color-mix(in srgb, var(--accent) 8%, transparent);
 }
@@ -771,7 +771,7 @@
   font-family: var(--mono);
   font-feature-settings: "ss01";
   font-size: 10px;
-  color: var(--accent);
+  color: var(--accent-text);
   letter-spacing: 0.08em;
 }
 
@@ -866,7 +866,7 @@
   font-size: 9.5px;
   letter-spacing: 0.16em;
   text-transform: uppercase;
-  color: var(--accent);
+  color: var(--accent-text);
   display: flex;
   align-items: center;
 }
@@ -913,7 +913,7 @@
   font-size: 9px;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: var(--accent);
+  color: var(--accent-text);
   margin-bottom: 10px;
 }
 
@@ -959,7 +959,7 @@
 }
 
 .editorialNoteActionLink[data-accent] {
-  color: var(--accent);
+  color: var(--accent-text);
 }
 
 .editorialNoteActionLink[data-accent]:hover {
@@ -1110,7 +1110,7 @@
 }
 
 .nfbTagSelect[data-tagged] {
-  color: var(--accent);
+  color: var(--accent-text);
   border-color: var(--accent);
 }
 

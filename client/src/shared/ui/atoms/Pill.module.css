@@ -1,4 +1,4 @@
-.pill {
+﻿.pill {
   display: inline-flex;
   align-items: center;
   gap: 6px;
@@ -15,7 +15,7 @@
 
 .pill[data-tone="neutral"] { background: transparent;  border-color: var(--rule);   color: var(--muted); }
 .pill[data-tone="paper"]   { background: var(--paper); border-color: var(--paper);  color: var(--ink); }
-.pill[data-tone="accent"]  { background: transparent;  border-color: var(--accent); color: var(--accent); }
+.pill[data-tone="accent"]  { background: transparent;  border-color: var(--accent); color: var(--accent-text); }
 .pill[data-tone="good"]    { background: transparent;  border-color: var(--good);   color: var(--good); }
 .pill[data-tone="danger"]  { background: transparent;  border-color: var(--danger); color: var(--danger); }
 .pill[data-tone="solid"]   { background: var(--ink-3); border-color: var(--ink-3);  color: var(--paper); }

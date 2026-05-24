@@ -1,4 +1,4 @@
-/* ── Wrapper ──────────────────────────────────────────────────────── */
+﻿/* ── Wrapper ──────────────────────────────────────────────────────── */
 .wrap {
   display: flex;
   flex-direction: column;
@@ -170,7 +170,7 @@
   text-align: center;
 }
 .diagIcon[data-level="warn"] { color: var(--danger); }
-.diagIcon[data-level="info"] { color: var(--accent); }
+.diagIcon[data-level="info"] { color: var(--accent-text); }
 .diagIcon[data-level="ok"]   { color: var(--good); }
 
 .diagLoc {
@@ -191,7 +191,7 @@
 .diagFix {
   font-size: 8.5px;
   letter-spacing: 0.06em;
-  color: var(--accent);
+  color: var(--accent-text);
   background: none;
   border: none;
   cursor: pointer;
@@ -262,7 +262,7 @@
   letter-spacing: 0.1em;
 }
 .flowSummary [data-level="warn"] { color: var(--danger); }
-.flowSummary [data-level="info"] { color: var(--accent); }
+.flowSummary [data-level="info"] { color: var(--accent-text); }
 .flowSummary [data-level="ok"]   { color: var(--good); }
 .flowSummary [data-blocking]     { color: var(--good); }
 

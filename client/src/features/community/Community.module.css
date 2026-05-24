@@ -1,4 +1,4 @@
-/* ── Section wrapper ──────────────────────────────────────── */
+﻿/* ── Section wrapper ──────────────────────────────────────── */
 .section {
   padding: 40px 48px;
   border-bottom: 1px solid var(--rule);
@@ -137,7 +137,7 @@
 
 .availBadge[data-available="paused"] {
   border-color: var(--accent);
-  color: var(--accent);
+  color: var(--accent-text);
 }
 
 .mentorSpecialties {
@@ -190,7 +190,7 @@
 .pendingCount {
   font-style: italic;
   font-size: 36px;
-  color: var(--accent);
+  color: var(--accent-text);
 }
 
 /* ── Writing circle view ──────────────────────────────────── */

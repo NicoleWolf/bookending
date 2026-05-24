@@ -1,4 +1,4 @@
-.root {
+﻿.root {
   display: flex;
   flex-direction: column;
   height: 100%;
@@ -62,7 +62,7 @@
 }
 
 .item[data-active] .label {
-  color: var(--accent);
+  color: var(--accent-text);
 }
 
 .date {
@@ -83,7 +83,7 @@
   padding: 8px 0;
   background: transparent;
   border: 1px solid var(--accent);
-  color: var(--accent);
+  color: var(--accent-text);
   font-family: var(--mono);
   font-size: 9.5px;
   letter-spacing: 0.1em;

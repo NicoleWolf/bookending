@@ -1,4 +1,4 @@
-.state {}
+﻿.state {}
 
 .heroHeadline {
   font-style: italic;
@@ -65,7 +65,7 @@
 .laneNum {
   font-size: 11px;
   letter-spacing: 0.12em;
-  color: var(--accent);
+  color: var(--accent-text);
   font-weight: 500;
 }
 
@@ -114,7 +114,7 @@
 .mechanismLabel {
   font-size: 10.5px;
   letter-spacing: 0.1em;
-  color: var(--accent);
+  color: var(--accent-text);
   font-weight: 500;
   min-width: 100px;
   flex-shrink: 0;
@@ -192,7 +192,7 @@
   border: 0;
   font-style: italic;
   font-size: 16px;
-  color: var(--accent);
+  color: var(--accent-text);
   cursor: pointer;
   text-decoration: underline;
   padding: 0;

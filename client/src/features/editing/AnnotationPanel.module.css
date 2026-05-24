@@ -1,4 +1,4 @@
-.panel {
+﻿.panel {
   display: flex;
   flex-direction: column;
   border-left: 1px solid var(--rule);
@@ -36,7 +36,7 @@
 }
 
 .headBadge[data-active] {
-  color: var(--accent);
+  color: var(--accent-text);
 }
 
 /* ── Hint (no selection) ─────────────────────────────────────────── */

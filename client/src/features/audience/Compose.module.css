@@ -1,4 +1,4 @@
-/* ── Compose chooser ──────────────────────────────────────── */
+﻿/* ── Compose chooser ──────────────────────────────────────── */
 .chooser {
   padding: 48px 40px;
   max-width: 580px;
@@ -417,7 +417,7 @@
 
 .adaptScheduleBtn:hover {
   border-color: var(--accent);
-  color: var(--accent);
+  color: var(--accent-text);
 }
 
 .adaptScheduleBtn[data-scheduled] {

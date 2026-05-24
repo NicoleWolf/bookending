@@ -1,4 +1,4 @@
-/* ── Section wrapper ─────────────────────────────────────────────── */
+﻿/* ── Section wrapper ─────────────────────────────────────────────── */
 .section {
   padding: 0;
   border-bottom: 1px solid var(--rule);
@@ -251,7 +251,7 @@
 .serialBadge {
   padding: 2px 8px;
   border: 1px solid var(--accent);
-  color: var(--accent);
+  color: var(--accent-text);
   font-family: var(--mono);
   font-feature-settings: "ss01";
   font-size: 9px;
@@ -301,7 +301,7 @@
 }
 
 .msProgressPct[data-complete] {
-  color: var(--accent);
+  color: var(--accent-text);
 }
 
 .msBarTrack {
@@ -345,7 +345,7 @@
   font-family: var(--mono);
   font-feature-settings: "ss01";
   font-size: 10px;
-  color: var(--accent);
+  color: var(--accent-text);
   letter-spacing: 0.06em;
 }
 
@@ -544,7 +544,7 @@
 }
 
 .readingProgressPct[data-complete] {
-  color: var(--accent);
+  color: var(--accent-text);
 }
 
 .readingBarTrack {
@@ -872,7 +872,7 @@
   font-size: 10.5px;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--accent);
+  color: var(--accent-text);
 }
 
 .newNoteQuote {
@@ -1003,7 +1003,7 @@
 }
 
 .noteThemeBadge[data-theme="pacing"]    { color: var(--danger);  border-color: var(--danger);  background: color-mix(in srgb, var(--danger)  8%, transparent); }
-.noteThemeBadge[data-theme="prose"]     { color: var(--accent);  border-color: var(--accent);  background: color-mix(in srgb, var(--accent)  8%, transparent); }
+.noteThemeBadge[data-theme="prose"]     { color: var(--accent-text);  border-color: var(--accent);  background: color-mix(in srgb, var(--accent)  8%, transparent); }
 .noteThemeBadge[data-theme="character"] { color: var(--muted);   border-color: var(--rule);    background: transparent; }
 .noteThemeBadge[data-theme="plot"]      { color: var(--muted);   border-color: var(--rule);    background: transparent; }
 .noteThemeBadge[data-theme="other"]     { color: var(--muted-2); border-color: var(--rule);    background: transparent; }
@@ -1123,7 +1123,7 @@
   font-size: 10.5px;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--accent);
+  color: var(--accent-text);
 }
 
 .submitTitle {
@@ -1195,7 +1195,7 @@
 .compStarBtn[data-lit] {
   border-color: var(--accent);
   background: var(--ink-3);
-  color: var(--accent);
+  color: var(--accent-text);
 }
 
 .starRatingLabel {
@@ -1607,7 +1607,7 @@
 
 .stanceBtn[data-active] {
   border-color: var(--accent);
-  color: var(--accent);
+  color: var(--accent-text);
 }
 
 .stanceBtn:hover {
@@ -1928,7 +1928,7 @@
   font-size: 9px;
   letter-spacing: 0.18em;
   text-transform: uppercase;
-  color: var(--accent);
+  color: var(--accent-text);
 }
 
 .irStatusSep {
@@ -2030,7 +2030,7 @@
   font-size: 9px;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: var(--accent);
+  color: var(--accent-text);
   background: none;
   border: none;
   cursor: pointer;
@@ -2067,7 +2067,7 @@
   font-size: 9px;
   letter-spacing: 0.18em;
   text-transform: uppercase;
-  color: var(--accent);
+  color: var(--accent-text);
 }
 
 .irCloserStatement {
@@ -2141,7 +2141,7 @@
 .arcFinishEyebrow {
   font-size: 0.65rem;
   letter-spacing: 0.12em;
-  color: var(--accent);
+  color: var(--accent-text);
 }
 
 .arcFinishTitle {

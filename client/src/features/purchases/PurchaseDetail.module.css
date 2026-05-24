@@ -1,4 +1,4 @@
-/* ── Back bar ─────────────────────────────────────────────── */
+﻿/* ── Back bar ─────────────────────────────────────────────── */
 
 .backBar {
   background: var(--ink-2);
@@ -290,7 +290,7 @@
 }
 
 .checklistHeader[data-complete] .checklistProgress {
-  color: var(--accent);
+  color: var(--accent-text);
 }
 
 .checklistItems {
@@ -322,7 +322,7 @@
 }
 
 .checklistRow[data-done] .checklistMark {
-  color: var(--accent);
+  color: var(--accent-text);
 }
 
 .checklistLabel {

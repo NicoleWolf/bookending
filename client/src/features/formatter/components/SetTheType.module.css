@@ -1,4 +1,4 @@
-/* ── Wrapper ──────────────────────────────────────────────────────── */
+﻿/* ── Wrapper ──────────────────────────────────────────────────────── */
 .wrap {
   display: flex;
   flex-direction: column;
@@ -107,7 +107,7 @@
   margin-left: auto;
   transition: color 0.1s;
 }
-.suggestLink:hover { color: var(--accent); }
+.suggestLink:hover { color: var(--accent-text); }
 
 /* ── Theme card grid ──────────────────────────────────────────────── */
 .grid {
@@ -154,7 +154,7 @@
 .cardSelected {
   font-size: 8px;
   letter-spacing: 0.1em;
-  color: var(--accent);
+  color: var(--accent-text);
   border: 1px solid color-mix(in srgb, var(--accent) 40%, transparent);
   padding: 1px 5px;
 }
@@ -230,7 +230,7 @@
 .cardFootTag {
   font-size: 8px;
   letter-spacing: 0.1em;
-  color: var(--accent);
+  color: var(--accent-text);
 }
 
 .cardFootTagMuted {

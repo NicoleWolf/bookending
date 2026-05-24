@@ -1,4 +1,4 @@
-/* ── Landing: manuscript grid ────────────────────────────────────── */
+﻿/* ── Landing: manuscript grid ────────────────────────────────────── */
 .landingWrap {
   padding: 32px 48px 64px;
 }
@@ -30,7 +30,7 @@
 .clearSearch {
   background: none;
   border: none;
-  color: var(--accent);
+  color: var(--accent-text);
   font-family: var(--serif);
   font-style: italic;
   font-size: 15px;
@@ -603,7 +603,7 @@ details[open] .cwSummary::after {
 
 .statusBtn[data-active] {
   border-color: var(--accent);
-  color: var(--accent);
+  color: var(--accent-text);
   background: color-mix(in srgb, var(--accent) 8%, transparent);
 }
 
@@ -684,7 +684,7 @@ details[open] .cwSummary::after {
   font-family: var(--mono);
   font-feature-settings: "ss01";
   font-size: 9.5px;
-  color: var(--accent);
+  color: var(--accent-text);
   letter-spacing: 0.1em;
   text-transform: uppercase;
 }
@@ -830,7 +830,7 @@ details[open] .cwSummary::after {
 
 .betaModeBtn[data-active] {
   border-color: var(--accent);
-  color: var(--accent);
+  color: var(--accent-text);
   background: color-mix(in srgb, var(--accent) 8%, transparent);
 }
 

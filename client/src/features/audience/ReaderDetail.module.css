@@ -1,4 +1,4 @@
-/* ── Back link ────────────────────────────────────────────── */
+﻿/* ── Back link ────────────────────────────────────────────── */
 .backBtn {
   display: block;
   font-family: var(--mono);
@@ -237,7 +237,7 @@
 }
 
 .matchConfidence[data-confidence="medium"] {
-  color: var(--accent);
+  color: var(--accent-text);
 }
 
 .matchDetail {

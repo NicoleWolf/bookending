@@ -1,4 +1,4 @@
-/* ── Stats strip ─────────────────────────────────────────────────── */
+﻿/* ── Stats strip ─────────────────────────────────────────────────── */
 .statsGrid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -197,7 +197,7 @@
   font-family: var(--mono);
   font-feature-settings: "ss01";
   font-size: 9.5px;
-  color: var(--accent);
+  color: var(--accent-text);
   letter-spacing: 0.04em;
   margin-top: 4px;
 }

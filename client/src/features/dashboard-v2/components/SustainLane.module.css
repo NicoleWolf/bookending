@@ -1,4 +1,4 @@
-.lane {}
+﻿.lane {}
 
 .header { margin-bottom: 10px; }
 
@@ -49,7 +49,7 @@
 .statValueAlert {
   font-style: italic;
   font-size: 22px;
-  color: var(--accent);
+  color: var(--accent-text);
   display: block;
 }
 

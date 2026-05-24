@@ -1,4 +1,4 @@
-/* ── Header ───────────────────────────────────────────────── */
+﻿/* ── Header ───────────────────────────────────────────────── */
 .header {
   display: flex;
   align-items: flex-start;
@@ -49,7 +49,7 @@
   border: 1px solid var(--rule);
   font-size: 9.5px;
   letter-spacing: 0.1em;
-  color: var(--accent);
+  color: var(--accent-text);
 }
 
 /* ── Stats strip ──────────────────────────────────────────── */
@@ -79,7 +79,7 @@
 }
 
 .statNum[data-active] {
-  color: var(--accent);
+  color: var(--accent-text);
 }
 
 .statLabel {
@@ -225,7 +225,7 @@
 }
 
 .taskDue[data-this-week] {
-  color: var(--accent);
+  color: var(--accent-text);
 }
 
 .taskRight {
@@ -241,7 +241,7 @@
   font-size: 11px;
   font-weight: 500;
   letter-spacing: 0.03em;
-  color: var(--accent);
+  color: var(--accent-text);
   background: transparent;
   border: none;
   padding: 0;

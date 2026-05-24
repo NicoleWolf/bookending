@@ -1,4 +1,4 @@
-.stack {
+﻿.stack {
   position: fixed;
   bottom: 24px;
   right: 24px;
@@ -67,7 +67,7 @@
   font-size: 11px;
   font-weight: 600;
   letter-spacing: 0.03em;
-  color: var(--accent);
+  color: var(--accent-text);
   background: none;
   border: none;
   padding: 0;

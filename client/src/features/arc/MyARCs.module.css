@@ -1,4 +1,4 @@
-/* ── Shell ──────────────────────────────────────────────────────────────────── */
+﻿/* ── Shell ──────────────────────────────────────────────────────────────────── */
 
 .wrap {
   padding: 0 0 80px;
@@ -131,7 +131,7 @@
   font-size: 0.65rem;
   letter-spacing: 0.06em;
   text-transform: uppercase;
-  color: var(--accent);
+  color: var(--accent-text);
 }
 
 .deadlineSoon {
@@ -156,7 +156,7 @@
   font-size: 0.7rem;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--accent);
+  color: var(--accent-text);
   background: none;
   border: 1px solid var(--accent);
   padding: 7px 14px;

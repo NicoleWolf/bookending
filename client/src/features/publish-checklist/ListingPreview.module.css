@@ -1,4 +1,4 @@
-/* ── Panel wrapper ───────────────────────────────────────── */
+﻿/* ── Panel wrapper ───────────────────────────────────────── */
 .panel {
   display: flex;
   flex-direction: column;
@@ -135,7 +135,7 @@
   border-bottom: none;
 }
 
-.cnCount { color: var(--accent); }
+.cnCount { color: var(--accent-text); }
 
 .cnList {
   margin: 3px 0 0;

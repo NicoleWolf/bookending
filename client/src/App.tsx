@@ -246,8 +246,8 @@ function ReaderApp() {
     addToast(n);
   }
 
-  function handleNotifCta(authorId: string) {
-    setAuthorTarget({ authorId, tab: 'qa' });
+  function handleNotifCta(authorId: string, tab?: string) {
+    setAuthorTarget({ authorId, tab: (tab as ProfileTab) ?? 'qa' });
     setActiveTab('Author Profiles');
   }
 
@@ -309,7 +309,7 @@ function ReaderApp() {
       {activeTab === 'Purchases' && <PurchasesView />}
       {activeTab === 'Community' && <Community section="mentorship" />}
       {activeTab === 'Profile' && (
-        <ProfileHub onBack={() => setActiveTab('Reading')} onToast={addToast} initialTab={profileInitialTab} />
+        <ProfileHub onBack={() => setActiveTab('Reading')} onToast={addToast} initialTab={profileInitialTab} savedBooks={savedBooks} />
       )}
       {activeTab === 'ARC Application' && arcApplicationManuscriptId && (
         <ARCApplicationForm
@@ -454,8 +454,8 @@ function AuthorApp() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isQuiet]);
 
-  function handleNotifCta(authorId: string) {
-    setAuthorTarget({ authorId, tab: 'qa' });
+  function handleNotifCta(authorId: string, tab?: string) {
+    setAuthorTarget({ authorId, tab: (tab as ProfileTab) ?? 'qa' });
     setActiveTab('Author Profiles');
   }
 
@@ -610,6 +610,20 @@ function AuthorApp() {
           openNewManuscript={openNewManuscript}
           onOpenNewHandled={() => setOpenNewManuscript(false)}
           onDirtyChange={setManuscriptsDirty}
+          onPublish={(manuscriptId) => {
+            const book = savedBooks[manuscriptId];
+            const title = book?.title ?? 'your book';
+            addNotification({
+              id: `book-published-${manuscriptId}-${Date.now()}`,
+              type: 'BOOK_PUBLISHED',
+              stage: 'Publish',
+              message: `Your followers were notified that "${title}" is now live.`,
+              read: false,
+              receivedAt: new Date().toISOString(),
+              cta: { label: 'View listing', authorId: currentUser?.id ?? '', tab: 'overview' },
+            });
+            setActiveTab('My Store');
+          }}
         />
       )}
       {activeTab === 'Editing & Beta-readers' && <EditingHub savedBooks={savedBooks} onTabChange={setActiveTab} />}
@@ -659,7 +673,7 @@ function AuthorApp() {
       {activeTab === 'Connections' && <ConnectionsView />}
       {activeTab === 'Royalties' && <RoyaltiesTab savedBooks={savedBooks} />}
       {activeTab === 'Profile' && (
-        <ProfileHub onBack={() => setActiveTab('Dashboard')} onToast={addToast} initialTab={profileInitialTab} />
+        <ProfileHub onBack={() => setActiveTab('Dashboard')} onToast={addToast} initialTab={profileInitialTab} savedBooks={savedBooks} />
       )}
       {activeTab === 'Admin' && currentUser?.isAdmin && <AdminPanel />}
 

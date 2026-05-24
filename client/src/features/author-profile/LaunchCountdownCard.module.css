@@ -1,0 +1,131 @@
+/* ── LaunchCountdownCard ──────────────────────────────────── */
+.card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 28px;
+  padding: 36px 24px 32px;
+  background: var(--ink-3);
+  border: 0.5px solid var(--rule);
+  text-align: center;
+  position: relative;
+}
+
+/* Thin oxblood top accent line */
+.card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: var(--accent);
+}
+
+.eyebrow {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+/* ── Countdown grid ───────────────────────────────────────── */
+.countdown {
+  display: flex;
+  align-items: flex-end;
+  gap: 20px;
+}
+
+.unit {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.number {
+  font-size: 52px;
+  font-weight: 400;
+  color: var(--paper);
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  min-width: 64px;
+  text-align: center;
+}
+
+.unitLabel {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.18em;
+  color: var(--muted);
+  text-transform: uppercase;
+}
+
+.sep {
+  font-family: var(--mono);
+  font-size: 28px;
+  color: var(--rule);
+  padding-bottom: 12px;
+  flex-shrink: 0;
+}
+
+/* ── Book meta ────────────────────────────────────────────── */
+.bookMeta {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.bookTitle {
+  font-size: 20px;
+  font-style: italic;
+  font-weight: 400;
+  color: var(--paper);
+  line-height: 1.2;
+  margin: 0;
+  max-width: 360px;
+}
+
+.dateLabel {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  color: var(--accent-text);
+  margin-top: 2px;
+}
+
+/* ── Now available state ──────────────────────────────────── */
+.available {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.availableMark {
+  font-size: 32px;
+  color: var(--good);
+  line-height: 1;
+}
+
+/* Visually hidden, announced by screen readers */
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Responsive */
+@media (max-width: 520px) {
+  .number { font-size: 36px; min-width: 44px; }
+  .countdown { gap: 12px; }
+  .sep { font-size: 20px; padding-bottom: 8px; }
+}

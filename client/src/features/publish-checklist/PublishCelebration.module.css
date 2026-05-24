@@ -1,0 +1,191 @@
+/* ── PublishCelebration overlay ──────────────────────────────── */
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  background: var(--ink);
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  overflow-y: auto;
+  padding: 48px 24px 64px;
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 32px;
+  width: 100%;
+  max-width: 480px;
+}
+
+/* ── Cover ───────────────────────────────────────────────────── */
+.coverWrap {
+  display: flex;
+  justify-content: center;
+}
+
+.cover {
+  width: 180px;
+  height: auto;
+  aspect-ratio: 2 / 3;
+  object-fit: cover;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.6);
+}
+
+.coverPlaceholder {
+  width: 180px;
+  aspect-ratio: 2 / 3;
+  background: var(--ink-3);
+  border: 0.5px solid var(--rule);
+}
+
+/* ── Headline ────────────────────────────────────────────────── */
+.headline {
+  font-size: 48px;
+  font-style: italic;
+  font-weight: 400;
+  color: var(--paper);
+  margin: 0;
+  letter-spacing: -0.01em;
+}
+
+/* ── Shareable card (light theme — hardcoded for screenshottability) ── */
+.shareCard {
+  width: 100%;
+  background: #F4ECD8;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.shareCardInner {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+  padding: 20px;
+}
+
+.shareThumb {
+  width: 56px;
+  height: auto;
+  aspect-ratio: 2 / 3;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.shareMeta {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding-top: 2px;
+}
+
+.shareTitle {
+  font-family: 'Newsreader', Georgia, serif;
+  font-size: 18px;
+  font-style: italic;
+  font-weight: 400;
+  color: #1F1611;
+  line-height: 1.2;
+}
+
+.shareAuthor {
+  font-family: 'Inter', system-ui, sans-serif;
+  font-size: 12px;
+  color: #4A3728;
+}
+
+.shareAvailable {
+  font-family: 'JetBrains Mono', 'Courier New', monospace;
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #9A3324;
+  margin-top: 4px;
+}
+
+.shareGenre {
+  color: #4A3728;
+}
+
+.shareNote {
+  padding: 8px 20px;
+  background: rgba(0, 0, 0, 0.06);
+  font-family: 'JetBrains Mono', 'Courier New', monospace;
+  font-size: 9px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #5C4030; /* darkened from #7A5C4A — 6.15:1 on tinted cream bg, passes AA */
+  text-align: center;
+}
+
+/* ── Stats ───────────────────────────────────────────────────── */
+.stats {
+  display: flex;
+  gap: 40px;
+  justify-content: center;
+}
+
+.statItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.statNum {
+  font-size: 40px;
+  font-weight: 400;
+  color: var(--paper);
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+
+.statLabel {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.statsHint {
+  font-family: var(--sans);
+  font-size: 12px;
+  color: var(--muted);
+  margin: -16px 0 0;
+  text-align: center;
+  font-style: italic;
+}
+
+/* ── Go to store button ──────────────────────────────────────── */
+.storeBtn {
+  background: var(--accent);
+  color: var(--ink);
+  border: none;
+  padding: 14px 36px;
+  font-family: var(--mono);
+  font-size: 13px;
+  letter-spacing: 0.06em;
+  cursor: pointer;
+  margin-top: 8px;
+}
+
+.storeBtn:hover {
+  opacity: 0.9;
+}
+
+.storeBtn:focus-visible {
+  outline: 2px solid var(--paper);
+  outline-offset: 3px;
+}
+
+/* ── Responsive ──────────────────────────────────────────────── */
+@media (max-width: 520px) {
+  .cover { width: 140px; }
+  .headline { font-size: 36px; }
+  .stats { gap: 24px; }
+  .statNum { font-size: 32px; }
+}

@@ -20,8 +20,9 @@
   --muted-2:   #6E5C40;   /* labels */
 
   /* ── Accents ─────────────────────────────────────────────────── */
-  --accent:    #9A3324;   /* oxblood — lead accent */
-  --accent-2:  #BF4B3A;   /* lighter oxblood */
+  --accent:      #9A3324;   /* oxblood — lead accent */
+  --accent-text: #9A3324;   /* equals --accent in light theme; overridden for dark */
+  --accent-2:    #BF4B3A;   /* lighter oxblood */
   --good:      #3D5440;   /* moss — success / live */
   --danger:    #BF4010;   /* error / destructive */
   --moss:      #3D5440;   /* community moments */
@@ -95,11 +96,12 @@
   --paper:     #F4EFE6;
   --paper-dim: #D9D2C5;
   --muted:     #9A8E7A;
-  --muted-2:   #6E6557;
-  --accent:    #9A3324;   /* oxblood */
+  --muted-2:   #928A7C;   /* lightened for WCAG AA on dark surfaces (was #6E6557, 2.89:1) */
+  --accent:    #9A3324;   /* oxblood — use --accent-text for readable text on dark */
   --accent-2:  #BF4B3A;
+  --accent-text: #D4725F; /* WCAG AA text-safe oxblood on dark surfaces (5.04:1 on --ink-3) */
   --good:      #00A8A8;   /* teal reads better on dark */
-  --danger:    #BF4010;
+  --danger:    #DC6535;   /* lightened for WCAG AA on dark surfaces (was #BF4010, 3.13:1) */
   --moss:      #3D5440;
   --honey:     #C8941F;
   --plum:      #6B3A52;

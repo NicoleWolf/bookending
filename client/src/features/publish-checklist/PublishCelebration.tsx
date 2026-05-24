@@ -3,7 +3,7 @@ import styles from './PublishCelebration.module.css';
 
 interface Props {
   title:       string;
-  authorName:  string;
+  authorName:  string | null;
   genre:       string | null;
   coverUrl:    string | null;
   onGoToStore: () => void;

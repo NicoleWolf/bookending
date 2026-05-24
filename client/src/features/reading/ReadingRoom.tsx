@@ -364,7 +364,7 @@ export default function ReadingRoom({ msRef, onBack, arcMode, onArcFinished }: R
       )}
 
       {/* ── Background content (inert while guidelines gate is open) ── */}
-      <div {...(!guidelinesAcked && ms.instructions ? { inert: '' } : {})}>
+      <div {...(!guidelinesAcked && ms.instructions ? { inert: true } : {})}>
 
       {/* ── Masthead ────────────────────────────────────────────────── */}
       <div className={styles.roomHeader}>

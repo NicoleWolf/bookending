@@ -309,7 +309,7 @@ function ReaderApp() {
       {activeTab === 'Purchases' && <PurchasesView />}
       {activeTab === 'Community' && <Community section="mentorship" />}
       {activeTab === 'Profile' && (
-        <ProfileHub onBack={() => setActiveTab('Reading')} onToast={addToast} initialTab={profileInitialTab} savedBooks={savedBooks} />
+        <ProfileHub onBack={() => setActiveTab('Reading')} onToast={addToast} initialTab={profileInitialTab} />
       )}
       {activeTab === 'ARC Application' && arcApplicationManuscriptId && (
         <ARCApplicationForm

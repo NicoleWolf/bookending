@@ -206,7 +206,7 @@ export default function PublishChecklist({ manuscript, coverUrl, authorName, onB
         onGoToStore={() => { setPublished(false); onPublish?.(); }}
       />
     )}
-    <div className={styles.page} {...(published ? { inert: '' } : {})}>
+    <div className={styles.page} {...(published ? { inert: true } : {})}>
 
       {/* ── Sticky top bar ────────────────────────────────── */}
       <div className={styles.topBar}>

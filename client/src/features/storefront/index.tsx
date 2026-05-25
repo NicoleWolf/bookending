@@ -6,21 +6,23 @@ import { StorefrontView } from './StorefrontView';
 import { ProductsView } from './ProductsView';
 import { OrdersView } from './OrdersView';
 import { SettingsView } from './SettingsView';
+import { AttributionView } from './AttributionView';
 import type { BookMetadata } from '../library/data';
 import { useAuth } from '../auth';
 import { api } from '../../lib/api';
 import type { OrderRecord, ProductRecord } from '@bookending/shared';
 import styles from './Storefront.module.css';
 
-type SubView = 'overview' | 'products' | 'orders' | 'settings' | 'storefront';
+type SubView = 'overview' | 'products' | 'orders' | 'settings' | 'storefront' | 'attribution';
 
 interface StorefrontTabProps {
-  savedBooks: Record<string, BookMetadata>;
-  onTabChange: (tab: string) => void;
-  onBookSave?: (id: string, book: BookMetadata) => void;
+  savedBooks:     Record<string, BookMetadata>;
+  onTabChange:    (tab: string) => void;
+  onBookSave?:    (id: string, book: BookMetadata) => void;
+  onViewListing?: (bookId: string) => void;
 }
 
-export default function StorefrontTab({ savedBooks, onTabChange, onBookSave }: StorefrontTabProps) {
+export default function StorefrontTab({ savedBooks, onTabChange, onBookSave, onViewListing }: StorefrontTabProps) {
   const { session } = useAuth();
   const [view,       setView]       = useState<SubView>('overview');
   const [newOrders,  setNewOrders]  = useState(0);
@@ -89,14 +91,22 @@ export default function StorefrontTab({ savedBooks, onTabChange, onBookSave }: S
           >
             Storefront
           </button>
+          <button
+            className={styles.tab}
+            data-active={view === 'attribution' ? 'true' : undefined}
+            onClick={() => setView('attribution')}
+          >
+            Attribution
+          </button>
         </nav>
       </div>
 
       {view === 'overview'  && <OverviewView onViewChange={v => setView(v as SubView)} />}
-      {view === 'storefront' && <StorefrontView />}
+      {view === 'storefront' && <StorefrontView onViewListing={onViewListing} />}
       {view === 'products'  && <ProductsView savedBooks={savedBooks} onTabChange={onTabChange} onBookSave={onBookSave} />}
       {view === 'orders'    && <OrdersView />}
-      {view === 'settings'  && <SettingsView />}
+      {view === 'settings'     && <SettingsView />}
+      {view === 'attribution'  && <AttributionView />}
     </section>
   );
 }

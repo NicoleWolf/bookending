@@ -5,8 +5,12 @@ export type NotificationType =
   | 'ENCOURAGEMENT'
   | 'AUTHOR_FOLLOW'
   | 'AUTHOR_MILESTONE'
+  | 'AUTHOR_POST'
+  | 'AUTHOR_LAUNCH'
+  | 'AUTHOR_ARC'
   | 'QA_ANSWERED'
-  | 'BOOK_PUBLISHED';
+  | 'BOOK_PUBLISHED'
+  | 'CHECKIN_RECEIVED';
 
 export interface AppNotification {
   id: string;
@@ -15,7 +19,7 @@ export interface AppNotification {
   message: string;
   read: boolean;
   receivedAt: string; // ISO date string
-  cta?: { label: string; authorId: string; tab?: string };
+  cta?: { label: string; authorId: string; tab?: string; bookId?: string };
   onUndo?: () => void;
 }
 

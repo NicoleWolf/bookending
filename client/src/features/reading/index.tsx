@@ -8,10 +8,17 @@ import WarmCard from './WarmCard';
 import ShelfCard from './ShelfCard';
 import FinishedCard from './FinishedCard';
 import FollowingRow from './FollowingRow';
+import FollowingFeed from './FollowingFeed';
+import AuthorMessages from './AuthorMessages';
 import HouseRail from './HouseRail';
 import styles from './Hub.module.css';
 
-export default function Reading() {
+interface ReadingProps {
+  onViewListing?:  (msRef: string) => void;
+  onGoToProfile?:  (authorId: string, tab?: string) => void;
+}
+
+export default function Reading({ onViewListing, onGoToProfile }: ReadingProps = {}) {
   const { session } = useAuth();
 
   const [hub,             setHub]             = useState<HubResponse | null>(null);
@@ -140,6 +147,7 @@ export default function Reading() {
                     item={item}
                     onBegin={openMs}
                     onRemove={handleShelfRemove}
+                    onViewListing={onViewListing}
                   />
                 ))}
               </div>
@@ -159,16 +167,22 @@ export default function Reading() {
             </section>
           )}
 
+          {/* Messages from authors (post-read check-ins) */}
+          <AuthorMessages />
+
           {/* From authors you follow */}
-          {followingAuthors.length > 0 && (
-            <section>
-              <div className={styles.sectionHead}>
-                <span className={styles.sectionTitle}>From authors you follow</span>
-                <span className={styles.sectionMeta}>See all &rarr;</span>
-              </div>
+          <section>
+            <div className={styles.sectionHead}>
+              <span className={styles.sectionTitle}>From authors you follow</span>
+            </div>
+            {followingAuthors.length > 0 && (
               <FollowingRow authors={followingAuthors} />
-            </section>
-          )}
+            )}
+            <FollowingFeed
+              onViewListing={onViewListing}
+              onGoToProfile={onGoToProfile}
+            />
+          </section>
 
         </div>
 

@@ -1,0 +1,76 @@
+import type { BookListing } from './types';
+
+export const DEMO_LISTING: BookListing = {
+  id:         'book-demo',
+  title:      'The Last Cartographer',
+  authorName: 'Billie Wolf',
+  authorId:   'author-billie',
+  genre:      'Literary Fiction',
+  coverUrl:   null,
+  price:      14.99,
+  edition:    'Signed first edition',
+  blurb:      'In a city where the streets rearrange themselves each decade, a young map-maker must decide whether the certainty she has built her career on is worth the wonder she has been trained to suppress. A novel about the cost of precision and the grace of being lost.',
+  authorNote: 'The first draft came out of a two-week sprint in February, when the power kept going out and I was writing by lamplight. The map-making was always in there — I\'d been obsessed with the Ordnance Survey for years. But the city changing its own geography only arrived on day four, around 2am, when I couldn\'t sleep. I wrote the climax before I wrote the middle. Sometimes that\'s the only way in.',
+  reviews: [
+    {
+      id:          'r1',
+      readerName:  'M. Chen',
+      stars:       5,
+      body:        'Quietly devastating. Wolf has a gift for letting the emotional weight arrive without announcing itself. I read the last fifty pages in one sitting and needed to sit with it afterward.',
+      submittedAt: '2026-05-12',
+      featured:    true,
+    },
+    {
+      id:          'r2',
+      readerName:  'J. Osei',
+      stars:       4,
+      body:        'A slow burn that earns every page of its buildup. The world-building is immaculate without ever feeling like a feature list. My only hesitation is the pacing in part two — it stalls slightly before the turn.',
+      submittedAt: '2026-05-10',
+      featured:    true,
+    },
+    {
+      id:          'r3',
+      readerName:  'P. Linares',
+      stars:       5,
+      body:        'I don\'t usually annotate books but I flagged nearly every other page. There\'s a sentence on page 140 that I\'ve thought about every day since I read it.',
+      submittedAt: '2026-05-11',
+      featured:    false,
+    },
+    {
+      id:          'r4',
+      readerName:  'T. Moreau',
+      stars:       4,
+      body:        'Literary fiction that doesn\'t make you feel like you\'re working. Rare.',
+      submittedAt: '2026-05-13',
+      featured:    false,
+    },
+    {
+      id:          'r5',
+      readerName:  'S. Nakamura',
+      stars:       3,
+      body:        'Beautiful prose, but the ending felt unearned to me. I wanted more for the secondary characters. Still glad I read it.',
+      submittedAt: '2026-05-15',
+      featured:    false,
+    },
+  ],
+  qa: [
+    {
+      id:       'q1',
+      question: 'How long did this take from first draft to publication?',
+      answer:   'About two and a half years. Eight months for the first draft, a year in revision, then another eight months in production. The revision felt longest — I had to pull the whole middle apart and rebuild it after my editor pointed out the inciting incident was in the wrong place.',
+      askedAt:  '2026-05-09',
+    },
+    {
+      id:       'q2',
+      question: 'Is the city based anywhere real?',
+      answer:   'It started as Portland, then quietly became its own thing. There are bones of Edinburgh in the older districts, and something of Lisbon in the hillside geography. But the cartography system is entirely invented — I spent two weeks drawing maps before writing a single chapter.',
+      askedAt:  '2026-05-10',
+    },
+    {
+      id:       'q3',
+      question: 'What were you reading while you wrote this?',
+      answer:   'Ursula Le Guin\'s essays on fiction, Italo Calvino\'s Invisible Cities, and a lot of 19th-century survey reports. Plus an embarrassing amount of Reddit threads about the Ordnance Survey.',
+      askedAt:  '2026-05-11',
+    },
+  ],
+};

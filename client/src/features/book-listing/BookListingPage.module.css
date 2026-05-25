@@ -1,0 +1,471 @@
+/* ── Shell ── */
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  background: var(--ink);
+  overflow-y: auto;
+}
+
+.page {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 32px 24px 80px;
+}
+
+.back {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: none;
+  border: none;
+  color: var(--muted);
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+  padding: 0;
+  margin-bottom: 36px;
+}
+
+.back:hover { color: var(--paper); }
+.back:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+
+/* ── Hero ── */
+
+.hero {
+  display: grid;
+  grid-template-columns: 168px 1fr;
+  gap: 36px;
+  margin-bottom: 0;
+}
+
+.cover {
+  aspect-ratio: 2 / 3;
+}
+
+.coverImg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.coverPlaceholder {
+  width: 100%;
+  height: 100%;
+  background: repeating-linear-gradient(
+    45deg,
+    var(--ink-2), var(--ink-2) 4px,
+    var(--ink-3) 4px, var(--ink-3) 8px
+  );
+  border: 1px solid var(--rule);
+}
+
+.meta {
+  display: flex;
+  flex-direction: column;
+  padding-top: 4px;
+}
+
+.metaGenre {
+  color: var(--muted);
+  font-size: 0.6rem;
+  margin-bottom: 8px;
+}
+
+.metaTitle {
+  font-size: 2.1rem;
+  line-height: 1.1;
+  color: var(--paper);
+  margin-bottom: 6px;
+}
+
+.metaAuthor {
+  font-size: 0.85rem;
+  color: var(--muted);
+  margin-bottom: 20px;
+}
+
+.metaBlurb {
+  font-size: 0.9rem;
+  line-height: 1.7;
+  color: var(--paper);
+  margin-bottom: 20px;
+  flex: 1;
+}
+
+.metaPrice {
+  font-size: 1.25rem;
+  color: var(--paper);
+  margin-bottom: 3px;
+}
+
+.metaEdition {
+  color: var(--muted);
+  font-size: 0.58rem;
+  margin-bottom: 16px;
+}
+
+.ctaRow {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.ctaBuy {
+  background: var(--accent);
+  color: var(--paper);
+  border: none;
+  padding: 10px 26px;
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.ctaBuy:hover { opacity: 0.88; }
+.ctaBuy:focus-visible { outline: 2px solid var(--paper); outline-offset: 3px; }
+
+.ctaSecondary {
+  background: none;
+  border: 1px solid var(--rule);
+  color: var(--muted);
+  padding: 10px 20px;
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.ctaSecondary:hover { color: var(--paper); border-color: var(--muted-2); }
+
+/* ── Section wrapper ── */
+
+.section {
+  border-top: 1px solid var(--rule);
+  padding: 32px 0;
+}
+
+.sectionLabel {
+  font-size: 0.6rem;
+  letter-spacing: 0.1em;
+  color: var(--muted);
+  margin-bottom: 16px;
+}
+
+.authorHint {
+  font-style: italic;
+  text-transform: none;
+  letter-spacing: 0;
+  font-family: inherit;
+  color: var(--muted);
+}
+
+/* ── Author note ── */
+
+.authorNote {
+  font-size: 0.9rem;
+  line-height: 1.75;
+  color: var(--paper);
+  font-style: italic;
+  border-left: 2px solid var(--rule);
+  padding-left: 18px;
+  margin: 0;
+}
+
+/* ── Featured reviews ── */
+
+.featuredGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 2px;
+}
+
+.featuredCard {
+  background: var(--ink-2);
+  padding: 20px;
+}
+
+.featuredStars {
+  font-size: 0.85rem;
+  letter-spacing: 2px;
+  color: var(--accent-text);
+  margin-bottom: 10px;
+}
+
+.featuredBody {
+  font-size: 0.875rem;
+  line-height: 1.65;
+  color: var(--paper);
+  margin-bottom: 12px;
+}
+
+.featuredByline {
+  font-family: var(--font-mono);
+  font-size: 0.58rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* ── Review stats ── */
+
+.reviewStats {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  margin-bottom: 18px;
+}
+
+.avgNum {
+  font-size: 1.5rem;
+  color: var(--paper);
+}
+
+.avgStars {
+  font-size: 0.85rem;
+  letter-spacing: 1px;
+  color: var(--accent-text);
+}
+
+.reviewCount {
+  font-size: 0.6rem;
+  letter-spacing: 0.1em;
+  color: var(--muted);
+}
+
+/* ── Review list ── */
+
+.reviewList {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-bottom: 24px;
+}
+
+.reviewCard {
+  background: var(--ink-2);
+  padding: 16px 18px;
+  border-left: 3px solid transparent;
+}
+
+.reviewCard[data-featured] {
+  border-left-color: var(--accent);
+}
+
+.reviewHead {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 8px;
+  flex-wrap: wrap;
+}
+
+.reviewStars {
+  font-size: 0.8rem;
+  letter-spacing: 1px;
+  color: var(--accent-text);
+}
+
+.reviewMeta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.reviewName {
+  font-size: 0.6rem;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+}
+
+.reviewDate {
+  font-size: 0.55rem;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+}
+
+.reviewBody {
+  font-size: 0.85rem;
+  line-height: 1.6;
+  color: var(--paper);
+}
+
+/* ── Pin button ── */
+
+.pinBtn {
+  background: none;
+  border: 1px solid transparent;
+  color: var(--muted);
+  font-family: var(--font-mono);
+  font-size: 0.55rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  cursor: pointer;
+  padding: 2px 7px;
+}
+
+.pinBtn:hover { color: var(--accent-text); border-color: var(--rule); }
+.pinBtn[data-pinned] { color: var(--accent-text); border-color: color-mix(in srgb, var(--accent) 40%, transparent); }
+.pinBtn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+/* ── Empty state ── */
+
+.emptyReviews {
+  border: 1px dashed var(--rule);
+  padding: 36px;
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.emptyHeadline {
+  font-size: 1.1rem;
+  color: var(--paper);
+  margin-bottom: 8px;
+}
+
+.emptyBody {
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+
+/* ── Submit form ── */
+
+.submitForm {
+  border: 1px solid var(--rule);
+  padding: 20px;
+}
+
+.submitLabel {
+  font-size: 0.6rem;
+  letter-spacing: 0.1em;
+  color: var(--muted);
+  margin-bottom: 14px;
+}
+
+.starPicker {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 12px;
+}
+
+.starBtn {
+  background: none;
+  border: none;
+  font-size: 1.25rem;
+  cursor: pointer;
+  padding: 0 1px;
+  line-height: 1;
+  color: var(--muted);
+}
+
+.starBtn[data-lit] { color: var(--accent-text); }
+.starBtn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+.submitTextarea {
+  width: 100%;
+  background: var(--ink);
+  border: 1px solid var(--rule);
+  color: var(--paper);
+  font-family: inherit;
+  font-size: 0.85rem;
+  line-height: 1.55;
+  padding: 10px 12px;
+  resize: vertical;
+  min-height: 84px;
+  box-sizing: border-box;
+  margin-bottom: 10px;
+}
+
+.submitTextarea:focus { border-color: var(--muted-2); }
+.submitTextarea:focus-visible { outline: 2px solid var(--accent); outline-offset: 0; }
+.submitTextarea::placeholder { color: var(--muted); }
+
+.submitFoot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.charCount {
+  font-size: 0.58rem;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+}
+
+.submitBtn {
+  background: var(--accent);
+  color: var(--paper);
+  border: none;
+  padding: 9px 22px;
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.submitBtn:disabled { opacity: 0.35; cursor: not-allowed; }
+.submitBtn:focus-visible { outline: 2px solid var(--paper); outline-offset: 3px; }
+
+.submitDone {
+  font-size: 0.9rem;
+  color: var(--good);
+  padding: 8px 0;
+}
+
+/* ── Q&A / Discussion ── */
+
+.qaList {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  margin-bottom: 18px;
+}
+
+.qaItem {}
+
+.qaQuestion {
+  font-size: 0.9rem;
+  color: var(--muted);
+  font-style: italic;
+  margin-bottom: 8px;
+}
+
+.qaAnswer {
+  font-size: 0.85rem;
+  line-height: 1.65;
+  color: var(--paper);
+  border-left: 2px solid var(--rule);
+  padding-left: 14px;
+}
+
+.qaFoot {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.qaLink {
+  background: none;
+  border: none;
+  color: var(--muted);
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+  padding: 0;
+}
+
+.qaLink:hover { color: var(--paper); }
+.qaLink:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }

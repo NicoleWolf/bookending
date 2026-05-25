@@ -86,7 +86,7 @@ interface MastheadProps {
   savedBooks?: Record<number, BookMetadata>;
   onNewManuscript?: () => void;
   onLogout?: () => void;
-  onNotifCta?: (authorId: string) => void;
+  onNotifCta?: (authorId: string, tab?: string, bookId?: string) => void;
   navMode?: 'author' | 'reader';
   onLogin?: () => void;
 }

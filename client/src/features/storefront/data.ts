@@ -69,3 +69,65 @@ export const STOREFRONT_CONFIG = {
   hero: { name: 'Billie Wolf', tagline: 'Literary fiction from Portland, Oregon.' },
   featuredIds: ['1', '2', '3', '6'],
 };
+
+// ── Attribution data ──────────────────────────────────────────────
+
+export interface AttributionChannel {
+  id:          string;
+  label:       string;
+  description: string;        // what this channel is
+  revenue:     number;        // $ attributed
+  orders:      number;
+  pct:         number;        // share of total attributed revenue
+  avgOrder:    number;        // average order value
+  timing:      string;        // when it converted
+  repeat:      string;        // playbook recommendation for next launch
+}
+
+// Total attributed revenue: $2,645 (matches ENGAGEMENT_DATA totals)
+export const ATTRIBUTION_DATA: AttributionChannel[] = [
+  {
+    id:          'arc',
+    label:       'ARC readers',
+    description: 'Advance review copies sent 8 days before launch',
+    revenue:     1005,
+    orders:      31,
+    pct:         38,
+    avgOrder:    32,
+    timing:      'Converted mostly on launch day and day 2',
+    repeat:      'Send ARCs 10–14 days before launch — give more lead time for reviews to accumulate',
+  },
+  {
+    id:          'teaser',
+    label:       'Community teaser',
+    description: 'First-chapter preview posted to author community',
+    revenue:     740,
+    orders:      26,
+    pct:         28,
+    avgOrder:    28,
+    timing:      'Steady conversion over the first week',
+    repeat:      'Post 2 teasers: one excerpt + one thematic image, spaced 5 days apart',
+  },
+  {
+    id:          'newsletter',
+    label:       'Newsletter feature',
+    description: 'Featured in The Bookending Letter (18 k subscribers)',
+    revenue:     582,
+    orders:      18,
+    pct:         22,
+    avgOrder:    32,
+    timing:      'Spike on May 14, sustained 3 days',
+    repeat:      'Request the feature slot 3 weeks out — newsletter fills fast',
+  },
+  {
+    id:          'organic',
+    label:       'Organic discovery',
+    description: 'Direct, search, and unattributed traffic',
+    revenue:     318,
+    orders:      14,
+    pct:         12,
+    avgOrder:    23,
+    timing:      'Gradual, picked up in week 2',
+    repeat:      'Improve book page SEO: add genre keywords to description',
+  },
+];

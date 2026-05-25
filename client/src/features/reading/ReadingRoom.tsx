@@ -4,6 +4,8 @@ import { IconCheck } from '../../shared/ui/icons';
 import type { Manuscript, Highlight, Pending, Submission, AnnotationRecord, ProgressRecord, ImpressionPointRecord, ReaderChapterNoteRecord } from './types';
 import InRevisionReaderView from './InRevisionReaderView';
 import { STAR_LABELS, STANCE_ORDER, STANCE_VALUE } from './data';
+import type { TemplateAnswers } from './data';
+import FeedbackTemplate from './FeedbackTemplate';
 import { useAuth } from '../auth';
 import styles from './Reading.module.css';
 import { api } from '../../lib/api';
@@ -38,6 +40,7 @@ export default function ReadingRoom({ msRef, onBack, arcMode, onArcFinished }: R
   const [firstNoteSaved,    setFirstNoteSaved]    = useState(false);
   const [stars,             setStars]             = useState(0);
   const [message,           setMessage]           = useState('');
+  const [templateAnswers,   setTemplateAnswers]   = useState<TemplateAnswers>({});
   const [releasedOverrides] = useState<Record<number, boolean>>({});
   const [focusedHighlightId, setFocusedHighlightId] = useState<string | null>(null);
   const [submittedChapters,  setSubmittedChapters]  = useState<Set<number>>(new Set());
@@ -238,8 +241,12 @@ export default function ReadingRoom({ msRef, onBack, arcMode, onArcFinished }: R
 
   const submitFinish = () => {
     if (stars === 0) return;
-    setAlreadySub({ stars, message });
-    putProgress({ stars, message, submittedAt: new Date().toISOString() });
+    setAlreadySub({ stars, message, templateAnswers });
+    putProgress({
+      stars, message,
+      templateJson: JSON.stringify(templateAnswers),
+      submittedAt: new Date().toISOString(),
+    });
   };
 
   const upsertImpression = (chapterNum: number, stance: string) => {
@@ -657,29 +664,40 @@ export default function ReadingRoom({ msRef, onBack, arcMode, onArcFinished }: R
             <div className={styles.alreadySub}>
               <div className={styles.submitLabel}>Reading submitted</div>
               <p className={`serif ${styles.submitTitle}`}>Your reading of <em>{ms.title}</em> is complete.</p>
-              <p className={styles.submitSummary}>{alreadySub.stars} star{alreadySub.stars !== 1 ? 's' : ''} · {highlights.length} note{highlights.length !== 1 ? 's' : ''} sent to {authorFirstName}.</p>
+              <p className={styles.submitSummary}>
+                {alreadySub.stars} star{alreadySub.stars !== 1 ? 's' : ''} · {highlights.length} note{highlights.length !== 1 ? 's' : ''}
+                {alreadySub.templateAnswers && Object.keys(alreadySub.templateAnswers).length > 0
+                  ? ` · structured feedback`
+                  : ''
+                } sent to {authorFirstName}.
+              </p>
             </div>
           ) : (
             <>
               <div className={styles.finishHeader}>
                 <div className="label">You've finished the manuscript</div>
               </div>
-              <div className={styles.finishGrid}>
-                <div>
-                  <div className={styles.starsLabel}>STAR RATING</div>
-                  <div className={styles.starsRow}>
-                    {[1,2,3,4,5].map(n => (
-                      <button key={n} className={styles.compStarBtn} data-lit={n <= stars ? 'true' : undefined} onClick={() => setStars(n)}>★</button>
-                    ))}
-                  </div>
-                  {stars > 0 && <div className={styles.starRatingLabel}>{STAR_LABELS[stars].toUpperCase()}</div>}
+
+              {/* Star rating */}
+              <div className={styles.starsSection}>
+                <div className={styles.starsLabel}>STAR RATING</div>
+                <div className={styles.starsRow}>
+                  {[1,2,3,4,5].map(n => (
+                    <button key={n} className={styles.compStarBtn} data-lit={n <= stars ? 'true' : undefined} onClick={() => setStars(n)}>★</button>
+                  ))}
                 </div>
-                <div className={styles.msgSection}>
-                  <div className={styles.msgLabel}>MESSAGE TO AUTHOR (OPTIONAL)</div>
-                  <textarea className={styles.msgTextarea} placeholder="A final note for the writer…" value={message} onChange={e => setMessage(e.target.value)} />
-                  <Btn tone="accent" icon={<IconCheck size={14} />} onClick={submitFinish} disabled={stars === 0}>Submit reading</Btn>
-                  {stars === 0 && <div className={styles.noRatingHint}>ADD A STAR RATING TO SUBMIT</div>}
-                </div>
+                {stars > 0 && <div className={styles.starRatingLabel}>{STAR_LABELS[stars].toUpperCase()}</div>}
+              </div>
+
+              {/* Structured feedback template */}
+              <FeedbackTemplate answers={templateAnswers} onChange={setTemplateAnswers} />
+
+              {/* Message + submit */}
+              <div className={styles.msgSection}>
+                <div className={styles.msgLabel}>ADDITIONAL NOTES (OPTIONAL)</div>
+                <textarea className={styles.msgTextarea} placeholder="A final note for the writer…" value={message} onChange={e => setMessage(e.target.value)} />
+                <Btn tone="accent" icon={<IconCheck size={14} />} onClick={submitFinish} disabled={stars === 0}>Submit reading</Btn>
+                {stars === 0 && <div className={styles.noRatingHint}>ADD A STAR RATING TO SUBMIT</div>}
               </div>
             </>
           )}

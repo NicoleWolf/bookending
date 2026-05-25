@@ -5,7 +5,11 @@ import styles from './StorefrontView.module.css';
 
 interface HeroData { name: string; tagline: string; }
 
-export function StorefrontView() {
+interface StorefrontViewProps {
+  onViewListing?: (productId: string) => void;
+}
+
+export function StorefrontView({ onViewListing }: StorefrontViewProps = {}) {
   const [editMode,       setEditMode]       = useState(false);
   const [editingSection, setEditingSection] = useState<'hero' | 'products' | null>(null);
   const [hero,           setHero]           = useState<HeroData>(STOREFRONT_CONFIG.hero);
@@ -176,7 +180,12 @@ export function StorefrontView() {
 
           <div className={styles.sfProductGrid}>
             {featured.map(p => (
-              <div key={p.id} className={styles.sfProduct}>
+              <div
+                key={p.id}
+                className={styles.sfProduct}
+                style={onViewListing ? { cursor: 'pointer' } : undefined}
+                onClick={onViewListing ? () => onViewListing(p.id) : undefined}
+              >
                 <div className={styles.sfProductCover}>
                   <div className={styles.sfProductAuthor}>B. WOLF</div>
                   <div className={`serif ${styles.sfProductTitle}`}>{p.title}</div>

@@ -35,6 +35,7 @@ import ARCReviewComposer from './features/arc/ARCReviewComposer';
 import type { AuthorProfile, ProfileTab } from './features/author-profiles/types';
 import { api } from './lib/api';
 import type { ManuscriptRecord, NotificationRecord } from '@bookending/shared';
+import { BookListingPage } from './features/book-listing/BookListingPage';
 import styles from './App.module.css';
 
 type SavedBooks = Record<string, BookMetadata>;
@@ -220,6 +221,7 @@ function ReaderApp() {
   const [followedAuthors,         setFollowedAuthors]         = useState<Set<string>>(new Set());
   const [authorTarget,            setAuthorTarget]            = useState<{ authorId: string; tab: ProfileTab } | null>(null);
   const [arcApplicationManuscriptId, setArcApplicationManuscriptId] = useState<string | null>(null);
+  const [listingBookId,     setListingBookId]     = useState<string | null>(null);
   const toastTimers = useRef<Map<string, ReturnType<typeof setTimeout>>>(new Map());
 
   useEffect(() => {
@@ -246,7 +248,8 @@ function ReaderApp() {
     addToast(n);
   }
 
-  function handleNotifCta(authorId: string, tab?: string) {
+  function handleNotifCta(authorId: string, tab?: string, bookId?: string) {
+    if (bookId) { setListingBookId(bookId); return; }
     setAuthorTarget({ authorId, tab: (tab as ProfileTab) ?? 'qa' });
     setActiveTab('Author Profiles');
   }
@@ -275,7 +278,14 @@ function ReaderApp() {
   }
 
   return (
-    <div>
+    <>
+      {listingBookId && (
+        <BookListingPage
+          bookId={listingBookId}
+          onBack={() => setListingBookId(null)}
+        />
+      )}
+      <div {...(listingBookId ? { inert: true } : {})}>
       <Masthead
         activeTab={activeTab}
         onTabChange={setActiveTab}
@@ -288,7 +298,12 @@ function ReaderApp() {
       />
 
       {activeTab === 'Dashboard' && <DashboardPreview />}
-      {activeTab === 'Reading' && <Reading />}
+      {activeTab === 'Reading' && (
+        <Reading
+          onViewListing={setListingBookId}
+          onGoToProfile={(authorId, tab) => handleNotifCta(authorId, tab)}
+        />
+      )}
       {activeTab === 'Library' && (
         <LibraryBrowse
           savedBooks={{}}
@@ -346,7 +361,8 @@ function ReaderApp() {
         <span className={`mono ${styles.footerMeta}`}>BOOKENDING · A COMMUNITY FOR READERS & WRITERS · MMXXVI</span>
         <span className={`mono ${styles.footerMeta}`}>SET IN NEWSREADER & INTER · PRINTED FROM PORTLAND</span>
       </footer>
-    </div>
+      </div>
+    </>
   );
 }
 
@@ -369,6 +385,7 @@ function AuthorApp() {
   const [followedAuthors,            setFollowedAuthors]            = useState<Set<string>>(new Set());
   const [authorTarget,               setAuthorTarget]               = useState<{ authorId: string; tab: ProfileTab } | null>(null);
   const [arcApplicationManuscriptId, setArcApplicationManuscriptId] = useState<string | null>(null);
+  const [listingBookId,              setListingBookId]              = useState<string | null>(null);
   const toastTimers = useRef<Map<string, ReturnType<typeof setTimeout>>>(new Map());
 
   useEffect(() => {
@@ -454,7 +471,8 @@ function AuthorApp() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isQuiet]);
 
-  function handleNotifCta(authorId: string, tab?: string) {
+  function handleNotifCta(authorId: string, tab?: string, bookId?: string) {
+    if (bookId) { setListingBookId(bookId); return; }
     setAuthorTarget({ authorId, tab: (tab as ProfileTab) ?? 'qa' });
     setActiveTab('Author Profiles');
   }
@@ -580,7 +598,15 @@ function AuthorApp() {
   }
 
   return (
-    <div>
+    <>
+      {listingBookId && (
+        <BookListingPage
+          bookId={listingBookId}
+          onBack={() => setListingBookId(null)}
+          isAuthor={true}
+        />
+      )}
+      <div {...(listingBookId ? { inert: true } : {})}>
       <Masthead
         activeTab={activeTab}
         onTabChange={handleTabChange}
@@ -627,7 +653,12 @@ function AuthorApp() {
         />
       )}
       {activeTab === 'Editing & Beta-readers' && <EditingHub savedBooks={savedBooks} onTabChange={setActiveTab} />}
-      {activeTab === 'Reading' && <Reading />}
+      {activeTab === 'Reading' && (
+        <Reading
+          onViewListing={setListingBookId}
+          onGoToProfile={(authorId, tab) => handleNotifCta(authorId, tab)}
+        />
+      )}
       {activeTab === 'Library' && (
         <LibraryBrowse
           savedBooks={savedBooks}
@@ -667,7 +698,7 @@ function AuthorApp() {
         />
       )}
       {activeTab === 'Print & Distribution' && <PrintDistribution />}
-      {activeTab === 'My Store' && <StorefrontTab savedBooks={savedBooks} onTabChange={setActiveTab} onBookSave={handleBookSave} />}
+      {activeTab === 'My Store' && <StorefrontTab savedBooks={savedBooks} onTabChange={setActiveTab} onBookSave={handleBookSave} onViewListing={setListingBookId} />}
       {activeTab === 'Audience' && <AudienceTab savedBooks={savedBooks} onOpenSeasons={() => setActiveTab('Seasons')} />}
       {activeTab === 'Seasons' && <SeasonsView onCompose={() => setActiveTab('Audience')} />}
       {activeTab === 'Connections' && <ConnectionsView />}
@@ -705,7 +736,8 @@ function AuthorApp() {
         <span className={`mono ${styles.footerMeta}`}>BOOKENDING · A WORKBENCH FOR SELF-PUBLISHERS · MMXXVI</span>
         <span className={`mono ${styles.footerMeta}`}>SET IN NEWSREADER & INTER · PRINTED FROM PORTLAND</span>
       </footer>
-    </div>
+      </div>
+    </>
   );
 }
 

@@ -1,0 +1,203 @@
+/* ── Section head ── */
+
+.sectionHead {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--rule);
+  margin-bottom: 2px;
+}
+
+.sectionTitle {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 9.5px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--paper);
+  flex: 1;
+}
+
+.sectionCount {
+  font-family: var(--mono);
+  font-size: 9px;
+  color: var(--muted);
+}
+
+/* ── Message list ── */
+
+.messageList {
+  display: flex;
+  flex-direction: column;
+}
+
+.messageCard {
+  border-bottom: 1px solid var(--rule);
+  padding: 16px 0;
+  border-left: 2px solid transparent;
+  padding-left: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.messageCard:last-child {
+  border-bottom: none;
+}
+
+.messageCard[data-replied] {
+  border-left-color: var(--good);
+  opacity: 0.75;
+}
+
+/* ── Card head ── */
+
+.cardHead {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.authorName {
+  font-size: 11.5px;
+  color: var(--paper);
+}
+
+.bookTitle {
+  font-style: italic;
+  font-size: 11px;
+  color: var(--muted);
+  flex: 1;
+}
+
+.timestamp {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 9px;
+  color: var(--muted-2);
+  letter-spacing: 0.06em;
+}
+
+/* ── Message body ── */
+
+.messageText {
+  font-size: 13px;
+  line-height: 1.65;
+  color: var(--paper);
+  margin: 0;
+  white-space: pre-wrap;
+}
+
+/* ── Reply controls ── */
+
+.replyToggle {
+  background: none;
+  border: 1px solid var(--rule);
+  color: var(--muted);
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  cursor: pointer;
+  padding: 5px 10px;
+  align-self: flex-start;
+}
+
+.replyToggle:hover {
+  color: var(--paper);
+  border-color: var(--muted-2);
+}
+
+.replyToggle:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.replyForm {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.replyArea {
+  width: 100%;
+  background: var(--ink-2);
+  border: 1px solid var(--rule);
+  color: var(--paper);
+  font-family: inherit;
+  font-size: 13px;
+  line-height: 1.55;
+  padding: 10px 12px;
+  resize: vertical;
+  box-sizing: border-box;
+}
+
+.replyArea:focus {
+  border-color: var(--muted-2);
+}
+
+.replyArea:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 0;
+}
+
+.replyArea::placeholder {
+  color: var(--muted);
+  font-style: italic;
+}
+
+.replyFoot {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.cancelBtn {
+  background: none;
+  border: 1px solid var(--rule);
+  color: var(--muted);
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  cursor: pointer;
+  padding: 5px 12px;
+}
+
+.cancelBtn:hover { color: var(--paper); }
+.cancelBtn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+.replyBtn {
+  background: var(--accent);
+  border: none;
+  color: var(--paper);
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  cursor: pointer;
+  padding: 5px 14px;
+}
+
+.replyBtn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.replyBtn:not(:disabled):hover { opacity: 0.88; }
+.replyBtn:focus-visible { outline: 2px solid var(--paper); outline-offset: 2px; }
+
+/* ── Replied confirmation ── */
+
+.repliedNote {
+  font-family: var(--mono);
+  font-size: 9.5px;
+  letter-spacing: 0.06em;
+  color: var(--good);
+  margin: 0;
+}

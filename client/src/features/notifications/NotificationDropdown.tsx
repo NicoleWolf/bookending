@@ -6,7 +6,7 @@ interface Props {
   notifications: AppNotification[];
   onMarkRead: (id: string) => void;
   onMarkAllRead: () => void;
-  onCta?: (authorId: string, tab?: string) => void;
+  onCta?: (authorId: string, tab?: string, bookId?: string) => void;
 }
 
 export default function NotificationDropdown({ notifications, onMarkRead, onMarkAllRead, onCta }: Props) {
@@ -46,7 +46,7 @@ export default function NotificationDropdown({ notifications, onMarkRead, onMark
                     onClick={e => {
                       e.stopPropagation();
                       onMarkRead(n.id);
-                      onCta(n.cta!.authorId, n.cta!.tab);
+                      onCta(n.cta!.authorId, n.cta!.tab, n.cta!.bookId);
                     }}
                   >
                     {n.cta.label} <span aria-hidden="true">→</span>

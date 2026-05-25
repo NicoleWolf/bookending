@@ -18,7 +18,7 @@ export interface Highlight {
   time: string;
 }
 export interface Pending { chapterId: number; paraId: number; text: string; }
-export interface Submission { stars: number; message: string; }
+export interface Submission { stars: number; message: string; templateAnswers?: import('./data').TemplateAnswers; }
 
 export type { ThreadEntry } from '@bookending/shared';
 export type { AnnotationRecord, ProgressRecord, ImpressionPointRecord, ReaderChapterNoteRecord } from '@bookending/shared';

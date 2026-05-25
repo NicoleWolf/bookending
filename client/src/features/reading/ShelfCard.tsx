@@ -2,9 +2,10 @@ import type { HubShelfItem } from '@bookending/shared';
 import styles from './Hub.module.css';
 
 interface ShelfCardProps {
-  item:      HubShelfItem;
-  onBegin:   (msRef: string) => void;
-  onRemove:  (msRef: string) => void;
+  item:            HubShelfItem;
+  onBegin:         (msRef: string) => void;
+  onRemove:        (msRef: string) => void;
+  onViewListing?:  (msRef: string) => void;
 }
 
 function reasonLine(item: HubShelfItem): string {
@@ -24,7 +25,7 @@ function reasonLine(item: HubShelfItem): string {
   }
 }
 
-export default function ShelfCard({ item, onBegin, onRemove }: ShelfCardProps) {
+export default function ShelfCard({ item, onBegin, onRemove, onViewListing }: ShelfCardProps) {
   const { manuscriptRef, title, authorName, genre, totalChapters, draftLabel, source } = item;
   const isRecommended = source !== 'self_saved';
 
@@ -52,6 +53,11 @@ export default function ShelfCard({ item, onBegin, onRemove }: ShelfCardProps) {
             ? <button className={styles.shelfActionSecondary}>Why this?</button>
             : <button className={styles.shelfActionSecondary} onClick={() => onRemove(manuscriptRef)}>Remove</button>
           }
+          {onViewListing && (
+            <button className={styles.shelfActionSecondary} onClick={() => onViewListing(manuscriptRef)}>
+              View listing
+            </button>
+          )}
         </div>
       </div>
     </div>

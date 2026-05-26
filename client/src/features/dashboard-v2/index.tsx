@@ -12,6 +12,7 @@ import { DiscoverLane } from './components/DiscoverLane';
 import { ConnectLane } from './components/ConnectLane';
 import { WriterEmptyState } from './components/WriterEmptyState';
 import { ReaderEmptyState } from './components/ReaderEmptyState';
+import LaunchFeed from './LaunchFeed';
 
 import { adaptWritingData, adaptReadingData } from './adapters';
 import { useDashboardV2 } from './useDashboardV2';
@@ -73,6 +74,14 @@ export default function DashboardPreview({ writerEmpty = false, readerEmpty = fa
 
       {!isWriterEmpty && !isReaderEmpty && writingData !== null && readingData !== null && (
         <>
+          {/* First-24-hours launch feed — shown to writers with a published manuscript */}
+          {role === 'writing' && (() => {
+            const publishedMs = data?.writing.manuscripts.find(m => m.status === 'PUBLISHED');
+            return publishedMs ? (
+              <LaunchFeed manuscriptId={publishedMs.id} manuscriptTitle={publishedMs.title} />
+            ) : null;
+          })()}
+
           {/* Desk + Today rail grid */}
           <div className={styles.deskGrid}>
             <div className={styles.deskMain}>

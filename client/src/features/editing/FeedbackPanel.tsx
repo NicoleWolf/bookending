@@ -5,6 +5,7 @@ import { api } from '../../lib/api';
 import { FEEDBACK_TEMPLATE } from '../reading/data';
 import type { TemplateAnswers } from '../reading/data';
 import CheckInsTab from './CheckInsTab';
+import ApplicationsTab from './ApplicationsTab';
 import styles from './FeedbackPanel.module.css';
 
 interface ReaderAnnotation {
@@ -28,7 +29,7 @@ interface ReaderSubmission {
   submittedAt:    string;
 }
 
-type PanelTab = 'annotations' | 'overall' | 'checkins';
+type PanelTab = 'annotations' | 'overall' | 'checkins' | 'applicants';
 
 interface Props {
   manuscriptId:       string;
@@ -152,6 +153,17 @@ export default function FeedbackPanel({
           >
             Check-ins
           </button>
+          <button
+            id="tab-applicants"
+            className={styles.panelTab}
+            role="tab"
+            aria-selected={panelTab === 'applicants'}
+            aria-controls="panel-applicants"
+            data-active={panelTab === 'applicants' ? '' : undefined}
+            onClick={() => setPanelTab('applicants')}
+          >
+            Applicants
+          </button>
         </div>
       </div>
 
@@ -195,6 +207,13 @@ export default function FeedbackPanel({
       {panelTab === 'checkins' && (
         <div id="panel-checkins" role="tabpanel" aria-labelledby="tab-checkins" className={styles.annotationsPanel}>
           <CheckInsTab manuscriptTitle={manuscriptTitle} />
+        </div>
+      )}
+
+      {/* ── Applicants tab ── */}
+      {panelTab === 'applicants' && (
+        <div id="panel-applicants" role="tabpanel" aria-labelledby="tab-applicants" className={styles.annotationsPanel}>
+          <ApplicationsTab manuscriptId={manuscriptId} />
         </div>
       )}
 

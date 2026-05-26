@@ -10,6 +10,7 @@ import FinishedCard from './FinishedCard';
 import FollowingRow from './FollowingRow';
 import FollowingFeed from './FollowingFeed';
 import AuthorMessages from './AuthorMessages';
+import BetaDirectory from './BetaDirectory';
 import HouseRail from './HouseRail';
 import styles from './Hub.module.css';
 
@@ -166,6 +167,9 @@ export default function Reading({ onViewListing, onGoToProfile }: ReadingProps =
               <FinishedCard item={finishedItems[0]} />
             </section>
           )}
+
+          {/* Beta programmes matching reader's genres */}
+          <BetaDirectory onGoToProfile={onGoToProfile} />
 
           {/* Messages from authors (post-read check-ins) */}
           <AuthorMessages />

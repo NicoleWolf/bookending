@@ -6,6 +6,7 @@ import InRevisionReaderView from './InRevisionReaderView';
 import { STAR_LABELS, STANCE_ORDER, STANCE_VALUE } from './data';
 import type { TemplateAnswers } from './data';
 import FeedbackTemplate from './FeedbackTemplate';
+import WhatsNextCard from './WhatsNextCard';
 import { useAuth } from '../auth';
 import styles from './Reading.module.css';
 import { api } from '../../lib/api';
@@ -703,6 +704,9 @@ export default function ReadingRoom({ msRef, onBack, arcMode, onArcFinished }: R
           )}
         </div>
       )}
+
+      {/* ── What's next card ─────────────────────────────────────── */}
+      {allDone && <WhatsNextCard msRef={msRef} />}
 
       <footer className={styles.roomFooter}>Bookending · a reading room for works in progress</footer>
 

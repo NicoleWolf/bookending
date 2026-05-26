@@ -1,0 +1,136 @@
+.card {
+  max-width: 560px;
+  margin: 48px auto 0;
+  padding: 40px 0 56px;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+/* ── Ornamental separator ── */
+
+.ornament {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.4em;
+  color: var(--rule);
+  text-align: center;
+}
+
+/* ── Eyebrow ── */
+
+.eyebrow {
+  font-size: 9px;
+  letter-spacing: 0.16em;
+  color: var(--muted);
+  text-align: center;
+  text-transform: uppercase;
+  margin: 0;
+}
+
+/* ── Current project ── */
+
+.project {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  border-left: 2px solid var(--accent);
+  padding-left: 20px;
+}
+
+.projectLabel {
+  font-size: 8.5px;
+  letter-spacing: 0.14em;
+  color: var(--muted);
+  text-transform: uppercase;
+}
+
+.projectTitle {
+  font-size: 1.75rem;
+  line-height: 1.15;
+  color: var(--paper);
+  margin: 0;
+}
+
+.projectBlurb {
+  font-size: 0.9rem;
+  line-height: 1.7;
+  color: var(--muted);
+  margin: 0;
+  font-style: italic;
+}
+
+/* ── Next release ── */
+
+.release {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  border-top: 1px solid var(--rule);
+  padding-top: 20px;
+}
+
+.releaseLabel {
+  font-size: 8.5px;
+  letter-spacing: 0.14em;
+  color: var(--muted);
+  text-transform: uppercase;
+}
+
+.releaseRow {
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.releaseTitle {
+  font-size: 1.05rem;
+  color: var(--paper);
+}
+
+.releaseDate {
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  color: var(--muted-2);
+  text-transform: uppercase;
+}
+
+/* ── Follow button ── */
+
+.followBtn {
+  align-self: flex-start;
+  background: var(--accent);
+  border: 1px solid transparent;
+  color: var(--paper);
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 9.5px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  cursor: pointer;
+  padding: 9px 20px;
+}
+
+.followBtn:not([data-following]):hover {
+  opacity: 0.88;
+}
+
+.followBtn[data-following] {
+  background: none;
+  border-color: var(--good);
+  color: var(--good);
+}
+
+.followBtn[data-following]:hover {
+  opacity: 0.75;
+}
+
+.followBtn:focus-visible {
+  outline: 2px solid var(--paper);
+  outline-offset: 3px;
+}
+
+.followBtn[data-following]:focus-visible {
+  outline-color: var(--good);
+}

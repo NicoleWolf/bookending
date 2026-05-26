@@ -1366,6 +1366,12 @@
   color: var(--paper);
 }
 
+.arcBioForm {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
 .arcCTARow {
   display: flex;
   align-items: center;

@@ -10,7 +10,9 @@ export type NotificationType =
   | 'AUTHOR_ARC'
   | 'QA_ANSWERED'
   | 'BOOK_PUBLISHED'
-  | 'CHECKIN_RECEIVED';
+  | 'CHECKIN_RECEIVED'
+  | 'BETA_ACCEPTED'
+  | 'BETA_DECLINED';
 
 export interface AppNotification {
   id: string;

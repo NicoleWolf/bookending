@@ -1,0 +1,149 @@
+/* ── Section head ── */
+
+.sectionHead {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--rule);
+  margin-bottom: 2px;
+}
+
+.sectionTitle {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 9.5px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--paper);
+  flex: 1;
+}
+
+.sectionCount {
+  font-family: var(--mono);
+  font-size: 9px;
+  color: var(--muted);
+}
+
+/* ── Card list ── */
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+/* ── Programme card (button) ── */
+
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  background: var(--ink-2);
+  border: none;
+  border-left: 2px solid transparent;
+  padding: 14px 16px;
+  text-align: left;
+  cursor: pointer;
+  width: 100%;
+}
+
+.card:hover {
+  border-left-color: var(--accent);
+}
+
+.card:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* ── Card head ── */
+
+.cardHead {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.cardAvatar {
+  width: 28px;
+  height: 28px;
+  background: color-mix(in srgb, var(--accent) 18%, var(--ink-3));
+  color: var(--accent-text);
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.05em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.cardMeta {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+  min-width: 0;
+}
+
+.cardTitle {
+  font-size: 12.5px;
+  color: var(--paper);
+  font-family: var(--serif, serif);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.cardAuthor {
+  font-size: 10.5px;
+  color: var(--muted);
+}
+
+.cardArrow {
+  font-size: 14px;
+  color: var(--muted);
+  flex-shrink: 0;
+  transition: color 0.1s;
+}
+
+.card:hover .cardArrow {
+  color: var(--accent-text);
+}
+
+/* ── Genres ── */
+
+.cardGenres {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.genreTag {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 8px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+  background: var(--ink-3);
+  padding: 2px 6px;
+}
+
+/* ── Description + stats ── */
+
+.cardDesc {
+  font-size: 11.5px;
+  line-height: 1.55;
+  color: var(--muted);
+  margin: 0;
+}
+
+.cardStats {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 9px;
+  letter-spacing: 0.06em;
+  color: var(--muted-2);
+}

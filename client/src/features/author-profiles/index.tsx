@@ -107,7 +107,7 @@ interface ArcProgramViewShared {
   } | null;
 }
 
-function ArcAffordance({ program, authorFirstName, followed, followerCount, onApply, onContinueReading, onToggleFollow, onWithdraw }: {
+function ArcAffordance({ program, authorFirstName, followed, followerCount, onApply, onContinueReading, onToggleFollow, onWithdraw, manuscriptId }: {
   program: ArcProgramViewShared;
   authorFirstName: string;
   followed: boolean;
@@ -116,8 +116,24 @@ function ArcAffordance({ program, authorFirstName, followed, followerCount, onAp
   onContinueReading: () => void;
   onToggleFollow: () => void;
   onWithdraw: () => Promise<void>;
+  manuscriptId?: string;
 }) {
-  const [withdrawing, setWithdrawing] = useState(false);
+  const [withdrawing,  setWithdrawing]  = useState(false);
+  const [bioFormOpen,  setBioFormOpen]  = useState(false);
+  const [bio,          setBio]          = useState('');
+  const [submitting,   setSubmitting]   = useState(false);
+
+  async function submitApplication() {
+    if (submitting || !bio.trim()) return;
+    setSubmitting(true);
+    try {
+      if (manuscriptId) {
+        await api.post(`/api/manuscripts/${manuscriptId}/arc/apply`, { bio });
+      }
+      onApply();
+      setBioFormOpen(false);
+    } catch { setSubmitting(false); }
+  }
   const app = program.myApplication;
   const status = app?.status;
   const isFull = program.isOpen && program.cap !== null && program.acceptedCount >= program.cap;
@@ -332,19 +348,44 @@ function ArcAffordance({ program, authorFirstName, followed, followerCount, onAp
             )}
           </div>
         )}
-        <div className={styles.arcCTARow}>
-          <button className={styles.arcPrimaryBtn} onClick={onApply}>
-            Apply for early access →
-          </button>
-          {(program.acceptedCount > 0 || program.pendingCount > 0) && (
-            <span className={styles.arcSocialProof}>
-              {[
-                program.acceptedCount > 0 && `${program.acceptedCount} reading`,
-                program.pendingCount > 0 && `${program.pendingCount} under review`,
-              ].filter(Boolean).join(' · ')}
-            </span>
-          )}
-        </div>
+        {bioFormOpen ? (
+          <div className={styles.arcBioForm}>
+            <textarea
+              className={styles.answerTextarea}
+              placeholder="Tell the author a little about yourself as a reader — genres you love, how you give feedback, what you look for in a story."
+              value={bio}
+              onChange={e => setBio(e.target.value)}
+              rows={4}
+              autoFocus
+            />
+            <div className={styles.answerFormActions}>
+              <button
+                className={styles.answerPublishBtn}
+                onClick={submitApplication}
+                disabled={submitting || !bio.trim()}
+              >
+                {submitting ? '…' : 'Submit application →'}
+              </button>
+              <button className={styles.answerCancelBtn} onClick={() => setBioFormOpen(false)}>
+                Cancel
+              </button>
+            </div>
+          </div>
+        ) : (
+          <div className={styles.arcCTARow}>
+            <button className={styles.arcPrimaryBtn} onClick={() => setBioFormOpen(true)}>
+              Apply for early access →
+            </button>
+            {(program.acceptedCount > 0 || program.pendingCount > 0) && (
+              <span className={styles.arcSocialProof}>
+                {[
+                  program.acceptedCount > 0 && `${program.acceptedCount} reading`,
+                  program.pendingCount > 0 && `${program.pendingCount} under review`,
+                ].filter(Boolean).join(' · ')}
+              </span>
+            )}
+          </div>
+        )}
       </div>
     );
   }
@@ -811,6 +852,7 @@ function AuthorProfilePage({ author, followed, onToggleFollow, onBack, onNotify,
                       authorFirstName={author.name.split(' ')[0] ?? author.name}
                       followed={followed}
                       followerCount={author.followerCount}
+                      manuscriptId={author.featuredProject!.id}
                       onApply={() => onApplyForArc?.(author.featuredProject!.id)}
                       onContinueReading={() => onContinueArcReading?.(author.featuredProject!.id)}
                       onToggleFollow={onToggleFollow}
@@ -1143,6 +1185,7 @@ function AuthorProfilePage({ author, followed, onToggleFollow, onBack, onNotify,
                 authorFirstName={author.name.split(' ')[0] ?? author.name}
                 followed={followed}
                 followerCount={author.followerCount}
+                manuscriptId={author.featuredProject!.id}
                 onApply={() => onApplyForArc?.(author.featuredProject!.id)}
                 onContinueReading={() => onContinueArcReading?.(author.featuredProject!.id)}
                 onToggleFollow={onToggleFollow}

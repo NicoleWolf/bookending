@@ -1,6 +1,6 @@
 export type AuthorTone = 'accent' | 'gold' | 'muted' | 'ink' | 'paper';
 export type ProjectStatus = 'drafting' | 'in-revision' | 'complete';
-export type ProfileTab = 'overview' | 'activity' | 'qa' | 'arc';
+export type ProfileTab = 'overview' | 'activity' | 'qa' | 'arc' | 'exclusive';
 
 export interface CurrentProject {
   title: string;

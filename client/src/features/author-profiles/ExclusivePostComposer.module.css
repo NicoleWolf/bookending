@@ -1,0 +1,235 @@
+/* ── Section ── */
+
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid var(--rule);
+  margin-bottom: 24px;
+}
+
+/* ── Head ── */
+
+.sectionHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.sectionTitle {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 9.5px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--paper);
+}
+
+.composeBtn {
+  background: none;
+  border: none;
+  padding: 0;
+  font-family: var(--mono);
+  font-size: 9.5px;
+  letter-spacing: 0.06em;
+  color: var(--accent-text);
+  cursor: pointer;
+}
+
+.composeBtn:hover {
+  color: var(--paper);
+}
+
+.composeBtn:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
+/* ── Composer ── */
+
+.composer {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.composerNote {
+  font-size: 11.5px;
+  color: var(--muted);
+  margin: 0;
+  line-height: 1.5;
+}
+
+/* ── Type selector ── */
+
+.typeRow {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+
+.typeBtn {
+  background: var(--ink-3);
+  border: 1px solid var(--rule);
+  padding: 4px 10px;
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted);
+  cursor: pointer;
+}
+
+.typeBtn[data-active] {
+  background: color-mix(in srgb, var(--accent) 18%, var(--ink-3));
+  border-color: var(--accent);
+  color: var(--accent-text);
+}
+
+.typeBtn:hover:not([data-active]) {
+  color: var(--paper);
+  border-color: var(--muted-2);
+}
+
+/* ── Inputs ── */
+
+.titleInput {
+  background: var(--ink-3);
+  border: 1px solid var(--rule);
+  padding: 8px 12px;
+  font-size: 13px;
+  color: var(--paper);
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.titleInput:focus {
+  outline: none;
+  border-color: var(--muted-2);
+}
+
+.titleInput:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 0;
+}
+
+.bodyTextarea {
+  background: var(--ink-3);
+  border: 1px solid var(--rule);
+  padding: 10px 12px;
+  font-family: var(--serif, serif);
+  font-size: 13.5px;
+  line-height: 1.65;
+  color: var(--paper);
+  resize: vertical;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.bodyTextarea:focus {
+  outline: none;
+  border-color: var(--muted-2);
+}
+
+.bodyTextarea:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 0;
+}
+
+/* ── Actions ── */
+
+.composerActions {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.postBtn {
+  background: var(--accent);
+  border: none;
+  padding: 8px 16px;
+  font-family: var(--mono);
+  font-size: 9.5px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--paper);
+  cursor: pointer;
+}
+
+.postBtn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.postBtn:not(:disabled):hover {
+  background: color-mix(in srgb, var(--accent) 80%, var(--paper));
+}
+
+.postBtn:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
+.cancelBtn {
+  background: none;
+  border: none;
+  padding: 0;
+  font-family: var(--mono);
+  font-size: 9.5px;
+  color: var(--muted);
+  cursor: pointer;
+}
+
+.cancelBtn:hover {
+  color: var(--paper);
+}
+
+/* ── Posted list ── */
+
+.postedList {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  border-top: 1px solid var(--rule);
+  padding-top: 12px;
+}
+
+.postedItem {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  padding: 5px 0;
+}
+
+.postedIcon {
+  font-size: 10px;
+  color: var(--good);
+  flex-shrink: 0;
+}
+
+.postedType {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted-2);
+  flex-shrink: 0;
+}
+
+.postedTitle {
+  font-size: 12.5px;
+  color: var(--muted);
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.postedTime {
+  font-family: var(--mono);
+  font-size: 9px;
+  color: var(--muted-2);
+  flex-shrink: 0;
+}

@@ -12,7 +12,8 @@ export type NotificationType =
   | 'BOOK_PUBLISHED'
   | 'CHECKIN_RECEIVED'
   | 'BETA_ACCEPTED'
-  | 'BETA_DECLINED';
+  | 'BETA_DECLINED'
+  | 'EXCLUSIVE_POST';
 
 export interface AppNotification {
   id: string;

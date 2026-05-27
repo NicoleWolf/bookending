@@ -6,7 +6,7 @@ import styles from './FollowingFeed.module.css';
 
 export interface FeedItem {
   id:             string;
-  type:           'milestone' | 'post' | 'launch' | 'arc';
+  type:           'milestone' | 'post' | 'launch' | 'arc' | 'exclusive';
   authorId:       string;
   authorName:     string;
   authorInitials: string;
@@ -15,6 +15,7 @@ export interface FeedItem {
   createdAt:      string;   // ISO
   bookId?:        string;   // present for launch type
   firstIn30Days:  boolean;
+  isUnlocked?:    boolean;  // present for exclusive type
 }
 
 const TYPE_LABEL: Record<FeedItem['type'], string> = {
@@ -22,6 +23,7 @@ const TYPE_LABEL: Record<FeedItem['type'], string> = {
   post:      'New post',
   launch:    'Book launch',
   arc:       'ARC open',
+  exclusive: '◆ Reader exclusive',
 };
 
 function toneClass(authorId: string): string {
@@ -127,6 +129,15 @@ export default function FollowingFeed({ onViewListing, onGoToProfile }: Props) {
                     onClick={() => onGoToProfile?.(item.authorId, 'activity')}
                   >
                     See activity <span aria-hidden="true">→</span>
+                  </button>
+                )}
+                {item.type === 'exclusive' && (
+                  <button
+                    className={styles.actionLink}
+                    type="button"
+                    onClick={() => onGoToProfile?.(item.authorId, 'exclusive')}
+                  >
+                    {item.isUnlocked ? 'Read exclusive' : 'View'} <span aria-hidden="true">→</span>
                   </button>
                 )}
               </div>

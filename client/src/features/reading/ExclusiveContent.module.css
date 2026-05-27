@@ -1,0 +1,129 @@
+/* ── Section head ── */
+
+.sectionHead {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--rule);
+  margin-bottom: 2px;
+}
+
+.sectionTitle {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 9.5px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--paper);
+  flex: 1;
+}
+
+.sectionCount {
+  font-family: var(--mono);
+  font-size: 9px;
+  color: var(--muted);
+}
+
+/* ── List ── */
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+/* ── Card ── */
+
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  background: var(--ink-2);
+  border-left: 2px solid var(--good);
+  padding: 16px;
+}
+
+.card[data-locked] {
+  border-left-color: var(--rule);
+}
+
+/* ── Card head ── */
+
+.cardHead {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.typeBadge {
+  font-family: var(--mono);
+  font-feature-settings: "ss01";
+  font-size: 8.5px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--good);
+  flex: 1;
+}
+
+.card[data-locked] .typeBadge {
+  color: var(--muted-2);
+}
+
+.lockGlyph {
+  font-size: 12px;
+  color: var(--muted-2);
+}
+
+.cardTime {
+  font-family: var(--mono);
+  font-size: 9px;
+  color: var(--muted-2);
+  flex-shrink: 0;
+}
+
+/* ── Book / author attribution ── */
+
+.bookBtn {
+  background: none;
+  border: none;
+  padding: 0;
+  font-family: var(--mono);
+  font-size: 9.5px;
+  color: var(--muted);
+  cursor: pointer;
+  text-align: left;
+}
+
+.bookBtn:hover {
+  color: var(--paper);
+}
+
+.bookLabel {
+  font-family: var(--mono);
+  font-size: 9.5px;
+  color: var(--muted);
+}
+
+/* ── Content ── */
+
+.cardTitle {
+  font-size: 13.5px;
+  color: var(--paper);
+  margin: 0;
+}
+
+.cardBody {
+  font-size: 13.5px;
+  line-height: 1.75;
+  color: var(--muted);
+  margin: 0;
+  white-space: pre-wrap;
+}
+
+.lockedMsg {
+  font-size: 12px;
+  color: var(--muted-2);
+  font-style: italic;
+  margin: 0;
+}

@@ -11,6 +11,7 @@ import FollowingRow from './FollowingRow';
 import FollowingFeed from './FollowingFeed';
 import AuthorMessages from './AuthorMessages';
 import BetaDirectory from './BetaDirectory';
+import ExclusiveContent from './ExclusiveContent';
 import HouseRail from './HouseRail';
 import styles from './Hub.module.css';
 
@@ -167,6 +168,9 @@ export default function Reading({ onViewListing, onGoToProfile }: ReadingProps =
               <FinishedCard item={finishedItems[0]} />
             </section>
           )}
+
+          {/* Exclusive posts from authors of books the reader has reviewed */}
+          <ExclusiveContent onGoToProfile={onGoToProfile} />
 
           {/* Beta programmes matching reader's genres */}
           <BetaDirectory onGoToProfile={onGoToProfile} />

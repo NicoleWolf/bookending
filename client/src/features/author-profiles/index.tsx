@@ -9,6 +9,8 @@ import { timeAgo } from '../notifications/data';
 import styles from './AuthorProfiles.module.css';
 
 import { api } from '../../lib/api';
+import ExclusivePostComposer from './ExclusivePostComposer';
+import ExclusiveContent from '../reading/ExclusiveContent';
 
 const TONES: AuthorTone[] = ['accent', 'gold', 'muted', 'ink', 'paper'];
 function toneForId(id: string): AuthorTone {
@@ -778,6 +780,13 @@ function AuthorProfilePage({ author, followed, onToggleFollow, onBack, onNotify,
             ARC
           </button>
         )}
+        <button
+          className={styles.profileTab}
+          data-active={tab === 'exclusive' ? '' : undefined}
+          onClick={() => setTab('exclusive')}
+        >
+          ◆ Exclusive
+        </button>
       </div>
 
       {/* Overview */}
@@ -971,6 +980,24 @@ function AuthorProfilePage({ author, followed, onToggleFollow, onBack, onNotify,
                 </div>
               ))}
             </div>
+          )}
+        </div>
+      )}
+
+      {/* Exclusive content */}
+      {tab === 'exclusive' && (
+        <div className={styles.profileBody}>
+          {isOwnProfile ? (
+            author.featuredProject ? (
+              <ExclusivePostComposer
+                manuscriptId={author.featuredProject.id}
+                manuscriptTitle={author.featuredProject.title}
+              />
+            ) : (
+              <div className={styles.emptyState}>Publish a book to start posting exclusive content for your readers.</div>
+            )
+          ) : (
+            <ExclusiveContent authorId={author.id} />
           )}
         </div>
       )}
